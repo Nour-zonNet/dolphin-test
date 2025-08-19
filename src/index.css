@@ -1,5 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap");
-
+@import "tailwindcss";
 @theme {
   --color-health: #0077b6;
   --color-quran: #2e7d32;
