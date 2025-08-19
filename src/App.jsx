@@ -1,14 +1,13 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import "./i18n"; 
-import Packages from "./pages/Packages";
+import MobileNav from "./components/layouts/MobileNav";
+import Navbar from "./components/layouts/Navbar";
+import "./App.css";
 
 function App() {
-  const { t, i18n } = useTranslation();
   return (
-    <div>
-      <Packages />
-    </div>
+    <>
+      <Navbar />
+      <MobileNav />
+    </>
   );
 }
 

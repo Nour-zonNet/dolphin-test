@@ -1,23 +1,19 @@
-@import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap");
 
-:root {
-  --color-health: #0077B6;
-  --color-quran: #2E7D32;
-  --color-english-level-one: #BCA7F5;
-  --color-english-level-two: #5A2D82;
+@theme {
+  --color-health: #0077b6;
+  --color-quran: #2e7d32;
+  --color-health: #0077b6;
+  --color-quran: #2e7d32;
+  --color-englishLevelOne: #bca7f5;
+  --color-englishLevelTwo: #5a2d82;
   --color-muslim: #746751;
-  --color-arabic: #7E424A;
-  --color-science: #D47C7C;
-  --color-math: #D4C71C;
-  --color-darkblue: #0C2D40;
-  --color-deepnavy: #061A2F;
-  --color-navyteal: #08233F;
-  --color-orangedeep: #E89B32;
-  --color-graycustom: #8C8C8C;
-}
-
-/* Global Styles */
-body {
-  font-family: "Cairo", sans-serif;
+  --color-arabic: #7e424a;
+  --color-science: #d47c7c;
+  --color-math: #d4c71c;
+  --color-darkblue: #0c2d40;
+  --color-deepnavy: #061a2f;
+  --color-navyteal: #08233f;
+  --color-orangedeep: #e89b32;
+  --color-graycustom: #8c8c8c;
 }
