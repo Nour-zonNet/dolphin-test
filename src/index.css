@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Global Styles */
+body {
+  /* @apply bg-red-200 text-yellow-700 dark:bg-amber-300 */
+}
