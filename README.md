@@ -101,12 +101,9 @@ components/Button/
 npm create vite@latest my-react-app -- --template react
 cd my-react-app
 
-# Or with Create React App
-npx create-react-app my-react-app --template typescript
-
 # Install additional dependencies
 npm install react-router-dom @tanstack/react-query zustand axios
-npm install -D tailwindcss postcss autoprefixer
+npm install -D @tailwindcss/vite
 ```
 
 ## Configuration Files to Add:
