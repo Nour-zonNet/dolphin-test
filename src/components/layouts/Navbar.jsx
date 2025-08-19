@@ -1,4 +1,5 @@
-import { Headphones, Settings } from "../../utils/icons";
+import SubscribeBtn from "../common/SubscribeBtn";
+import SupportBtn from "../common/SupportBtn";
 
 function Navbar() {
   return (
@@ -18,16 +19,10 @@ function Navbar() {
       {/* Buttons Section */}
       <div className="flex gap-2 sm:gap-4 w-full justify-end md:w-auto  ">
         {/* Subscription Button */}
-        <button className="flex items-center text-xs gap-2 bg-orangedeep text-[#0C2D40] font-medium px-4 sm:px-6 py-2 rounded-full shadow hover:scale-105 transition  sm:text-sm">
-          <Settings size={18} />
-          <span>إدارة الاشتراك</span>
-        </button>
 
+        <SubscribeBtn />
         {/* Support Button */}
-        <button className="flex items-center text-xs gap-2 bg-orangedeep text-[#0C2D40] font-medium px-4 sm:px-6 py-2 rounded-full shadow hover:scale-103 transition  sm:text-sm">
-          <Headphones size={18} />
-          <span>الدعم</span>
-        </button>
+        <SupportBtn />
       </div>
     </nav>
   );
