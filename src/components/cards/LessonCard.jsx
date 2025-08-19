@@ -1,59 +1,77 @@
 import React from "react";
 import vector from "../../assets/packages/vector.svg";
-import frame from "../../assets/packages/frame.svg";
-import checked from "../../assets/packages/check.svg";
+import highlight from "../../assets/schedule/highlight.svg";
+import teacherIcon from "../../assets/schedule/teacher.svg";
+import groupIcon from "../../assets/schedule/group.svg";
+import timeIcon from "../../assets/schedule/time.svg";
+import timerIcon from "../../assets/schedule/timer.svg";
 import meetingIcon from "../../assets/packages/meeting.svg";
-import whatsapp from "../../assets/packages/whatsapp.svg";
+import clock from "../../assets/schedule/clock.svg";
 import telegram from "../../assets/packages/telegram.svg";
 
-const PackageCard = ({ title, description, color, image, status, group, schedule }) => {
+const PackageCard = ({ title, description, color, image, teacher, group, schedule }) => {
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block mt-10">
     
-    {/* Frame overlay */}
+    {/* highlight overlay */}
      <img
-       src={frame}
-       alt="frame"
-       className="absolute -top-10 -left-0 w-[100%] h-[125%] z-20 pointer-events-none"
+       src={highlight}
+       alt="highlight"
+       className="absolute -top-4 -left-0 z-20 pointer-events-none"
    />
-    <div className={`relative rounded-[10.45px] border border-cardBorder min-h-[200px] w-[550px] overflow-hidden transform skew-x-[0.6deg]`}
+    <div className={`flex items-start justify-between rounded-tr-4xl rounded-bl-4xl border border-cardBorder min-h-[200px] w-[560px] py-4 pe-6 overflow-hidden ${color}`}
     >
 
-      {/* Header */}
-      <div className={`flex items-center gap-2 relative z-10 h-[75px] text-white px-2 ${color}`}>
-        {image && (
-          <img
-            src={image}
-            alt={title}
-            className="w-[50px] h-[50px]"
-          />
-        )}
-        <div>
-          <h2 className="text-[1.25rem] font-semibold">{title}</h2>
-          <h2 className="text-[1.25rem] font-semibold">{description}</h2>
+      <div>
+        {/* Header */}
+        <div className={`flex items-center gap-2 relative z-10 text-[#08233F] px-2`}>
+          {image && (
+            <img
+              src={image}
+              alt={title}
+              className="w-[50px] h-[50px]"
+            />
+          )}
+          <div>
+            <h2 className="text-[1.25rem] font-semibold">{title}</h2>
+            <h2 className="text-[1.25rem] font-semibold">{description}</h2>
+          </div>
+        </div>
+
+        {/* teacher & Group */}
+        <div className="flex items-center gap-2 mt-6 px-2 relative z-10">
+          <div className="font-semibold px-1.5 flex items-center gap-2">
+            <img src={teacherIcon} alt="teacher icon" className="w-6 h-6" />
+            <span className="text-status">{teacher}</span>
+          </div>
+          <div className="font-semibold px-1.5 flex items-center gap-2">
+            <img src={groupIcon} alt="group icon" className="w-6 h-6" />
+            <span className="text-status">{group}</span>
+          </div>
+        </div>
+        {/* Timer */}
+        <div className="flex items-center gap-2 mt-6 px-2 relative z-10">
+          <div className="font-semibold px-1.5 flex items-center gap-2">
+            <img src={timeIcon} alt="time icon" className="w-6 h-6" />
+            <span className="">م 9.00</span>
+          </div>
+          <div className="font-semibold px-1.5 flex items-center gap-2">
+            <img src={timerIcon} alt="timer icon" className="w-6 h-6" />
+            <span className="">متبقي ساعة و 23 دقيقة</span>
+          </div>
         </div>
       </div>
 
-      {/* Status & Group */}
-      <div className="flex items-center gap-2 mt-6 px-2 relative z-10">
-        <div className="bg-[#FCF0E0] w-[120px] h-[36px] font-semibold rounded-3xl px-1.5 flex items-center gap-[15px]">
-          <img src={checked} alt="activeIcon" className="w-6 h-6" />
-          <span className="text-status">{status}</span>
+        {/* Lessons */}
+        <div className="flex flex-col items-center justify-between px-2 relative z-10">
+          <div className="">
+            <img src={clock} alt="clock" className="cursor-pointer" />
+          </div>
+          <button className="mb-4 w-[150px] h-[50px] text-nowrap text-navyteal text-[18px] flex items-center justify-center gap-2 mt-4 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-4 py-1">
+            <img src={meetingIcon} alt="meetingIcon" />
+              دخول الحصه
+          </button>
         </div>
-        <p className="text-navyteal font-semibold">{group}</p>
-      </div>
-
-      {/* Schedule & Social */}
-      <div className="flex items-center justify-between px-2 relative z-10">
-        <button className="mb-4 w-[280px] h-[50px] text-navyteal text-[18px] flex items-center justify-center gap-4 mt-4 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-4 py-1">
-          <img src={meetingIcon} alt="meetingIcon" />
-            دخول الحصه
-        </button>
-        <div className="flex items-center justify-center gap-7 h-[52px] w-[131px] border border-navyteal rounded-4xl">
-          <img src={whatsapp} alt="whatsapp" className="cursor-pointer" />
-          <img src={telegram} alt="telegram" className="cursor-pointer" />
-        </div>
-      </div>
     </div> 
     </div>
   );

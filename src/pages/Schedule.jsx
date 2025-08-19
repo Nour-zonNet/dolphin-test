@@ -11,26 +11,18 @@ const Packages = () => {
     {
       title: "باقة الصحة العامة",
       description: "",
-      color: "bg-health",
+      color: "border-r-16 border-r-health",
       image: HealthIcon,
-      group: "المجموعة العامة",
-      status: "فعالة"
+      group: "المجموعة الأولي",
+      teacher: "أ. حنان"
     },
     {
       title: "باقة ركن المسلم",
       description: "",
-      color: "bg-quran",
+      color: "border-r-16 border-r-quran",
       image: QuranIcon,
-      group: "المجموعة العامة",
-      status: "فعالة"
-    },
-    {
-      title: "باقة تأسيس اللغة الإنجليزية ",
-      description: "(المستوي الأول)",
-      color: "bg-englishLevelOne",
-      image: EnglishIcon,
-      group: "المجموعة العامة",
-      status: "فعالة"
+      group: "المجموعة الأولي",
+      teacher: "أ. حنان"
     },
   ];
 
@@ -44,7 +36,7 @@ const Packages = () => {
           color={card.color}
           image={card.image}
           group={card.group}
-          status={card.status}
+          teacher={card.teacher}
         />
       ))}
     </div>
