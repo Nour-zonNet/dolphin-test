@@ -1,0 +1,18 @@
+import profileImg from "../../assets/profileImage.png";
+
+const ProfileInfo = () => {
+  return (
+    <button className="flex flex-col items-center text-darkblue cursor-pointer">
+      <div className="relative w-10 h-10 rounded-full border-2 border-[#E89B32] flex items-center justify-center overflow-hidden bg-white">
+        <img
+          src={profileImg}
+          alt="profile"
+          className="w-6 h-6 object-cover group-hover:scale-110 transition"
+        />
+      </div>
+      <span className="text-sm font-medium">حسابي</span>
+    </button>
+  );
+};
+
+export default ProfileInfo;
