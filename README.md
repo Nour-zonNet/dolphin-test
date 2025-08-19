@@ -1,3 +1,53 @@
+# Project Setup
+
+## 1. Clone project repo from git
+
+```bash
+git clone https://github.com/ZonNet-DigitalSolution/learnatdolphin-frontend.git
+```
+
+## 2. Install required packages.
+
+```bash
+cd learnatdolphin-frontend
+npm run install
+npm run dev
+```
+
+
+## Contribuation
+
+### 1. check you in development branch
+
+```bash
+git checkout development
+```
+
+### 2. Pull latest from development
+
+```bash
+git pull origin development
+```
+
+### 3. Start your implementation by create new branch
+
+```bash
+git checkout -b feature/task-title
+```
+
+### 4. Task completed push it on you branch
+
+```bash
+git status
+git add
+git commit -m "Write here meaningful message"
+git push
+```
+
+### 5. Create Pull Request from your task branch with `development` branch and set PR link in your clickup task comment
+
+
+-------
 # React.js Project Structure Recommendations
 
 ## 1. Feature-Based Structure (Recommended ⭐)
