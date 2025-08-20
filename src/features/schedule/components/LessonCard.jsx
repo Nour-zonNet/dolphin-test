@@ -8,12 +8,12 @@ import clock from "@/assets/schedule/clock.svg";
 
 const LessonCard = ({ item }) => {
   return (
-    <div className="relative mt-6 ml-4 xs:ml-6 md:ml-10">
+    <div className="relative  pt-7 pl-7">
       {/* highlight overlay */}
       <img
         src={highlight}
         alt="highlight"
-        className="absolute -top-6 -left-4 xs:-top-9 xs:-left-6 z-20 pointer-events-none w-12 xs:w-16"
+        className="absolute top-0 left-0 z-20 pointer-events-none w-12 xs:w-16"
       />
       <div
         className={`flex flex-col xs:flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-cardBorder min-h-[200px] w-full max-w-[600px] py-4 pe-4 xs:pe-6 overflow-hidden ${item.color}`}
@@ -65,8 +65,8 @@ const LessonCard = ({ item }) => {
         </div>
 
         {/* Right section */}
-        <div className="flex xs:flex-col items-center justify-between gap-4 xs:gap-0 px-2 mt-4 xs:mt-0 relative z-10">
-          <div>
+        <div className="flex xs:flex-col items-center  justify-center mr-auto xs:space-y-3.5 gap-2 xs:gap-0 px-2 mt-4 xs:mt-0 relative z-10 xs-">
+          <div className="flex justify-center text-center items-center align-middle">
             <img src={clock} alt="clock" className="cursor-pointer w-8 xs:w-auto" />
           </div>
           <button className="w-[120px] xs:w-[150px] h-[45px] xs:h-[50px] text-nowrap text-navyteal text-xs xs:text-[18px] flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-3 xs:px-4 py-1">

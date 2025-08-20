@@ -10,20 +10,23 @@ import "swiper/css/pagination";
 // Assets & utils
 import notFoundImage from "@/assets/images/notFoundLessons.png";
 
-
 // Local
 import LessonCard from "./LessonCard";
 import { packagesItems } from "@/constants/packagesItrms";
 import SliderHeader from "./SliderHeader";
-
-
+import { getNext7Days } from "../../../utils/dateHelpers";
+import { useState } from "react";
 
 const ScheduleSlider = () => {
+  const days = getNext7Days();
+  const [activeIndex, setActiveIndex] = useState(0);
   return (
-    <div className="mx-auto pt-16 px-4 sm:px-6 lg:px-10 space-y-20">
-      <SliderHeader />
-
-      <div className="slider">
+    <div className="mx-auto pt-16 px-4 sm:px-6 lg:px-10 ">
+     <SliderHeader
+        dayLabel={days[activeIndex].label}
+        dayDate={days[activeIndex].date}
+      />
+      <div className="slider pb-30">
         <Swiper
           modules={[Navigation, Pagination]}
           spaceBetween={30}
@@ -36,26 +39,29 @@ const ScheduleSlider = () => {
             640: { slidesPerView: 1 },
             1024: { slidesPerView: 1 },
           }}
+          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         >
-          {/* Placeholder slide */}
-          <SwiperSlide>
-            <div className="relative p-5 flex items-end justify-center bg-white">
-              <img
-                src={notFoundImage}
-                alt="No lessons found"
-                className="max-h-140 group-hover:scale-110 transition"
-              />
-            </div>
-          </SwiperSlide>
+        {days.map((day) => (
+          <SwiperSlide key={day.date}>
+            <div className="flex flex-col  gap-6">
+      
 
-          {/* Lessons slide */}
-          <SwiperSlide>
-            <div className="flex flex-col justify-center items-center">
-              {packagesItems.map((item, index) => (
-                <LessonCard key={index + item.title} item={item} />
-              ))}
+              {packagesItems.length > 0 ? (
+                packagesItems.map((item, i) => (
+                  <LessonCard key={i + item.title} item={item} />
+                ))
+              ) : (
+                <div className="relative p-5 flex items-center justify-center bg-white">
+                  <img
+                    src={notFoundImage}
+                    alt="No lessons found"
+                    className="max-h-80 group-hover:scale-110 transition"
+                  />
+                </div>
+              )}
             </div>
           </SwiperSlide>
+        ))}
         </Swiper>
       </div>
     </div>
