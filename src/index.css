@@ -20,9 +20,3 @@
   --color-btnClicked: #D18C2D;
 }
 
-/* Global Styles */
-body {
-  max-width: 744px;
-  margin: 10rem auto;
-  direction: rtl;
-}

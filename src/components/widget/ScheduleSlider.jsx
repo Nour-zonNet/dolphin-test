@@ -11,6 +11,7 @@ import PackageCard from "../cards/PackageCard";
 import notFoundImage from "../../assets/images/notFoundLessons.png";
 import { LeftArrow, RightArrow } from "../../utils/icons";
 import LessonCard from "../cards/LessonCard";
+import { cards } from "../../pages/Schedule";
 
 const data = [
   {
@@ -146,8 +147,16 @@ const ScheduleSlider = () => {
             </div>
           </SwiperSlide>
           <SwiperSlide>
-            {data.map(() => (
-              <LessonCard />
+            {cards.map((card, index) => (
+              <LessonCard
+                key={index}
+                title={card.title}
+                description={card.description}
+                color={card.color}
+                image={card.image}
+                group={card.group}
+                teacher={card.teacher}
+              />
             ))}
           </SwiperSlide>
         </Swiper>

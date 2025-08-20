@@ -9,7 +9,7 @@ import clock from "../../assets/schedule/clock.svg";
 
 const PackageCard = ({ title, description, color, image, teacher, group, schedule }) => {
   return (
-    <div className="relative inline-block mt-10 max-w-[744px]">
+    <div className="relative inline-block mt-10">
     
     {/* highlight overlay */}
      <img
