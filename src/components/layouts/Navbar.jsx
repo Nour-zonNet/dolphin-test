@@ -31,7 +31,7 @@ function Navbar() {
     navigate(tab === "schedule" ? "/schedule" : "/subscriptions");
   };
   return (
-        <nav className="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-[744px] flex items-center justify-between py-4 px-4 sm:px-6 bg-white text-nowrap z-100">
+      <nav className="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-[744px] flex items-center justify-between py-4 px-4 sm:px-6 bg-white text-nowrap z-100">
       {/* Tabs Section */}
       <div className="flex items-center gap-4 text-xl sm:text-2xl font-bold">
         {TABS.map((tab) => (
