@@ -11,13 +11,13 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        {/* <Navbar /> */}
+        <Navbar />
         <Routes>
           <Route path="/schedule" element={<LessonsSchedule />} />
           <Route path="/subscriptions" element={<Packages />} />
           <Route path="/home" element={<HomePage />} />
         </Routes>
-        {/* <MobileNav /> */}
+        <MobileNav />
       </BrowserRouter>
     </>
   );

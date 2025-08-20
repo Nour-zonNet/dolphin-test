@@ -1,6 +1,6 @@
 import dolphinChild from "../assets/images/homeChild.png";
 import { FaTelegramPlane, FaWhatsapp, Lock, Plus } from "../utils/icons";
-
+import dolphinLogo from "../assets/Logo/dolphinLogo.png";
 const HomePage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white relative overflow-hidden">
@@ -8,7 +8,7 @@ const HomePage = () => {
       <header className="flex items-center justify-between px-6 py-4">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="Dolphin Logo" className="h-10" />
+          <img src={dolphinLogo} alt={"logo"} className="h-10" />
         </div>
 
         {/* Nav buttons */}
