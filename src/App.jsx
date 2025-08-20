@@ -5,29 +5,37 @@ import { Navbar, MobileNav } from "./components/layout";
 import HomePage from "./features/home";
 import LessonsSchedule from "./features/schedule";
 import Packages from "./features/packages";
-import { useState } from "react";
 
 const App = () => {
-  const [isAuthenticated] = useState(false);
   return (
     <>
       <BrowserRouter>
-        {isAuthenticated ? (
-          <>
-            {" "}
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<LessonsSchedule />} />
-              <Route path="/schedule" element={<LessonsSchedule />} />
-              <Route path="/subscriptions" element={<Packages />} />
-            </Routes>
-            <MobileNav />
-          </>
-        ) : (
+        <>
+          {" "}
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route
+              path="/schedule"
+              element={
+                <>
+                  <Navbar />
+                  <LessonsSchedule />
+                  <MobileNav />
+                </>
+              }
+            />
+            <Route
+              path="/subscriptions"
+              element={
+                <>
+                  <Navbar />
+                  <Packages />
+                  <MobileNav />
+                </>
+              }
+            />
           </Routes>
-        )}
+        </>
       </BrowserRouter>
     </>
   );
