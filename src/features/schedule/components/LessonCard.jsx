@@ -1,73 +1,75 @@
-import highlight from "../../../assets/schedule/highlight.svg";
-import teacherIcon from "../../../assets/schedule/teacher.svg";
-import groupIcon from "../../../assets/schedule/group.svg";
-import timeIcon from "../../../assets/schedule/time.svg";
-import timerIcon from "../../../assets/schedule/timer.svg";
-// import meetingIcon from "../../../assets/packages/meeting.svg";
-import clock from "../../../assets/schedule/clock.svg";
+import highlight from "@/assets/schedule/highlight.svg";
+import teacherIcon from "@/assets/schedule/teacher.svg";
+import groupIcon from "@/assets/schedule/group.svg";
+import timeIcon from "@/assets/schedule/time.svg";
+import timerIcon from "@/assets/schedule/timer.svg";
+// import meetingIcon from "@/assets/packages/meeting.svg";
+import clock from "@/assets/schedule/clock.svg";
 
 const LessonCard = ({ item }) => {
   return (
-    <div className="relative inline-block mt-10">
+    <div className="relative mt-6 ml-4 xs:ml-6 md:ml-10">
       {/* highlight overlay */}
       <img
         src={highlight}
         alt="highlight"
-        className="absolute -top-9 -left-6 z-20 pointer-events-none"
+        className="absolute -top-6 -left-4 xs:-top-9 xs:-left-6 z-20 pointer-events-none w-12 xs:w-16"
       />
       <div
-        className={`flex items-start justify-between rounded-tr-4xl rounded-bl-4xl border border-cardBorder min-h-[200px] max-w-[600px] py-4 pe-6 overflow-hidden ${item.color}`}
+        className={`flex flex-col xs:flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-cardBorder min-h-[200px] w-full max-w-[600px] py-4 pe-4 xs:pe-6 overflow-hidden ${item.color}`}
       >
-        <div>
+        {/* Left section */}
+        <div className="flex-1 w-full">
           {/* Header */}
-          <div
-            className={`flex items-center gap-2 relative z-10 text-[#08233F] px-2`}
-          >
+          <div className="flex items-center gap-2 relative z-10 text-[#08233F] px-2">
             {item.image && (
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-[50px] h-[50px]"
+                className="w-10 h-10 xs:w-[50px] xs:h-[50px] flex-shrink-0"
               />
             )}
             <div>
-              <h2 className="text-[1.25rem] font-semibold">{item.title}</h2>
-              <h2 className="text-[1.25rem] font-semibold">
+              <h2 className="text-lg xs:text-[1.25rem] font-semibold leading-snug">
+                {item.title}
+              </h2>
+              <h2 className="text-lg xs:text-[1.25rem] font-semibold leading-snug">
                 {item.description}
               </h2>
             </div>
           </div>
 
-          {/* teacher & Group */}
-          <div className="flex items-center gap-2 mt-6 px-2 relative z-10">
-            <div className="font-semibold px-1.5 flex items-center gap-2">
-              <img src={teacherIcon} alt="teacher icon" className="w-6 h-6" />
-              <span className="text-status">{item.teacher}</span>
+          {/* Teacher & Group */}
+          <div className="flex flex-wrap items-center gap-3 mt-4 xs:mt-6 px-2 relative z-10">
+            <div className="font-semibold flex items-center gap-2">
+              <img src={teacherIcon} alt="teacher icon" className="w-5 h-5 xs:w-6 xs:h-6" />
+              <span className="text-status text-xs xs:text-base">{item.teacher}</span>
             </div>
-            <div className="font-semibold px-1.5 flex items-center gap-2">
-              <img src={groupIcon} alt="group icon" className="w-6 h-6" />
-              <span className="text-status">{item.group}</span>
+            <div className="font-semibold flex items-center gap-2">
+              <img src={groupIcon} alt="group icon" className="w-5 h-5 xs:w-6 xs:h-6" />
+              <span className="text-status text-xs xs:text-base">{item.group}</span>
             </div>
           </div>
+
           {/* Timer */}
-          <div className="flex items-center gap-2 mt-6 px-2 relative z-10">
-            <div className="font-semibold px-1.5 flex items-center gap-2">
-              <img src={timeIcon} alt="time icon" className="w-6 h-6" />
-              <span className="">م 9.00</span>
+          <div className="flex flex-wrap items-center gap-3 mt-4 xs:mt-6 px-2 relative z-10">
+            <div className="font-semibold flex items-center gap-2">
+              <img src={timeIcon} alt="time icon" className="w-5 h-5 xs:w-6 xs:h-6" />
+              <span className="text-xs xs:text-base">م 9.00</span>
             </div>
-            <div className="font-semibold px-1.5 flex items-center gap-2">
-              <img src={timerIcon} alt="timer icon" className="w-6 h-6" />
-              <span className="">متبقي ساعة و 23 دقيقة</span>
+            <div className="font-semibold flex items-center gap-2">
+              <img src={timerIcon} alt="timer icon" className="w-5 h-5 xs:w-6 xs:h-6" />
+              <span className="text-xs xs:text-base">متبقي ساعة و 23 دقيقة</span>
             </div>
           </div>
         </div>
 
-        {/* Lessons */}
-        <div className="flex flex-col items-center justify-between px-2 relative z-10">
-          <div className="">
-            <img src={clock} alt="clock" className="cursor-pointer" />
+        {/* Right section */}
+        <div className="flex xs:flex-col items-center justify-between gap-4 xs:gap-0 px-2 mt-4 xs:mt-0 relative z-10">
+          <div>
+            <img src={clock} alt="clock" className="cursor-pointer w-8 xs:w-auto" />
           </div>
-          <button className="mb-4 w-[150px] h-[50px] text-nowrap text-navyteal text-[18px] flex items-center justify-center gap-2 mt-4 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-4 py-1">
+          <button className="w-[120px] xs:w-[150px] h-[45px] xs:h-[50px] text-nowrap text-navyteal text-xs xs:text-[18px] flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-3 xs:px-4 py-1">
             {/* <img src={meetingIcon} alt="meetingIcon" /> */}
             دخول الحصه
           </button>

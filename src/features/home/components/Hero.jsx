@@ -1,5 +1,5 @@
-import dolphinChild from "../../../assets/images/homeChild.png";
-import { Kite } from "../../../utils/Illustrations";
+import dolphinChild from "@/assets/images/homeChild.png";
+import { Kite } from "@/utils/Illustrations";
 
 const Hero = () => {
   return (

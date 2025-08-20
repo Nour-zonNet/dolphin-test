@@ -1,5 +1,5 @@
 // import { Home } from "@/utils/icons";
-import { Home } from "../../../utils/icons";
+import { Home } from "@/utils/icons";
 import { ProfileInfo } from "./components";
 const MobileNav = () => (
   <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white shadow-[0_-1px_3px_0_rgba(0,0,0,0.1)] z-50">

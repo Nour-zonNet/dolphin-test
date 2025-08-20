@@ -1,5 +1,5 @@
-import { Lock } from "../../../utils/icons";
-import { Plus } from "../../../utils/Illustrations";
+import { Lock } from "@/utils/icons";
+import { Plus } from "@/utils/Illustrations";
 
 const LoginCard = () => {
   return (

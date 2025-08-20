@@ -1,4 +1,4 @@
-import dolphinLogo from "../../../assets/Logo/dolphinLogo.png";
+import dolphinLogo from "@/assets/Logo/dolphinLogo.png";
 
 const Navbar = () => {
   return (
