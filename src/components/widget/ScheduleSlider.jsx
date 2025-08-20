@@ -98,7 +98,7 @@ const data = [
 
 const ScheduleSlider = () => {
   return (
-    <div className="mx-auto pt-16   px-4 sm:px-6 lg:px-10 space-y-20">
+    <div className="mx-auto pt-16 px-4 sm:px-6 lg:px-10 space-y-20 max-w-[744px]">
       <div className="flex items-center justify-between my-2 gap-4 border-[1px]  border-dashed  border-oceandeep rounded-full px-10 py-4">
         <button
           className="custom-prev  text-black w-12 h-12 rounded-full flex items-center justify-center   transition-all hover:scale-105 disabled:opacity-50"
