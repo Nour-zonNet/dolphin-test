@@ -3,12 +3,11 @@ import teacherIcon from "@/assets/schedule/teacher.svg";
 import groupIcon from "@/assets/schedule/group.svg";
 import timeIcon from "@/assets/schedule/time.svg";
 import timerIcon from "@/assets/schedule/timer.svg";
-// import meetingIcon from "@/assets/packages/meeting.svg";
 import clock from "@/assets/schedule/clock.svg";
 
 const LessonCard = ({ item }) => {
   return (
-    <div className="relative  pt-7 pl-7  max-w-[600px]">
+    <div className="relative  pt-7 pl-7  max-w-[650px]">
       {/* highlight overlay */}
       <img
         src={highlight}

@@ -3,12 +3,16 @@ import "./App.css";
 import { Navbar, MobileNav } from "./components/layout";
 
 import HomePage from "./features/home";
-import LessonsSchedule from "./features/schedule";
+import LessonsSchedule from "./features/lessons";
 import Packages from "./features/packages";
+import { Provider } from "react-redux";
+import store from "./store";
 
 const App = () => {
   return (
     <>
+    <Provider store={store}>
+
       <BrowserRouter>
         <>
           {" "}
@@ -33,10 +37,11 @@ const App = () => {
                   <MobileNav />
                 </>
               }
-            />
+              />
           </Routes>
         </>
       </BrowserRouter>
+              </Provider>
     </>
   );
 };

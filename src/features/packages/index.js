@@ -1,1 +1,1 @@
-export { default } from "./Packages";
+export { default } from "./pages/Packages";

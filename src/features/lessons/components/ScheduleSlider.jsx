@@ -12,12 +12,13 @@ import notFoundImage from "@/assets/images/notFoundLessons.png";
 
 // Local
 import LessonCard from "./LessonCard";
-import { packagesItems } from "@/constants/packagesItrms";
 import SliderHeader from "./SliderHeader";
 import { getNext7Days } from "../../../utils/dateHelpers";
 import { useState } from "react";
+import { usePackages } from "../../packages/hooks/usePackages";
 
 const ScheduleSlider = () => {
+  const {items} =usePackages()
   const days = getNext7Days();
   const [activeIndex, setActiveIndex] = useState(0);
   return (
@@ -44,8 +45,8 @@ const ScheduleSlider = () => {
           {days.map((day) => (
             <SwiperSlide key={day.date}>
               <div className="flex flex-col   ">
-                {packagesItems.length > 0 ? (
-                  packagesItems.map((item, i) => (
+                {items.length > 0 ? (
+                  items.map((item, i) => (
                     <LessonCard key={i + item.title} item={item} />
                   ))
                 ) : (

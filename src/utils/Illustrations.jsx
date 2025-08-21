@@ -1,4 +1,4 @@
-export const Plus = ({ width = "49", height = "56", color }) => (
+export const Plus = ({ width = "49", height = "56" }) => (
   <svg
     width={width}
     height={height}
@@ -25,7 +25,7 @@ export const Plus = ({ width = "49", height = "56", color }) => (
   </svg>
 );
 
-export const Kite = ({ width = "289", height = "167", color }) => (
+export const Kite = ({ width = "289", height = "167" }) => (
   <svg
     width={width}
     height={height}

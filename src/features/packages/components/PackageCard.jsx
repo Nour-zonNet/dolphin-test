@@ -1,3 +1,5 @@
+import { Calender, TelegramCircle, WhatsappCircle } from "../../../utils/icons";
+
 const PackageCard = ({ item }) => {
   return (
     <div className="relative w-full max-w-[550px] mx-auto">
@@ -32,11 +34,14 @@ const PackageCard = ({ item }) => {
         {/* Schedule & Social */}
         <div className="flex flex-col xs:flex-row items-center justify-between gap-4 px-4 py-4 relative z-10">
           <button className="w-full xs:w-[280px] h-[50px] text-navyteal text-[16px] xs:text-[18px] flex items-center justify-center gap-3 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-4">
+         <Calender/>
             معاينة الجدول الأسبوعي
           </button>
 
           <div className="flex items-center justify-center gap-6 h-[52px] w-full xs:w-[131px] border border-navyteal rounded-4xl">
             {/* <img src={whatsapp} alt="whatsapp" className="cursor-pointer" /> */}
+            <WhatsappCircle/>
+            <TelegramCircle/>
             {/* <img src={telegram} alt="telegram" className="cursor-pointer" /> */}
           </div>
         </div>
