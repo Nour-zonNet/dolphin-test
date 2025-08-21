@@ -15,7 +15,7 @@ const LessonCard = ({ item }) => {
         className="absolute top-0 left-0 z-20 pointer-events-none w-12 xs:w-16"
       />
       <div
-        className={`flex flex-col xs:flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-cardBorder min-h-[200px] w-full py-4 pe-4 xs:pe-6 overflow-hidden ${item.color}`}
+        className={`flex flex-col xs:flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-card Border min-h-[200px] w-full py-4 pe-4 xs:pe-6 overflow-hidden ${item.color}`}
       >
         {/* Left section */}
         <div className="flex-1 w-full">
