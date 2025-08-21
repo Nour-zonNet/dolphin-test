@@ -8,7 +8,7 @@ import clock from "@/assets/schedule/clock.svg";
 
 const LessonCard = ({ item }) => {
   return (
-    <div className="relative  pt-7 pl-7">
+    <div className="relative  pt-7 pl-7  max-w-[600px]">
       {/* highlight overlay */}
       <img
         src={highlight}
@@ -16,7 +16,7 @@ const LessonCard = ({ item }) => {
         className="absolute top-0 left-0 z-20 pointer-events-none w-12 xs:w-16"
       />
       <div
-        className={`flex flex-col xs:flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-cardBorder min-h-[200px] w-full max-w-[600px] py-4 pe-4 xs:pe-6 overflow-hidden ${item.color}`}
+        className={`flex flex-col xs:flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-cardBorder min-h-[200px] w-full py-4 pe-4 xs:pe-6 overflow-hidden ${item.color}`}
       >
         {/* Left section */}
         <div className="flex-1 w-full">
@@ -42,24 +42,46 @@ const LessonCard = ({ item }) => {
           {/* Teacher & Group */}
           <div className="flex flex-wrap items-center gap-3 mt-4 xs:mt-6 px-2 relative z-10">
             <div className="font-semibold flex items-center gap-2">
-              <img src={teacherIcon} alt="teacher icon" className="w-5 h-5 xs:w-6 xs:h-6" />
-              <span className="text-status text-xs xs:text-base">{item.teacher}</span>
+              <img
+                src={teacherIcon}
+                alt="teacher icon"
+                className="w-5 h-5 xs:w-6 xs:h-6"
+              />
+              <span className="text-status text-xs xs:text-base">
+                {item.teacher}
+              </span>
             </div>
             <div className="font-semibold flex items-center gap-2">
-              <img src={groupIcon} alt="group icon" className="w-5 h-5 xs:w-6 xs:h-6" />
-              <span className="text-status text-xs xs:text-base">{item.group}</span>
+              <img
+                src={groupIcon}
+                alt="group icon"
+                className="w-5 h-5 xs:w-6 xs:h-6"
+              />
+              <span className="text-status text-xs xs:text-base">
+                {item.group}
+              </span>
             </div>
           </div>
 
           {/* Timer */}
           <div className="flex flex-wrap items-center gap-3 mt-4 xs:mt-6 px-2 relative z-10">
             <div className="font-semibold flex items-center gap-2">
-              <img src={timeIcon} alt="time icon" className="w-5 h-5 xs:w-6 xs:h-6" />
+              <img
+                src={timeIcon}
+                alt="time icon"
+                className="w-5 h-5 xs:w-6 xs:h-6"
+              />
               <span className="text-xs xs:text-base">م 9.00</span>
             </div>
             <div className="font-semibold flex items-center gap-2">
-              <img src={timerIcon} alt="timer icon" className="w-5 h-5 xs:w-6 xs:h-6" />
-              <span className="text-xs xs:text-base">متبقي ساعة و 23 دقيقة</span>
+              <img
+                src={timerIcon}
+                alt="timer icon"
+                className="w-5 h-5 xs:w-6 xs:h-6"
+              />
+              <span className="text-xs xs:text-base">
+                متبقي ساعة و 23 دقيقة
+              </span>
             </div>
           </div>
         </div>
@@ -67,7 +89,11 @@ const LessonCard = ({ item }) => {
         {/* Right section */}
         <div className="flex xs:flex-col items-center  justify-center mr-auto xs:space-y-3.5 gap-2 xs:gap-0 px-2 mt-4 xs:mt-0 relative z-10 xs-">
           <div className="flex justify-center text-center items-center align-middle">
-            <img src={clock} alt="clock" className="cursor-pointer w-8 xs:w-auto" />
+            <img
+              src={clock}
+              alt="clock"
+              className="cursor-pointer w-8 xs:w-auto"
+            />
           </div>
           <button className="w-[120px] xs:w-[150px] h-[45px] xs:h-[50px] text-nowrap text-navyteal text-xs xs:text-[18px] flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-3 xs:px-4 py-1">
             {/* <img src={meetingIcon} alt="meetingIcon" /> */}

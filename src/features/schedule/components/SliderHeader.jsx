@@ -16,7 +16,7 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
         <RightArrow size={18} />
       </SliderNavButton>
 
-       <div className="text-deepnavy text-center flex flex-col text-sm md:text-base">
+      <div className="text-deepnavy  text-center flex flex-col text-xl md:text-base">
         <span>{dayLabel}</span>
         <span>{formattedDate}</span>
       </div>

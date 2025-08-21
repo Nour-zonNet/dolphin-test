@@ -6,8 +6,8 @@ const MobileNav = () => (
     <div className="flex justify-between px-4 sm:px-6 items-center py-2">
       {/* Home */}
       <button className="flex flex-col items-center text-darkblue hover:scale-105 transition">
-        <Home className="w-6 h-6" />
-        <span className="text-sm font-medium">الرئيسية</span>
+        <Home />
+        <span className="text-base font-medium">الرئيسية</span>
       </button>
 
       {/* Profile */}

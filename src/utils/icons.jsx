@@ -57,10 +57,10 @@ export const Headphones = ({ size = 24, color = "#E89B32" }) => (
   </svg>
 );
 
-export const Home = ({ size = 24, color = "#E89B32" }) => (
+export const Home = ({ width = 24, height = "24", color = "#E89B32" }) => (
   <svg
-    width={size}
-    height={size}
+    width={width}
+    height={height}
     viewBox="0 0 20 20"
     fill={color}
     xmlns="http://www.w3.org/2000/svg"
@@ -280,8 +280,8 @@ export const FaWhatsapp = ({ width = "36", height = "36" }) => (
 );
 export const FaTelegramPlane = ({ width = "36", height = "36" }) => (
   <svg
-    width="36"
-    height="36"
+    width={width}
+    height={height}
     viewBox="0 0 36 36"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
