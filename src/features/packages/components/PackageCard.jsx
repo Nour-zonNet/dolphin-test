@@ -19,30 +19,34 @@ const PackageCard = ({ item }) => {
           )}
           <div>
             <h2 className="text-lg xs:text-xl font-semibold">{item.title}</h2>
-            <h2 className="text-base xs:text-lg font-medium">{item.description}</h2>
+            <h2 className="text-base xs:text-lg font-medium">
+              {item.description}
+            </h2>
           </div>
         </div>
 
         {/* Status & Group */}
         <div className="flex flex-wrap items-center gap-3 mt-4 px-4 relative z-10">
           <div className="bg-[#FCF0E0] min-w-[100px] h-[36px] font-semibold rounded-3xl px-3 flex items-center justify-center">
-            <span className="text-status text-xs xs:text-base">{item.status}</span>
+            <span className="text-status text-xs xs:text-base">
+              {item.status}
+            </span>
           </div>
-          <p className="text-navyteal font-semibold text-xs xs:text-base">{item.group}</p>
+          <p className="text-navyteal font-semibold text-xs xs:text-base">
+            {item.group}
+          </p>
         </div>
 
         {/* Schedule & Social */}
         <div className="flex flex-col xs:flex-row items-center justify-between gap-4 px-4 py-4 relative z-10">
           <button className="w-full xs:w-[280px] h-[50px] text-navyteal text-[16px] xs:text-[18px] flex items-center justify-center gap-3 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-4">
-         <Calender/>
+            <Calender />
             معاينة الجدول الأسبوعي
           </button>
 
           <div className="flex items-center justify-center gap-6 h-[52px] w-full xs:w-[131px] border border-navyteal rounded-4xl">
-            {/* <img src={whatsapp} alt="whatsapp" className="cursor-pointer" /> */}
-            <WhatsappCircle/>
-            <TelegramCircle/>
-            {/* <img src={telegram} alt="telegram" className="cursor-pointer" /> */}
+            <WhatsappCircle />
+            <TelegramCircle />
           </div>
         </div>
       </div>

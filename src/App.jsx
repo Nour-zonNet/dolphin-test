@@ -7,6 +7,7 @@ import LessonsSchedule from "./features/lessons";
 import Packages from "./features/packages";
 import { Provider } from "react-redux";
 import store from "./store";
+import {RegisterForm} from "@/features/auth/components";
 
 const App = () => {
   return (
@@ -17,7 +18,7 @@ const App = () => {
         <>
           {" "}
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<RegisterForm />} />
             <Route
               path="/schedule"
               element={
