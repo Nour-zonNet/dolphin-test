@@ -1,0 +1,29 @@
+@import "tailwindcss";
+/* @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap"); */
+:root {
+  --font-main: "Cairo", sans-serif;
+}
+
+body {
+  font-family: var(--font-main);
+}
+
+@theme {
+  --color-health: #0077b6;
+  --color-quran: #2e7d32;
+  --color-health: #0077b6;
+  --color-quran: #2e7d32;
+  --color-englishLevelOne: #bca7f5;
+  --color-englishLevelTwo: #5a2d82;
+  --color-muslim: #746751;
+  --color-arabic: #7e424a;
+  --color-science: #d47c7c;
+  --color-math: #d4c71c;
+  --color-darkblue: #0c2d40;
+  --color-deepnavy: #061a2f;
+  --color-navyteal: #08233f;
+  --color-orangedeep: #e89b32;
+  --color-graycustom: #8c8c8c;
+  --color-oceandeep: #1b5c81;
+  --breakpoint-xs: 30rem;
+}
