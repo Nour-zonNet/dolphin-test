@@ -1,5 +1,6 @@
 import { Lock } from "@/utils/icons";
 import { Plus } from "@/utils/Illustrations";
+import { Link } from "react-router-dom";
 
 const LoginCard = () => {
   return (
@@ -13,10 +14,10 @@ const LoginCard = () => {
           سجل دخول للمنصة
         </h2>
         <p className="text-gray-500 text-sm mt-1">للمستخدمين الجدد والحاليين</p>
-        <button className="mt-4 flex items-center gap-2 bg-orangedeep text-[#0C2D40] px-6 py-2 rounded-full shadow hover:scale-105 transition">
+        <Link to="/login" className="mt-4 flex items-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer text-[#0C2D40] px-6 py-2 rounded-full">
           <Lock size={18} />
           سجل الآن
-        </button>
+        </Link>
       </div>
 
       <div className="pb-10">
