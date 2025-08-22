@@ -7,14 +7,14 @@ const HomePage = () => {
       <Navbar />
 
       {/* Hero + Login Section */}
-      <main className="flex flex-col-reverse lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-12 mt-8 gap-8 lg:gap-16">
+      <main className="flex flex-col items-center justify-between px-4">
         {/* Left: Hero */}
-        <div className="flex-1 text-center lg:text-left">
+        <div className="text-center lg:text-left">
           <Hero />
         </div>
 
         {/* Right: Login Card */}
-        <div className="flex-1 w-full max-w-md">
+        <div className="w-full max-w-md">
           <LoginCard />
         </div>
       </main>
