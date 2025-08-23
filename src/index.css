@@ -41,5 +41,6 @@ body {
   --color-verifyinputbg: #fdf5eb;
   --color-softblue: #b8cfdc;
   --color-normalblue: #165072;
+  --color-foundblue: #fafbfc;
   --breakpoint-xs: 30rem;
 }
