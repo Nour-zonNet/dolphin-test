@@ -536,6 +536,7 @@ export const CardKite = ({
   width = "158",
   height = "105",
   className = "",
+  stroke = "#0077B6",
   fill = "#0077B6",
 }) => (
   <svg
