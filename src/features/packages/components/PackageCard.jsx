@@ -26,7 +26,7 @@ const PackageCard = ({ item }) => {
         <div className="absolute w-full h-full ">
           <PackagesBorder className=" w-full h-full scale-x-105 scale-y-125" />
         </div>
-        <div className="relative rounded-xl border bg-foundblue border-health w-full overflow-hidden transform  skew-y-[0.1deg] p-2 pr-0 pl-6  skew-x-2  z-10 shadow-sm transition-all ">
+        <div className="relative rounded-xl border bg-foundblue border-health w-full overflow-hidden transform  skew-y-[0.1deg] p-2 pr-0 pl-    skew-x-2  z-10 shadow-sm transition-all ">
           {/* Decorative Kite */}
           <div className="absolute flex items-start justify-end z-20 w-full -left-2 pt-8">
             <CardKite className="relative left-0" />
