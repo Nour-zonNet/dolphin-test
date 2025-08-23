@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Calender, TelegramCircle, WhatsappCircle } from "../../../utils/icons";
-
+import WeeklySchedulePopup from "./WeeklySchedulePopup";
 const PackageCard = ({ item }) => {
+  const [open, setOpen] = useState(false);
   return (
     <div className="relative w-full max-w-[550px] mx-auto">
       <div
@@ -39,7 +41,10 @@ const PackageCard = ({ item }) => {
 
         {/* Schedule & Social */}
         <div className="flex flex-col xs:flex-row items-center justify-between gap-4 px-4 py-4 relative z-10">
-          <button className="w-full xs:w-[280px] h-[50px] text-navyteal text-[16px] xs:text-[18px] flex items-center justify-center gap-3 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-4">
+          <button
+            onClick={() => setOpen(true)}
+            className="w-full xs:w-[280px] h-[50px] text-navyteal text-[16px] xs:text-[18px] flex items-center justify-center gap-3 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-4"
+          >
             <Calender />
             معاينة الجدول الأسبوعي
           </button>
@@ -50,6 +55,7 @@ const PackageCard = ({ item }) => {
           </div>
         </div>
       </div>
+      <WeeklySchedulePopup open={open} setOpen={setOpen} />
     </div>
   );
 };
