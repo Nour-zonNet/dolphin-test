@@ -9,7 +9,26 @@ export const fetchLessons = createAsyncThunk("lessons/fetch", async () => {
 const lessonsSlice = createSlice({
   name: "lessons",
   initialState: {
-    items: [],
+    items: [   {
+            "day_of_week": "saturday",
+            "start_time": "07:00 مساء",
+            "subject": "القرأن",
+            "group": "المجموعة 2",
+            "class": "الصف الاول ابتدائي",
+            "session_link": "https://online.learnatdolphin.com/lea-vza-wm2-yse",
+            "teacher_status": "active",
+            "status": false
+        },
+        {
+            "day_of_week": "tuesday",
+            "start_time": "07:00 مساء",
+            "subject": "القرأن",
+            "group": "المجموعة 2",
+            "class": "الصف الاول ابتدائي",
+            "session_link": "https://online.learnatdolphin.com/lea-vza-wm2-yse",
+            "teacher_status": "active",
+            "status": false
+        }],
     loading: false,
     error: null,
   },

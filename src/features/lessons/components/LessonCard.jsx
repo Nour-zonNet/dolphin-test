@@ -1,4 +1,3 @@
-import highlight from "@/assets/schedule/highlight.svg";
 import teacherIcon from "@/assets/schedule/teacher.svg";
 import groupIcon from "@/assets/schedule/group.svg";
 import timeIcon from "@/assets/schedule/time.svg";
@@ -9,18 +8,14 @@ const LessonCard = ({ item }) => {
   return (
     <div className="relative  pt-7 pl-7  max-w-[650px]">
       {/* highlight overlay */}
-      <img
-        src={highlight}
-        alt="highlight"
-        className="absolute top-0 left-0 z-20 pointer-events-none w-12 xs:w-16"
-      />
+     
       <div
-        className={`flex flex-col xs:flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-card Border min-h-[200px] w-full py-4 pe-4 xs:pe-6 overflow-hidden ${item.color}`}
+        className={`flex flex-col xs:flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-gray-400 border-r-quran  border-r-14  min-h-[200px] w-full py-4 px-4 overflow-hidden `}
       >
         {/* Left section */}
         <div className="flex-1 w-full">
           {/* Header */}
-          <div className="flex items-center gap-2 relative z-10 text-[#08233F] px-2">
+          <div className="flex items-center gap-2 relative z-10 text- px-2">
             {item.image && (
               <img
                 src={item.image}
@@ -30,7 +25,7 @@ const LessonCard = ({ item }) => {
             )}
             <div>
               <h2 className="text-lg xs:text-[1.25rem] font-semibold leading-snug">
-                {item.title}
+                {item.subject}
               </h2>
               <h2 className="text-lg xs:text-[1.25rem] font-semibold leading-snug">
                 {item.description}
@@ -70,7 +65,7 @@ const LessonCard = ({ item }) => {
                 alt="time icon"
                 className="w-5 h-5 xs:w-6 xs:h-6"
               />
-              <span className="text-xs xs:text-base">م 9.00</span>
+              <span className="text-xs xs:text-base">{item.start_time}</span>
             </div>
             <div className="font-semibold flex items-center gap-2">
               <img
@@ -91,7 +86,7 @@ const LessonCard = ({ item }) => {
             <img
               src={clock}
               alt="clock"
-              className="cursor-pointer w-8 xs:w-auto"
+              className="cursor-pointer h-20 xs:w-auto"
             />
           </div>
           <button className="w-[120px] xs:w-[150px] h-[45px] xs:h-[50px] text-nowrap text-navyteal text-xs xs:text-[18px] flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-3 xs:px-4 py-1">

@@ -1,3 +1,4 @@
+import { HomeSupportBtn } from "../../../components/layout";
 import AddPackageBtn from "../../../components/ui/AddPackageBtn";
 import { PackageCard } from "../components";
 import { usePackages } from "../hooks/usePackages";
@@ -23,6 +24,9 @@ const Packages = () => {
           </div>
         </div>
       )}
+
+      <HomeSupportBtn />
+    
     </div>
   );
 };
