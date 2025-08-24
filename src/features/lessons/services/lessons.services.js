@@ -3,7 +3,7 @@ import api from "@/services/api";
 class LessonsRepository {
   // Get all lessons
   async getAll() {
-    const { data } = await api.get("/lessons");
+    const { data } = await api.get("/student/schedule");
     return data;
   }
 

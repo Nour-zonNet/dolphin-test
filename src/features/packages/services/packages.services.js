@@ -3,7 +3,7 @@ import api from "@/services/api";
 class PackagesRepository {
   // Get all packages
   async getAll() {
-    const { data } = await api.get("/packages");
+    const { data } = await api.get("/student/packages");
     return data;
   }
 
