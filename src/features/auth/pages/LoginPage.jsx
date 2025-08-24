@@ -6,7 +6,7 @@ const LoginPage = () => {
       <div className="">
         <main className="">
           <HeaderIllustration />
-          <div className="flex flex-col lg:flex-row items-center justify-between lg:mt-20 container">
+          <div className="flex flex-col lg:flex-row items-center lg:mt-20 container">
             <TopHero />
             <LoginForm />
           </div>
