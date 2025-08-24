@@ -39,7 +39,7 @@ const Hero = () => {
       </div>
       <div className="w-screen flex justify-between items-start">
         <RightKite />
-        <div className="ml-14 -mt-12">
+        <div className="ml-14 -mt-8">
           <img src={pencil} alt="pencil" />
         </div> 
       </div>
