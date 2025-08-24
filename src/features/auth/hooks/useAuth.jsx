@@ -1,5 +1,12 @@
 import { useSelector, useDispatch } from "react-redux";
-import { loginUser, logoutUser, fetchCurrentUser } from "../store/authSlice";
+import {
+  loginUser,
+  logoutUser,
+  fetchCurrentUser,
+  checkPhone,
+  registerUser,
+  verifyOtp,
+} from "../store/authSlice";
 import { useState } from "react";
 
 export const useAuth = () => {
@@ -15,7 +22,11 @@ export const useAuth = () => {
     setIsAuthenticated, //  just in dev mode not production
     loading,
     error,
-    login: (credentials) => dispatch(loginUser(credentials)),
+    loginUser: (credentials) => dispatch(loginUser(credentials)),
+    checkPhone: (credentials) => dispatch(checkPhone(credentials)), //{ phone_number : "**********"  }
+    registerUser: (userData) => dispatch(registerUser(userData)),
+    verifyOtp: (data) =>
+      dispatch(verifyOtp(data)),
     logout: () => dispatch(logoutUser()),
     refreshUser: () => dispatch(fetchCurrentUser()),
   };

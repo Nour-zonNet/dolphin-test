@@ -4,7 +4,6 @@ import { FooterIllustration, HeaderIllustration, LoginForm, TopHero } from '../c
 const LoginPage = () => {
   return (
       <div className="">
-        {/* Hero + Login Form */}
         <main className="">
           <HeaderIllustration />
           <div className="flex flex-col lg:flex-row items-center justify-between lg:mt-20 container">
