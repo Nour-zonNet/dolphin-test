@@ -16,13 +16,17 @@ const countries = [
 ];
 
 const LoginForm = () => {
-  const { register, handleSubmit, formState: { errors, isValid } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
     mode: "onChange",
   });
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [open, setOpen] = useState(false);
 
-  const { checkPhone, verifyOtp, registerUser, loading, error } = useAuth(); 
+  const { checkPhone, verifyOtp, registerUser, loading, error } = useAuth();
   const [step, setStep] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState("");
 
@@ -59,7 +63,9 @@ const LoginForm = () => {
     >
       {step === 1 && (
         <>
-          <h2 className="text-2xl text-[#185A80] font-bold px-8 pt-8">أدخل رقم جوالك</h2>
+          <h2 className="text-2xl text-[#185A80] font-bold px-8 pt-8">
+            أدخل رقم جوالك
+          </h2>
           <div className="relative w-[80%] ml-16 mr-8 mt-4">
             <div className="flex items-center border rounded-[48px] border-inputbordercolor bg-white overflow-hidden">
               {/* Flag + dropdown */}
@@ -68,7 +74,11 @@ const LoginForm = () => {
                 onClick={() => setOpen(!open)}
                 className="flex items-center gap-1 px-3 py-3 border-r cursor-pointer"
               >
-                <img src={selectedCountry.flag} alt={selectedCountry.name} className="w-6 h-6" />
+                <img
+                  src={selectedCountry.flag}
+                  alt={selectedCountry.name}
+                  className="w-6 h-6"
+                />
                 <img src={caretDown} alt="" />
               </button>
 
@@ -77,15 +87,24 @@ const LoginForm = () => {
                 type="tel"
                 {...register("mobile", {
                   required: "رقم الجوال مطلوب",
-                  pattern: { value: /^[0-9]{7,12}$/, message: "أدخل رقم جوال صحيح" },
+                  pattern: {
+                    value: /^[0-9]{7,12}$/,
+                    message: "أدخل رقم جوال صحيح",
+                  },
                 })}
                 placeholder="أدخل رقم جوالك"
                 className="flex-1 outline-0 text-right p-4"
               />
             </div>
             <div className="min-h-[24px] mt-2">
-              {errors.mobile && <p className="text-red-500 text-sm text-right">{errors.mobile.message}</p>}
-              {error && <p className="text-red-500 text-sm text-right">{error}</p>}
+              {errors.mobile && (
+                <p className="text-red-500 text-sm text-right">
+                  {errors.mobile.message}
+                </p>
+              )}
+              {error && (
+                <p className="text-red-500 text-sm text-right">{error}</p>
+              )}
             </div>
             {open && (
               <div className="absolute top-full right-0 mt-2 w-40 bg-white rounded-lg shadow-lg z-10">
@@ -109,15 +128,19 @@ const LoginForm = () => {
       )}
 
       {step === 2 && (
-        <>
-             <VerificationInputs />
-        </>
+        <VerificationInputs
+          // value={watch("otp") || ""}
+          // onChange={(val) => setValue("otp", val, { shouldValidate: true })}
+          // error={errors.otp?.message}
+        />
       )}
       {/* <VerificationPage /> */}
 
       {step === 3 && (
         <>
-          <h2 className="text-2xl text-[#185A80] font-bold px-8 pt-8">أكمل بياناتك</h2>
+          <h2 className="text-2xl text-[#185A80] font-bold px-8 pt-8">
+            أكمل بياناتك
+          </h2>
           <div className="relative w-[80%] ml-16 mr-8 mt-4">
             <input
               type="text"
@@ -126,7 +149,11 @@ const LoginForm = () => {
               className="flex-1 outline-0 text-right p-4 border rounded-[48px] border-inputbordercolor"
             />
             <div className="min-h-[24px] mt-2">
-              {errors.name && <p className="text-red-500 text-sm text-right">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm text-right">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
           </div>
         </>
@@ -138,7 +165,9 @@ const LoginForm = () => {
         disabled={!isValid || loading}
         className="flex items-center justify-center gap-4 text-navyteal text-[18px] font-semibold px-4 py-3 rounded-3xl bg-btnClicked cursor-pointer w-2xs mx-auto disabled:opacity-50"
       >
-        {loading ? "جاري المعالجة..." : (
+        {loading ? (
+          "جاري المعالجة..."
+        ) : (
           <>
             <ArrowNext />
             متابعة

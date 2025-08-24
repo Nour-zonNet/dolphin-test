@@ -9,7 +9,7 @@ export const fetchCurrentUser = createAsyncThunk(
   }
 );
 
-export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
+export const  loginUser = createAsyncThunk("auth/login", async (credentials) => {
   return await authRepository.login(credentials);
 });
 
