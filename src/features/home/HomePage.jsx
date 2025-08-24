@@ -2,6 +2,7 @@ import { HomeSupportBtn } from "../../components";
 import { FooterIllustration } from "../auth/components";
 import { Hero, LoginCard, Navbar } from "./components";
 import numbers from "@/assets/home/number.svg";
+
 const HomePage = () => {
   return (
     <div className="h-screen flex flex-col bg-white">
