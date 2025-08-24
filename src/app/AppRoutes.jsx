@@ -9,6 +9,7 @@ import LessonsSchedule from "@/features/lessons";
 import Packages from "@/features/packages";
 import { LoginPage } from "@/features/auth/pages";
 import { VerificationPage } from "@/features/auth/pages";
+import RegistrationPage from "../features/auth/pages/RegistrationPage";
 
 const AppRoutes = () => {
   return (
@@ -39,6 +40,7 @@ const AppRoutes = () => {
 
       <Route path="/login" element={<LoginPage />} />
       <Route path="/verification" element={<VerificationPage />} />
+      <Route path="/register" element={<RegistrationPage />} />
     </Routes>
   );
 };
