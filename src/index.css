@@ -30,14 +30,17 @@ body {
   --color-navyteal: #08233f;
   --color-orangedeep: #e89b32;
   --color-graycustom: #8c8c8c;
-  --color-bordercolor: #7A8085;
+  --color-bordercolor: #7a8085;
   --color-oceandeep: #1b5c81;
-  --color-graycustom: #8C8C8C;
-  --color-status: #1B648E;
-  --color-subtext: #185A80;
-  --color-cardBorder: #B2BBC3;
-  --color-btnClicked: #D18C2D;
-  --color-inputbordercolor: #8C8C8C;
-  --color-verifyinputbg: #FDF5EB;
+  --color-graycustom: #8c8c8c;
+  --color-status: #1b648e;
+  --color-subtext: #185a80;
+  --color-cardBorder: #b2bbc3;
+  --color-btnClicked: #d18c2d;
+  --color-inputbordercolor: #8c8c8c;
+  --color-verifyinputbg: #fdf5eb;
+  --color-softblue: #b8cfdc;
+  --color-normalblue: #165072;
+  --color-foundblue: #fafbfc;
   --breakpoint-xs: 30rem;
 }

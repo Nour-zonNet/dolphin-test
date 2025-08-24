@@ -4,8 +4,10 @@ import MainLayout from '../../../components/layout/MainLayout'
 
 const LoginPage = () => {
   return (
+    <div className="">
       <MainLayout className="">
         {/* Hero + Login Form */}
+
         <main className="">
           {/* <HeaderIllustration /> */}
           <div className="flex flex-col lg:flex-row items-center justify-between lg:mt-20 container">
