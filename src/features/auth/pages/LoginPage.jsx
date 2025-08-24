@@ -1,6 +1,6 @@
+import { HomeSupportBtn } from "@/components/layout";
 import MainLayout from "../../../components/layout/MainLayout";
-import { HomeSupportBtn } from '../../../components/ui'
-import { FooterIllustration, HeaderIllustration, LoginForm, TopHero } from "../components";
+import { LoginForm, TopHero } from "../components";
 
 const LoginPage = () => {
   return (
