@@ -40,10 +40,10 @@ const WeeklySchedulePopup = ({ open, setOpen }) => {
           {/* Schedule Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-center border-collapse min-w-[500px]">
-              <thead className="rounded">
-                <tr className="bg-softblue text-navyteal border border-black rounded">
+              <thead className="">
+                <tr className="bg-softblue text-navyteal">
                   {days.map((day) => (
-                    <th key={day} className="py-2 sm:py-3 font-medium text-sm sm:text-base rounded">
+                    <th key={day} className="py-2 sm:py-3 font-medium text-sm sm:text-base">
                       {day}
                     </th>
                   ))}
