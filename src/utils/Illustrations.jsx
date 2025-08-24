@@ -451,7 +451,6 @@ export const Book = ({ className = "" }) => (
   </svg>
 );
 
-<<<<<<< HEAD
 export const RightKite = ({ className="" }) => (
   <svg width="278" height="159" viewBox="0 0 278 159" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M10.8206 133.63C18.768 131.269 26.7284 128.908 34.6758 126.547C35.8001 126.214 35.3219 124.456 34.1847 124.802C26.2373 127.163 18.2769 129.524 10.3295 131.885C9.21816 132.206 9.69631 133.964 10.8206 133.63Z" fill="#00477C"/>
@@ -472,7 +471,6 @@ export const RightKite = ({ className="" }) => (
   </svg>
 );
 
-=======
 export const PackagesBorder = ({
   width = "611",
   height = "231",
@@ -634,4 +632,5 @@ export const CardKite = ({
     />
   </svg>
 );
->>>>>>> 9d6ca35c7c1e6b3c6324375ae4c943422792db8d
+
+
