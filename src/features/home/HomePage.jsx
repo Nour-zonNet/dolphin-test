@@ -1,4 +1,5 @@
-import { Hero, LoginCard, Navbar, SocialButtons } from "./components";
+import { HomeSupportBtn } from "../../components";
+import { Hero, LoginCard, Navbar } from "./components";
 
 const HomePage = () => {
   return (
@@ -23,7 +24,7 @@ const HomePage = () => {
       <div className="absolute bottom-0 left-0 w-28 h-28 sm:w-40 sm:h-40 bg-[#FCE9D6] rounded-t-full"></div>
 
       {/* Floating Social Buttons */}
-      <SocialButtons />
+      <HomeSupportBtn />
     </div>
   );
 };
