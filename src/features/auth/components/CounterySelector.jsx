@@ -1,15 +1,7 @@
 import { useState } from "react";
 
-import flagSA from "@/assets/authentication/flag.svg";
 import caretDown from "@/assets/authentication/caret-down.svg";
-export const countries = [
-  { name: "السعودية", code: "+966", flag: flagSA },
-  { name: "الإمارات", code: "+971", flag: flagSA },
-  { name: "الكويت", code: "+965", flag: flagSA },
-  { name: "قطر", code: "+974", flag: flagSA },
-  { name: "البحرين", code: "+973", flag: flagSA },
-  { name: "عُمان", code: "+968", flag: flagSA },
-];
+import { COUNTRIES } from "../../../constants/countries";
 
 // -------- Country Selector --------
 const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
@@ -32,7 +24,7 @@ const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
 
       {open && (
         <div className="absolute top-full right-0 mt-2 w-40 bg-white rounded-lg shadow-lg z-10">
-          {countries.map((c) => (
+          {COUNTRIES.map((c) => (
             <div
               key={c.name}
               onClick={() => {
