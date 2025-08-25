@@ -4,10 +4,10 @@ const HomeSupportBtn = () => {
   return (
     <button
       className="
-        fixed bottom-24 right-0 z-50 mx-4
+        fixed bottom-[4%] right-0 z-50 mx-4
         flex items-center justify-center
         w-16 h-16 md:w-20 md:h-20
-        mx-4 sm:mx-6
+        sm:mx-6
         bg-orangedeep text-darkblue
         rounded-full shadow-lg
         hover:bg-btnClicked focus:bg-btnClicked
