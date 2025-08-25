@@ -5,9 +5,9 @@ import { HomeSupportBtn } from "@/components/layout";
 import { LoginForm, RegisterForm, TopHero } from "../components";
 import VerificationForm from "../components/VerificationForm";
 import { useAuth } from "../hooks/useAuth";
-import { countries } from "../components/CounterySelector";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { COUNTRIES } from "../../../constants/countries";
 
 // -------- Step Enum --------
 const STEPS = {
@@ -25,7 +25,7 @@ const LoginPage = () => {
 
   const [step, setStep] = useState(STEPS.PHONE);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
 
   const {
     register,
