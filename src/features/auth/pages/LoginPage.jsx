@@ -64,6 +64,7 @@ const LoginPage = () => {
   };
 
   const handleRegisterSubmit = async (data) => {
+    console.log(data)
     const res = await dispatch(
       registerUser({
         phoneNumber: phoneNumber,
@@ -72,8 +73,13 @@ const LoginPage = () => {
         pinCode: data.password,
       })
     );
-
-    if (res.success) {
+ console.log({
+        phoneNumber: phoneNumber,
+        name: data.name,
+        grade: data.grade,
+        pinCode: data.password,
+      })
+    if (res?.payload?.success) {
       navigate("/schedule");
     }
   };
