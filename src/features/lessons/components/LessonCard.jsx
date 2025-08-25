@@ -1,14 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import teacherIcon from "@/assets/schedule/teacher.svg";
 import groupIcon from "@/assets/schedule/group.svg";
 import timeIcon from "@/assets/schedule/time.svg";
 import timerIcon from "@/assets/schedule/timer.svg";
 import clock from "@/assets/schedule/clock.svg";
+import fileIcon from "@/assets/schedule/file-icon.svg";
 
 const LessonCard = ({ item }) => {
+  const navigate = useNavigate();
   return (
-    <div className="relative  pt-7 pl-7  max-w-[650px]">
+    <div className="relative pt-7 pl-7 max-w-[]">
       {/* highlight overlay */}
-     
       <div
         className={`flex flex-col xs:flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-gray-400 border-r-quran  border-r-14  min-h-[200px] w-full py-4 px-4 overflow-hidden `}
       >
@@ -89,9 +91,9 @@ const LessonCard = ({ item }) => {
               className="cursor-pointer h-20 xs:w-auto"
             />
           </div>
-          <button className="w-[120px] xs:w-[150px] h-[45px] xs:h-[50px] text-nowrap text-navyteal text-xs xs:text-[18px] flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-3 xs:px-4 py-1">
-            {/* <img src={meetingIcon} alt="meetingIcon" /> */}
-            دخول الحصه
+          <button onClick={() => navigate("lessoncontent")} className="w-[120px] xs:w-[150px] h-[45px] xs:h-[50px] text-nowrap text-navyteal text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl px-3 xs:px-4 py-1">
+            <img src={fileIcon} alt="fileIcon" />
+            عرض المحتوي
           </button>
         </div>
       </div>
