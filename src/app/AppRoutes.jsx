@@ -8,8 +8,6 @@ import HomePage from "@/features/home";
 import LessonsSchedule from "@/features/lessons";
 import Packages from "@/features/packages";
 import { LoginPage } from "@/features/auth/pages";
-import { VerificationPage } from "@/features/auth/pages";
-import RegistrationPage from "../features/auth/pages/RegistrationPage";
 import { useDispatch } from "react-redux";
 import { useAuth } from "../features/auth/hooks/useAuth";
 
@@ -18,9 +16,9 @@ const AppRoutes = () => {
     const { loginUser } = useAuth();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(loginUser({phoneNumber :"201156235709",pinCode:"111111"})) 
-  }, []); 
+  // useEffect(() => {
+  //   dispatch(loginUser({phoneNumber :"201156235709",pinCode:"111111"})) 
+  // }, [dispatch]); 
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
@@ -48,8 +46,6 @@ const AppRoutes = () => {
       />
 
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/verification" element={<VerificationPage />} />
-      <Route path="/register" element={<RegistrationPage />} />
     </Routes>
   );
 };

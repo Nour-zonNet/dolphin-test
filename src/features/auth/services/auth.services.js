@@ -2,11 +2,14 @@ import api from "@/services/api";
 
 class AuthRepository {
   async checkPhone(credentials) {
-    const { data } = await api.post("/student/check-phone", credentials); // REQ  Body {"phone_number" : "201156235709" }  |  RES   {   "success": true,   "message": "تم التحقق من رقم الهاتف بنجاح"}
+    const { data } = await api.post("/student/check-phone", credentials); 
+        console.log(data)
+    // REQ  Body {"phone_number" : "201156235709" }  |  RES   {   "success": true,   "message": "تم التحقق من رقم الهاتف بنجاح"}
     return data;
   }
   async login(credentials) {
     const { data } = await api.post("/student/login", credentials);
+    console.log(data)
     return data;
     // REQ Body  phoneNumber : 201156235709  pinCode : 111111
     // RES {
@@ -25,7 +28,7 @@ class AuthRepository {
   }
 
   async register(userData) {
-    const { data } = await api.post("/auth/register", userData);
+    const { data } = await api.post("/student/register", userData);
     return data;
 
     //     phoneNumber:201156235739
@@ -48,15 +51,15 @@ class AuthRepository {
     //     }
     // }
   }
-async verifyOtp(credentials) {
-  const { data } = await api.post("/student/verify", credentials);
-  return data;
-}
+  async verifyOtp(credentials) {
+    console.log(credentials);
+    const { data } = await api.post("/student/verify", credentials);
+    return data;
+  }
   async getProfile() {
     const { data } = await api.get("/auth/me");
     return data;
   }
-
 
   async logout() {
     // if your backend has logout endpoint, call it

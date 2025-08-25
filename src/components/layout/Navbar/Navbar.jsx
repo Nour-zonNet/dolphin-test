@@ -45,7 +45,7 @@ function Navbar() {
 
       {/* Buttons Section */}
       <div className="flex gap-2 sm:gap-4 w-full justify-end md:w-auto">
-   {  activeTab == "subscriptions" &&  <SubscribeBtn />}
+        <SubscribeBtn />
         {/* <SupportBtn /> */}
       </div>
     </nav>

@@ -4,10 +4,10 @@ import HomeSupportBtn from './HomeSupportBtn'
 
 const MainLayout = ({ children }) => {
   return (
-    <div className='flex flex-col min-h-screen justify-between'>
+    <div className='flex flex-col relative min-h-screen justify-between'>
         <HeaderIllustration />
 
-        <main className="flex-grow mt-16">
+        <main className="flex-grow ">
             {children}
         </main>
         <HomeSupportBtn />

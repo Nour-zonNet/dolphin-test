@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   loginUser,
   logoutUser,
@@ -14,7 +14,6 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     Boolean(token && user) //  just in dev mode not production
   );
-  const dispatch = useDispatch();
   return {
     user,
     token,
@@ -23,11 +22,10 @@ export const useAuth = () => {
     loading,
     error,
     loginUser: loginUser,
-    checkPhone: (credentials) => dispatch(checkPhone(credentials)), //{ phone_number : "**********"  }
-    registerUser: (userData) => dispatch(registerUser(userData)),
-    verifyOtp: (data) =>
-      dispatch(verifyOtp(data)),
-    logout: () => dispatch(logoutUser()),
-    refreshUser: () => dispatch(fetchCurrentUser()),
+    checkPhone: checkPhone, //{ phone_number : "**********"  }
+    registerUser: registerUser,
+    verifyOtp: verifyOtp,
+    logout: logoutUser,
+    refreshUser: fetchCurrentUser,
   };
 };
