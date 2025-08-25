@@ -24,7 +24,7 @@ const PackageCard = ({ item }) => {
       {/* Card */}
       <div className="relative w-full transition-transform duration-300  pr-0 pl-2  ">
         <div className="absolute w-full h-full ">
-          <PackagesBorder className=" w-full h-full scale-x-105 scale-y-125" />
+          <PackagesBorder className=" w-full h-full scale-105 " />
         </div>
         <div className="relative rounded-xl border bg-foundblue border-health w-full overflow-hidden transform  skew-y-[0.1deg] p-2 pr-0 pl-    skew-x-2  z-10 shadow-sm transition-all ">
           {/* Decorative Kite */}
@@ -55,7 +55,7 @@ const PackageCard = ({ item }) => {
             )}
             <div>
               <h2 className="text-lg text-navyteal xs:text-xl font-semibold leading-snug">
-                {item.title ?? "باقة الصحة العامة"}
+                {item.name ?? "باقة الصحة العامة"}
               </h2>
               <h3 className="text-sm xs:text-base font-medium opacity-90">
                 {item.description}

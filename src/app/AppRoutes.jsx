@@ -10,8 +10,17 @@ import Packages from "@/features/packages";
 import { LoginPage } from "@/features/auth/pages";
 import { VerificationPage } from "@/features/auth/pages";
 import RegistrationPage from "../features/auth/pages/RegistrationPage";
+import { useDispatch } from "react-redux";
+import { useAuth } from "../features/auth/hooks/useAuth";
 
+import { useEffect } from "react";
 const AppRoutes = () => {
+    const { loginUser } = useAuth();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loginUser({phoneNumber :"201156235709",pinCode:"111111"})) 
+  }, []); 
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />

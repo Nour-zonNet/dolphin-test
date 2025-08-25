@@ -6,7 +6,7 @@ class AuthRepository {
     return data;
   }
   async login(credentials) {
-    const { data } = await api.post("student/login", credentials);
+    const { data } = await api.post("/student/login", credentials);
     return data;
     // REQ Body  phoneNumber : 201156235709  pinCode : 111111
     // RES {

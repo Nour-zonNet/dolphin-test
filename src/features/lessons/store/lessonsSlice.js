@@ -3,13 +3,16 @@ import { lessonsRepository } from "../services/lessons.services";
 
 export const fetchLessons = createAsyncThunk("lessons/fetch", async () => {
   const res = await lessonsRepository.getAll();
+
+  console.log(res)
   return res.data;
 });
+
 
 const lessonsSlice = createSlice({
   name: "lessons",
   initialState: {
-    items: [],
+    items: [ ],
     loading: false,
     error: null,
   },
@@ -21,7 +24,7 @@ const lessonsSlice = createSlice({
       })
       .addCase(fetchLessons.fulfilled, (state, action) => {
         state.loading = false;
-        state.list = action.payload;
+        state.items = action.payload;
       })
       .addCase(fetchLessons.rejected, (state, action) => {
         state.loading = false;
