@@ -70,7 +70,7 @@ export const Kite = ({ width = "289", height = "167" }) => (
       stroke="#00477C"
       strokeWidth="1.5"
       strokeMiterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
       strokeDasharray="9.74 9.74"
     />
     <path
@@ -181,7 +181,7 @@ export const DashedBorder = ({
         stroke="#746751"
         strokeWidth="2"
         strokeMiterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
         strokeDasharray="9.74 9.74"
       />
       <path
@@ -396,7 +396,7 @@ export const HomeKite = ({width="293",height="167",className=""}) => (
       stroke="#00477C"
       strokeWidth="1.5"
       strokeMiterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
       strokeDasharray="9.74 9.74"
     />
     <path
@@ -495,7 +495,7 @@ export const RightKite = ({ className = "" }) => (
       stroke="#00477C"
       strokeWidth="1.5"
       strokeMiterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
       strokeDasharray="9.74 9.74"
     />
     <path
@@ -659,7 +659,7 @@ export const CardKite = ({
       stroke="#0077B6"
       strokeWidth="2"
       strokeMiterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
       strokeDasharray="9.74 9.74"
     />
     <path
