@@ -20,6 +20,7 @@ const LoginPage = () => {
           {/* <FooterIllustration /> */}
         </div>
     </MainLayout>
+    </div>
   )
 }
 

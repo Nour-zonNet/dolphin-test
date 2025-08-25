@@ -1,13 +1,16 @@
-import { Hero, LoginCard, Navbar, SocialButtons } from "./components";
+import { HomeSupportBtn } from "../../components";
+import { FooterIllustration } from "../auth/components";
+import { Hero, LoginCard, Navbar } from "./components";
+import numbers from "@/assets/home/number.svg";
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-white relative overflow-hidden">
+    <div className="h-screen flex flex-col bg-white">
       {/* Navbar */}
       <Navbar />
 
       {/* Hero + Login Section */}
-      <main className="flex flex-col items-center justify-between px-4">
+      <main className="flex flex-col">
         {/* Left: Hero */}
         <div className="text-center lg:text-left">
           <Hero />
@@ -20,10 +23,12 @@ const HomePage = () => {
       </main>
 
       {/* Background Decoration */}
-      <div className="absolute bottom-0 left-0 w-28 h-28 sm:w-40 sm:h-40 bg-[#FCE9D6] rounded-t-full"></div>
-
-      {/* Floating Social Buttons */}
-      <SocialButtons />
+      <div className="">
+        {/* Floating Social Buttons */}
+          <HomeSupportBtn />
+          {/* <img src={numbers} alt="numbers" width="200px"/> */}
+          <FooterIllustration />
+      </div>
     </div>
   );
 };
