@@ -22,7 +22,7 @@ export const useAuth = () => {
     setIsAuthenticated, //  just in dev mode not production
     loading,
     error,
-    loginUser: (credentials) => dispatch(loginUser(credentials)),
+    loginUser: loginUser,
     checkPhone: (credentials) => dispatch(checkPhone(credentials)), //{ phone_number : "**********"  }
     registerUser: (userData) => dispatch(registerUser(userData)),
     verifyOtp: (data) =>

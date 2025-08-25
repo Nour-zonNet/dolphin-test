@@ -1,6 +1,6 @@
 import React from 'react'
 import { FooterIllustration, HeaderIllustration } from '../../features/auth/components'
-import { HomeSupportBtn } from '../ui'
+import HomeSupportBtn from './HomeSupportBtn'
 
 const MainLayout = ({ children }) => {
   return (
