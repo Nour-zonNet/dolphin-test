@@ -6,6 +6,7 @@ const WeeklySchedulePopup = ({ open, setOpen }) => {
   const schedule = {
     الأحد: [{ time: "9:00م", doctor: "أ. حنان" }],
     الثلاثاء: [
+      
       { time: "9:00م", doctor: "أ. حنان" },
       { time: "9:00م", doctor: "أ. حنان" },
     ],
