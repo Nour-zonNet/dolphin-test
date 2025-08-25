@@ -3,43 +3,50 @@ import { Book } from "../../../utils/Illustrations";
 
 const TopHero = () => {
   return (
-    <div className="">
-        {/* Hero Section */}
-        <div className="flex items-center justify-center gap-10 mt-7">
-            {/* Dolphin Child */}
-            <d
-            iv className="flex items-center justify-center gap-2">
-                <img src={dolphinChild} alt="Path" className="h-46 lg:h-[100%] mb-6" />
-                <div>
-                    <h1 className="text-3xl lg:text-4xl text-center font-bold text-[#1B648E]">
-                        ادخل لحسابك 
-                    </h1>
+    <div className="w-full px-4 ">
+      {/* Hero Section */}
+      <div className="flex flex-row items-center justify-center ">
+        
+        {/* Dolphin Child + Title */}
+        <div className="flex items-center gap-2">
+          <img
+            src={dolphinChild}
+            alt="Path"
+            className="h-32 sm:h-40 md:h-48 lg:h-56 object-contain mb-4 lg:mb-6"
+          />
+          <div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl text-center font-bold text-[#1B648E]">
+              ادخل لحسابك
+            </h1>
 
-                    <div className="mascot pt-3">
-                    <svg
-                        width="218"
-                        height="31"
-                        viewBox="0 0 218 31"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                        d="M2.58266 28.3739C59.1646 5.20245 139.615 -3.66695 214.694 8.94163"
-                        stroke="#E89B32"
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                        />
-                    </svg>
-                    </div>
-                </div>
-            </d>
-            {/* Book Illustration */}
-            <div>
-                <Book className="w-16 lg:w-28"/>
+            {/* Underline SVG */}
+            <div className="mascot pt-3 flex justify-center lg:justify-start">
+              <svg
+                width="218"
+                height="31"
+                viewBox="0 0 218 31"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-40 sm:w-52 md:w-60 lg:w-72"
+              >
+                <path
+                  d="M2.58266 28.3739C59.1646 5.20245 139.615 -3.66695 214.694 8.94163"
+                  stroke="#E89B32"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                />
+              </svg>
             </div>
+          </div>
         </div>
-    </div>
-  )
-}
 
-export default TopHero
+        {/* Book Illustration */}
+        <div>
+          <Book className="w-14 sm:w-16 md:w-20 lg:w-28" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TopHero;

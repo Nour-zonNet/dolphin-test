@@ -1,9 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Lock } from "../../../utils/icons";
-import OtpInput from "react-otp-input";
-import { useState } from "react";
-const RegisterForm = () => {
-  const [otp, setOtp] = useState("");
+
+const RegisterForm = ({ onSubmit, loading, error }) => {
   const {
     register,
     handleSubmit,
@@ -11,15 +9,12 @@ const RegisterForm = () => {
     watch,
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
   const password = watch("password");
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-6 w-full max-w-lg mx-auto bg-white p-6 rounded-2xl "
+      className="flex flex-col gap-6 w-full max-w-lg mx-auto  rounded-2xl"
     >
       {/* الاسم الكامل */}
       <div className="flex flex-col gap-2">
@@ -29,7 +24,7 @@ const RegisterForm = () => {
         <input
           type="text"
           placeholder="اكتب اسمك الكامل"
-          {...register("fullName", { required: "الاسم مطلوب" })}
+          {...register("name", { required: "الاسم مطلوب" })}
           className="border rounded-full border-graycustom px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-right"
         />
         {errors.fullName && (
@@ -46,7 +41,7 @@ const RegisterForm = () => {
         </label>
         <select
           {...register("grade", { required: "الصف الدراسي مطلوب" })}
-          className="border rounded-full border-graycustom px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-right"
+          className="border rounded-full border-graycustom px-4 py-2 text-right"
         >
           <option value="">اختر الصف الدراسي</option>
           <option value="1">الصف الأول</option>
@@ -65,25 +60,21 @@ const RegisterForm = () => {
         <label className="text-right font-semibold text-2xl text-[#144B6B]">
           كلمة المرور
         </label>
-        <OtpInput
-          value={otp}
-          onChange={setOtp}
-          numInputs={6}
-          containerStyle="w-full flex  text-black items-stretch justify-between "
-          renderInput={(props) => <input {...props} />}
-          inputStyle="py-5 bg-[#FDF5EB] text-black aspect-square px-8 rounded-md border  text-black border-gray-300 text-center text-xl focus:outline-none focus:ring-2 focus:ring-orange-400"
-        />
         <input
           type="password"
           placeholder="أدخل كلمة مرور من 6 أرقام"
           {...register("password", {
             required: "كلمة المرور مطلوبة",
             minLength: { value: 6, message: "كلمة المرور يجب أن تكون 6 أرقام" },
+            pattern: {
+              value: /^[0-9]+$/,
+              message: "كلمة المرور يجب أن تكون أرقام فقط",
+            },
           })}
-          className="border   rounded-full  border-graycustom px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-right"
+          className="border rounded-full border-graycustom px-4 py-2 text-right"
         />
         {errors.password && (
-          <p className="text-[#BA7C28] font-semibold pr-2  text-sm">
+          <p className="text-[#BA7C28] font-semibold pr-2 text-sm">
             {errors.password.message}
           </p>
         )}
@@ -102,7 +93,7 @@ const RegisterForm = () => {
             validate: (value) =>
               value === password || "كلمة المرور غير متطابقة",
           })}
-          className="border rounded-full border-graycustom px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-right"
+          className="border rounded-full border-graycustom px-4 py-2 text-right"
         />
         {errors.confirmPassword && (
           <p className="text-[#BA7C28] font-semibold pr-3 text-sm">
@@ -120,18 +111,25 @@ const RegisterForm = () => {
           type="text"
           placeholder="أدخل كود الدعوة أو الخصم إن وجد"
           {...register("inviteCode")}
-          className="border rounded-full border-graycustom px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-right"
+          className="border rounded-full border-graycustom px-4 py-2 text-right"
         />
       </div>
 
       {/* زر التسجيل */}
-      <button
-        type="submit"
-        className="bg-orangedeep text-navyteal font-bold py-3 rounded-full flex items-center justify-center gap-2 hover:bg-yellow-600 transition"
-      >
-        <Lock size={18} />
-        إكمال التسجيل
-      </button>
+      <div className="flex items-center justify-center ">
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-orangedeep text-navyteal font-bold py-3 px-8 rounded-full flex items-center justify-center gap-2 hover:bg-yellow-600 transition"
+        >
+          <Lock size={18} />
+          {loading ? "جاري التسجيل..." : "إكمال التسجيل"}
+        </button>
+
+        {error && (
+          <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+        )}
+      </div>
     </form>
   );
 };

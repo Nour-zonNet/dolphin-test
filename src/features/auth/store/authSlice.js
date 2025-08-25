@@ -9,7 +9,7 @@ export const fetchCurrentUser = createAsyncThunk(
   }
 );
 
-export const  loginUser = createAsyncThunk("auth/login", async (credentials) => {
+export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
   return await authRepository.login(credentials);
 });
 
@@ -18,6 +18,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await authRepository.register(userData);
+
       if (response.success) {
         return response.data; // هترجع بيانات المستخدم + token
       } else {
@@ -88,7 +89,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.data; // البيانات كلها
+        state.user = action.payload.data.userData; // البيانات كلها
         state.token = action.payload.data.token;
         localStorage.setItem("token", action.payload.data.token);
       })
@@ -115,7 +116,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.userData;
         state.token = action.payload.token;
         localStorage.setItem("token", action.payload.token);
       })
