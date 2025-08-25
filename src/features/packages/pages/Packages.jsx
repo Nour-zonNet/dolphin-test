@@ -8,9 +8,9 @@ import { useEffect } from "react";
 const Packages = () => {
   const dispatch = useDispatch();
   const { items, fetchPackages } = usePackages();
-  // useEffect(() => {
-  //   dispatch(fetchPackages());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchPackages());
+  }, [dispatch]);
   return (
     <div className="flex flex-col   justify-center items-center py-15 px-4">
       {items.length > 0 ? (
