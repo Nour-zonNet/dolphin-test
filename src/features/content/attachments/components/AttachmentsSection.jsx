@@ -6,7 +6,7 @@ export const AttachmentsSection = () => {
     {
       title: "ملخص الدرس",
       size: "2.5 MB",
-      hasImportantBadge: false,
+      hasImportantBadge: true,
       hasDownloadIcon: true,
       iconSrc: "https://c.animaapp.com/mer0eh3xn7npjs/img/fab.svg"
     },

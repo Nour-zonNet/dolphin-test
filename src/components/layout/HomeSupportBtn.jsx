@@ -4,7 +4,7 @@ const HomeSupportBtn = () => {
   return (
     <button
       className="
-        fixed bottom-[4%] right-0 z-50 mx-4
+        fixed bottom-[10%] right-0 z-50 mx-4
         flex items-center justify-center
         w-16 h-16 md:w-20 md:h-20
         sm:mx-6
