@@ -7,7 +7,7 @@ import notFoundPackages from "@/assets/images/notFoundPackages.png";
 import { packageColorMap } from "../../../constants/packageColors";
 
 import { useEffect } from "react";
-const Packages = ({ }) => {
+const Packages = () => {
   const dispatch = useDispatch();
   const { items, fetchPackages } = usePackages();
 

@@ -557,14 +557,14 @@ export const Star = ({
   width = "107",
   height = "108",
   className = "",
-  stroke = "#0077B6",
   fill = "#0077B6",
 }) => (
   <svg
-    width="107"
-    height="108"
+    width={width}
+    height={height}
     viewBox="0 0 107 108"
     fill="none"
+    className={className}
     xmlns="http://www.w3.org/2000/svg"
   >
     <g clipPath="url(#clip0_662_1503)">
@@ -607,10 +607,7 @@ export const Star = ({
 );
 
 export const CardKite = ({
-  width = "158",
-  height = "105",
   className = "",
-  stroke = "#0077B6",
   fill = "#0077B6",
 }) => (
   <svg
