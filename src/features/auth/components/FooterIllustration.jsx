@@ -9,3 +9,4 @@ const FooterIllustration = () => {
 };
 
 export default FooterIllustration;
+  

@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import MainLayout from "../../../components/layout/MainLayout";
+import MainLayout from "@/components/layout/MainLayout";
 import { HomeSupportBtn } from "@/components/layout";
-import { LoginForm, RegisterForm, TopHero } from "../components";
-import VerificationForm from "../components/VerificationForm";
+import {
+  LoginForm,
+  RegisterForm,
+  TopHero,
+  VerificationForm,
+} from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { COUNTRIES } from "../../../constants/countries";
-import OTPInput from "../../../components/ui/InputOtp";
-import Button from "../../../components/ui/Button";
-import { Lock } from "../../../utils/icons";
-import { STEPS } from "../../../constants/STEPS";
+import { COUNTRIES } from "@/constants/countries";
+import OTPInput from "@/components/ui/InputOtp";
+import Button from "@/components/ui/Button";
+import { Lock } from "@/utils/icons";
+import { STEPS } from "@/constants/STEPS";
 
 // -------- Step Enum --------
 
