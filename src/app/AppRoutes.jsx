@@ -50,7 +50,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/verification" element={<VerificationPage />} />
       <Route path="/register" element={<RegistrationPage />} />
-      <Route path="/lessoncontent" element={<LessonContentPage />} />
+      <Route path="/schedule/lessoncontent" element={<LessonContentPage />} />
     </Routes>
   );
 };

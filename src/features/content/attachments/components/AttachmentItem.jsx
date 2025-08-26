@@ -21,11 +21,11 @@ export const AttachmentItem = ({ title, size, hasImportantBadge, hasDownloadIcon
       )}
 
       {/* Content */}
-      <div className="flex-1 text-right mr-4">
-        <h3 className="font-semibold text-text text-lg [font-family:'Cairo',Helvetica] mb-2">
+      <div className="flex-1 text-right mr-2">
+        <h3 className="font-semibold text-lg text-navyteal mb-2">
           {title}
         </h3>
-        <p className="font-normal text-black text-base [font-family:'Cairo',Helvetica]">
+        <p className="font-normal text-black text-base">
           {size}
         </p>
       </div>
