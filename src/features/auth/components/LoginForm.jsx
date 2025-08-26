@@ -1,8 +1,15 @@
 import { useForm } from "react-hook-form";
 import { ArrowNext } from "../../../utils/icons";
 import CountrySelector from "./CounterySelector";
+import Button from "../../../components/ui/Button";
 
-const LoginForm = ({ onSubmit, loading, error, selectedCountry, setSelectedCountry }) => {
+const LoginForm = ({
+  onSubmit,
+  loading,
+  error,
+  selectedCountry,
+  setSelectedCountry,
+}) => {
   const {
     register,
     handleSubmit,
@@ -15,16 +22,16 @@ const LoginForm = ({ onSubmit, loading, error, selectedCountry, setSelectedCount
       className="
         flex flex-col gap-4 mx-auto p-4 
         w-full max-w-md sm:max-w-lg md:min-w-[500px] lg:max-w-xl
-        border border-bordercolor rounded-[3rem] sm:rounded-[5rem] bg-white
+        border border-graycustom rounded-[3rem] sm:rounded-[3rem] bg-white
         sm:p-8
       "
     >
-      <h2 className="text-xl sm:text-2xl text-[#185A80] font-bold text-center sm:text-right">
+      <h2 className="text-xl sm:text-2xl text-subtext font-bold text-center sm:text-right">
         أدخل رقم جوالك
       </h2>
 
       {/* Phone Input */}
-      <div className="flex items-center border rounded-[30px] border-inputbordercolor bg-white overflow-hidden mt-4">
+      <div className="flex items-center border rounded-full border-graycustom bg-white overflow-hidden mt-4 p-2">
         <CountrySelector
           selectedCountry={selectedCountry}
           setSelectedCountry={setSelectedCountry}
@@ -45,25 +52,22 @@ const LoginForm = ({ onSubmit, loading, error, selectedCountry, setSelectedCount
 
       <div className="min-h-[24px] mt-2">
         {errors.mobile && (
-          <p className="text-red-500 text-sm text-right">{errors.mobile.message}</p>
+          <p className="text-red-500 text-sm text-right">
+            {errors.mobile.message}
+          </p>
         )}
         {error && <p className="text-red-500 text-sm text-right">{error}</p>}
       </div>
 
       {/* Submit */}
-      <button
-        type="submit"
-        disabled={!isValid || loading}
-        className="
-          flex items-center justify-center gap-2 sm:gap-4 
-          text-navyteal text-base sm:text-lg font-semibold
-          px-4 py-2 sm:px-6 sm:py-3 rounded-2xl sm:rounded-3xl 
-          bg-btnClicked cursor-pointer max-w-[314px] mx-auto
-          disabled:opacity-50 transition-all
-        "
-      >
-        {loading ? "جاري المعالجة..." : (<><ArrowNext className="w-4 h-4 sm:w-5 sm:h-5" /> متابعة</>)}
-      </button>
+        <Button
+          type="submit"
+          icon={
+            loading ? null : <ArrowNext className="w-4 h-4 sm:w-5 sm:h-5" />
+          }
+          text={loading ? "جاري المعالجة..." : "متابعة"}
+          disabled={!isValid || loading}
+        />
     </form>
   );
 };

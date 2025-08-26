@@ -12,12 +12,12 @@ const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-3 py-3 border-r cursor-pointer"
+        className="flex items-center gap-1 px-3 py-3  cursor-pointer"
       >
         <img
           src={selectedCountry.flag}
           alt={selectedCountry.name}
-          className="w-6 h-6"
+          className="w-8 h-8"
         />
         <img src={caretDown} alt="caret" />
       </button>

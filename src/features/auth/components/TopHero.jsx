@@ -1,13 +1,9 @@
 import dolphinChild from "@/assets/images/homeChild.png";
 import { Book } from "../../../utils/Illustrations";
 
-const TopHero = () => {
+const TopHero = ({text}) => {
   return (
-    <div className="w-full px-4 ">
-      {/* Hero Section */}
-      <div className="flex flex-row items-center justify-center ">
         
-        {/* Dolphin Child + Title */}
         <div className="flex items-center gap-2">
           <img
             src={dolphinChild}
@@ -16,7 +12,7 @@ const TopHero = () => {
           />
           <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl text-center font-bold text-[#1B648E]">
-              ادخل لحسابك
+              {text}
             </h1>
 
             {/* Underline SVG */}
@@ -38,14 +34,12 @@ const TopHero = () => {
               </svg>
             </div>
           </div>
-        </div>
 
         {/* Book Illustration */}
         <div>
           <Book className="w-14 sm:w-16 md:w-20 lg:w-28" />
         </div>
       </div>
-    </div>
   );
 };
 
