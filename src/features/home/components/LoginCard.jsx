@@ -5,11 +5,9 @@ import { Book } from "../../../utils/Illustrations";
 const LoginCard = () => {
   return (
     // Login Card
-    <div className="border-2 border-dashed border-[#0C78B9] rounded-full px-6 py-6 mt-8 flex flex-row items-center justify-around w-[550px] mx-auto">
+    <div className="relative border-2 border-dashed border-[#0C78B9] rounded-full px-6 py-6 mt-8 flex flex-row items-center justify-center w-full ">
 
-        <div className="pt-10">
-          <Book />
-        </div>
+          <Book  className="absolute bottom-10 right-10"/>
 
         <div className="flex flex-col items-center text-nowrap">
           <h2 className="text-2xl lg:text-[32px] font-bold text-subtext">
@@ -25,7 +23,7 @@ const LoginCard = () => {
           </Link>
         </div>
 
-        <div className="pb-10">
+        <div className="absolute top-10 left-10">
           <svg
             width="65"
             height="65"
