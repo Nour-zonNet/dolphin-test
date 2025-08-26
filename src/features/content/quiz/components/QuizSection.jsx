@@ -1,56 +1,48 @@
 import React from "react";
+import brain from "@/assets/schedule/brain.svg";
+import { ArrowNext } from "../../../../utils/icons";
+import { Draw } from "../../../../utils/Illustrations";
 
 export const QuizSection = () => {
   return (
-    <div className="w-full max-w-[696px] mx-auto mt-8 bg-foundationbluenormal rounded-2xl p-6 border-[0.5px] border-solid border-black">
+    <div className="relative w-full mx-auto mt-10 mb-50 p-8 h-[180px] lg:h-[215px] rounded-2xl border-[0.5px] border-solid border-black bg-status">
       <div className="flex items-start justify-between">
-        {/* Left Side - Start Button */}
-        <div className="flex flex-col items-start">
-          <button className="flex items-center justify-center gap-4 px-4 py-2 bg-foundationorangenormal-hover rounded-3xl mb-4">
-            <span className="font-semibold text-text text-lg [font-family:'Cairo',Helvetica]">
-              ابدأ الاختبار
-            </span>
-            <img
-              className="w-6 h-6"
-              alt="Start"
-              src="https://c.animaapp.com/mer0eh3xn7npjs/img/left-2.png"
-            />
-          </button>
-          
-          {/* Decorative Vector */}
-          <img
-            className="w-[217px] h-[69px] -ml-4"
-            alt="Decoration"
-            src="https://c.animaapp.com/mer0eh3xn7npjs/img/vector-2.svg"
-          />
-        </div>
-
         {/* Right Side - Quiz Info */}
         <div className="text-right">
-          <div className="flex items-center justify-end gap-4 mb-4">
-            <h2 className="font-semibold text-white text-lg [font-family:'Cairo',Helvetica]">
-              اختبار الدرس
-            </h2>
-            <div className="flex items-center justify-center w-[60px] h-[60px] bg-white rounded-[50px] opacity-80">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center justify-center w-[60px] h-[60px] bg-white rounded-full">
               <img
                 className="w-8 h-8"
                 alt="Quiz"
-                src="https://c.animaapp.com/mer0eh3xn7npjs/img/frame-2610539.png"
+                src={brain}
               />
             </div>
+            <div>
+              <h2 className="font-semibold text-white text-lg">اختبار الدرس</h2>
+              <p className="font-semibold text-white text-lg mt-2">10 اسئله |  20 دقيقة</p>
+            </div>
           </div>
-          
-          <p className="font-semibold text-white text-lg [font-family:'Cairo',Helvetica] mb-4">
-            10 اسئله | 20 دقيقة
-          </p>
-          
-          <p className="font-semibold text-white text-lg [font-family:'Cairo',Helvetica]">
+
+          <p className="font-semibold text-white text-lg">
             ابدأ هذا الاختبار القصير لتتعرف على مستوي فهمك
           </p>
         </div>
+        {/* Left Side - Start Button */}
+        <div className="flex flex-col items-start">
+          <button className="cursor-pointer flex items-center justify-center gap-4 py-2.5 rounded-3xl mb-4 bg-btnClicked w-[200px]">
+            <ArrowNext />
+            <span className="font-semibold text-navyteal text-lg">
+              ابدأ الاختبار
+            </span>
+          </button>
+        </div>
+          {/* Decorative Vector */}
+          <div className="absolute left-0 bottom-0 overflow-hidden rounded-bl-2xl">
+            <Draw />
+          </div>
       </div>
     </div>
   );
 };
 
-export default QuizSection
+export default QuizSection;
