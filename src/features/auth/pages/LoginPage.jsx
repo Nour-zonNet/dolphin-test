@@ -28,6 +28,13 @@ const LoginPage = () => {
   const { control, handleSubmit } = useForm({ mode: "onChange" });
 
   // -------- Handlers --------
+
+  const handleBack = () => {
+    if (step === STEPS.OTP) setStep(STEPS.PHONE);
+    else if (step === STEPS.REGISTER) setStep(STEPS.OTP);
+    else if (step === STEPS.PASSWORD) setStep(STEPS.PHONE);
+  };
+
   const handlePhoneSubmit = async (data) => {
     const phone_number = `${data.mobile}`;
     setPhoneNumber(phone_number);
@@ -90,7 +97,7 @@ const LoginPage = () => {
     }
   };
   return (
-    <MainLayout>
+    <MainLayout handleBack={handleBack}>
       <div className="flex flex-col lg:flex-row items-center justify-center relative mt-10 px-8 my-auto sm:px-6">
         {step === STEPS.PHONE ? (
           <TopHero text="ادخل لحسابك" />
