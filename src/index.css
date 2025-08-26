@@ -45,3 +45,17 @@ body {
   --color-foundblue: #fafbfc;
   --breakpoint-xs: 30rem;
 }
+
+@layer utilities {
+  .border-dash-wide {
+    border-style: dashed;
+    border-width: 1px;
+    border-image: repeating-linear-gradient(
+      to right,
+      currentColor 0,
+      currentColor 6px,   /* ← dash length */
+      transparent 6px,
+      transparent 10px     /* ← gap length */
+    ) 1;
+  }
+}

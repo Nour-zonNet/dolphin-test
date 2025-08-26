@@ -1,8 +1,9 @@
 import { Routes, Route } from "react-router-dom";
-
-// Layout
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useAuth } from "../features/auth/hooks/useAuth";
+// Layouts
 import { Navbar, MobileNav } from "@/components/layout";
-
 // Pages
 import HomePage from "@/features/home";
 import LessonsSchedule from "@/features/lessons";
@@ -10,8 +11,10 @@ import Packages from "@/features/packages";
 import { LoginPage } from "@/features/auth/pages";
 import { useDispatch } from "react-redux";
 import { useAuth } from "../features/auth/hooks/useAuth";
+import { VerificationPage } from "@/features/auth/pages";
+import RegistrationPage from "../features/auth/pages/RegistrationPage";
+import LessonContentPage from "../features/content/pages/LessonContentPage";
 
-import { useEffect } from "react";
 const AppRoutes = () => {
     const { loginUser } = useAuth();
   const dispatch = useDispatch();
@@ -44,8 +47,10 @@ const AppRoutes = () => {
           </>
         }
       />
-
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/verification" element={<VerificationPage />} />
+      <Route path="/register" element={<RegistrationPage />} />
+      <Route path="/schedule/lessoncontent" element={<LessonContentPage />} />
     </Routes>
   );
 };

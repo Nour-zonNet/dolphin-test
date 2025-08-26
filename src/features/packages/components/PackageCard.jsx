@@ -9,7 +9,7 @@ import WeeklySchedulePopup from "./WeeklySchedulePopup";
 import Tooth from "@/assets/images/Tooth.svg";
 import { CardKite, PackagesBorder, Star } from "@/utils/Illustrations";
 
-const PackageCard = ({ item }) => {
+const PackageCard = ({ item, borderColor, starFill, kiteStroke }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -18,18 +18,18 @@ const PackageCard = ({ item }) => {
 
       {/* Decoration */}
       <div className="absolute z-20 -left-12 -top-15">
-        <Star />
+        <Star fill={starFill} />
       </div>
 
       {/* Card */}
       <div className="relative w-full transition-transform duration-300  pr-0 pl-2  ">
         <div className="absolute w-full h-full ">
-          <PackagesBorder className=" w-full h-full scale-105 " />
+          <PackagesBorder stroke={borderColor} className=" w-full h-full scale-105 " />
         </div>
         <div className="relative rounded-xl border bg-foundblue border-health w-full overflow-hidden transform  skew-y-[0.1deg] p-2 pr-0 pl-    skew-x-2  z-10 shadow-sm transition-all ">
           {/* Decorative Kite */}
           <div className="absolute flex items-start justify-end z-20 w-full -left-2 pt-8">
-            <CardKite className="relative left-0" />
+            <CardKite fill={kiteStroke} className="relative left-0" />
           </div>
 
           {/* Header */}
