@@ -25,7 +25,8 @@ export const registerUser = createAsyncThunk(
         return rejectWithValue(response.message);
       }
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || "Server error");
+      console.log(err.response.data.errors[0])
+      return rejectWithValue(err.response.data.errors[0]|| "Server error");
     }
   }
 );

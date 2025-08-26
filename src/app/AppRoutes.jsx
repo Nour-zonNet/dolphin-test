@@ -1,8 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-
-// Layouts
 import { Navbar, MobileNav } from "@/components/layout";
-// Pages
 import HomePage from "@/features/home";
 import LessonsSchedule from "@/features/lessons";
 import Packages from "@/features/packages";
@@ -19,9 +16,16 @@ const AppRoutes = () => {
   useEffect(() => {
     dispatch(loginUser({ phoneNumber: "201156235709", pinCode: "111111" }));
   }, [dispatch]);
+
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route
+        path="/"
+        element={
+       
+        <HomePage/>
+        }
+      />
 
       <Route
         path="/schedule"

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import MainLayout from "../../../components/layout/MainLayout";
 import { HomeSupportBtn } from "@/components/layout";
 import { LoginForm, RegisterForm, TopHero } from "../components";
@@ -8,14 +8,12 @@ import { useAuth } from "../hooks/useAuth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { COUNTRIES } from "../../../constants/countries";
+import OTPInput from "../../../components/ui/InputOtp";
+import Button from "../../../components/ui/Button";
+import { Lock } from "../../../utils/icons";
+import { STEPS } from "../../../constants/STEPS";
 
 // -------- Step Enum --------
-const STEPS = {
-  PHONE: 1,
-  OTP: 2,
-  REGISTER: 3,
-  PASSWORD: 4,
-};
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -27,13 +25,16 @@ const LoginPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ mode: "onChange" });
+  const { control, handleSubmit } = useForm({ mode: "onChange" });
 
   // -------- Handlers --------
+
+  const handleBack = () => {
+    if (step === STEPS.OTP) setStep(STEPS.PHONE);
+    else if (step === STEPS.REGISTER) setStep(STEPS.OTP);
+    else if (step === STEPS.PASSWORD) setStep(STEPS.PHONE);
+  };
+
   const handlePhoneSubmit = async (data) => {
     const phone_number = `${data.mobile}`;
     setPhoneNumber(phone_number);
@@ -64,7 +65,7 @@ const LoginPage = () => {
   };
 
   const handleRegisterSubmit = async (data) => {
-    console.log(data)
+    console.log(data);
     const res = await dispatch(
       registerUser({
         phoneNumber: phoneNumber,
@@ -73,12 +74,12 @@ const LoginPage = () => {
         pinCode: data.password,
       })
     );
- console.log({
-        phoneNumber: phoneNumber,
-        name: data.name,
-        grade: data.grade,
-        pinCode: data.password,
-      })
+    console.log({
+      phoneNumber: phoneNumber,
+      name: data.name,
+      grade: data.grade,
+      pinCode: data.password,
+    });
     if (res?.payload?.success) {
       navigate("/schedule");
     }
@@ -96,14 +97,12 @@ const LoginPage = () => {
     }
   };
   return (
-    <MainLayout>
-      <div className="flex flex-col lg:flex-row items-center justify-between relative px-4 sm:px-6">
+    <MainLayout handleBack={handleBack}>
+      <div className="flex flex-col lg:flex-row items-center justify-center relative mt-10 px-8 my-auto sm:px-6">
         {step === STEPS.PHONE ? (
           <TopHero text="ادخل لحسابك" />
         ) : step === STEPS.REGISTER ? (
           <TopHero text="أكمال التسجيل " />
-        ) : step === STEPS.PASSWORD ? (
-          <TopHero text="ادخل كلمة المرور" />
         ) : null}
 
         {/* -------- Step 1: Phone -------- */}
@@ -132,31 +131,42 @@ const LoginPage = () => {
         {/* -------- Step 4: Password -------- */}
         {step === STEPS.PASSWORD && (
           <form
-            className="w-full max-w-md"
+            className="w-full max-w-lg my-auto  space-y-10 mt-20"
             onSubmit={handleSubmit(handlePasswordSubmit)} // 👈 مهم
           >
-            <h2 className="text-xl sm:text-2xl text-[#185A80] font-bold text-center sm:text-right">
-              ادخل كلمة المرور
-            </h2>
-            <div className="relative w-full mt-4">
-              <input
-                type="password"
-                {...register("password", { required: "كلمة المرور مطلوبة" })}
-                placeholder="كلمة المرور"
-                className="flex-1 outline-0 text-right p-3 sm:p-4 text-base sm:text-lg border rounded-[30px] border-inputbordercolor w-full"
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm text-right mt-2">
-                  {errors.password.message}
-                </p>
-              )}
+            <div className="flex  flex-col items-center justify-center">
+              <h2 className=" mb-4 text-3xl sm:text-2xl text-status font-bold text-center sm:text-right">
+                ادخل لحسابك
+              </h2>
+              <p className="text-subtext text-lg">ادخل الرمز السرى للدخول</p>
+              <p className="text-orangedeep text-lg">
+                {phoneNumber && phoneNumber}
+              </p>
             </div>
-            <button
-              type="submit"
-              className="bg-btnClicked text-white rounded-2xl px-6 py-3 mt-6 w-full"
-            >
-              دخول
-            </button>
+            <div className="relative w-full " dir="ltr">
+              <Controller
+                name="password"
+                control={control}
+                rules={{ required: "كلمة المرور مطلوبة" }}
+                render={({ field, fieldState }) => (
+                  <div className="flex flex-col items-center">
+                    <OTPInput
+                      length={6}
+                      type="password"
+                      value={field.value || ""}
+                      onChange={field.onChange} // يربط الكمبوننت بالـ form
+                    />
+                    {fieldState.error && (
+                      <p className="text-red-500 text-sm text-right mt-2 w-full">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
+            </div>
+
+            <Button icon={<Lock />} text={"اكمال التسجيل "} />
           </form>
         )}
       </div>
