@@ -25,8 +25,8 @@ export const registerUser = createAsyncThunk(
         return rejectWithValue(response.message);
       }
     } catch (err) {
-      console.log(err.response.data.errors[0])
-      return rejectWithValue(err.response.data.errors[0]|| "Server error");
+      console.log(err.response.data.errors[0]);
+      return rejectWithValue(err.response.data.errors[0] || "Server error");
     }
   }
 );
@@ -51,7 +51,7 @@ export const verifyOtp = createAsyncThunk(
   "auth/verifyOtp",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await authRepository.verifyOtp( data );
+      const response = await authRepository.verifyOtp(data);
       if (response.success) {
         return response;
       } else {
@@ -136,6 +136,21 @@ const authSlice = createSlice({
       .addCase(verifyOtp.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
+      }) // ✅ fetchCurrentUser
+      .addCase(fetchCurrentUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload; // هنا بيرجع user من الـ API
+      })
+      .addCase(fetchCurrentUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+        state.user = null;
+        state.token = null; // ممكن تمسح التوكن لو API رجع unauthorized
+        localStorage.removeItem("token");
       });
   },
 });

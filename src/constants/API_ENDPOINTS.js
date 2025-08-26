@@ -3,6 +3,6 @@ export const ENDPOINTS = {
   LOGIN: "/student/login",
   REGISTER: "/student/register",
   VERIFY_OTP: "/student/verify",
-  GET_PROFILE: "/auth/me",
+  GET_PROFILE: "/student/info",
   LOGOUT: "/auth/logout",
 };
