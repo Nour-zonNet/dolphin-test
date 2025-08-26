@@ -2,7 +2,7 @@ import profileImg from "@/assets/images/profileImage.png";
 
 const ProfileInfo = () => {
   return (
-    <button className="flex flex-col items-center text-darkblue hover:scale-105 transition">
+    <button className="flex flex-col items-center text-darkblue hover:scale-105 transition cursor-pointer">
       <div className="relative w-10 h-10 rounded-full border-1 border-black/40 flex items-center justify-center overflow-hidden bg-white">
         <img
           src={profileImg}
