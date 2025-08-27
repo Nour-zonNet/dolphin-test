@@ -332,7 +332,7 @@ export const FaTelegramPlane = ({ width = "36", height = "36" }) => (
   </svg>
 );
 
-export const CorrectCircle = ({ width = "25", height = "25" }) => (
+export const CorrectCircle = ({ width = "25", height = "25", color ="#08233F", fill="#E89B32" }) => (
   <svg
     width={width}
     height={height}
@@ -345,12 +345,12 @@ export const CorrectCircle = ({ width = "25", height = "25" }) => (
       height="24"
       rx="12"
       transform="matrix(-1.00005 -0.000996425 0.00314037 0.999859 24.1993 0.695581)"
-      fill="#E89B32"
+      fill={fill}
     />
     <g clipPath="url(#clip0_362_316)">
       <path
         d="M9.77253 17.732C9.37511 17.7317 8.99346 17.5734 8.7118 17.2919L5.49898 14.0878C5.15328 13.7428 5.15153 13.1841 5.49506 12.8397C5.83871 12.4955 6.39752 12.4961 6.74333 12.841L9.76664 15.8573L17.715 7.89335C18.0586 7.54914 18.6174 7.5497 18.9632 7.89459C19.3089 8.2396 19.3107 8.7983 18.9671 9.14262L10.8305 17.294C10.5506 17.575 10.1699 17.7325 9.77253 17.732Z"
-        fill="#08233F"
+        fill={color}
       />
     </g>
     <defs>

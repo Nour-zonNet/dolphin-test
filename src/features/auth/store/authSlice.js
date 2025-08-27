@@ -2,16 +2,33 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authRepository } from "../services/auth.services";
 
 export const fetchCurrentUser = createAsyncThunk(
-  "auth/currentUser",
-  async () => {
-    const response = await authRepository.getProfile();
-    return response.data;
+  "auth/fetchCurrentUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authRepository.getProfile();
+      return response.data;
+    } catch (error) {
+      console.log(error.response.data.errors[0]);
+      return rejectWithValue(
+        error.response?.data?.errors[0] || "Failed to fetch user"
+      );
+    }
   }
 );
 
-export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
-  return await authRepository.login(credentials);
-});
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await authRepository.login(credentials);
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.errors[0] || "Login failed. Please try again."
+      );
+    }
+  }
+);
 
 export const registerUser = createAsyncThunk(
   "auth/register",

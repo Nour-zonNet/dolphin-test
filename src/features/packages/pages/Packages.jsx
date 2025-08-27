@@ -1,4 +1,3 @@
-import { useDispatch } from "react-redux";
 import { HomeSupportBtn } from "../../../components/layout";
 import AddPackageBtn from "../../../components/ui/AddPackageBtn";
 import { PackageCard } from "../components";
@@ -6,14 +5,13 @@ import { usePackages } from "../hooks/usePackages";
 import notFoundPackages from "@/assets/images/notFoundPackages.png";
 import { packageColorMap } from "../../../constants/packageColors";
 
-import { useEffect } from "react";
+import withAuth from "../../auth/hoc/withAuth";
 const Packages = () => {
-  const dispatch = useDispatch();
-  const { items, fetchPackages } = usePackages();
+  const { items,loading} = usePackages();
 
-  useEffect(() => {
-    dispatch(fetchPackages());
-  }, [dispatch]);
+
+
+    if (loading) return null;
   return (
     <div className="flex flex-col   justify-center items-center py-15 px-4">
       {items.length > 0 ? (
@@ -22,13 +20,17 @@ const Packages = () => {
             const colors = packageColorMap[item.id] || {
               borderColor: "#0077B6",
               starFill: "#0C78B9",
-              kiteStroke: "red"
+              kiteStroke: "red",
             };
-            // console.log("item.id:", item.id, "colors:", colors); 
-            // const colors = packageColorMap[item.name] || { borderColor: "#0077B6", starFill: "0C78B9", kiteStroke: "red"};
-            return (
 
-            <PackageCard key={item.id} item={item} borderColor={colors.borderColor} starFill={colors.starFill} kiteStroke={colors.kiteStroke} />
+            return (
+              <PackageCard
+                key={item.id}
+                item={item}
+                borderColor={colors.borderColor}
+                starFill={colors.starFill}
+                kiteStroke={colors.kiteStroke}
+              />
             );
           })}
         </div>
@@ -49,5 +51,5 @@ const Packages = () => {
     </div>
   );
 };
-
-export default Packages;
+const ProtectedComponent =withAuth(Packages)
+export default ProtectedComponent;

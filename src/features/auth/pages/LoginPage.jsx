@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import MainLayout from "@/components/layout/MainLayout";
 import { HomeSupportBtn } from "@/components/layout";
 import {
@@ -7,31 +6,41 @@ import {
   RegisterForm,
   TopHero,
   VerificationForm,
+  PasswordForm,
 } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { COUNTRIES } from "@/constants/countries";
-import OTPInput from "@/components/ui/InputOtp";
-import Button from "@/components/ui/Button";
-import { Lock } from "@/utils/icons";
 import { STEPS } from "@/constants/STEPS";
-
+import { Navigate } from "react-router-dom";
+import { showModal } from "../../../store/modalSlice";
+import { MODAL_TYPES } from "../../../constants/MODAL_TYPES";
 // -------- Step Enum --------
 
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate(); // 👈
-  const { checkPhone, verifyOtp, registerUser, loginUser, loading, error } =
-    useAuth();
+  const {
+    checkPhone,
+    verifyOtp,
+    registerUser,
+    loginUser,
+    loading,
+    error,
+    token,
+    user,
+  } = useAuth();
 
   const [step, setStep] = useState(STEPS.PHONE);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
 
-  const { control, handleSubmit } = useForm({ mode: "onChange" });
-
   // -------- Handlers --------
+  if (token && user) {
+    // user already logged in → redirect
+    return <Navigate to="/schedule" replace />;
+  }
 
   const handleBack = () => {
     if (step === STEPS.OTP) setStep(STEPS.PHONE);
@@ -86,6 +95,16 @@ const LoginPage = () => {
     });
     if (res?.payload?.success) {
       navigate("/schedule");
+      dispatch(
+        showModal({
+          type: MODAL_TYPES.SUCCESS,
+          props: {
+            title: "تهانينا ",
+            message:
+              "تم بدء الفترة التجريبية بنجاح لمدة 1 أيام وتم تعيينك في المجموعة الأولى ( تم اختيار مجموعة زوجية لتوافق مع باقتك النشطة باقة مادة الرياضيات في مجموعة 2)",
+          },
+        })
+      );
     }
   };
   const handlePasswordSubmit = async (data) => {
@@ -134,44 +153,11 @@ const LoginPage = () => {
 
         {/* -------- Step 4: Password -------- */}
         {step === STEPS.PASSWORD && (
-          <form
-            className="w-full max-w-lg my-auto  space-y-10 mt-20"
-            onSubmit={handleSubmit(handlePasswordSubmit)} // 👈 مهم
-          >
-            <div className="flex  flex-col items-center justify-center">
-              <h2 className=" mb-4 text-3xl sm:text-2xl text-status font-bold text-center sm:text-right">
-                ادخل لحسابك
-              </h2>
-              <p className="text-subtext text-lg">ادخل الرمز السرى للدخول</p>
-              <p className="text-orangedeep text-lg">
-                {phoneNumber && phoneNumber}
-              </p>
-            </div>
-            <div className="relative w-full " dir="ltr">
-              <Controller
-                name="password"
-                control={control}
-                rules={{ required: "كلمة المرور مطلوبة" }}
-                render={({ field, fieldState }) => (
-                  <div className="flex flex-col items-center">
-                    <OTPInput
-                      length={6}
-                      type="password"
-                      value={field.value || ""}
-                      onChange={field.onChange} // يربط الكمبوننت بالـ form
-                    />
-                    {fieldState.error && (
-                      <p className="text-red-500 text-sm text-right mt-2 w-full">
-                        {fieldState.error.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
-            </div>
-
-            <Button icon={<Lock />} text={"اكمال التسجيل "} />
-          </form>
+          <PasswordForm
+            onSubmit={handlePasswordSubmit}
+            loading={loading}
+            phoneNumber={phoneNumber}
+          />
         )}
       </div>
       <HomeSupportBtn />

@@ -8,23 +8,27 @@ import { useDispatch } from "react-redux";
 import LessonContentPage from "../features/content/pages/LessonContentPage";
 import { useEffect } from "react";
 import { fetchCurrentUser } from "../features/auth/store/authSlice";
+import { fetchPackages } from "../features/packages/store/packagesSlice";
+import { fetchLessons } from "../features/lessons/store/lessonsSlice";
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchCurrentUser());
+    const token = localStorage.getItem("token");
+    if (token) {
+      dispatch(fetchCurrentUser()).then((res) => {
+        if (res.meta.requestStatus === "fulfilled" && res.payload) {
+          dispatch(fetchPackages());
+          dispatch(fetchLessons());
+        }
+      });
+    }
   }, [dispatch]);
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-       
-        <HomePage/>
-        }
-      />
+      <Route path="/" element={<HomePage />} />
 
       <Route
         path="/schedule"
