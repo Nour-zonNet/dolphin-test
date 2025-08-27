@@ -1,19 +1,12 @@
-import { useEffect } from "react";
-import { HomeSupportBtn } from "../../../components/layout";
+import { HomeSupportBtn } from "@/components/layout";
 import { ScheduleSlider } from "../components";
-import { useLessons } from "../hooks/useLessons";
-import { useDispatch } from "react-redux";
+import withAuth from "@/features/auth/hoc/withAuth";
 
 
 const SchedulePage = () => {
-  const { fetchLessons } = useLessons();
 
-  const dispatch = useDispatch();
   
-  useEffect(() => {
-  
-  dispatch(fetchLessons()) 
-  }, [dispatch]);
+
   return (
     <div className="py-16">
       <ScheduleSlider />
@@ -22,4 +15,5 @@ const SchedulePage = () => {
   );
 };
 
-export default SchedulePage;
+const ProtectedComponent =withAuth(SchedulePage)
+export default ProtectedComponent;

@@ -18,25 +18,26 @@ import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 
 const ScheduleSlider = () => {
-  const { items } = useLessons();
+  const { items, loading } = useLessons();
   const days = getNext7Days();
   const [activeIndex, setActiveIndex] = useState(0);
 
-const NAVBAR_HEIGHT = 64; // px
-const MOBILE_BAR_HEIGHT = 56; // px
+  const NAVBAR_HEIGHT = 64; // px
+  const MOBILE_BAR_HEIGHT = 56; // px
 
-const renderNoLessons = () => (
-  <div
-    className="flex justify-center items-center"
-    style={{ height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)` }}
-  >
-    <img
-      src={notFoundImage}
-      alt="No lessons found"
-      className="max-h-full w-auto object-contain"
-    />
-  </div>
-);
+  const renderNoLessons = () => (
+    <div
+      className="flex justify-center items-center"
+      style={{ height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)` }}
+    >
+      <img
+        src={notFoundImage}
+        alt="No lessons found"
+        className="max-h-full w-auto object-contain"
+      />
+    </div>
+  );
+  if (loading) return null;
 
   return (
     <div className="mx-auto pt-16 px-4 sm:px-6 lg:px-10">
@@ -51,12 +52,16 @@ const renderNoLessons = () => (
           spaceBetween={30}
           slidesPerView={1}
           navigation={{ nextEl: ".custom-next", prevEl: ".custom-prev" }}
-          breakpoints={{ 640: { slidesPerView: 1 }, 1024: { slidesPerView: 1 } }}
+          breakpoints={{
+            640: { slidesPerView: 1 },
+            1024: { slidesPerView: 1 },
+          }}
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         >
           {days.map((day) => {
             const lessonsForDay = items.filter(
-              (item) => day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
+              (item) =>
+                day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
             );
 
             return (
@@ -64,7 +69,10 @@ const renderNoLessons = () => (
                 <div className="flex flex-col">
                   {lessonsForDay.length > 0
                     ? lessonsForDay.map((lesson, i) => (
-                        <LessonCard key={`${lesson.title}-${i}`} item={lesson} />
+                        <LessonCard
+                          key={`${lesson.title}-${i}`}
+                          item={lesson}
+                        />
                       ))
                     : renderNoLessons()}
                 </div>
