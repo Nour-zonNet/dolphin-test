@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { HomeSupportBtn } from "../../components";
-import { Pencel, RightKite } from "../../utils/Illustrations";
+import { RightKite } from "../../utils/Illustrations";
 import { FooterIllustration } from "../auth/components";
 import { useAuth } from "../auth/hooks/useAuth";
 import { Hero, LoginCard, Navbar } from "./components";
