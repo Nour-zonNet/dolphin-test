@@ -49,13 +49,32 @@ body {
 @layer utilities {
   .border-dash-wide {
     border-style: dashed;
-    border-width: 1px;
+    border-width: 0.5px;
     border-image: repeating-linear-gradient(
       to right,
       currentColor 0,
-      currentColor 6px,   /* ← dash length */
+      currentColor 12px,   /* ← dash length */
       transparent 6px,
-      transparent 10px     /* ← gap length */
+      transparent 18px     /* ← gap length */
     ) 1;
   }
+}
+
+/* Works for Chrome, Edge, Safari */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 18px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #F1F1F1;
+  border-radius: 20px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: rgba(140, 140, 140, 0.6);
+  border-radius: 20px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(140, 140, 140, 0.6);
 }
