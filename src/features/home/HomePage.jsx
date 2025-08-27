@@ -1,9 +1,16 @@
+import { Navigate } from "react-router-dom";
 import { HomeSupportBtn } from "../../components";
 import { Pencel, RightKite } from "../../utils/Illustrations";
 import { FooterIllustration } from "../auth/components";
+import { useAuth } from "../auth/hooks/useAuth";
 import { Hero, LoginCard, Navbar } from "./components";
 
 const HomePage = () => {
+  const { token, user } = useAuth();
+  if (token && user) {
+    return <Navigate to="/schedule" replace />;
+  }
+
   return (
     <div className="min-h-screen relative flex flex-col bg-white ">
       {/* Navbar */}

@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { COUNTRIES } from "@/constants/countries";
 import { STEPS } from "@/constants/STEPS";
 import { Navigate } from "react-router-dom";
+import { showModal } from "../../../store/modalSlice";
+import { MODAL_TYPES } from "../../../constants/MODAL_TYPES";
 // -------- Step Enum --------
 
 const LoginPage = () => {
@@ -93,6 +95,16 @@ const LoginPage = () => {
     });
     if (res?.payload?.success) {
       navigate("/schedule");
+      dispatch(
+        showModal({
+          type: MODAL_TYPES.SUCCESS,
+          props: {
+            title: "تهانينا ",
+            message:
+              "تم بدء الفترة التجريبية بنجاح لمدة 1 أيام وتم تعيينك في المجموعة الأولى ( تم اختيار مجموعة زوجية لتوافق مع باقتك النشطة باقة مادة الرياضيات في مجموعة 2)",
+          },
+        })
+      );
     }
   };
   const handlePasswordSubmit = async (data) => {
