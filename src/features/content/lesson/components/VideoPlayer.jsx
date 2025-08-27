@@ -39,13 +39,13 @@ const VideoPlayer = () => {
         {/* Overlay (only if not playing) */}
         {!isPlaying && (
           <div
-            className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 cursor-pointer"
+            className="absolute inset-0 flex flex-col items-center justify-center bg-black/1 cursor-pointer"
             onClick={togglePlay}
           >
-            <button className="">
+            {/* <button className="">
               <img src={stopVideo} alt="Play" className="" />
-            </button>
-            <p className="mt-4 font-semibold text-white text-xl">
+            </button> */}
+            <p className="mt-30 font-semibold text-white text-xl z-10">
               مشاهدة الدرس المسجل
             </p>
           </div>
@@ -75,11 +75,11 @@ const VideoPlayer = () => {
           </button>
 
           {/* Show text only when video is not playing */}
-          {!isPlaying && (
+          {/* {!isPlaying && (
             <p className="mt-4 font-semibold text-white text-xl">
               مشاهدة الدرس المسجل
             </p>
-          )}
+          )} */}
         </div>
       )}
 

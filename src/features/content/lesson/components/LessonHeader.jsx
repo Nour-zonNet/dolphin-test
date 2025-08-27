@@ -4,11 +4,11 @@ import { RightArrow } from "../../../../utils/icons";
 
 export const LessonHeader = () => {
   return (
-    <div className="w-full bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-8 px-4 flex items-center relative">
+    <div className="w-full bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-8 px-20 flex items-center relative">
 
       {/* Back Button */}
       <Link
-        to=""
+        to="/schedule"
         className="outline-0 border border-bordercolor w-[60px] h-[60px] rounded-full flex items-center justify-center"
       >
         <RightArrow />
