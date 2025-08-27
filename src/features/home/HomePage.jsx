@@ -1,34 +1,32 @@
 import { HomeSupportBtn } from "../../components";
+import { Pencel, RightKite } from "../../utils/Illustrations";
 import { FooterIllustration } from "../auth/components";
 import { Hero, LoginCard, Navbar } from "./components";
-import numbers from "@/assets/home/number.svg";
 
 const HomePage = () => {
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="min-h-screen relative flex flex-col bg-white ">
       {/* Navbar */}
       <Navbar />
-
       {/* Hero + Login Section */}
-      <main className="flex flex-col">
-        {/* Left: Hero */}
-        <div className="text-center lg:text-left">
+      <main className="flex flex-col  justify-center items-center gap-10 px-6 py-10 lg:px-16 lg:py-20">
+        {/* Hero (Left on Desktop / Top on Mobile) */}
+        <div className="flex-1 flex justify-center">
           <Hero />
         </div>
 
-        {/* Right: Login Card */}
-        <div className="w-full max-w-md">
+        {/* Login Card (Right on Desktop / Bottom on Mobile) */}
+        <div className="flex-1 flex justify-center w-full max-w-md">
           <LoginCard />
         </div>
       </main>
-
-      {/* Background Decoration */}
-      <div className="">
-        {/* Floating Social Buttons */}
-          <HomeSupportBtn />
-          {/* <img src={numbers} alt="numbers" width="200px"/> */}
-          <FooterIllustration />
-      </div>
+      {/* Floating Social Buttons */}
+      <HomeSupportBtn />
+      {/* Footer Illustration */}
+      <FooterIllustration />
+      {/* Background Illustrations */}
+      {/* <Pencel className=" hidden md:block absolute bottom-[50%] left-10 sm:h-20 md:w-40 lg-w-120" />{" "} */}
+      <RightKite className=" hidden sm:block absolute bottom-[50%] sm:w-40 md:w-60  " />
     </div>
   );
 };

@@ -8,13 +8,14 @@ class AuthRepository {
     return data;
   }
   async login(credentials) {
-    const { data } = await api.post(ENDPOINTS.LOGIN, credentials);
-    console.log(data);
-    return data;
+    const res = await api.post(ENDPOINTS.LOGIN, credentials);
+    console.log(res);
+    return res.data;
   }
 
   async register(userData) {
     const { data } = await api.post(ENDPOINTS.REGISTER, userData);
+    console.log(data)
     return data;
   }
   async verifyOtp(credentials) {
