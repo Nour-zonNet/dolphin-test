@@ -43,6 +43,7 @@ body {
   --color-softblue: #b8cfdc;
   --color-normalblue: #165072;
   --color-foundblue: #fafbfc;
+  --color-searchborder: #D9D9D9;
   --breakpoint-xs: 30rem;
 }
 

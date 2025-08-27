@@ -13,7 +13,7 @@ const PackageCard = ({ item, borderColor, starFill, kiteStroke }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="relative w-full mx-auto  ">
+    <div className="relative w-full mx-auto">
       {/* Border Illustration */}
 
       {/* Decoration */}
@@ -22,9 +22,12 @@ const PackageCard = ({ item, borderColor, starFill, kiteStroke }) => {
       </div>
 
       {/* Card */}
-      <div className="relative w-full transition-transform duration-300  pr-0 pl-2  ">
+      <div className="relative w-full transition-transform duration-300 pr-0 pl-2  ">
         <div className="absolute w-full h-full ">
-          <PackagesBorder stroke={borderColor} className=" w-full h-full scale-105 " />
+          <PackagesBorder
+            stroke={borderColor}
+            className=" w-full h-full scale-105 "
+          />
         </div>
         <div className="relative rounded-xl border bg-foundblue border-health w-full overflow-hidden transform  skew-y-[0.1deg] p-2 pr-0 pl-    skew-x-2  z-10 shadow-sm transition-all ">
           {/* Decorative Kite */}

@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import LessonContentPage from "../features/content/pages/LessonContentPage";
 import { useEffect } from "react";
 import { fetchCurrentUser } from "../features/auth/store/authSlice";
+import ManageSubscription from "../features/managesubscription/pages/ManageSubscription";
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
@@ -21,7 +22,6 @@ const AppRoutes = () => {
       <Route
         path="/"
         element={
-       
         <HomePage/>
         }
       />
@@ -49,6 +49,7 @@ const AppRoutes = () => {
       />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/schedule/lessoncontent" element={<LessonContentPage />} />
+      <Route path="/manage-subscription" element={<ManageSubscription />} />
     </Routes>
   );
 };

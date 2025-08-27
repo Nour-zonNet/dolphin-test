@@ -15,9 +15,10 @@ const Packages = () => {
     dispatch(fetchPackages());
   }, [dispatch]);
   return (
-    <div className="flex flex-col   justify-center items-center py-15 px-4">
+    <div className="w-[90%] mx-auto py-15 px-4 pt-45">
       {items.length > 0 ? (
-        <div className="flex flex-col gap-15 pt-20">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-15">
+
           {items.map((item) => {
             const colors = packageColorMap[item.id] || {
               borderColor: "#0077B6",
@@ -28,7 +29,7 @@ const Packages = () => {
             // const colors = packageColorMap[item.name] || { borderColor: "#0077B6", starFill: "0C78B9", kiteStroke: "red"};
             return (
 
-            <PackageCard key={item.id} item={item} borderColor={colors.borderColor} starFill={colors.starFill} kiteStroke={colors.kiteStroke} />
+            <PackageCard className="" key={item.id} item={item} borderColor={colors.borderColor} starFill={colors.starFill} kiteStroke={colors.kiteStroke} />
             );
           })}
         </div>

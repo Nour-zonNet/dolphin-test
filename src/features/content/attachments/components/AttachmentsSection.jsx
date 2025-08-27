@@ -117,8 +117,8 @@ export const AttachmentsSection = () => {
       </div>
 
       {/* Attachments List */}
-      <div className="relative max-h-[calc(6*62px)] lg:max-h-[calc(5*124px)] overflow-y-scroll scrollbar-custom">
-        <div className="space-y-4 pl-6" dir="rtl">
+      <div className="flex gap-4 max-h-[calc(6*62px)] lg:max-h-[calc(5*124px)] overflow-y-scroll scrollbar-custom">
+        <div className="space-y-4 pl-6 w-full" dir="rtl">
           {attachments.map((attachment, index) => (
             <AttachmentItem key={index} {...attachment} />
           ))}

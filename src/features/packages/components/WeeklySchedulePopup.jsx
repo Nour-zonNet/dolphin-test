@@ -19,20 +19,20 @@ const WeeklySchedulePopup = ({ open, setOpen }) => {
   return (
     open && (
       <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-lg overflow-hidden px-4 sm:px-6">
+        <div className="relative w-full max-w-xl lg:max-w-2xl bg-white rounded-3xl shadow-lg overflow-hidden px-4 sm:px-6">
           {/* Header */}
           <div className="flex justify-between items-center py-4 sm:py-6">
             <div className="flex items-center gap-4">
               <div className="bg-health rounded p-1">
                 <img src={Tooth} className="w-10 h-10 sm:w-12 sm:h-12" alt="tooth" />
               </div>
-              <h2 className="text-darkblue text-lg sm:text-xl font-semibold">
+              <h2 className="text-navyteal text-lg sm:text-xl font-semibold">
                 بـاقة الصحة العامة
               </h2>
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="text-gray-600 hover:text-gray-800 border p-2 rounded-full"
+              className="text-gray-600 cursor-pointer hover:text-gray-800 border p-2 rounded-full"
             >
               <Cross width="16" height="16" />
             </button>
@@ -40,11 +40,15 @@ const WeeklySchedulePopup = ({ open, setOpen }) => {
 
           {/* Schedule Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-center border-collapse min-w-[500px]">
+            <table className="w-full text-center border-collapse min-w-[500px] h-[320px]">
               <thead className="">
                 <tr className="bg-softblue text-navyteal">
-                  {days.map((day) => (
-                    <th key={day} className="py-2 sm:py-3 font-medium text-sm sm:text-base">
+                  {days.map((day,idx) => (
+                    <th key={day} className={`
+                      py-2 sm:py-3 font-medium text-xl sm:text-base
+                      ${idx === 0 ? "rounded-br-4xl" : ""}
+                      ${idx === days.length - 1 ? "rounded-tl-4xl " : ""}
+                      `}>
                       {day}
                     </th>
                   ))}
@@ -61,7 +65,7 @@ const WeeklySchedulePopup = ({ open, setOpen }) => {
                       return (
                         <td
                           key={colIdx}
-                          className="p-3 sm:p-6 border-l border-gray-300 last:border-l-0"
+                          className="p-3 sm:p-6 border-l border-normalblue/60  last:border-l-0"
                         >
                           {item ? (
                             <div className="flex flex-col items-center gap-2">
