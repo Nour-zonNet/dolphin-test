@@ -1,0 +1,50 @@
+import { Canceled, Checked, Experimental, Finished } from "../utils/icons";
+
+// constants/STATUS_CONFIG.js
+export const STATUS_CONFIG = {
+  فعالة: {
+    color: "bg-[#F8E0BF] text-status font-semibold",
+    label: (daysLeft) => `فعالة (${daysLeft} يوم متبقي)`,
+    actions: ["changeGroup", "useCoupon", "cancel"],
+    message: null,
+    lineColor: "stroke-[#185A80]", 
+    fill: "#185A80",
+    bg: "bg-health",
+    icon: Checked 
+  },
+  تجريبي: {
+    color: "border border-[#99A1A7] text-status h-9 w-32 px-4 font-semibold",
+    label: () => "تجريبي",
+    actions: ["reactivate"],
+    message: "انتهت الفترة التجريبية الخاصة بك مدد الاشتراك لمتابعة الاستفادة",
+    lineColor: "stroke-blue-500",
+    lineColor: "stroke-[#185A80]", 
+    fill: "#185A80",
+    bg: "bg-health",
+    buttonText: "تمديد الاشتراك",
+    icon: Experimental
+  },
+  منتهي: {
+    color: "bg-[#595959] h-9 w-32 text-white font-semibold px-4",
+    label: () => "منتهي",
+    actions: ["renew"],
+    message: "انتهت صلاحية باقتك، اضغط على زر (تجديد الباقة) لتجديدها ومتابعة استخدام خدماتنا",
+    lineColor: "stroke-[#B3261E]",
+    fill: "#B3261E",
+    bg: "bg-health",
+    buttonText: "تجديد الاشتراك",
+    icon: Finished
+  },
+  ملغاة: {
+    color: "bg-[#FFD8E4] text-status h-9 w-32 px-4 font-semibold",
+    label: () => "ملغاة",
+    actions: ["canceled"],
+    message: "لقد قمت بتغيير الاشتراك لإعادة التفعيل أرسل طلب عبر الضغط علي زر  إعادة تفعيل الاشتراك",
+    lineColor: "stroke-red-500",
+    lineColor: "stroke-[#185A80]", 
+    fill: "#185A80",
+    buttonText: "طلب إعادة تفعيل الاشتراك",
+    bg: "bg-englishLevelOne",
+    icon: Canceled,
+  },
+};

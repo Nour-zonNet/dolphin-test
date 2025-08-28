@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { Cancel, ChangeGroup, Copon, Renew } from "../../../utils/icons";
 import { Line } from "../../../utils/Illustrations";
 import { STATUS_CONFIG } from "../../../constants/STATUS_CONFIG";
 
-const Card = ({
+const StatusCard = ({
   title,
   image,
   status,
@@ -13,18 +12,16 @@ const Card = ({
   endDate,
   group,
   daysLeft,
-  onChangeGroup,
-  onUseCoupon,
-  onCancel,
   onRenew,
+  onCancel,
+  onReactivate,
 }) => {
   const [open, setOpen] = useState(false);
   const [height, setHeight] = useState("0px");
   const contentRef = useRef(null);
 
-  // Smooth expand/collapse height handling
   useEffect(() => {
-    if (open && contentRef.current) {
+    if (open) {
       setHeight(`${contentRef.current.scrollHeight}px`);
     } else {
       setHeight("0px");
@@ -32,9 +29,16 @@ const Card = ({
   }, [open]);
 
   const config = STATUS_CONFIG[status] || STATUS_CONFIG["فعالة"];
+  const Icon = config.icon;
+
+  const handleAction = () => {
+    if (config.actions.includes("renew")) onRenew?.();
+    if (config.actions.includes("cancel")) onCancel?.();
+    if (config.actions.includes("reactivate")) onReactivate?.();
+  };
 
   return (
-    <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
+    <div className="w-full bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
       {/* Header */}
       <div
         className="flex items-center justify-between p-4 cursor-pointer select-none"
@@ -55,7 +59,7 @@ const Card = ({
           <span
             className={`text-sm px-3 py-1 rounded-full flex items-center justify-center gap-2 ${config.color}`}
           >
-            {config.icon && <config.icon />}
+            {Icon && <Icon />}
             {config.label(daysLeft)}
           </span>
           {open ? (
@@ -66,7 +70,7 @@ const Card = ({
         </div>
       </div>
 
-      {/* Expandable Content */}
+      {/* Expandable Section */}
       <div
         ref={contentRef}
         style={{ height }}
@@ -98,65 +102,26 @@ const Card = ({
             </p>
           </div>
 
-          {/* Group Info (if allowed) */}
-          <div className="flex items-end justify-between">
-            {config.actions.includes("changeGroup") && (
-              <p className="flex flex-col gap-4 mt-8">
-                <span className="font-semibold text-[18px]">المجموعة:</span>
-                <span className="text-status font-semibold text-2xl">
-                  {group}
-                </span>
-              </p>
-            )}
+          {/* Group Info */}
+          <p className="flex flex-col gap-4 mt-8">
+            <span className="font-semibold text-[18px]">المجموعة:</span>{" "}
+            <span className="text-status font-semibold text-2xl">{group}</span>
+          </p>
 
-            {/* Top Actions */}
-            <div className="flex flex-wrap gap-3 mt-4">
-              {config.actions.includes("changeGroup") && (
-                <button
-                  onClick={onChangeGroup}
-                  className="flex items-center gap-2 px-4 py-2 bg-orangedeep hover:bg-btnClicked transition text-navyteal font-semibold rounded-3xl cursor-pointer"
-                >
-                  <ChangeGroup /> تغيير المجموعة
-                </button>
-              )}
-              {config.actions.includes("useCoupon") && (
-                <button
-                  onClick={onUseCoupon}
-                  className="flex items-center gap-2 px-4 py-2 border border-orangedeep text-navyteal rounded-3xl hover:bg-orange-50 font-semibold transition cursor-pointer"
-                >
-                  <Copon /> استخدام كوبون لإضافة أيام
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Cancel Button */}
-          {config.actions.includes("cancel") && (
-            <div className="flex justify-center mt-12">
+          {/* Dynamic Action */}
+          {config.actions.length > 0 && (
+            <div className="flex flex-col items-center mt-8">
               <button
-                onClick={onCancel}
-                className="flex items-center justify-center gap-2 mb-4 px-6 py-3 border w-full border-[#BA7C28] text-navyteal font-semibold rounded-full hover:bg-red-50 transition cursor-pointer"
-              >
-                <Cancel /> إلغاء الاشتراك
-              </button>
-            </div>
-          )}
-
-          {/* Other Status Button + Message */}
-          {(config.actions.includes("renew") ||
-            config.actions.includes("canceled") ||
-            config.actions.includes("reactivate")) && (
-            <div className="flex flex-col items-center mt-6">
-              <button
-                onClick={onRenew}
+                onClick={handleAction}
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-orangedeep w-full text-navyteal font-semibold rounded-full hover:bg-btnClicked transition cursor-pointer"
               >
-                <Renew /> {config.buttonText}
+                {config.buttonIcon && <config.buttonIcon />}
+                {config.buttonText}
               </button>
 
               {config.message && (
-                <div className="bg-[#F9F9F9]  w-full mt-6 mb-4 text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-xl font-semibold">
-                  <p className="text-wrap">{config.message}</p>
+                <div className="w-full mt-3 mb-4 text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-xl font-semibold">
+                  <p className="max-w-[500px]">{config.message}</p>
                 </div>
               )}
             </div>
@@ -167,4 +132,4 @@ const Card = ({
   );
 };
 
-export default Card;
+export default StatusCard;
