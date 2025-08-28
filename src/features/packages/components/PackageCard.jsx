@@ -10,7 +10,6 @@ import { CardKite, PackagesBorder, Star } from "@/utils/Illustrations";
 
 const PackageCard = ({ item, color, image }) => {
   const [open, setOpen] = useState(false);
-  console.log(image);
 
   return (
     <div className="relative w-full mx-auto px-4 pl-8 ">

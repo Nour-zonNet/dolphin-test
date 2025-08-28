@@ -2,16 +2,16 @@ import { useForm } from "react-hook-form";
 import { ArrowNext } from "../../../utils/icons";
 import CountrySelector from "./CounterySelector";
 import Button from "../../../components/ui/Button";
+import PhoneInput from "../../../components/ui/PhoneInput/PhoneInput";
 
 const LoginForm = ({
   onSubmit,
   loading,
   error,
-  selectedCountry,
-  setSelectedCountry,
+  setPhoneNumber
+
 }) => {
   const {
-    register,
     handleSubmit,
     formState: { errors, isValid },
   } = useForm({ mode: "onChange" });
@@ -31,7 +31,7 @@ const LoginForm = ({
       </h2>
 
       {/* Phone Input */}
-      <div className="flex items-center border rounded-full border-graycustom bg-white overflow-hidden mt-4 p-2">
+      {/* <div className="flex items-center border rounded-full border-graycustom bg-white overflow-hidden mt-4 p-2">
         <CountrySelector
           selectedCountry={selectedCountry}
           setSelectedCountry={setSelectedCountry}
@@ -48,7 +48,8 @@ const LoginForm = ({
           placeholder="أدخل رقم جوالك"
           className="flex-1 outline-0 text-right px-3 py-3 text-base sm:text-lg"
         />
-      </div>
+      </div> */}
+          <PhoneInput setNumber={setPhoneNumber}/>
 
       <div className="min-h-[24px] mt-2">
         {errors.mobile && (
