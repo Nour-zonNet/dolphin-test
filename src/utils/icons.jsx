@@ -106,10 +106,11 @@ export const RightArrow = ({
   </svg>
 );
 
-export const LeftArrow = ({ size = 24, color = "#E89B32" }) => (
+export const LeftArrow = ({ size = 24, color = "#E89B32",className }) => (
   <svg
     width={size}
     height={size}
+    className={className}
     fill={color}
     viewBox="0 0 24 20"
     xmlns="http://www.w3.org/2000/svg"

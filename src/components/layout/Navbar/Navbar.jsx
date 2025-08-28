@@ -16,14 +16,16 @@ function Navbar() {
       setActiveTab("subscriptions");
     }
   }, [location]);
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
     navigate(tab === "schedule" ? "/schedule" : "/subscriptions");
   };
+
   return (
-    <nav className="fixed top-0 left-1/2 transform -translate-x-1/2 w-full flex items-center justify-between py-8 px-4 sm:px-6 bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] text-nowrap z-100">
+    <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-full flex flex-row items-center justify-between py-4 px-3 sm:px-6 bg-white shadow-[0px_2px_4px_rgba(192,192,192,0.25)] z-50">
       {/* Tabs Section */}
-      <div className="flex items-center gap-4 text-xl sm:text-2xl font-bold">
+      <div className="flex items-center gap-3 sm:gap-6 text-base sm:text-lg md:text-xl font-bold w-full md:w-auto">
         {TABS.map((tab) => (
           <NavTab
             key={tab.value}
@@ -36,8 +38,7 @@ function Navbar() {
       </div>
 
       {/* Buttons Section */}
-      <div className="flex gap-2 sm:gap-4 w-full justify-end md:w-auto">
-      {/* {  activeTab == "subscriptions" &&  <SubscribeBtn />} */}
+      <div className="flex gap-2 sm:gap-4 w-full justify-end md:w-auto  ">
         <SubscribeBtn />
         {/* <SupportBtn /> */}
       </div>

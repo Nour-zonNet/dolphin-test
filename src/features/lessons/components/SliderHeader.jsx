@@ -13,20 +13,20 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
         ariaLabel="Previous slide"
         className="custom-prev"
       >
-        <RightArrow size={22} />
+        <RightArrow size={22} className="w-4 sm:w-5" />
       </SliderNavButton>
 
-      <div className="text-deepnavy  text-center flex flex-col text-xl md:text-base">
-        <span>{dayLabel}</span>
-        <span>{formattedDate}</span>
-      </div>
+  <div className="text-deepnavy text-center flex flex-col  md:text-xl text-sm">
+  <span>{dayLabel}</span>
+  <span>{formattedDate}</span>
+</div>
 
       <SliderNavButton
         direction="next"
         ariaLabel="Next slide"
         className="custom-next"
       >
-        <LeftArrow size={22} />
+        <LeftArrow size={22} className="w-4 sm:w-5"/>
       </SliderNavButton>
     </div>
   );
