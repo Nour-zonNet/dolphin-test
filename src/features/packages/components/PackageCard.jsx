@@ -7,7 +7,6 @@ import {
 } from "@/utils/icons";
 import WeeklySchedulePopup from "./WeeklySchedulePopup";
 import { CardKite, PackagesBorder, Star } from "@/utils/Illustrations";
-import { Quran } from "../../../utils/icons";
 
 const PackageCard = ({ item, color, image }) => {
   const [open, setOpen] = useState(false);
@@ -38,20 +37,19 @@ const PackageCard = ({ item, color, image }) => {
           <div className="absolute flex items-start justify-end z-20 w-full -left-2 pt-8">
             <CardKite fill={color} className="relative left-0" />
           </div>
-          <Quran />
           {/* Header */}
           <div
             className={`flex flex-row xs:items-center  gap-2 relative z-10 text-white  px-3 py-4 bg-gradient-to-r `}
           >
             <div className=" overflow-hidden  p-1">
-              <div
-                style={{ backgroundColor: color }}
-                className="w-8 h-8 sm:w-12 sm:h-12 rounded flex items-center justify-center"
-              >
-                {image && (
-                  <img src={image} alt={item.name} className="w-10 h-10 mb-2" />
-                )}
-              </div>
+              {image && (
+                <div
+                  style={{ backgroundColor: color }}
+                  className="w-8 h-8 sm:w-12 sm:h-12 rounded flex items-center justify-center"
+                >
+                  <img src={image} alt={item.name} className="w-10 h-10 " />
+                </div>
+              )}
             </div>
 
             <div>

@@ -16,6 +16,7 @@ import { getNext7Days } from "../../../utils/dateHelpers";
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
+import { subjectFactory } from "../factory/subjectFactory";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();
@@ -68,12 +69,19 @@ const ScheduleSlider = () => {
               <SwiperSlide key={day.date}>
                 <div className="flex flex-col">
                   {lessonsForDay.length > 0
-                    ? lessonsForDay.map((lesson, i) => (
-                        <LessonCard
-                          key={`${lesson.title}-${i}`}
-                          item={lesson}
-                        />
-                      ))
+                    ? lessonsForDay.map((lesson, i) => {
+
+
+                       const { image, bgColor } = subjectFactory(lesson.subject);
+                        return (
+                          <LessonCard
+                            key={`${lesson.title}-${i}`}
+                            item={lesson}
+                            image={image}
+                            color={bgColor}
+                          />
+                        );
+                      })
                     : renderNoLessons()}
                 </div>
               </SwiperSlide>
