@@ -4,7 +4,7 @@ import groupIcon from "@/assets/schedule/group.svg";
 import timeIcon from "@/assets/schedule/time.svg";
 import timerIcon from "@/assets/schedule/timer.svg";
 import clock from "@/assets/schedule/clock.svg";
-import { File } from "../../../utils/icons";
+// import { File } from "../../../utils/icons";
 import { formatArabicTime, getRemainingTime } from "../../../utils/dateHelpers";
 
 const LessonCard = ({ item, color, image }) => {
@@ -102,7 +102,7 @@ const LessonCard = ({ item, color, image }) => {
             className="px-4 py-3 text-nowrap text-navyteal text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-3xl "
           >
             {/* <img src={fileIcon} alt="fileIcon" /> */}
-            <File width="" />
+            {/* <File width="" /> */}
             عرض المحتوي
           </button>
         </div>
