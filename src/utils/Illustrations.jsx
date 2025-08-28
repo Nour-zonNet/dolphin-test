@@ -687,7 +687,7 @@ export const CardKite = ({ className = "", fill = "#0077B6" }) => (
   </svg>
 );
 
-export const Draw = ({}) => (
+export const Draw = () => (
   <svg width="208" height="53" viewBox="0 0 208 53" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path opacity="0.2" d="M196.737 34.2492C215.426 50.3399 206.71 64.766 200.016 69.9678H-9.00002V23.499C38.9508 -20.1956 70.918 11.7084 73.7868 19.6844C76.6557 27.6604 79.5245 54.7094 124.606 31.475C169.688 8.24056 173.377 14.1359 196.737 34.2492Z" fill="#9B9DB4" fill-opacity="0.55"/>
   </svg>

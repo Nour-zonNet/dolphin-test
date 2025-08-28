@@ -3,30 +3,27 @@ import AddPackageBtn from "../../../components/ui/AddPackageBtn";
 import { PackageCard } from "../components";
 import { usePackages } from "../hooks/usePackages";
 import notFoundPackages from "@/assets/images/notFoundPackages.png";
-import { packageColorMap } from "../../../constants/packageColors";
-
 import withAuth from "../../auth/hoc/withAuth";
+import { packageFactory } from "../factory/packageFactory.js";
+
 const Packages = () => {
-  const { items,loading} = usePackages();
+  const { items, loading } = usePackages();
 
-
-
-    if (loading) return null;
+  if (loading) return null;
   return (
-    <div className="w-[90%] mx-auto py-15 px-4 pt-45">
+    <div className="py-18 md:py-18 px-4 sm:px-6 lg:px-10">
       {items.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-15">
-
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 py-8">
           {items.map((item) => {
-            const colors = packageColorMap[item.id] || {
-              borderColor: "#0077B6",
-              starFill: "#0C78B9",
-              kiteStroke: "red",
-            };
+            const { image, bgColor } = packageFactory(item.id);
 
             return (
-
-            <PackageCard className="" key={item.id} item={item} borderColor={colors.borderColor} starFill={colors.starFill} kiteStroke={colors.kiteStroke} />
+              <PackageCard
+                key={item.id}
+                item={item}
+                color={bgColor} // pass bgColor here
+                image={image}
+              />
             );
           })}
         </div>
@@ -47,5 +44,5 @@ const Packages = () => {
     </div>
   );
 };
-const ProtectedComponent =withAuth(Packages)
+const ProtectedComponent = withAuth(Packages);
 export default ProtectedComponent;

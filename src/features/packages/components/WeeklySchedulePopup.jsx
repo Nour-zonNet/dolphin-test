@@ -1,5 +1,5 @@
 import { Cross } from "@/utils/icons";
-import Tooth from "@/assets/images/Tooth.svg";
+import Tooth from "@/assets/packages/tooth.svg";
 import { Clock, Teacher } from "../../../utils/icons";
 
 const WeeklySchedulePopup = ({ open, setOpen }) => {

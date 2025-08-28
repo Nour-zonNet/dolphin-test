@@ -1,9 +1,7 @@
-import React from "react";
 import Card from "./Card";
-import { Tooth } from "../../../utils/icons";
-import tooth from "@/assets/images/tooth.svg";
+import tooth from "@/assets/packages/tooth.svg";
 
-export const Cards = ({  }) => {
+export const Cards = () => {
       const subscriptions = [
     {
       id: 1,
