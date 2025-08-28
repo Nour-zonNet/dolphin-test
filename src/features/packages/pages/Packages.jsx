@@ -3,7 +3,7 @@ import AddPackageBtn from "../../../components/ui/AddPackageBtn";
 import { PackageCard } from "../components";
 import { usePackages } from "../hooks/usePackages";
 import notFoundPackages from "@/assets/images/notFoundPackages.png";
-import { packageColorMap } from "../../../constants/packageColors";
+import { packageColorMap } from "../../../constants/PACKAGE_COLORS";
 
 import withAuth from "../../auth/hoc/withAuth";
 const Packages = () => {

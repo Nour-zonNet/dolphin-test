@@ -24,7 +24,7 @@ export const ManageSubscription = () => {
   return (
     <>
       <Header title="الباقات والاشتراكات" balance="الرصيد:" />    
-    <main className="pt-8 flex justify-center flex-col items-center w-[%] mx-auto">
+    <main className="pt-8 flex justify-center flex-col items-center w-[90%] mx-auto">
       <ActionButtons />
 
       {/* Conditional rendering */}

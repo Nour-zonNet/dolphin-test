@@ -1,4 +1,4 @@
-export const subscriptionsData = [
+export const SUBSCRIPTION_DATA = [
   {
     id: 1,
     title: 'باقة الصحة العامة',
