@@ -4,8 +4,9 @@ import { RightArrow } from "../../../utils/icons";
 import { HomeKite } from "../../../utils/Illustrations";
 
 const HeaderIllustration = ({handleBack}) => {
+  // h-26 sm:h-32 md:h-40 lg:h-48
   return (
-    <div className="relative h-26 sm:h-32 md:h-40 lg:h-48">
+    <div className="relative ">
       {/* زر السهم (Responsive sizes) */}
       <div
         onClick={()=> handleBack()}
