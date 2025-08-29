@@ -31,7 +31,7 @@ const LoginPage = () => {
     user,
   } = useAuth();
 
-  const [step, setStep] = useState(STEPS.PHONE);
+  const [step, setStep] = useState(STEPS.OTP);
   const [phoneNumber, setPhoneNumber] = useState("");
  
 
@@ -118,11 +118,7 @@ const LoginPage = () => {
   return (
     <MainLayout handleBack={handleBack}>
       <div className=" relative   px-8 sm:px-6  mt-37 md:mt-49 lg:mt-63 ">
-        {/* {step === STEPS.PHONE ? (
-          <TopHero text="ادخل لحسابك" />
-        ) : step === STEPS.REGISTER ? (
-          <TopHero text="أكمال التسجيل " />
-        ) : null} */}
+
 
         {/* -------- Step 1: Phone -------- */}
         {step === STEPS.PHONE && (
