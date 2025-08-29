@@ -22,7 +22,7 @@ const HeaderIllustration = ({handleBack}) => {
 
       {/* HomeKite في النص وبأحجام مرنة */}
       <div className="absolute  left-0 mx-4 flex justify-end ">
-        <HomeKite className="w-40 sm:w-70 md:w-80 lg:w-96 h-auto" />
+        <HomeKite className="w-45 sm:w-73 md:w-80 lg:w-140 h-auto" />
       </div>
     </div>
   );

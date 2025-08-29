@@ -33,6 +33,7 @@ const LoginPage = () => {
 
   const [step, setStep] = useState(STEPS.PHONE);
   const [phoneNumber, setPhoneNumber] = useState("");
+ 
 
   // -------- Handlers --------
   if (token && user) {
@@ -116,7 +117,7 @@ const LoginPage = () => {
   };
   return (
     <MainLayout handleBack={handleBack}>
-      <div className=" relative mt-10 px-8 sm:px-6 ">
+      <div className=" relative   px-8 sm:px-6  mt-37 md:mt-49 lg:mt-63 ">
         {/* {step === STEPS.PHONE ? (
           <TopHero text="ادخل لحسابك" />
         ) : step === STEPS.REGISTER ? (
