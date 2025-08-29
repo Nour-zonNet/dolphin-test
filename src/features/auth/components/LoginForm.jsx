@@ -1,74 +1,72 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { ArrowNext } from "../../../utils/icons";
-import CountrySelector from "./CounterySelector";
 import Button from "../../../components/ui/Button";
-import PhoneInput from "../../../components/ui/PhoneInput/PhoneInput";
+import { validatePhone } from "../../../utils/phoneValidation";
+import MyPhone from "../../../components/ui/PhoneInput/PhoneInput";
 
-const LoginForm = ({
-  onSubmit,
-  loading,
-  error,
-  setPhoneNumber
-
-}) => {
+const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
   const {
     handleSubmit,
+    control,
     formState: { errors, isValid },
-  } = useForm({ mode: "onChange" });
+  } = useForm({
+    mode: "onTouched",
+    defaultValues: { mobile: "", countryCode: null },
+  });
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="
-        flex flex-col gap-4 mx-auto p-4 
-        w-full max-w-md sm:max-w-lg md:min-w-[500px] lg:max-w-xl
-        border border-graycustom rounded-[3rem] sm:rounded-[3rem] bg-white
-        sm:p-8
-      "
+      className="flex flex-col gap-4 mx-auto p-3 sm:p-6 md:p-8 w-full max-w-sm sm:max-w-md border border-graycustom/50 rounded-[2rem] sm:rounded-[3rem] bg-white"
     >
-      <h2 className="text-xl sm:text-2xl text-subtext font-bold text-center sm:text-right">
+      {/* Title */}
+      <h2 className="text-lg sm:text-xl md:text-2xl text-subtext font-bold text-center sm:text-right">
         أدخل رقم جوالك
       </h2>
 
       {/* Phone Input */}
-      {/* <div className="flex items-center border rounded-full border-graycustom bg-white overflow-hidden mt-4 p-2">
-        <CountrySelector
-          selectedCountry={selectedCountry}
-          setSelectedCountry={setSelectedCountry}
-        />
-        <input
-          type="tel"
-          {...register("mobile", {
-            required: "رقم الجوال مطلوب",
-            pattern: {
-              value: /^[0-9]{7,12}$/,
-              message: "أدخل رقم جوال صحيح",
-            },
-          })}
-          placeholder="أدخل رقم جوالك"
-          className="flex-1 outline-0 text-right px-3 py-3 text-base sm:text-lg"
-        />
-      </div> */}
-          <PhoneInput setNumber={setPhoneNumber}/>
-
-      <div className="min-h-[24px] mt-2">
-        {errors.mobile && (
-          <p className="text-red-500 text-sm text-right">
-            {errors.mobile.message}
-          </p>
+      <Controller
+        name="mobile"
+        control={control}
+        rules={{
+          required: "رقم الهاتف مطلوب",
+          validate: (value, { countryCode }) =>
+            validatePhone(value, countryCode) || "رقم الهاتف غير صالح",
+        }}
+        render={({ field: { onChange, value } }) => (
+          <MyPhone
+            value={value}
+            onChange={(phone, countryCode) => {
+              onChange(phone);
+              setPhoneNumber(phone);
+              // save country code separately if needed
+              control._formValues.countryCode = countryCode;
+            }}
+          />
         )}
-        {error && <p className="text-red-500 text-sm text-right">{error}</p>}
-      </div>
+      />
 
-      {/* Submit */}
-        <Button
-          type="submit"
-          icon={
-            loading ? null : <ArrowNext className="w-4 h-4 sm:w-5 sm:h-5" />
-          }
-          text={loading ? "جاري المعالجة..." : "متابعة"}
-          disabled={!isValid || loading}
-        />
+      {/* Errors */}
+      {errors.mobile && (
+        <p className="text-red-500 text-xs sm:text-sm text-right">
+          {errors.mobile.message}
+        </p>
+      )}
+      {error && (
+        <p className="text-red-500 text-xs sm:text-sm text-right">{error}</p>
+      )}
+
+      {/* Submit Button */}
+      <Button
+        type="submit"
+        icon={
+          !loading && (
+            <ArrowNext className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+          )
+        }
+        text={loading ? "جاري المعالجة..." : "متابعة"}
+        disabled={!isValid || loading}
+      />
     </form>
   );
 };
