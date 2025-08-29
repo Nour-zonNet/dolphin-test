@@ -116,12 +116,12 @@ const LoginPage = () => {
   };
   return (
     <MainLayout handleBack={handleBack}>
-      <div className="flex flex-col  items-center justify-center relative mt-10 px-8 my-auto sm:px-6">
-        {step === STEPS.PHONE ? (
+      <div className=" relative mt-10 px-8 sm:px-6 ">
+        {/* {step === STEPS.PHONE ? (
           <TopHero text="ادخل لحسابك" />
         ) : step === STEPS.REGISTER ? (
           <TopHero text="أكمال التسجيل " />
-        ) : null}
+        ) : null} */}
 
         {/* -------- Step 1: Phone -------- */}
         {step === STEPS.PHONE && (
