@@ -1,7 +1,10 @@
 import dolphinChild from "@/assets/images/homeChild.png";
 import flash from "@/assets/home/flash.svg";
+import { useTranslation } from "react-i18next";
 
 const Hero = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="flex flex-col lg:flex-row items-center justify-between lg:justify-center   ">
       {/* Image */}
@@ -22,8 +25,8 @@ const Hero = () => {
 
         {/* Title */}
         <h1 className="text-4xl font-bold text-[#1B648E] z-10 leading-relaxed">
-          مرحباً بكم في منصة <br />
-          <span className="  relative ">الدلفين التعليمية</span>
+          {t('home.welcome')} <br />
+          <span className="  relative ">{t('home.platformName')}</span>
         </h1>
 
         {/* Mascot underline */}

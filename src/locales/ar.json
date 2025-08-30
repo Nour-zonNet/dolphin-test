@@ -1,0 +1,72 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "ok": "موافق",
+    "cancel": "إلغاء",
+    "back": "رجوع",
+    "next": "التالي",
+    "submit": "إرسال",
+    "save": "حفظ",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا"
+  },
+  "navigation": {
+    "schedule": "الجدول الدراسي",
+    "subscriptions": "الباقات المشترك بها",
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "logout": "تسجيل الخروج"
+  },
+  "home": {
+    "welcome": "مرحباً بكم في منصة",
+    "platformName": "الدلفين التعليمية",
+    "loginToPlatform": "سجل دخول للمنصة",
+    "forNewAndExistingUsers": "للمستخدمين الجدد والحاليين",
+    "loginNow": "سجل الآن"
+  },
+  "auth": {
+    "loginToAccount": "ادخل لحسابك",
+    "enterPhoneNumber": "أدخل رقم جوالك",
+    "enterPassword": "ادخل الرمز السرى للدخول",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "completingRegistration": "اكمال التسجيل",
+    "loggingIn": "جاري الدخول..."
+  },
+  "subscription": {
+    "active": "فعالة",
+    "trial": "تجريبي",
+    "expired": "منتهي",
+    "cancelled": "ملغاة",
+    "daysLeft": "يوم متبقي",
+    "renewSubscription": "تجديد الاشتراك",
+    "extendSubscription": "تمديد الاشتراك",
+    "requestReactivateSubscription": "طلب إعادة تفعيل الاشتراك",
+    "trialExpiredMessage": "انتهت الفترة التجريبية الخاصة بك مدد الاشتراك لمتابعة الاستفادة",
+    "expiredMessage": "انتهت صلاحية باقتك، اضغط على زر (تجديد الباقة) لتجديدها ومتابعة استخدام خدماتنا",
+    "cancelledMessage": "لقد قمت بتغيير الاشتراك لإعادة التفعيل أرسل طلب عبر الضغط علي زر إعادة تفعيل الاشتراك",
+    "healthPackage": "باقة الصحة العامة",
+    "generalHealth": "الصحة العامة",
+    "englishFoundationPackage": "باقة تأسيس اللغة الإنجليزية (المستوي الأول)",
+    "englishLanguage": "اللغة الانجليزية",
+    "firstGroup": "المجموعة الاولى",
+    "previewWeeklySchedule": "معاينة الجدول الأسبوعي"
+  },
+  "header": {
+    "balance": "الرصيد",
+    "currency": "ريال"
+  },
+  "modal": {
+    "success": "نجح",
+    "warning": "تحذير",
+    "error": "خطأ"
+  },
+  "buttons": {
+    "subscribe": "عرض الباقات",
+    "support": "الدعم",
+    "addPackage": "إضافة باقة"
+  }
+}

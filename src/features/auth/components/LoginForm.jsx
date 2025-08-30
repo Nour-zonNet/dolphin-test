@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { ArrowNext } from "../../../utils/icons";
 import Button from "../../../components/ui/Button";
 import dolphinChild from "@/assets/images/homeChild.png";
@@ -6,6 +7,7 @@ import FormTitle from "./FormTitle";
 import PhoneField from "./PhoneField";
 
 const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
+  const { t } = useTranslation();
   const {
     handleSubmit,
     control,
@@ -26,13 +28,13 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
           alt="Path"
           className="h-29 sm:h-48 md:h-48 lg:h-135 object-contain  lg:mb-6"
         />
-        <FormTitle text="ادخل لحسابك" isMobile />
+        <FormTitle text={t('auth.loginToAccount')} isMobile />
       </div>
 
       {/* Right side form */}
       <div className=" relative  ">
         <div className="flex justify-center ">
-          <FormTitle text="ادخل لحسابك" />
+          <FormTitle text={t('auth.loginToAccount')} />
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -40,7 +42,7 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
         >
           {/* Title */}
           <h2 className="text-lg sm:text-xl md:text-2xl text-subtext font-bold">
-            أدخل رقم جوالك
+            {t('auth.enterPhoneNumber')}
           </h2>
 
           {/* Phone Input */}

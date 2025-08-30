@@ -1,9 +1,11 @@
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import OTPInput from "@/components/ui/InputOtp";
 import Button from "@/components/ui/Button";
 import { Lock } from "@/utils/icons";
 
 const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
+  const { t } = useTranslation();
   const { control, handleSubmit } = useForm({ mode: "onChange" });
 
   return (
@@ -14,9 +16,9 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
       {/* ---- Header ---- */}
       <div className="flex flex-col items-center justify-center">
         <h2 className="mb-4 text-3xl sm:text-2xl text-status font-bold text-center sm:text-right">
-          ادخل لحسابك
+          {t('auth.loginToAccount')}
         </h2>
-        <p className="text-subtext text-lg">ادخل الرمز السرى للدخول</p>
+        <p className="text-subtext text-lg">{t('auth.enterPassword')}</p>
         <p className="text-orangedeep text-lg">{phoneNumber && phoneNumber}</p>
       </div>
 
@@ -25,7 +27,7 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
         <Controller
           name="password"
           control={control}
-          rules={{ required: "كلمة المرور مطلوبة" }}
+          rules={{ required: t('auth.passwordRequired') }}
           render={({ field, fieldState }) => (
             <div className="flex flex-col items-center">
               <OTPInput
@@ -47,7 +49,7 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
       {/* ---- Submit Button ---- */}
       <Button
         icon={<Lock />}
-        text={loading ? "جاري الدخول..." : "اكمال التسجيل "}
+        text={loading ? t('auth.loggingIn') : t('auth.completingRegistration')}
       />
     </form>
   );

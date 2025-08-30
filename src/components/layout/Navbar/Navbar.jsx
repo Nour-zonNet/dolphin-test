@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavTab, SubscribeBtn, SupportBtn } from "./components";
 import { TABS } from "../../../constants/TABS";
+import LanguageSwitcher from "../../ui/LanguageSwitcher";
 
 function Navbar() {
   const [activeTab, setActiveTab] = useState("schedule");
@@ -29,7 +30,7 @@ function Navbar() {
         {TABS.map((tab) => (
           <NavTab
             key={tab.value}
-            label={tab.label}
+            labelKey={tab.labelKey}
             value={tab.value}
             active={activeTab === tab.value}
             onClick={handleTabClick}
@@ -39,6 +40,7 @@ function Navbar() {
 
       {/* Buttons Section */}
       <div className="flex gap-2 sm:gap-4 w-full justify-end md:w-auto  ">
+        <LanguageSwitcher />
         <SubscribeBtn />
         {/* <SupportBtn /> */}
       </div>

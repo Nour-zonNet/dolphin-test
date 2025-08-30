@@ -1,10 +1,12 @@
 import { MODAL_TYPES } from "../../../../constants/MODAL_TYPES";
 import { CorrectCircle, Cross } from "../../../../utils/icons";
+import { useTranslation } from "react-i18next";
 import Button from "../../../ui/Button";
 import successImg from "../../../../assets/modal/successModal.svg"
 import failImg from "../../../../assets/modal/warningModal.svg"
 
 const StatusModal = ({ type, onClose, title, message }) => {
+  const { t } = useTranslation();
 
   return (
     <div className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-lg mx-10">
@@ -33,7 +35,7 @@ const StatusModal = ({ type, onClose, title, message }) => {
 
       {/* Button */}
       <div className="flex justify-center items-center mt-8">
-        <Button onClick={onClose} icon={<CorrectCircle color="#E89B32" fill="black" />} text="موافق" />
+        <Button onClick={onClose} icon={<CorrectCircle color="#E89B32" fill="black" />} text={t('common.ok')} />
       </div>
     </div>
   );

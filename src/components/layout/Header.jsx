@@ -1,8 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Balance, RightArrow } from "../../utils/icons";
 
 export const Header = ({ title, balance }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="w-full relative bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-8 px-20 flex items-center justify-between">
 
@@ -23,7 +26,7 @@ export const Header = ({ title, balance }) => {
       <div className="flex items-center gap-2">
         <Balance />
         <p className="font-bold text-navyteal text-xl">{balance}</p>
-        <span className="font-bold text-navyteal text-2xl">0 ريال</span>
+        <span className="font-bold text-navyteal text-2xl">0 {t('header.currency')}</span>
       </div>
     </div>
 

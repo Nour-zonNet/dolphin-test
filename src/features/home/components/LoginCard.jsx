@@ -1,8 +1,11 @@
 import { Lock } from "@/utils/icons";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Book } from "../../../utils/Illustrations";
 
 const LoginCard = () => {
+  const { t } = useTranslation();
+
   return (
     // Login Card
     <div className="relative border-2 border-dashed border-[#0C78B9] rounded-full px-6 py-6 mt-8 flex flex-row items-center justify-center w-full ">
@@ -11,15 +14,15 @@ const LoginCard = () => {
 
         <div className="flex flex-col items-center text-nowrap">
           <h2 className="text-2xl lg:text-[32px] font-bold text-subtext">
-            سجل دخول للمنصة
+            {t('home.loginToPlatform')}
           </h2>
-          <p className="text-subtext text-lg mt-1">للمستخدمين الجدد والحاليين</p>
+          <p className="text-subtext text-lg mt-1">{t('home.forNewAndExistingUsers')}</p>
           <Link
             to="/login"
             className="mt-4 flex items-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer text-[#0C2D40] px-6 py-2 rounded-full"
           >
             <Lock size={18} />
-            سجل الآن
+            {t('home.loginNow')}
           </Link>
         </div>
 

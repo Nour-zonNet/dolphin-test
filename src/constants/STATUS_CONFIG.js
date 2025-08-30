@@ -2,9 +2,10 @@ import { Canceled, Checked, Experimental, Finished } from "../utils/icons";
 
 // constants/STATUS_CONFIG.js
 export const STATUS_CONFIG = {
-  فعالة: {
+  active: {
     color: "bg-[#F8E0BF] text-status font-semibold",
-    label: (daysLeft) => `فعالة (${daysLeft} يوم متبقي)`,
+    labelKey: "subscription.active",
+    daysLeftKey: "subscription.daysLeft",
     actions: ["changeGroup", "useCoupon", "cancel"],
     message: null,
     lineColor: "stroke-[#185A80]", 
@@ -12,38 +13,36 @@ export const STATUS_CONFIG = {
     bg: "bg-health",
     icon: Checked 
   },
-  تجريبي: {
+  trial: {
     color: "border border-[#99A1A7] text-status h-9 w-32 px-4 font-semibold",
-    label: () => "تجريبي",
+    labelKey: "subscription.trial",
     actions: ["reactivate"],
-    message: "انتهت الفترة التجريبية الخاصة بك مدد الاشتراك لمتابعة الاستفادة",
-    lineColor: "stroke-blue-500",
+    messageKey: "subscription.trialExpiredMessage",
     lineColor: "stroke-[#185A80]", 
     fill: "#185A80",
     bg: "bg-health",
-    buttonText: "تمديد الاشتراك",
+    buttonTextKey: "subscription.extendSubscription",
     icon: Experimental
   },
-  منتهي: {
+  expired: {
     color: "bg-[#595959] h-9 w-32 text-white font-semibold px-4",
-    label: () => "منتهي",
+    labelKey: "subscription.expired",
     actions: ["renew"],
-    message: "انتهت صلاحية باقتك، اضغط على زر (تجديد الباقة) لتجديدها ومتابعة استخدام خدماتنا",
+    messageKey: "subscription.expiredMessage",
     lineColor: "stroke-[#B3261E]",
     fill: "#B3261E",
     bg: "bg-health",
-    buttonText: "تجديد الاشتراك",
+    buttonTextKey: "subscription.renewSubscription",
     icon: Finished
   },
-  ملغاة: {
+  cancelled: {
     color: "bg-[#FFD8E4] text-status h-9 w-32 px-4 font-semibold",
-    label: () => "ملغاة",
+    labelKey: "subscription.cancelled",
     actions: ["canceled"],
-    message: "لقد قمت بتغيير الاشتراك لإعادة التفعيل أرسل طلب عبر الضغط علي زر  إعادة تفعيل الاشتراك",
-    lineColor: "stroke-red-500",
+    messageKey: "subscription.cancelledMessage",
     lineColor: "stroke-[#185A80]", 
     fill: "#185A80",
-    buttonText: "طلب إعادة تفعيل الاشتراك",
+    buttonTextKey: "subscription.requestReactivateSubscription",
     bg: "bg-englishLevelOne",
     icon: Canceled,
   },

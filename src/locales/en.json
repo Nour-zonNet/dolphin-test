@@ -1,0 +1,72 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "schedule": "Study Schedule",
+    "subscriptions": "Subscribed Packages",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "home": {
+    "welcome": "Welcome to",
+    "platformName": "Dolphin Educational Platform",
+    "loginToPlatform": "Login to Platform",
+    "forNewAndExistingUsers": "For new and existing users",
+    "loginNow": "Login Now"
+  },
+  "auth": {
+    "loginToAccount": "Login to Your Account",
+    "enterPhoneNumber": "Enter your phone number",
+    "enterPassword": "Enter password to login",
+    "passwordRequired": "Password is required",
+    "completingRegistration": "Complete Registration",
+    "loggingIn": "Logging in..."
+  },
+  "subscription": {
+    "active": "Active",
+    "trial": "Trial",
+    "expired": "Expired",
+    "cancelled": "Cancelled",
+    "daysLeft": "days left",
+    "renewSubscription": "Renew Subscription",
+    "extendSubscription": "Extend Subscription",
+    "requestReactivateSubscription": "Request Reactivate Subscription",
+    "trialExpiredMessage": "Your trial period has expired. Extend your subscription to continue benefiting",
+    "expiredMessage": "Your package has expired. Click the (Renew Package) button to renew it and continue using our services",
+    "cancelledMessage": "You have changed your subscription. To reactivate, send a request by clicking the Reactivate Subscription button",
+    "healthPackage": "Health Package",
+    "generalHealth": "General Health",
+    "englishFoundationPackage": "English Foundation Package (Level 1)",
+    "englishLanguage": "English Language",
+    "firstGroup": "First Group",
+    "previewWeeklySchedule": "Preview Weekly Schedule"
+  },
+  "header": {
+    "balance": "Balance",
+    "currency": "SAR"
+  },
+  "modal": {
+    "success": "Success",
+    "warning": "Warning",
+    "error": "Error"
+  },
+  "buttons": {
+    "subscribe": "View Packages",
+    "support": "Support",
+    "addPackage": "Add Package"
+  }
+}
