@@ -54,6 +54,9 @@ const AppRoutes = () => {
       />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/schedule/lessoncontent" element={<LessonContentPage />} />
+      <Route path="/manage-subscription" element={<ManageSubscription />} />
+      manage-subscription
+
     </Routes>
   );
 };

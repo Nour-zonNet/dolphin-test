@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 // import lessonVideo from "@/assets/videos/lesson.mp4";
 import playVideo from "@/assets/schedule/play-video.svg";
 import stopVideo from "@/assets/schedule/stop-video.svg";
+import { Fullscreen, Settings } from "lucide-react";
 
 const VideoPlayer = () => {
   const videoRef = useRef(null);

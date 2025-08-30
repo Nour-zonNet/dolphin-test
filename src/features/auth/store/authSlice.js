@@ -71,10 +71,10 @@ export const verifyOtp = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await authRepository.verifyOtp(data);
+      console.log(response);
       if (response.success) {
         return response;
       } else {
-        console.log(response);
         return rejectWithValue(response.message);
       }
     } catch (error) {

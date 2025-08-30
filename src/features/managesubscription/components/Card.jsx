@@ -31,7 +31,7 @@ const Card = ({
   }, [open]);
 
   const config = STATUS_CONFIG[status] || STATUS_CONFIG["فعالة"];
-  console.log(config)
+  console.log(config);
 
   return (
     <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
