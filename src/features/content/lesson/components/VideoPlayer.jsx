@@ -1,11 +1,13 @@
 import React, { useRef, useState } from "react";
-// import { Fullscreen, Settings } from "lucide-react"; // icons
+
 // import lessonVideo from "@/assets/videos/lesson.mp4";
 import playVideo from "@/assets/schedule/play-video.svg";
 import stopVideo from "@/assets/schedule/stop-video.svg";
-import { Fullscreen, Settings } from "lucide-react";
+import { Fullscreen, Settings } from "@/utils/icons";
+import { useTranslation } from "react-i18next";
 
 const VideoPlayer = () => {
+  const { t } = useTranslation();
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -21,10 +23,10 @@ const VideoPlayer = () => {
   };
 
   return (
-    <div className="w-full lg:h-[430px] mx-auto mt-6 lg:mt-0 rounded-2xl overflow-hidden border border-[#00000066]">
+    <div className="w-full lg:h-[660px] mx-auto lg:mt-0 rounded-2xl overflow-hidden border border-[#00000066]">
       {/* Video Container */}
       <div
-        className="relative h-[300px] group"
+        className="relative lg:h-[500px] md:h-[250px] h-[180px] w-full group"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -43,11 +45,8 @@ const VideoPlayer = () => {
             className="absolute inset-0 flex flex-col items-center justify-center bg-black/1 cursor-pointer"
             onClick={togglePlay}
           >
-            {/* <button className="">
-              <img src={stopVideo} alt="Play" className="" />
-            </button> */}
-            <p className="mt-30 font-semibold text-white text-xl z-10">
-              مشاهدة الدرس المسجل
+            <p className="lg:mt-30 mt-20 font-semibold text-white text-sm md:text-xl z-10">
+                {t("lesson_content.watch_recorded")}
             </p>
           </div>
         )}
@@ -58,7 +57,7 @@ const VideoPlayer = () => {
             onClick={togglePlay}
             className="absolute inset-0 flex items-center justify-center bg-black/20"
           >
-            <img src={playVideo} alt="Pause" className="w-15" />
+            <img src={playVideo} alt="Pause" className="w-10 md:w-14" />
           </button>
         )}
         {/* Overlay for both states */}
@@ -71,27 +70,20 @@ const VideoPlayer = () => {
             <img
               src={!isPlaying ? stopVideo : playVideo}
               alt={!isPlaying ? "Play" : "Pause"}
-              className="w-15"
+              className="w-10 md:w-14"
             />
           </button>
-
-          {/* Show text only when video is not playing */}
-          {/* {!isPlaying && (
-            <p className="mt-4 font-semibold text-white text-xl">
-              مشاهدة الدرس المسجل
-            </p>
-          )} */}
         </div>
       )}
 
         {/* Controls */}
-        <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between text-white">
+        <div className="absolute md:bottom-12 bottom-2 left-6 right-6 flex items-center justify-between text-white">
           <div className="flex items-center gap-3">
-            <Settings className="w-7 h-7 cursor-pointer" />
             <Fullscreen
-              className="w-7 h-7 cursor-pointer"
+              className="md:w-5 md:h-5 cursor-pointer"
               onClick={() => videoRef.current.requestFullscreen()}
             />
+            <Settings fill="white" className="md:w-6 md:h-6 cursor-pointer" />
           </div>
           <span className="bg-black/50 rounded-[64px] px-3 py-1 text-sm">
             50:07
@@ -100,10 +92,10 @@ const VideoPlayer = () => {
       </div>
 
       {/* Video Info */}
-      <div className="p-6 bg-white">
-        <div className="flex justify-between items-start">
-          <div className="flex flex-col gap-4">
-            <h2 className="font-semibold text-xl text-normalblue">
+      <div className="md:p-6 p-2 bg-white">
+        <div className="flex justify-between items-start flex-wrap gap-4">
+          <div className="flex flex-col gap-2">
+            <h2 className="font-semibold text-sm md:text-xl text-normalblue">
               الدرس الرابع: الأفعال المساعدة
             </h2>
 
@@ -115,7 +107,7 @@ const VideoPlayer = () => {
                   alt="Duration"
                   src="https://c.animaapp.com/mer0eh3xn7npjs/img/frame-4.svg"
                 />
-                <span className="font-semibold text-lg">50 دقيقة</span>
+                <span className="font-semibold text-[12px] md:text-lg">50 دقيقة</span>
               </div>
 
               {/* Date */}
@@ -125,7 +117,7 @@ const VideoPlayer = () => {
                   alt="Calendar"
                   src="https://c.animaapp.com/mer0eh3xn7npjs/img/calendar-1.svg"
                 />
-                <span className="font-semibold text-lg">17 أغسطس</span>
+                <span className="font-semibold text-[12px] md:text-lg">17 أغسطس</span>
               </div>
             </div>
           </div>
@@ -137,7 +129,7 @@ const VideoPlayer = () => {
               alt="Teacher"
               src="https://c.animaapp.com/mer0eh3xn7npjs/img/frame-2.svg"
             />
-            <span className="font-semibold text-lg text-normalblue">
+            <span className="font-semibold text-[16px] md:text-lg text-normalblue">
               أ. حنان
             </span>
           </div>

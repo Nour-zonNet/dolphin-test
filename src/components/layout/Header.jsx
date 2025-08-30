@@ -7,26 +7,29 @@ export const Header = ({ title, balance }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="w-full relative bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-8 px-20 flex items-center justify-between">
+    <div className="w-full relative bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-8">
+      <div className="w-[90%] mx-auto flex items-center md:items-center justify-between">
+        {/* Back Button */}
+        <Link
+          to="/schedule"
+          className="outline-0 border border-bordercolor md:w-[60px] md:h-[60px] w-[40px] h-[40px] rounded-full flex items-center justify-center"
+        >
+          <RightArrow className="w-[20px] md:w-[40px]" />
+        </Link>
 
-      {/* Back Button */}
-      <Link
-        to="/schedule"
-        className="outline-0 border border-bordercolor w-[60px] h-[60px] rounded-full flex items-center justify-center"
-      >
-        <RightArrow />
-      </Link>
+        {/* Centered Title */}
+        <h1 className="absolute left-1/2 -translate-x-1/2 font-bold text-navyteal md:text-2xl text-[16px]">
+          {title}
+        </h1>
 
-      {/* Centered Title */}
-      <h1 className="absolute left-1/2 -translate-x-1/2 font-bold text-navyteal text-2xl">
-        {title}
-      </h1>
-
-      {/* Right Section */}
-      <div className="flex items-center gap-2">
-        <Balance />
-        <p className="font-bold text-navyteal text-xl">{balance}</p>
-        <span className="font-bold text-navyteal text-2xl">0 {t('header.currency')}</span>
+        {/* Right Section */}
+        <div className="flex items-center flex-col md:flex-row gap-2">
+          <div className="flex items-center gap-2">
+            <Balance className="w-4 md:w-6" />
+            <p className="font-bold text-navyteal md:text-xl text-sm">{balance}</p>
+          </div>
+            <span className="font-bold text-navyteal md:text-2xl text-[16px]">0 ريال</span>
+        </div>
       </div>
     </div>
 
