@@ -101,13 +101,14 @@ const LoginPage = () => {
     });
     if (res?.payload?.success) {
       navigate("/schedule");
+    } else {
+      console.log(res);
       dispatch(
         showModal({
-          type: MODAL_TYPES.SUCCESS,
+          type: MODAL_TYPES.WARNING,
           props: {
-            title: "تهانينا ",
-            message:
-              "تم بدء الفترة التجريبية بنجاح لمدة 1 أيام وتم تعيينك في المجموعة الأولى ( تم اختيار مجموعة زوجية لتوافق مع باقتك النشطة باقة مادة الرياضيات في مجموعة 2)",
+            title: "هنالك خطاء ",
+            message: res.payload || res.error.message,
           },
         })
       );
@@ -124,7 +125,7 @@ const LoginPage = () => {
     if (res?.payload?.success) {
       navigate("/schedule"); // يوديه بعد تسجيل الدخول
     } else {
-      console.log(res)
+      console.log(res);
       dispatch(
         showModal({
           type: MODAL_TYPES.WARNING,

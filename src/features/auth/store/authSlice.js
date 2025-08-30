@@ -37,14 +37,12 @@ export const registerUser = createAsyncThunk(
     try {
       const response = await authRepository.register(userData);
 
-      if (response.success) {
         return response.data; // هترجع بيانات المستخدم + token
-      } else {
-        return rejectWithValue(response.message);
-      }
+  
     } catch (err) {
-      console.log(err.response.data.errors[0]);
-      return rejectWithValue(err.response.data.errors[0] || "Server error");
+      console.log(err)
+      console.log(err.response.data.error);
+      return rejectWithValue(err.response.data.error || "Server error");
     }
   }
 );

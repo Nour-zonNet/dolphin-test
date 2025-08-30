@@ -8,15 +8,15 @@ const LoginCard = () => {
 
   return (
     // Login Card
-    <div className="relative border-2 border-dashed border-[#0C78B9] rounded-full px-6 py-6 mt-8 flex flex-row items-center justify-center w-full ">
+    <div className=" w-full md:min-w-lg lg:min-w-xl relative border-2 border-dashed border-[#0C78B9] rounded-full px-6 py-4 mt-8 flex flex-row items-center justify-center ">
 
-          <Book  className="absolute bottom-10 right-10"/>
+          <Book  className="absolute bottom-10 right-8"/>
 
         <div className="flex flex-col items-center text-nowrap">
-          <h2 className="text-2xl lg:text-[32px] font-bold text-subtext">
+          <h2 className="text-base md:text-[32px]  lg:text-[40px] font-bold text-subtext">
             {t('home.loginToPlatform')}
           </h2>
-          <p className="text-subtext text-lg mt-1">{t('home.forNewAndExistingUsers')}</p>
+          <p className="text-subtext mt-1 text-[14px]  md:text-[20px]  lg:text-[24px]">{t('home.forNewAndExistingUsers')}</p>
           <Link
             to="/login"
             className="mt-4 flex items-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer text-[#0C2D40] px-6 py-2 rounded-full"
@@ -26,7 +26,7 @@ const LoginCard = () => {
           </Link>
         </div>
 
-        <div className="absolute top-10 left-10">
+        <div className="absolute top-10 left-8">
           <svg
             width="65"
             height="65"
