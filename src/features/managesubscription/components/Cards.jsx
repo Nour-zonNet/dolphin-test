@@ -16,19 +16,9 @@ export const Cards = ({  }) => {
       image: tooth,
       status: "فعالة"
     },
+
     {
       id: 2,
-      title: "بـاقة الصحة العامة",
-      subject: "الصحة العامة",
-      startDate: "29 أغسطس 2025",
-      endDate: "18 سبتمبر 2025",
-      group: "المجموعة 1",
-      daysLeft: 0,
-      image: tooth,
-      status: "منتهي"
-    },
-    {
-      id: 3,
       title: "بـاقة الصحة العامة",
       subject: "اللغة الإنجليزية",
       startDate: "1 سبتمبر 2025",
@@ -37,6 +27,17 @@ export const Cards = ({  }) => {
       daysLeft: 2,
       image: tooth,
       status: "تجريبي"
+    },
+    {
+      id: 3,
+      title: "بـاقة الصحة العامة",
+      subject: "الصحة العامة",
+      startDate: "29 أغسطس 2025",
+      endDate: "18 سبتمبر 2025",
+      group: "المجموعة 1",
+      daysLeft: 0,
+      image: tooth,
+      status: "منتهي"
     },
     {
       id: 4,
@@ -51,9 +52,10 @@ export const Cards = ({  }) => {
     },
   ];
   return (
-   <div className="w-full grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-6 items-start mt-6 lg:mt-10">
+  // <div className="w-full grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-6 items-start mt-6 lg:mt-10">
+    <div className="w-full columns-1 md:columns-1 lg:columns-2 gap-6 mt-6 lg:mt-10">
       {subscriptions.map((sub, index) => (
-        <div key={sub.id} className="w-full">
+      <div key={sub.id} className="mb-6 break-inside-avoid">
           <Card
             title={sub.title}
             image={sub.image}
@@ -67,9 +69,9 @@ export const Cards = ({  }) => {
             onCancel={() => console.log("Cancel subscription", sub.id)}
           />
           {/* Add dashed line after each card except the last one */}
-          {index !== subscriptions.length - 1 && (
-            <div className="my-4">
-              {/* <DashedLine /> */}
+          {index !== subscriptions.length - 1  && (
+            <div className="my-8">
+              <DashedLine className="w-full" />
             </div>
           )}
         </div>

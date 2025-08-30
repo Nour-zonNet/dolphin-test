@@ -913,8 +913,20 @@ export const Line = ({ className="", fill }) => (
   </svg>
 );
 
-export const DashedLine = ({  }) => (
-  <svg width="1262" height="1" viewBox="0 0 1262 1" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const DashedLine = ({ className="" }) => (
+  <svg className={className} height="1" viewBox="0 0 1262 1" fill="none" xmlns="http://www.w3.org/2000/svg">
     <line y1="0.5" x2="1262" y2="0.5" stroke="#185A80" stroke-dasharray="8 8"/>
+  </svg>
+);
+
+export const VerticalLine = ({ className="" }) => (
+  <svg className={className} width="5" height="628" viewBox="0 0 5 628" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="4.46874" y1="0.00300203" x2="0.698196" y2="627.992" stroke="#185A80" stroke-dasharray="8 8"/>
+  </svg>
+);
+
+export const HorizontalLine = ({ className="" }) => (
+  <svg className={className} width="650" height="2" viewBox="0 0 650 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="-2.49438e-05" y1="0.533203" x2="650" y2="0.500776" stroke="#185A80" stroke-dasharray="8 8"/>
   </svg>
 );
