@@ -29,7 +29,7 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<ManageSubscription />} />
+      <Route path="/" element={<HomePage />} />
 
       <Route
         path="/schedule"

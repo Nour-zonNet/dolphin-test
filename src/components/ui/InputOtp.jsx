@@ -84,7 +84,6 @@ const OTPInput = ({ length = 6, type = "text", onChange }) => {
           onPaste={(e) => handlePaste(e, i)}
           onFocus={(e) => handleFocus(e, i)}
            autoFocus={i === 0} 
-          dir="ltr"
           inputMode="numeric"
           pattern="[0-9]*"
           className="aspect-square w-full 

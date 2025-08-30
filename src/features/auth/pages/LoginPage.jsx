@@ -31,7 +31,7 @@ const LoginPage = () => {
     user,
   } = useAuth();
 
-  const [step, setStep] = useState(STEPS.PHONE);
+  const [step, setStep] = useState(STEPS.OTP);
   const [phoneNumber, setPhoneNumber] = useState("");
 
   // -------- Handlers --------

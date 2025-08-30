@@ -24,14 +24,13 @@ const VerificationForm = ({ onSubmit }) => {
 
   return (
     <form
-      dir="ltr"
       onSubmit={handleSubmit}
          className="w-full max-w-lg my-auto mx-auto  space-y-10 mt-20"
     >
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-status text-center">
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-status text-center mx-auto">
         رمز التحقق
       </h2>
-      <p className="text-sm sm:text-base md:text-lg text-subtext text-center max-w-md">
+      <p className="text-sm sm:text-base md:text-lg text-subtext text-center max-w-md mx-auto">
         أدخل رمز التحقق المرسل إلى جوالك
       </p>
 

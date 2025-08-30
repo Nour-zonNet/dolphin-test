@@ -1,10 +1,12 @@
 import { useForm, Controller } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Lock } from "../../../utils/icons";
 import OTPInput from "../../../components/ui/InputOtp";
 import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
 
 const RegisterForm = ({ onSubmit, loading, error }) => {
+  const { t } = useTranslation();
   const {
     control,
     handleSubmit,
@@ -23,40 +25,41 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
           alt="Path"
           className="h-29 sm:h-48 md:h-48 lg:h-135 object-contain  lg:mb-6"
         />
-        <FormTitle text="ادخل لحسابك" isMobile />
+        <FormTitle text={t('auth.loginToAccount')} isMobile />
       </div>
 
       {/* Right side form */}
       <div className=" relative w-full flex  justify-center items-center lg:items-stretch lg:justify-start  flex-col  mx-auto">
         <div className="flex">
 
-          <FormTitle text="ادخل لحسابك" />
+          <FormTitle text={t('auth.loginToAccount')} />
         </div>
 
         <form
+     
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-6 w-full max-w-lg rounded-2xl"
         >
           {/* الاسم الكامل */}
           <div className="flex flex-col gap-2">
-            <label className="text-right text-[#144B6B] font-semibold text-base sm:text-base md:text-2xl">
-              الاسم الكامل
+            <label className="text-[#144B6B] font-semibold text-base sm:text-base md:text-2xl">
+              {t('auth.fullName')}
             </label>
             <Controller
               name="name"
               control={control}
-              rules={{ required: "الاسم مطلوب" }}
+              rules={{ required: t('auth.fullNameRequired') }}
               render={({ field }) => (
                 <input
                   type="text"
-                  placeholder="اكتب اسمك الكامل"
+                  placeholder={t('auth.fullNamePlaceholder')}
                   {...field}
-                  className="placeholder:text-base  placeholder:sm:text-base placeholder:md:text-2xl border placeholder:text-bordercolor rounded-full border-graycustom/50 px-4 py-2 md:py-4 text-right"
+                  className="placeholder:text-base placeholder:sm:text-base placeholder:md:text-2xl border placeholder:text-bordercolor rounded-full border-graycustom/50 px-4 py-2 md:py-4"
                 />
               )}
             />
             {errors.name && (
-              <p className="text-[#BA7C28] font-semibold pr-3 text-sm">
+              <p className="text-[#BA7C28] font-semibold text-sm pr-3">
                 {errors.name.message}
               </p>
             )}
@@ -64,27 +67,27 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
 
           {/* الصف الدراسي */}
           <div className="flex flex-col gap-2">
-            <label className="text-right font-semibold text-base sm:text-base md:text-2xl  text-[#144B6B]">
-              الصف الدراسي
+            <label className="font-semibold text-base sm:text-base md:text-2xl text-[#144B6B]">
+              {t('auth.grade')}
             </label>
             <Controller
               name="grade"
               control={control}
-              rules={{ required: "الصف الدراسي مطلوب" }}
+              rules={{ required: t('auth.gradeRequired') }}
               render={({ field }) => (
                 <select
                   {...field}
-                  className="border rounded-full placeholder:text-bordercolor text-graycustom border-graycustom/50 px-4 py-2 md:py-4 text-right"
+                  className="border rounded-full placeholder:text-bordercolor text-graycustom border-graycustom/50 px-4 py-2 md:py-4"
                 >
-                  <option value="">اختر الصف الدراسي</option>
-                  <option value="1">الصف الأول</option>
-                  <option value="2">الصف الثاني</option>
-                  <option value="3">الصف الثالث</option>
+                  <option value="">{t('auth.selectGrade')}</option>
+                  <option value="1">{t('auth.grade1')}</option>
+                  <option value="2">{t('auth.grade2')}</option>
+                  <option value="3">{t('auth.grade3')}</option>
                 </select>
               )}
             />
             {errors.grade && (
-              <p className="text-[#BA7C28] font-semibold pr-3 text-sm">
+              <p className="text-[#BA7C28] font-semibold text-sm pr-3">
                 {errors.grade.message}
               </p>
             )}
@@ -92,21 +95,21 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
 
           {/* كلمة المرور */}
           <div className="flex flex-col gap-2">
-            <label className="text-right font-semibold text-base sm:text-base md:text-2xl  text-[#144B6B]">
-              كلمة المرور
+            <label className="font-semibold text-base sm:text-base md:text-2xl text-[#144B6B]">
+              {t('auth.password')}
             </label>
             <Controller
               name="password"
               control={control}
               rules={{
-                required: "كلمة المرور مطلوبة",
+                required: t('auth.passwordRequired'),
                 minLength: {
                   value: 6,
-                  message: "كلمة المرور يجب أن تكون 6 أرقام",
+                  message: t('auth.password6Digits'),
                 },
                 pattern: {
                   value: /^[0-9]+$/,
-                  message: "كلمة المرور يجب أن تكون أرقام فقط",
+                  message: t('auth.passwordNumbersOnly'),
                 },
               }}
               render={({ field }) => (
@@ -119,7 +122,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               )}
             />
             {errors.password && (
-              <p className="text-[#BA7C28] font-semibold pr-2 text-sm">
+              <p className="text-[#BA7C28] font-semibold text-sm pr-2">
                 {errors.password.message}
               </p>
             )}
@@ -127,16 +130,16 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
 
           {/* تأكيد كلمة المرور */}
           <div className="flex flex-col gap-2">
-            <label className="text-right font-semibold text-base sm:text-base md:text-2xl  text-[#144B6B]">
-              تأكيد كلمة المرور
+            <label className="font-semibold text-base sm:text-base md:text-2xl text-[#144B6B]">
+              {t('auth.confirmPassword')}
             </label>
             <Controller
               name="confirmPassword"
               control={control}
               rules={{
-                required: "تأكيد كلمة المرور مطلوب",
+                required: t('auth.confirmPasswordRequired'),
                 validate: (value) =>
-                  value === password || "كلمة المرور غير متطابقة",
+                  value === password || t('auth.passwordsNotMatch'),
               }}
               render={({ field }) => (
                 <OTPInput
@@ -148,7 +151,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               )}
             />
             {errors.confirmPassword && (
-              <p className="text-[#BA7C28] font-semibold pr-3 text-sm">
+              <p className="text-[#BA7C28] font-semibold text-sm pr-3">
                 {errors.confirmPassword.message}
               </p>
             )}
@@ -156,8 +159,8 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
 
           {/* كود الدعوة */}
           <div className="flex flex-col gap-2">
-            <label className="text-right font-semibold text-base sm:text-base md:text-2xl  text-[#144B6B]">
-              كود الدعوة أو الخصم (اختياري)
+            <label className="font-semibold text-base sm:text-base md:text-2xl text-[#144B6B]">
+              {t('auth.inviteCode')}
             </label>
             <Controller
               name="inviteCode"
@@ -165,9 +168,9 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               render={({ field }) => (
                 <input
                   type="text"
-                  placeholder="أدخل كود الدعوة أو الخصم إن وجد"
+                  placeholder={t('auth.inviteCodePlaceholder')}
                   {...field}
-                  className="border rounded-full border-graycustom/50 px-4 py-2 md:py-4 text-right"
+                  className="border rounded-full border-graycustom/50 px-4 py-2 md:py-4"
                 />
               )}
             />
@@ -181,7 +184,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               className="bg-orangedeep text-navyteal font-bold py-3 px-8 rounded-full flex items-center justify-center gap-2 hover:bg-yellow-600 transition"
             >
               <Lock size={18} />
-              {loading ? "جاري التسجيل..." : "إكمال التسجيل"}
+              {loading ? t('auth.registering') : t('auth.completeRegistration')}
             </button>
 
             {error && (
