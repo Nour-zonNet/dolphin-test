@@ -53,6 +53,7 @@
     "englishFoundationPackage": "English Foundation Package (Level 1)",
     "englishLanguage": "English Language",
     "firstGroup": "First Group",
+    "secondGroup": "Second Group",
     "previewWeeklySchedule": "Preview Weekly Schedule"
   },
   "header": {
@@ -68,5 +69,23 @@
     "subscribe": "View Packages",
     "support": "Support",
     "addPackage": "Add Package"
+  },
+  "lessons": {
+    "viewContent": "View Content",
+    "teacher": "Teacher",
+    "group": "Group",
+    "time": "Time",
+    "remainingTime": "Remaining Time",
+    "defaultTeacher": "Ms. Hanan",
+    "sunday": "Sunday",
+    "tuesday": "Tuesday",
+    "thursday": "Thursday"
+  },
+  "packages": {
+    "healthPackage": "Health Package",
+    "firstGroup": "First Group",
+    "previewWeeklySchedule": "Preview Weekly Schedule",
+    "weeklySchedule": "Weekly Schedule",
+    "noLesson": "-"
   }
 }

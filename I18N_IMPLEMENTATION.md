@@ -64,7 +64,40 @@ src/
   "subscription": {
     "active": "Active",
     "trial": "Trial",
-    "expired": "Expired"
+    "expired": "Expired",
+    "cancelled": "Cancelled",
+    "daysLeft": "days left",
+    "renewSubscription": "Renew Subscription",
+    "extendSubscription": "Extend Subscription",
+    "requestReactivateSubscription": "Request Reactivate Subscription",
+    "trialExpiredMessage": "Your trial period has expired. Extend your subscription to continue benefiting",
+    "expiredMessage": "Your package has expired. Click the (Renew Package) button to renew it and continue using our services",
+    "cancelledMessage": "You have changed your subscription. To reactivate, send a request by clicking the Reactivate Subscription button",
+    "healthPackage": "Health Package",
+    "generalHealth": "General Health",
+    "englishFoundationPackage": "English Foundation Package (Level 1)",
+    "englishLanguage": "English Language",
+    "firstGroup": "First Group",
+    "secondGroup": "Second Group",
+    "previewWeeklySchedule": "Preview Weekly Schedule"
+  },
+  "lessons": {
+    "viewContent": "View Content",
+    "teacher": "Teacher",
+    "group": "Group",
+    "time": "Time",
+    "remainingTime": "Remaining Time",
+    "defaultTeacher": "Ms. Hanan",
+    "sunday": "Sunday",
+    "tuesday": "Tuesday",
+    "thursday": "Thursday"
+  },
+  "packages": {
+    "healthPackage": "Health Package",
+    "firstGroup": "First Group",
+    "previewWeeklySchedule": "Preview Weekly Schedule",
+    "weeklySchedule": "Weekly Schedule",
+    "noLesson": "-"
   }
 }
 ```
@@ -115,6 +148,7 @@ const MyComponent = () => {
 
 The following components have been updated to use translations:
 
+### Core Components
 1. **Header.jsx** - Currency display
 2. **Hero.jsx** - Welcome message and platform name
 3. **LoginCard.jsx** - Login form text
@@ -124,6 +158,15 @@ The following components have been updated to use translations:
 7. **Navbar.jsx** - Navigation tabs and language switcher
 8. **NavTab.jsx** - Tab labels
 9. **HomePage Navbar** - Package button
+
+### Lessons Feature
+10. **LessonCard.jsx** - Lesson content, teacher names, view content button
+11. **SliderHeader.jsx** - Date formatting based on language
+12. **ScheduleSlider.jsx** - Lesson scheduling interface
+
+### Packages Feature
+13. **PackageCard.jsx** - Package titles, status, groups, preview button
+14. **WeeklySchedulePopup.jsx** - Schedule popup, day names, teacher names
 
 ## Adding New Languages
 

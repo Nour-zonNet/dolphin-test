@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Calender,
   CorrectCircle,
@@ -10,6 +11,7 @@ import { CardKite, PackagesBorder, Star } from "@/utils/Illustrations";
 
 const PackageCard = ({ item, color, image }) => {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <div className="relative w-full mx-auto px-4 pl-8 ">
@@ -53,7 +55,7 @@ const PackageCard = ({ item, color, image }) => {
 
             <div>
               <h2 className=" text-sm  sm:text-lg text-navyteal xs:text-xl font-semibold leading-snug">
-                {item.name ?? "باقة الصحة العامة"}
+                {item.name ?? t('packages.healthPackage')}
               </h2>
               <h3 className="text-sm xs:text-base font-medium opacity-90">
                 {item.description}
@@ -66,11 +68,11 @@ const PackageCard = ({ item, color, image }) => {
             <div className="flex items-center gap-2 bg-[#FCF0E0] min-w-[100px] h-[34px] font-semibold rounded-3xl px-3 shadow-sm">
               <CorrectCircle className="w-4 h-4 text-status" />
               <span className="text-status text-xs xs:text-sm">
-                {item.status ?? "فعالة"}
+                {item.status ?? t('subscription.active')}
               </span>
             </div>
             <p className="text-navyteal font-semibold text-xs xs:text-sm">
-              {item.group ?? "المجموعة الاولى"}
+              {item.group ?? t('packages.firstGroup')}
             </p>
           </div>
 
@@ -82,7 +84,7 @@ const PackageCard = ({ item, color, image }) => {
               className="w-full   text-navyteal text-xs  xs:text-base flex items-center text-nowrap gap-1 max-w-60  bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full  px-4 py-2 sm:py-4  font-medium transition-colors duration-300"
             >
               <Calender />
-              معاينة الجدول الأسبوعي
+              {t('packages.previewWeeklySchedule')}
             </button>
 
             {/* Social Icons */}

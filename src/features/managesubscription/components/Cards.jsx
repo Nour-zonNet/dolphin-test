@@ -1,53 +1,56 @@
 import Card from "./Card";
+import { useTranslation } from "react-i18next";
 import tooth from "@/assets/images/tooth.svg";
 import letters from "@/assets/schedule/abc.svg";
 import { DashedLine } from "../../../utils/Illustrations";
 
-export const Cards = ({  }) => {
-    const subscriptions = [
+export const Cards = () => {
+  const { t } = useTranslation();
+  
+  const subscriptions = [
     {
       id: 1,
-      title: "بـاقة الصحة العامة",
-      subject: "الصحة العامة",
+      title: t('subscription.healthPackage'),
+      subject: t('subscription.generalHealth'),
       startDate: "29 أغسطس 2025",
       endDate: "18 سبتمبر 2025",
-      group: "المجموعة 1",
+      group: t('subscription.firstGroup'),
       daysLeft: 1,
       image: tooth,
-      status: "فعالة"
+      status: "active"
     },
     {
       id: 2,
-      title: "بـاقة الصحة العامة",
-      subject: "الصحة العامة",
+      title: t('subscription.healthPackage'),
+      subject: t('subscription.generalHealth'),
       startDate: "29 أغسطس 2025",
       endDate: "18 سبتمبر 2025",
-      group: "المجموعة 1",
+      group: t('subscription.firstGroup'),
       daysLeft: 0,
       image: tooth,
-      status: "منتهي"
+      status: "expired"
     },
     {
       id: 3,
-      title: "بـاقة الصحة العامة",
-      subject: "اللغة الإنجليزية",
+      title: t('subscription.healthPackage'),
+      subject: t('subscription.englishLanguage'),
       startDate: "1 سبتمبر 2025",
       endDate: "20 أكتوبر 2025",
-      group: "المجموعة 2",
+      group: t('subscription.secondGroup'),
       daysLeft: 2,
       image: tooth,
-      status: "تجريبي"
+      status: "trial"
     },
     {
       id: 4,
-      title: "باقة تأسيس اللغة الإنجليزية (المستوي الأول)",
-      subject: "اللغة الإنجليزية",
+      title: t('subscription.englishFoundationPackage'),
+      subject: t('subscription.englishLanguage'),
       startDate: "1 سبتمبر 2025",
       endDate: "20 أكتوبر 2025",
-      group: "المجموعة 2",
+      group: t('subscription.secondGroup'),
       daysLeft: 2,
       image: letters,
-      status: "ملغاة"
+      status: "cancelled"
     },
   ];
   return (

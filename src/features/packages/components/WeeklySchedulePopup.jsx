@@ -1,19 +1,21 @@
 import { Cross } from "@/utils/icons";
+import { useTranslation } from "react-i18next";
 import Tooth from "@/assets/packages/tooth.svg";
 import { Clock, Teacher } from "../../../utils/icons";
 
 const WeeklySchedulePopup = ({ open, setOpen }) => {
+  const { t } = useTranslation();
   const schedule = {
-    الأحد: [{ time: "9:00م", doctor: "أ. حنان" }],
-    الثلاثاء: [
+    [t('lessons.sunday')]: [{ time: "9:00م", doctor: t('lessons.defaultTeacher') }],
+    [t('lessons.tuesday')]: [
       
-      { time: "9:00م", doctor: "أ. حنان" },
-      { time: "9:00م", doctor: "أ. حنان" },
+      { time: "9:00م", doctor: t('lessons.defaultTeacher') },
+      { time: "9:00م", doctor: t('lessons.defaultTeacher') },
     ],
-    الخميس: [{ time: "9:00م", doctor: "أ. حنان" }],
+    [t('lessons.thursday')]: [{ time: "9:00م", doctor: t('lessons.defaultTeacher') }],
   };
 
-  const days = ["الأحد", "الثلاثاء", "الخميس"];
+  const days = [t('lessons.sunday'), t('lessons.tuesday'), t('lessons.thursday')];
   const maxRows = Math.max(...days.map((d) => schedule[d].length));
 
   return (
@@ -27,7 +29,7 @@ const WeeklySchedulePopup = ({ open, setOpen }) => {
                 <img src={Tooth} className="w-10 h-10 sm:w-12 sm:h-12" alt="tooth" />
               </div>
               <h2 className="text-navyteal text-lg sm:text-xl font-semibold">
-                بـاقة الصحة العامة
+                {t('packages.healthPackage')}
               </h2>
             </div>
             <button
@@ -77,7 +79,7 @@ const WeeklySchedulePopup = ({ open, setOpen }) => {
                               </div>
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-xs sm:text-sm">-</span>
+                            <span className="text-gray-400 text-xs sm:text-sm">{t('packages.noLesson')}</span>
                           )}
                         </td>
                       );

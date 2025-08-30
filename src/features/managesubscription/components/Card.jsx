@@ -12,7 +12,6 @@ const Card = ({
   startDate,
   endDate,
   group,
-  daysLeft,
   onChangeGroup,
   onUseCoupon,
   onCancel,
@@ -32,6 +31,7 @@ const Card = ({
   }, [open]);
 
   const config = STATUS_CONFIG[status] || STATUS_CONFIG["فعالة"];
+  console.log(config)
 
   return (
     <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
@@ -56,7 +56,7 @@ const Card = ({
             className={`text-sm px-3 py-1 rounded-full flex items-center justify-center gap-2 ${config.color}`}
           >
             {config.icon && <config.icon />}
-            {config.label(daysLeft)}
+            {/* {config.label(daysLeft)} */}
           </span>
           {open ? (
             <ChevronUp className="w-5 h-5 text-gray-600 transition-transform duration-300" />

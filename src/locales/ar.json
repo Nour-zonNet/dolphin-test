@@ -53,6 +53,7 @@
     "englishFoundationPackage": "باقة تأسيس اللغة الإنجليزية (المستوي الأول)",
     "englishLanguage": "اللغة الانجليزية",
     "firstGroup": "المجموعة الاولى",
+    "secondGroup": "المجموعة الثانية",
     "previewWeeklySchedule": "معاينة الجدول الأسبوعي"
   },
   "header": {
@@ -68,5 +69,23 @@
     "subscribe": "عرض الباقات",
     "support": "الدعم",
     "addPackage": "إضافة باقة"
+  },
+  "lessons": {
+    "viewContent": "عرض المحتوي",
+    "teacher": "المعلم",
+    "group": "المجموعة",
+    "time": "الوقت",
+    "remainingTime": "الوقت المتبقي",
+    "defaultTeacher": "أ.حنان",
+    "sunday": "الأحد",
+    "tuesday": "الثلاثاء",
+    "thursday": "الخميس"
+  },
+  "packages": {
+    "healthPackage": "باقة الصحة العامة",
+    "firstGroup": "المجموعة الاولى",
+    "previewWeeklySchedule": "معاينة الجدول الأسبوعي",
+    "weeklySchedule": "الجدول الأسبوعي",
+    "noLesson": "-"
   }
 }

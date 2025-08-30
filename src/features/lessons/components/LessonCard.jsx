@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import teacherIcon from "@/assets/schedule/teacher.svg";
 import groupIcon from "@/assets/schedule/group.svg";
 import timeIcon from "@/assets/schedule/time.svg";
@@ -9,6 +10,7 @@ import { formatArabicTime, getRemainingTime } from "../../../utils/dateHelpers";
 
 const LessonCard = ({ item, color, image }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   return (
     <div className="relative pt-7  max-w-[]">
       {/* highlight overlay */}
@@ -47,7 +49,7 @@ const LessonCard = ({ item, color, image }) => {
                 className="w-5 h-5 xs:w-6 xs:h-6"
               />
               <span className="text-status text-xs xs:text-base">
-                {item.teacher ?? "أ.حنان"}
+                {item.teacher ?? t('lessons.defaultTeacher')}
               </span>
             </div>
             <div className="font-semibold flex items-center gap-2">
@@ -103,7 +105,7 @@ const LessonCard = ({ item, color, image }) => {
           >
             {/* <img src={fileIcon} alt="fileIcon" /> */}
             {/* <File width="" /> */}
-            عرض المحتوي
+            {t('lessons.viewContent')}
           </button>
         </div>
       </div>

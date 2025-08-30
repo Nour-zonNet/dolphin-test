@@ -1,11 +1,18 @@
 import SliderNavButton from "./SliderNavButton";
+import { useTranslation } from "react-i18next";
 import { LeftArrow, RightArrow } from "@/utils/icons";
+
 const SliderHeader = ({ dayLabel, dayDate }) => {
-  // Format date nicely (e.g., 2025-08-20 → 20 اغسطس)
-  const formattedDate = new Date(dayDate).toLocaleDateString("ar-EG", {
-    day: "numeric",
-    month: "long",
-  });
+  const { t, i18n } = useTranslation();
+  
+  // Format date nicely based on current language
+  const formattedDate = new Date(dayDate).toLocaleDateString(
+    i18n.language === 'ar' ? "ar-EG" : "en-US", 
+    {
+      day: "numeric",
+      month: "long",
+    }
+  );
   return (
     <div className="flex items-center justify-between  gap-4 border-[1px] border-dashed border-oceandeep rounded-full px-10 py-5">
       <SliderNavButton
