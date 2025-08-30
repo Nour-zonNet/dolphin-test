@@ -8,7 +8,7 @@ const MobileNav = () => {
   const inactiveColor = "#7A8085";
 
   return (
-    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white shadow-[0_-1px_3px_0_rgba(0,0,0,0.1)] z-50">
+    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white shadow-[0_-1px_1px_0_rgba(0,0,0,0.15)] z-50">
       <div className="flex justify-between px-4 sm:px-6 items-center py-2">
         {/* Home */}
         <button

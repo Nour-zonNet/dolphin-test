@@ -31,9 +31,8 @@ const LoginPage = () => {
     user,
   } = useAuth();
 
-  const [step, setStep] = useState(STEPS.OTP);
+  const [step, setStep] = useState(STEPS.REGISTER);
   const [phoneNumber, setPhoneNumber] = useState("");
- 
 
   // -------- Handlers --------
   if (token && user) {
@@ -117,8 +116,8 @@ const LoginPage = () => {
   };
   return (
     <MainLayout handleBack={handleBack}>
-      <div className=" relative   px-8 sm:px-6  mt-37 md:mt-49 lg:mt-63 ">
-
+          <div className=" relative px-4 sm:px-6  mt-37 md:mt-49 lg:mt-50 ">
+       
 
         {/* -------- Step 1: Phone -------- */}
         {step === STEPS.PHONE && (

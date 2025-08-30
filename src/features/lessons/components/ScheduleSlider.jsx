@@ -41,7 +41,7 @@ const ScheduleSlider = () => {
   if (loading) return null;
 
   return (
-    <div className="mx-auto pt-16 px-4 sm:px-6 lg:px-10">
+    <div className="mx-auto  px-4 sm:px-6 lg:px-10">
       <SliderHeader
         dayLabel={days[activeIndex].label}
         dayDate={days[activeIndex].date}

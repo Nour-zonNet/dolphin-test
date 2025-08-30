@@ -10,7 +10,7 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
     handleSubmit,
     control,
     setValue,
-    
+
     formState: { errors, isValid },
   } = useForm({
     mode: "onTouched",
@@ -18,26 +18,25 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
   });
 
   return (
-    <div className="flex justify-center items-center flex-col lg:flex-row ">
+    <div className="flex justify-center items-center flex-col lg:flex-row mx-auto ">
       {/* Left side image + title (mobile view) */}
-      <div className="flex items-center justify-center flex-none gap-2 lg:flex:1/4">
+      <div className="flex items-center justify-center flex-none gap-2">
         <img
           src={dolphinChild}
           alt="Path"
-          className="h-29 sm:h-48 md:h-48 lg:h-135 object-contain mb-4 lg:mb-6"
+          className="h-29 sm:h-48 md:h-48 lg:h-135 object-contain  lg:mb-6"
         />
         <FormTitle text="ادخل لحسابك" isMobile />
       </div>
 
       {/* Right side form */}
-      <div className="lg:flex3/4 relative flex-grow">
-      <div className="relative flex">
-
-        <FormTitle text="ادخل لحسابك" />
-      </div>
+      <div className=" relative  ">
+        <div className="flex justify-center ">
+          <FormTitle text="ادخل لحسابك" />
+        </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 p-7 sm:p-10 md:p-12 w-full max-w-sm sm:max-w-md border border-graycustom/50 rounded-[2rem] sm:rounded-[3rem] bg-white"
+          className="md:min-w-md lg:min-w-lg flex flex-col gap-6 md:gap-8 p-7 sm:p-10 md:p-12 w-full max-w-sm sm:max-w-md border-[0.5px] border-graycustom/40 rounded-[2rem] sm:rounded-[3rem] bg-white"
         >
           {/* Title */}
           <h2 className="text-lg sm:text-xl md:text-2xl text-subtext font-bold">
@@ -54,7 +53,9 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
 
           {/* Backend Error */}
           {error && (
-            <p className="text-red-500 text-xs sm:text-sm text-right">{error}</p>
+            <p className="text-red-500 text-xs sm:text-sm text-right">
+              {error}
+            </p>
           )}
 
           {/* Submit Button */}

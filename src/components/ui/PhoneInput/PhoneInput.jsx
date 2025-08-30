@@ -22,7 +22,7 @@ export default function MyPhone({ value, onChange }) {
   return (
     <div
       dir="ltr"
-      className="p-2 px-4 border   border-graycustom/50 rounded-full focus:outline-0"
+      className="p-1 px-4 border   border-graycustom/50 rounded-full focus:outline-0"
     >
       <PhoneInput
         value={value}

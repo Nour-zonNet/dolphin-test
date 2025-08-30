@@ -5,11 +5,11 @@ const Button = ({ icon, text, className, ...props }) => {
       className={
         className
           ? className
-          : "flex items-center   mx-auto justify-center gap-2 text-xs bg-orangedeep text-darkblue font-medium px-18 sm:px-8 py-3 rounded-full hover:bg-btnClicked focus:bg-btnClicked cursor-pointer sm:text-sm   disabled:opacity-50 transition-all min-w-70"
+          : "flex items-center w-53 sm:w-53 md:w-79 lg:w-91 py-2  mx-auto justify-center gap-2  bg-orangedeep text-darkblue font-medium    rounded-full hover:bg-btnClicked focus:bg-btnClicked cursor-pointer sm:text-sm   disabled:opacity-50 transition-all "
       }
     >
       {icon && icon}
-      <span className="text-lg">{text}</span>
+      <span className="text-base md:text-lg">{text}</span>
     </button>
   );
 };

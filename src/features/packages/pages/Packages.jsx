@@ -40,7 +40,7 @@ const Packages = () => {
         </div>
       )}
 
-      <HomeSupportBtn />
+     <HomeSupportBtn className="fixed bottom-25 lg:bottom-24 right-0 z-50" />
     </div>
   );
 };
