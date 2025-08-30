@@ -54,7 +54,14 @@
     "inviteCode": "كود الدعوة أو الخصم (اختياري)",
     "inviteCodePlaceholder": "أدخل كود الدعوة أو الخصم إن وجد",
     "registering": "جاري التسجيل...",
-    "completeRegistration": "إكمال التسجيل"
+    "completeRegistration": "إكمال التسجيل",
+    "verificationCode": "رمز التحقق",
+    "enterVerificationCode": "أدخل رمز التحقق المرسل إلى جوالك",
+    "didntReceiveCode": "لم تستلم الرمز؟",
+    "resendCode": "إعادة إرسال",
+    "resendAfter": "أعد الإرسال بعد",
+    "seconds": "ث",
+    "confirm": "تأكيد"
   },
   "subscription": {
     "active": "فعالة",
@@ -107,5 +114,11 @@
     "previewWeeklySchedule": "معاينة الجدول الأسبوعي",
     "weeklySchedule": "الجدول الأسبوعي",
     "noLesson": "-"
+  },
+  "mobileNavigation": {
+    "home": "الرئيسية",
+    "content": "المحتوي",
+    "profile": "حسابى"
+
   }
 }

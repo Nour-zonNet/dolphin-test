@@ -66,9 +66,20 @@ const LoginPage = () => {
         otp_code: `${data.otp}`,
       })
     );
+    console.log(res)
 
     if (res?.payload?.success) {
       setStep(STEPS.REGISTER);
+    } else {
+      dispatch(
+        showModal({
+          type: MODAL_TYPES.WARNING,
+          props: {
+            title: "هنالك خطاء ",
+            message: res.payload || res.error.message,
+          },
+        })
+      );
     }
   };
 
@@ -116,9 +127,7 @@ const LoginPage = () => {
   };
   return (
     <MainLayout handleBack={handleBack}>
-          <div className=" relative px-4 sm:px-6  mt-37 md:mt-49 lg:mt-50 ">
-       
-
+      <div className=" relative px-4 sm:px-6  mt-37 md:mt-49 lg:mt-50 ">
         {/* -------- Step 1: Phone -------- */}
         {step === STEPS.PHONE && (
           <LoginForm

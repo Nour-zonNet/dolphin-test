@@ -1,9 +1,10 @@
 import profileImg from "@/assets/images/profileImage.png";
 import { logoutUser } from "../../../../features/auth/store/authSlice";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const ProfileInfo = () => {
-  
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const handleLogout = () => {
@@ -24,7 +25,7 @@ const ProfileInfo = () => {
           className="w-6 h-6 object-cover group-hover:scale-110 transition"
         />
       </div>
-      <span className="text-base font-medium">حسابي</span>
+      <span className="text-base font-medium">    {t('mobileNavigation.profile')}</span>
     </button>
   );
 };

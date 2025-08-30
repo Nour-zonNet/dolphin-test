@@ -54,7 +54,14 @@
     "inviteCode": "Invitation or Discount Code (Optional)",
     "inviteCodePlaceholder": "Enter invitation or discount code if available",
     "registering": "Registering...",
-    "completeRegistration": "Complete Registration"
+    "completeRegistration": "Complete Registration",
+    "verificationCode": "Verification Code",
+    "enterVerificationCode": "Enter the verification code sent to your phone",
+    "didntReceiveCode": "Didn't receive the code?",
+    "resendCode": "Resend",
+    "resendAfter": "Resend after",
+    "seconds": "s",
+    "confirm": "Confirm"
   },
   "subscription": {
     "active": "Active",
@@ -107,5 +114,10 @@
     "previewWeeklySchedule": "Preview Weekly Schedule",
     "weeklySchedule": "Weekly Schedule",
     "noLesson": "-"
+  },
+  "mobileNavigation": {
+    "home": "Home",
+    "content": "Content",
+    "profile": "My Account"
   }
 }

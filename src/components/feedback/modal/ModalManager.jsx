@@ -16,6 +16,7 @@ const ModalManager = () => {
   switch (type) {
     case MODAL_TYPES.SUCCESS:
     case MODAL_TYPES.WARNING:
+    case MODAL_TYPES.ERROR:
       ModalContent = (
         <StatusModal type={type} {...props} onClose={handleClose} />
       );

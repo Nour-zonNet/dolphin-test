@@ -61,8 +61,8 @@ export const checkPhone = createAsyncThunk(
       }
     } catch (error) {
       console.log(error.response.data.errors[0]);
-
-      return rejectWithValue(error.response?.data?.message || "Server error");
+   error.response?.data?.errors[0] 
+      return rejectWithValue(   error.response?.data?.errors[0]  || "Server error");
     }
   }
 );
@@ -78,9 +78,9 @@ export const verifyOtp = createAsyncThunk(
         console.log(response);
         return rejectWithValue(response.message);
       }
-    } catch (err) {
-      console.log(err);
-      return rejectWithValue(err.response?.data?.message || "Server error");
+    } catch (error) {
+      
+      return rejectWithValue(   error.response?.data?.errors[0]  || "Server error");
     }
   }
 );
