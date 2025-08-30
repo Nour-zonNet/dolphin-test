@@ -31,7 +31,7 @@ const LoginPage = () => {
     user,
   } = useAuth();
 
-  const [step, setStep] = useState(STEPS.OTP);
+  const [step, setStep] = useState(STEPS.PHONE);
   const [phoneNumber, setPhoneNumber] = useState("");
 
   // -------- Handlers --------
@@ -66,7 +66,7 @@ const LoginPage = () => {
         otp_code: `${data.otp}`,
       })
     );
-    console.log(res)
+    console.log(res);
 
     if (res?.payload?.success) {
       setStep(STEPS.REGISTER);
@@ -123,6 +123,17 @@ const LoginPage = () => {
 
     if (res?.payload?.success) {
       navigate("/schedule"); // يوديه بعد تسجيل الدخول
+    } else {
+      console.log(res)
+      dispatch(
+        showModal({
+          type: MODAL_TYPES.WARNING,
+          props: {
+            title: "هنالك خطاء ",
+            message: res.payload || res.error.message,
+          },
+        })
+      );
     }
   };
   return (

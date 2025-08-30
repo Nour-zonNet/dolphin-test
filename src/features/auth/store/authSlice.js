@@ -23,8 +23,9 @@ export const loginUser = createAsyncThunk(
       const response = await authRepository.login(credentials);
       return response;
     } catch (error) {
+      console.log(error)
       return rejectWithValue(
-        error.response?.data?.errors[0] || "Login failed. Please try again."
+        error.response?.data?.error || "Login failed. Please try again."
       );
     }
   }
