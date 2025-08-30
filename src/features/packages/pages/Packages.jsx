@@ -3,7 +3,6 @@ import AddPackageBtn from "../../../components/ui/AddPackageBtn";
 import { PackageCard } from "../components";
 import { usePackages } from "../hooks/usePackages";
 import notFoundPackages from "@/assets/images/notFoundPackages.png";
-import { packageColorMap } from "../../../constants/PACKAGE_COLORS";
 
 import withAuth from "../../auth/hoc/withAuth";
 import { packageFactory } from "../factory/packageFactory.js";
@@ -42,7 +41,7 @@ const Packages = () => {
         </div>
       )}
 
-      <HomeSupportBtn />
+     <HomeSupportBtn className="fixed bottom-25 lg:bottom-24 right-0 z-50" />
     </div>
   );
 };

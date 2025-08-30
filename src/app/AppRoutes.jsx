@@ -10,7 +10,6 @@ import { useEffect } from "react";
 import { fetchCurrentUser } from "../features/auth/store/authSlice";
 import { fetchPackages } from "../features/packages/store/packagesSlice";
 import { fetchLessons } from "../features/lessons/store/lessonsSlice";
-import ManageSubscription from "../features/managesubscription/pages/ManageSubscription";
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
@@ -29,12 +28,7 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-        <HomePage/>
-        }
-      />
+      <Route path="/" element={<HomePage />} />
 
       <Route
         path="/schedule"
@@ -59,7 +53,6 @@ const AppRoutes = () => {
       />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/schedule/lessoncontent" element={<LessonContentPage />} />
-      <Route path="/manage-subscription" element={<ManageSubscription />} />
     </Routes>
   );
 };

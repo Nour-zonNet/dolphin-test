@@ -53,13 +53,16 @@ export const checkPhone = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authRepository.checkPhone(credentials);
+      
       if (response.success) {
         return response;
       } else {
         return rejectWithValue(response.message);
       }
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || "Server error");
+    } catch (error) {
+      console.log(error.response.data.errors[0]);
+
+      return rejectWithValue(error.response?.data?.message || "Server error");
     }
   }
 );

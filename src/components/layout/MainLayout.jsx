@@ -1,4 +1,3 @@
-import React from "react";
 import {
   FooterIllustration,
   HeaderIllustration,
@@ -7,10 +6,10 @@ import HomeSupportBtn from "./HomeSupportBtn";
 
 const MainLayout = ({ children, handleBack }) => {
   return (
-    <div className="flex flex-col relative min-h-screen justify-between">
+    <div className="flex flex-col items-stretch relative min-h-screen">
       <HeaderIllustration handleBack={handleBack} />
 
-      <main className="flex-grow ">{children}</main>
+     {children}
       <HomeSupportBtn />
       <FooterIllustration />
     </div>

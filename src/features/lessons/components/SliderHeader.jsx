@@ -7,7 +7,7 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
     month: "long",
   });
   return (
-    <div className="flex items-center justify-between my-2 gap-4 border-[1px] border-dashed border-oceandeep rounded-full px-10 py-4">
+    <div className="flex items-center justify-between  gap-4 border-[1px] border-dashed border-oceandeep rounded-full px-10 py-5">
       <SliderNavButton
         direction="prev"
         ariaLabel="Previous slide"
@@ -16,17 +16,17 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
         <RightArrow size={22} className="w-4 sm:w-5" />
       </SliderNavButton>
 
-  <div className="text-deepnavy text-center flex flex-col  md:text-xl text-sm">
-  <span>{dayLabel}</span>
-  <span>{formattedDate}</span>
-</div>
+      <div className="text-deepnavy text-center flex flex-col  md:text-xl text-sm">
+        <span>{dayLabel}</span>
+        <span>{formattedDate}</span>
+      </div>
 
       <SliderNavButton
         direction="next"
         ariaLabel="Next slide"
         className="custom-next"
       >
-        <LeftArrow size={22} className="w-4 sm:w-5"/>
+        <LeftArrow size={22} className="w-4 sm:w-5" />
       </SliderNavButton>
     </div>
   );

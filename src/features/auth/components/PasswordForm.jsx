@@ -8,7 +8,7 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
 
   return (
     <form
-      className="w-full max-w-lg my-auto space-y-10 mt-20"
+      className="w-full max-w-lg my-auto mx-auto space-y-10 mt-20"
       onSubmit={handleSubmit(onSubmit)} // 👈 مهم
     >
       {/* ---- Header ---- */}

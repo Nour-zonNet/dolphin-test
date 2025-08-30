@@ -1,74 +1,77 @@
 import { useForm } from "react-hook-form";
 import { ArrowNext } from "../../../utils/icons";
-import CountrySelector from "./CounterySelector";
 import Button from "../../../components/ui/Button";
+import dolphinChild from "@/assets/images/homeChild.png";
+import FormTitle from "./FormTitle";
+import PhoneField from "./PhoneField";
 
-const LoginForm = ({
-  onSubmit,
-  loading,
-  error,
-  selectedCountry,
-  setSelectedCountry,
-}) => {
+const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
   const {
-    register,
     handleSubmit,
+    control,
+    setValue,
+
     formState: { errors, isValid },
-  } = useForm({ mode: "onChange" });
+  } = useForm({
+    mode: "onTouched",
+    defaultValues: { mobile: "", countryCode: null },
+  });
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="
-        flex flex-col gap-4 mx-auto p-4 
-        w-full max-w-md sm:max-w-lg md:min-w-[500px] lg:max-w-xl
-        border border-graycustom rounded-[3rem] sm:rounded-[3rem] bg-white
-        sm:p-8
-      "
-    >
-      <h2 className="text-xl sm:text-2xl text-subtext font-bold text-center sm:text-right">
-        أدخل رقم جوالك
-      </h2>
-
-      {/* Phone Input */}
-      <div className="flex items-center border rounded-full border-graycustom bg-white overflow-hidden mt-4 p-2">
-        <CountrySelector
-          selectedCountry={selectedCountry}
-          setSelectedCountry={setSelectedCountry}
+    <div className="flex justify-center items-center flex-col lg:flex-row mx-auto ">
+      {/* Left side image + title (mobile view) */}
+      <div className="flex items-center justify-center flex-none gap-2">
+        <img
+          src={dolphinChild}
+          alt="Path"
+          className="h-29 sm:h-48 md:h-48 lg:h-135 object-contain  lg:mb-6"
         />
-        <input
-          type="tel"
-          {...register("mobile", {
-            required: "رقم الجوال مطلوب",
-            pattern: {
-              value: /^[0-9]{7,12}$/,
-              message: "أدخل رقم جوال صحيح",
-            },
-          })}
-          placeholder="أدخل رقم جوالك"
-          className="flex-1 outline-0 text-right px-3 py-3 text-base sm:text-lg"
-        />
+        <FormTitle text="ادخل لحسابك" isMobile />
       </div>
 
-      <div className="min-h-[24px] mt-2">
-        {errors.mobile && (
-          <p className="text-red-500 text-sm text-right">
-            {errors.mobile.message}
-          </p>
-        )}
-        {error && <p className="text-red-500 text-sm text-right">{error}</p>}
-      </div>
+      {/* Right side form */}
+      <div className=" relative  ">
+        <div className="flex justify-center ">
+          <FormTitle text="ادخل لحسابك" />
+        </div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="md:min-w-md lg:min-w-lg flex flex-col gap-6 md:gap-8 p-7 sm:p-10 md:p-12 w-full max-w-sm sm:max-w-md border-[0.5px] border-graycustom/40 rounded-[2rem] sm:rounded-[3rem] bg-white"
+        >
+          {/* Title */}
+          <h2 className="text-lg sm:text-xl md:text-2xl text-subtext font-bold">
+            أدخل رقم جوالك
+          </h2>
 
-      {/* Submit */}
-        <Button
-          type="submit"
-          icon={
-            loading ? null : <ArrowNext className="w-4 h-4 sm:w-5 sm:h-5" />
-          }
-          text={loading ? "جاري المعالجة..." : "متابعة"}
-          disabled={!isValid || loading}
-        />
-    </form>
+          {/* Phone Input */}
+          <PhoneField
+            control={control}
+            setValue={setValue}
+            setPhoneNumber={setPhoneNumber}
+            errors={errors}
+          />
+
+          {/* Backend Error */}
+          {error && (
+            <p className="text-red-500 text-xs sm:text-sm text-right">
+              {error}
+            </p>
+          )}
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            icon={
+              !loading && (
+                <ArrowNext className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+              )
+            }
+            text={loading ? "جاري المعالجة..." : "متابعة"}
+            disabled={!isValid || loading}
+          />
+        </form>
+      </div>
+    </div>
   );
 };
 

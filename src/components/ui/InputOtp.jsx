@@ -1,8 +1,9 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const OTPInput = ({ length = 6, type = "text", onChange }) => {
   const [otp, setOtp] = useState(Array(length).fill(""));
   const inputsRef = useRef([]);
+  const autoMoving = useRef(false); // 👈 Flag to detect auto focus movement
 
   const handleInput = (e, i) => {
     const char = e.target.value.slice(-1); // only keep last char
@@ -10,10 +11,10 @@ const OTPInput = ({ length = 6, type = "text", onChange }) => {
     newOtp[i] = char;
     setOtp(newOtp);
 
-    // Call parent with full OTP string
     onChange && onChange(newOtp.join(""));
 
     if (char && i < length - 1) {
+      autoMoving.current = true; // 👈 tell next focus it's automatic
       inputsRef.current[i + 1]?.focus();
     }
   };
@@ -26,6 +27,7 @@ const OTPInput = ({ length = 6, type = "text", onChange }) => {
         setOtp(newOtp);
         onChange && onChange(newOtp.join(""));
       } else if (i > 0) {
+        autoMoving.current = true; // 👈 mark as auto move
         inputsRef.current[i - 1]?.focus();
         const newOtp = [...otp];
         newOtp[i - 1] = "";
@@ -38,6 +40,10 @@ const OTPInput = ({ length = 6, type = "text", onChange }) => {
 
   const handlePaste = (e, i) => {
     e.preventDefault();
+    if (i !== 0) {
+      inputsRef.current[0]?.focus();
+      return;
+    }
     const pasted = e.clipboardData.getData("text").slice(0, length);
     const chars = [...pasted];
     const newOtp = [...otp];
@@ -50,7 +56,19 @@ const OTPInput = ({ length = 6, type = "text", onChange }) => {
     onChange && onChange(newOtp.join(""));
 
     const lastIndex = Math.min(i + chars.length - 1, length - 1);
+    autoMoving.current = true;
     inputsRef.current[lastIndex]?.focus();
+  };
+
+  const handleFocus = (e, i) => {
+    if (autoMoving.current) {
+      autoMoving.current = false; // 👈 reset after auto move
+      return;
+    }
+    const firstEmpty = otp.findIndex((v) => v === "");
+    if (firstEmpty !== -1 && i !== firstEmpty) {
+      inputsRef.current[firstEmpty]?.focus();
+    }
   };
 
   return (
@@ -59,20 +77,24 @@ const OTPInput = ({ length = 6, type = "text", onChange }) => {
         <input
           key={i}
           ref={(el) => (inputsRef.current[i] = el)}
-          type={type} // 👈 either text or password
+          type={type}
           value={val}
           onChange={(e) => handleInput(e, i)}
           onKeyDown={(e) => handleKeyDown(e, i)}
           onPaste={(e) => handlePaste(e, i)}
-          onFocus={(e) => e.target.select()}
-                className=" aspect-square   w-full 
-                       text-center  text-base sm:text-lg md:text-xl lg:text-2xl font-semibold
-                       border border-[#B3B3B3]/50 bg-verifyinputbg rounded-lg 
-                       focus:outline-none focus:ring-2 focus:ring-btnClicked"
+          onFocus={(e) => handleFocus(e, i)}
+           autoFocus={i === 0} 
+          dir="ltr"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          className="aspect-square w-full 
+                     text-center text-base sm:text-lg md:text-xl lg:text-2xl font-semibold
+                     border border-[#B3B3B3]/50 bg-verifyinputbg rounded-lg 
+                     focus:outline-none focus:ring-2 focus:ring-btnClicked"
         />
       ))}
     </div>
   );
 };
-// w-18 h-18 sm:w-20 md:w-22
+
 export default OTPInput;

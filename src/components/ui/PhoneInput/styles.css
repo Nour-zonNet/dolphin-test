@@ -1,0 +1,46 @@
+/* style the intl-tel-input wrapper */
+.iti {
+  border-radius: 9999px; /* rounded-full */
+  border: 1px solid #ccc; /* replace #ccc with your custom gray */
+  background-color: #fff; /* bg-white */
+  /* overflow-hidden */
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.25rem 0.75rem; /* some breathing space */
+  box-sizing: border-box;
+}
+
+/* make the input itself look neat */
+.iti input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  padding: 0.5rem;
+  background: transparent;
+}
+
+/* remove weird focus outline from intl-tel-input */
+.iti input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* style the flag dropdown */
+
+.iti__selected-country-primary {
+  margin-right: 0.5rem;
+}
+/* style the dropdown arrow */
+.iti__selected-flag {
+  border-radius: 9999px;
+  padding: 0 0.5rem;
+  cursor: pointer;
+}
+
+/* optional: style dropdown menu */
+/* .iti__country-list {
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+} */

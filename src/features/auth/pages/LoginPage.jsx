@@ -11,7 +11,6 @@ import {
 import { useAuth } from "../hooks/useAuth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { COUNTRIES } from "@/constants/countries";
 import { STEPS } from "@/constants/STEPS";
 import { Navigate } from "react-router-dom";
 import { showModal } from "../../../store/modalSlice";
@@ -32,9 +31,8 @@ const LoginPage = () => {
     user,
   } = useAuth();
 
-  const [step, setStep] = useState(STEPS.PHONE);
+  const [step, setStep] = useState(STEPS.REGISTER);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
 
   // -------- Handlers --------
   if (token && user) {
@@ -48,12 +46,9 @@ const LoginPage = () => {
     else if (step === STEPS.PASSWORD) setStep(STEPS.PHONE);
   };
 
-  const handlePhoneSubmit = async (data) => {
-    const phone_number = `${data.mobile}`;
-    setPhoneNumber(phone_number);
-
-    const res = await dispatch(checkPhone({ phone_number }));
-    console.log(res.payload.data);
+  const handlePhoneSubmit = async () => {
+    console.log(phoneNumber);
+    const res = await dispatch(checkPhone({ phone_number: phoneNumber }));
 
     if (res?.payload?.success) {
       if (res?.payload?.data?.otp_sent) {
@@ -121,12 +116,8 @@ const LoginPage = () => {
   };
   return (
     <MainLayout handleBack={handleBack}>
-      <div className="flex flex-col lg:flex-row items-center justify-center relative mt-10 px-8 my-auto sm:px-6">
-        {step === STEPS.PHONE ? (
-          <TopHero text="ادخل لحسابك" />
-        ) : step === STEPS.REGISTER ? (
-          <TopHero text="أكمال التسجيل " />
-        ) : null}
+          <div className=" relative px-4 sm:px-6  mt-37 md:mt-49 lg:mt-50 ">
+       
 
         {/* -------- Step 1: Phone -------- */}
         {step === STEPS.PHONE && (
@@ -134,8 +125,7 @@ const LoginPage = () => {
             onSubmit={handlePhoneSubmit}
             loading={loading}
             error={error}
-            selectedCountry={selectedCountry}
-            setSelectedCountry={setSelectedCountry}
+            setPhoneNumber={setPhoneNumber}
           />
         )}
 

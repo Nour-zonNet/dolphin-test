@@ -26,7 +26,7 @@ const VerificationForm = ({ onSubmit }) => {
     <form
       dir="ltr"
       onSubmit={handleSubmit}
-         className="w-full max-w-lg my-auto  space-y-10 mt-20"
+         className="w-full max-w-lg my-auto mx-auto  space-y-10 mt-20"
     >
       <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-status text-center">
         رمز التحقق
