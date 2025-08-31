@@ -913,7 +913,7 @@ export const Line = ({ className="", fill }) => (
   </svg>
 );
 
-export const DashedLine = ({  }) => (
+export const DashedLine = () => (
   <svg width="1262" height="1" viewBox="0 0 1262 1" fill="none" xmlns="http://www.w3.org/2000/svg">
     <line y1="0.5" x2="1262" y2="0.5" stroke="#185A80" stroke-dasharray="8 8"/>
   </svg>
