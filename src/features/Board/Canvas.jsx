@@ -89,7 +89,7 @@ const Canvas = ({
           onTouchMove={onMouseMove}
           onTouchEnd={onMouseUp}
           ref={stageRef}
-          className="bg-white shadow-sm pdf-export-optimized stage-responsive"
+          className="bg-white  pdf-export-optimized stage-responsive"
           style={{
             minWidth: "100%",
             minHeight: "100%",

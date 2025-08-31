@@ -52,12 +52,12 @@
   flex-direction: column;
 }
 
-.canvas-container {
+/* .canvas-container {
   position: relative;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-}
+} */
 
 /* Responsive breakpoints */
 @media (max-width: 640px) {
