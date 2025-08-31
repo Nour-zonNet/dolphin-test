@@ -15,7 +15,6 @@ const ActiveCard = ({
   onChangeGroup,
   onUseCoupon,
   onCancel,
-  onRenew,
 }) => {
   const [open, setOpen] = useState(false);
   const [height, setHeight] = useState("0px");

@@ -36,7 +36,7 @@ const Card = ({
   return (
     <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
       {/* Header */}
-      <div
+      <div  
         className="flex items-center justify-between p-4 cursor-pointer select-none"
         onClick={() => setOpen(!open)}
       >
