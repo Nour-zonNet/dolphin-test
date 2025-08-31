@@ -23,7 +23,7 @@ const Toolbar = ({
   onExport,
 }) => {
   return (
-    <div className="p-3 flex items-center justify-center flex-wrap z-10 gap-2">
+    <div className=" flex items-center  flex-wrap z-10 gap-2">
       <ToolSelector 
         tool={tool} 
         setTool={setTool}

@@ -13,6 +13,7 @@ import { fetchLessons } from "../features/lessons/store/lessonsSlice";
 import ManageSubscription from "../features/managesubscription/pages/ManageSubscription";
 import { PackageContent } from "../features/packages/pages/PackagesContent";
 import {Board} from "../features/Board";
+import { LessonExercise } from "../features/lessons/pages/LessonExercise";
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Board />} />
+      <Route path="/" element={<LessonExercise />} />
 
       <Route
         path="/schedule"
