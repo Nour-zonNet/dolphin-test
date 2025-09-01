@@ -1,31 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Header } from '../../../components/layout/Header';
 import { ActionButtons, Cards } from '../components';
 import addPackageDolphin from '@/assets/images/add-packages-dolphin.svg'
 import { HomeSupportBtn } from "../../../components";
+import { useSubscriptions } from '../hooks/useSubscriptions';
 
 export const ManageSubscription = () => {
   const NAVBAR_HEIGHT = 64; // px
   const MOBILE_BAR_HEIGHT = 56; // px
 
-  const [subscriptions, setSubscriptions] = useState( [{ id: 1, name: "Premium Plan" }]);
+  // const [subscriptions, setSubscriptions] = useState( [{ id: 1, name: "Premium Plan" }]);
 
-  // useEffect(() => {
-  //   const fetchSubscriptions = async () => {
-  //     const response = [];
+  // Hook from store
+  const {
+    items: subscriptions,
+    loading,
+    error,
+    fetchSubscriptions,
+  } = useSubscriptions();
 
-  //     setSubscriptions(response);
-  //   };
-  //   fetchSubscriptions();
-  // }, []);
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
 
   const hasSubscriptions = subscriptions.length > 0; 
 
   return (
     <>
       <Header title="الباقات والاشتراكات" balance="الرصيد:" />    
-    <main className="pt-8 flex justify-center flex-col items-center w-[90%] mx-auto">
-      <ActionButtons />
+       <main className="pt-8 flex justify-center flex-col items-center w-[90%] mx-auto">
+        <ActionButtons />
 
       {/* Conditional rendering */}
       {!hasSubscriptions ? (

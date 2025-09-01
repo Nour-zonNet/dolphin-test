@@ -4,8 +4,7 @@ const HomeSupportBtn = ({ className }) => {
   return (
     <div className={className ?? "fixed bottom-12 lg:bottom-15 right-0 z-50 "}>
       <button
-        className="
-      
+        className="    
         flex items-center justify-center
         w-15 h-15 md:w-20 md:h-20
         mx-4 sm:mx-6

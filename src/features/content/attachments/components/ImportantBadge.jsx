@@ -2,7 +2,7 @@ import React from "react";
 
 export const ImportantBadge = () => {
   return (
-    <div className="absolute top-2 left-[10px] rotate-[-37.96deg]">
+    <div className="rotate-[-37.96deg]">
       <div className="relative w-[99px] h-[99px] -top-6 -left-6">
         <svg width="57" height="57" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_1092_7625)">
