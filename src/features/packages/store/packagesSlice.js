@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { packagesRepository } from "../services/packages.services";
 
 export const fetchPackages = createAsyncThunk("packages/fetch", async () => {
-  const res = await packagesRepository.getAll();
+  const res = await packagesRepository.getAllMine();
   return res.data;
 });
 
