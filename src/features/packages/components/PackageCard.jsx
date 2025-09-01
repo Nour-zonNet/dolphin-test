@@ -13,6 +13,18 @@ const PackageCard = ({ item, color, image }) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
+        //   {
+        //     "id": 12261,
+        //     "package_name": "باقة مادة الرياضيات",
+        //     "group_id": 754,
+        //     "group_name": "المجموعة 1",
+        //     "start_date": "2025-09-01",
+        //     "end_date": "2025-09-03",
+        //     "days_remaining": 1,
+        //     "status": "trial",
+        //     "package_start_date": "2025-08-09",
+        //     "watsapp_link": "https://chat.whatsapp.com/Kv2gWmNXCvT7Hde7ucYz8g?mode=r_c"
+        // },
   return (
     <div className="relative w-full mx-auto px-4 pl-8 ">
       {/* Border Illustration */}
@@ -55,7 +67,7 @@ const PackageCard = ({ item, color, image }) => {
 
             <div>
               <h2 className=" text-sm  sm:text-lg text-navyteal xs:text-xl font-semibold leading-snug">
-                {item.name ?? t('packages.healthPackage')}
+                {item.package_name ?? t('packages.healthPackage')}
               </h2>
               <h3 className="text-sm xs:text-base font-medium opacity-90">
                 {item.description}
@@ -72,7 +84,7 @@ const PackageCard = ({ item, color, image }) => {
               </span>
             </div>
             <p className="text-navyteal font-semibold text-xs xs:text-sm">
-              {item.group ?? t('packages.firstGroup')}
+              {item.group_name ?? t('packages.firstGroup')}
             </p>
           </div>
 
