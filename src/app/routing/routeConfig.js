@@ -4,11 +4,11 @@ import { lazy } from "react";
 const HomePage = lazy(() => import("@/features/home"));
 const LessonsSchedule = lazy(() => import("@/features/lessons"));
 const Packages = lazy(() => import("@/features/packages"));
-const LessonContentPage = lazy(() => import("@/features/content/pages/LessonContentPage"));
-const ManageSubscription = lazy(() => import("@/features/managesubscription/pages/ManageSubscription"));
-const PackageContent = lazy(() => import("@/features/packages/pages/PackagesContent"));
+const LessonContentPage = lazy(() => import("@/features/content/pages/LessonContentPage").then(module => ({ default: module.LessonContentPage })));
+const ManageSubscription = lazy(() => import("@/features/managesubscription/pages/ManageSubscription").then(module => ({ default: module.ManageSubscription })));
+const PackageContent = lazy(() => import("@/features/packages/pages/PackagesContent").then(module => ({ default: module.PackageContent })));
 const Board = lazy(() => import("@/features/Board"));
-const LessonExercise = lazy(() => import("@/features/lessons/pages/LessonExercise"));
+const LessonExercise = lazy(() => import("@/features/lessons/pages/LessonExercise").then(module => ({ default: module.LessonExercise })));
 
 // Auth Pages
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
