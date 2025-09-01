@@ -5,4 +5,5 @@ export const MODAL_TYPES = {
   ERROR: "ERROR",
   WARNING: "WARNING",
   SELECT: "SELECT",
+  INFO: "INFO",
 };

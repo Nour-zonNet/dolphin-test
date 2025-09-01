@@ -3,6 +3,7 @@ import { hideModal } from "@/store/modalSlice";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 
 import StatusModal from "./modals/StatusModal";
+import InfoModal from "./modals/InfoModal";
 
 const ModalManager = () => {
   const { type, props } = useSelector((state) => state.modal);
@@ -19,6 +20,11 @@ const ModalManager = () => {
     case MODAL_TYPES.ERROR:
       ModalContent = (
         <StatusModal type={type} {...props} onClose={handleClose} />
+      );
+      break;
+    case MODAL_TYPES.INFO:
+      ModalContent = (
+        <InfoModal {...props} onClose={handleClose} />
       );
       break;
 
