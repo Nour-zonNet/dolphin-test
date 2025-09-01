@@ -1,9 +1,10 @@
-// app/providers.jsx
 import { Provider as ReduxProvider } from "react-redux";
 import { I18nextProvider } from "react-i18next";
-import store from "../store";
 import { BrowserRouter } from "react-router-dom";
-import i18n from "../i18n";
+
+// Local imports
+import store from "@/store";
+import i18n from "@/i18n";
 
 const AppProviders = ({ children }) => (
   <BrowserRouter>

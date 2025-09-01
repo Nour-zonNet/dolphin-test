@@ -23,7 +23,7 @@ export const loginUser = createAsyncThunk(
       const response = await authRepository.login(credentials);
       return response;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return rejectWithValue(
         error.response?.data?.error || "Login failed. Please try again."
       );
@@ -37,10 +37,9 @@ export const registerUser = createAsyncThunk(
     try {
       const response = await authRepository.register(userData);
 
-        return response.data; // هترجع بيانات المستخدم + token
-  
+      return response.data; // هترجع بيانات المستخدم + token
     } catch (err) {
-      console.log(err)
+      console.log(err);
       console.log(err.response.data.error);
       return rejectWithValue(err.response.data.error || "Server error");
     }
@@ -52,16 +51,12 @@ export const checkPhone = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authRepository.checkPhone(credentials);
-      
-      if (response.success) {
-        return response;
-      } else {
-        return rejectWithValue(response.message);
-      }
+
+      return response;
     } catch (error) {
-      console.log(error.response.data.errors[0]);
-   error.response?.data?.errors[0] 
-      return rejectWithValue(   error.response?.data?.errors[0]  || "Server error");
+      console.log(error);
+      error.response?.data?.errors[0];
+      return rejectWithValue(error.response?.data?.errors[0] || "Server error");
     }
   }
 );
@@ -72,14 +67,10 @@ export const verifyOtp = createAsyncThunk(
     try {
       const response = await authRepository.verifyOtp(data);
       console.log(response);
-      if (response.success) {
-        return response;
-      } else {
-        return rejectWithValue(response.message);
-      }
+      return response;
     } catch (error) {
-      
-      return rejectWithValue(   error.response?.data?.errors[0]  || "Server error");
+      console.log(error);
+      return rejectWithValue(error.response.data.error || "Server error");
     }
   }
 );

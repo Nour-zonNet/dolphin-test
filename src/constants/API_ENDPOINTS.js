@@ -8,5 +8,4 @@ export const ENDPOINTS = {
   MY_PACKAGES :"/student/packages/my-packages",
   GRADE_PACKAGES:"/student/packages",
   SCHEDULE_OF_PACKAGE:"/student/get-group-schedule/"
-  
 };
