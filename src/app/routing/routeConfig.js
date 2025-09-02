@@ -9,6 +9,7 @@ const ManageSubscription = lazy(() => import("@/features/managesubscription/page
 const PackageContent = lazy(() => import("@/features/packages/pages/PackagesContent").then(module => ({ default: module.PackageContent })));
 const Board = lazy(() => import("@/features/Board"));
 const LessonExercise = lazy(() => import("@/features/lessons/pages/LessonExercise").then(module => ({ default: module.LessonExercise })));
+const ShowLessons = lazy(() => import("@/features/packages/pages/ShowLessons"));
 
 // Auth Pages
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
@@ -77,6 +78,12 @@ export const routes = [
       { path: "exercise", element: LessonExercise, protected: true },
     ],
   },
+  {
+    path: "/show-lessons",
+    element: ShowLessons,
+    protected: true,
+  },
+
 ];
 
 // Helper function to check if route is public
