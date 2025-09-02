@@ -2,6 +2,7 @@ import profileImg from "@/assets/images/profileImage.png";
 import { logoutUser } from "../../../../features/auth/store/authSlice";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const ProfileInfo = () => {
   const { t } = useTranslation();
@@ -14,7 +15,8 @@ const ProfileInfo = () => {
     // or use navigate("/login") if using react-router
   };
   return (
-    <button
+    <Link 
+      to="/profile"
       className="flex flex-col items-center text-darkblue hover:scale-105 transition cursor-pointer"
       onClick={handleLogout}
     >
@@ -26,7 +28,7 @@ const ProfileInfo = () => {
         />
       </div>
       <span className="text-base font-medium">    {t('mobileNavigation.profile')}</span>
-    </button>
+    </Link>
   );
 };
 

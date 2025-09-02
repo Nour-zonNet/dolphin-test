@@ -35,7 +35,7 @@ const ChangeGradeModal = ({ isOpen, onClose, onConfirm  }) => {
              <h2 className="font-semibold text-navyteal text-xl md:text-[32px]">
                  تغيير الصف الدراسي
               </h2>
-              <h3 className="font-semibold text-navyteal text-lg md:text-2xl">اختر الصف الدراسي الجديد</h3>
+              <h3 className="font-semibold text-navyteal text-lg md:text-2xl mt-2">اختر الصف الدراسي الجديد</h3>
             </div>
           </div>
 

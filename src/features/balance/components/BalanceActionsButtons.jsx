@@ -1,14 +1,16 @@
-import React from 'react'
-import { Gift } from '@/utils/icons'
-import { Plus } from '@/utils/icons'
+import React, { useState } from 'react'
+import { Gift, Plus } from '@/utils/icons'
+import { AddBalanceModal } from '@/components/profile/modal';
 
 const BalanceActionsButtons = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <div>
         {/* Action Buttons */}
         <div className="flex flex-col lg:flex-row w-[90%] lg:w-[50%] mx-auto gap-[18px] justify-center items-center my-14">
             
             <button
+            onClick={() => setIsModalOpen(true)} 
             className="flex w-full h-[60px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover"
             >
             <Plus className="w-4 md:w-6" />
@@ -25,6 +27,10 @@ const BalanceActionsButtons = () => {
             </div>
             </button>
         </div>
+        <AddBalanceModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
     </div>
   )
 }

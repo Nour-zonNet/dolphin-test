@@ -108,7 +108,7 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="cursor-pointer w-full h-[70px] flex items-center justify-center gap-2 px-4 py-2 bg-[#e89b32] hover:bg-[#d18c2d] rounded-[60px] transition-colors"
+            className="cursor-pointer w-full h-[65px] flex items-center justify-center gap-2 px-4 py-2 bg-[#e89b32] hover:bg-[#d18c2d] rounded-[60px] transition-colors"
           >
             <img
               className="w-4 md:w-6"
