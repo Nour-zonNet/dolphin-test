@@ -17,17 +17,13 @@ const DetailsModal = ({ onClose, packageDetails = {} }) => {
       </button>
 
       {/* Header */}
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 font-cairo mb-2">
-          تفاصيل الباقة
-        </h2>
+      <div className="text-center mb-6 space-y-3">
         <div className="flex justify-center">
-          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-          <Info/>
-          </div>
+          <Info />
         </div>
+        <h2 className="text-lg font-bold text-navyteal  mb-2">تفاصيل الباقة</h2>
       </div>
-
+      <hr className="border-t border-dashed border-subtext/50 mb-6" />
       {/* Package Name */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-800 font-cairo mb-3">
@@ -37,14 +33,16 @@ const DetailsModal = ({ onClose, packageDetails = {} }) => {
 
       {/* Description */}
       <div className="mb-6">
-        <p className="text-gray-700 text-base leading-relaxed font-cairo text-right">
+        <p className="text-gray-700 text-base leading-relaxed font-cairo ">
           {description}
         </p>
       </div>
 
       {/* Additional Info Section */}
       <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="font-medium text-gray-800 mb-2 font-cairo">معلومات إضافية:</h4>
+        <h4 className="font-medium text-gray-800 mb-2 font-cairo">
+          معلومات إضافية:
+        </h4>
         <ul className="space-y-2 text-sm text-gray-600 font-cairo">
           <li className="flex items-center space-x-2">
             <span className="w-2 h-2 bg-blue-500 rounded-full"></span>

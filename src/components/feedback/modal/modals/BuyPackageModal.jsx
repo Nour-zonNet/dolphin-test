@@ -18,42 +18,43 @@ const BuyPackageModal = ({ onClose, packageData = {}, isExtendMode = false }) =>
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 relative">
+    <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 relative">
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-3 space-x-reverse">
-          <Package width={24} height={24} />
-          <h2 className="text-xl font-bold text-gray-900">
-            {isExtendMode ? "تمديد الباقة" : "شراء الباقة"}
-          </h2>
-        </div>
-        <button
+      <button
           onClick={onClose}
           className="text-gray-400 hover:text-gray-600 transition-colors"
         >
           <Cross width={20} height={20} />
         </button>
+        <div className="flex items-center space-x-3 space-x-reverse">
+          <h2 className="text-xl font-bold text-gray-900">
+            {isExtendMode ? "تمديد الباقة" : "شراء الباقة"}
+          </h2>
+        </div>
+        <div></div>
+       
       </div>
 
       {/* Package Details */}
       <div className="p-6">
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">{name}</h3>
-          <div className="flex items-center justify-center space-x-2 space-x-reverse mb-4">
-            <span className="text-3xl font-bold text-blue-600">{price} ريال</span>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-navyteal mb-2">{name}</h3>
+          <div className="flex items-center  justify-end space-x-2 space-x-reverse mb-4">
+            <span className="text-base font-bold text-blue-600">{price} ريال</span>
             {originalPrice && (
               <>
                 <span className="text-lg text-gray-400 line-through">{originalPrice} ريال</span>
-                <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
+                {/* <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
                   خصم {discount}
-                </span>
+                </span> */}
               </>
             )}
           </div>
-          <div className="flex items-center justify-center space-x-2 space-x-reverse text-gray-600">
+          {/* <div className="flex items-center justify-center space-x-2 space-x-reverse text-gray-600">
             <Calendar width={16} height={16} />
             <span>{duration}</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Features */}

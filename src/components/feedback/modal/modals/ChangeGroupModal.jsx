@@ -59,13 +59,14 @@ const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
 
       {/* Header */}
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 font-cairo mb-2">
+        <h2 className="text-2xl font-bold text-navyteal font-cairo mb-2">
           تغيير المجموعة
         </h2>
         <p className="text-gray-600 text-sm">
           اختر المجموعة الجديدة المناسبة
         </p>
       </div>
+      <hr className="border-t border-dashed border-subtext/50 mb-6" />
 
       {/* Group Options */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -111,9 +112,9 @@ const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
       <div className="flex justify-center mb-4">
         <Button
           onClick={handleConfirm}
-          icon={<Check color="white" />}
+          icon={<Check color="#08233f" />}
           text="تأكيد التغيير"
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-medium text-lg"
+          className="w-full text-navyteal  font-medium "
         />
       </div>
 
