@@ -1,9 +1,16 @@
 import { useSelector, useDispatch } from "react-redux";
-import { hideModal } from "@/store/modalSlice";
+import { closeModal } from "@/store/modalSlice";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
+import { callbackRegistry } from "./useModal";
 
-import StatusModal from "./modals/StatusModal";
-import InfoModal from "./modals/InfoModal";
+import {
+  StatusModal,
+  BuyPackageModal,
+  DetailsModal,
+  ConfirmModal,
+  ChangeGroupModal,
+  ReactivateModal,
+} from "./modals";
 
 const ModalManager = () => {
   const { type, props } = useSelector((state) => state.modal);
@@ -11,7 +18,16 @@ const ModalManager = () => {
 
   if (!type) return null;
 
-  const handleClose = () => dispatch(hideModal());
+  const handleClose = () => dispatch(closeModal());
+
+  // Helper function to execute callbacks from registry
+  const executeCallback = (callbackId, ...args) => {
+    const callback = callbackRegistry.get(callbackId);
+    if (callback) {
+      callback(...args);
+      callbackRegistry.delete(callbackId);
+    }
+  };
 
   let ModalContent = null;
   switch (type) {
@@ -22,19 +38,76 @@ const ModalManager = () => {
         <StatusModal type={type} {...props} onClose={handleClose} />
       );
       break;
-    case MODAL_TYPES.INFO:
+    case MODAL_TYPES.BUY_PACKAGE:
       ModalContent = (
-        <InfoModal {...props} onClose={handleClose} />
+        <BuyPackageModal {...props} onClose={handleClose} />
       );
       break;
-
+    case MODAL_TYPES.DETAILS:
+      ModalContent = (
+        <DetailsModal {...props} onClose={handleClose} />
+      );
+      break;
+    case MODAL_TYPES.CONFIRM:
+      ModalContent = (
+        <ConfirmModal 
+          {...props} 
+          onClose={handleClose}
+          onConfirm={(data) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, data);
+            }
+            handleClose();
+          }}
+        />
+      );
+      break;
+    case MODAL_TYPES.CHANGE_GROUP:
+      ModalContent = (
+        <ChangeGroupModal 
+          {...props} 
+          onClose={handleClose}
+          onConfirm={(groupId) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, groupId);
+            }
+            handleClose();
+          }}
+        />
+      );
+      break;
+    case MODAL_TYPES.REACTIVATE:
+      ModalContent = (
+        <ReactivateModal 
+          {...props} 
+          onClose={handleClose}
+          onConfirm={(data) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, data);
+            }
+            handleClose();
+          }}
+        />
+      );
+      break;
+    case MODAL_TYPES.EXTEND_PACKAGE:
+      ModalContent = (
+        <BuyPackageModal 
+          {...props} 
+          onClose={handleClose}
+          isExtendMode={true}
+        />
+      );
+      break;
     default:
       return null;
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      {ModalContent}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="relative">
+        {ModalContent}
+      </div>
     </div>
   );
 };

@@ -5,6 +5,15 @@ const modalSlice = createSlice({
   name: "modal",
   initialState: { type: null, props: {} },
   reducers: {
+    openModal: (state, action) => {
+      state.type = action.payload.type;
+      state.props = action.payload.props || {};
+    },
+    closeModal: (state) => {
+      state.type = null;
+      state.props = {};
+    },
+    // Keep backward compatibility
     showModal: (state, action) => {
       state.type = action.payload.type;
       state.props = action.payload.props || {};
@@ -16,5 +25,5 @@ const modalSlice = createSlice({
   },
 });
 
-export const { showModal, hideModal } = modalSlice.actions;
+export const { openModal, closeModal, showModal, hideModal } = modalSlice.actions;
 export default modalSlice.reducer;
