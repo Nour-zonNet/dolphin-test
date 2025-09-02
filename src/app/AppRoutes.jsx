@@ -12,6 +12,7 @@ import { fetchPackages } from "../features/packages/store/packagesSlice";
 import { fetchLessons } from "../features/lessons/store/lessonsSlice";
 import ManageSubscription from "../features/managesubscription/pages/ManageSubscription";
 import { PackageContent } from "../features/packages/pages/PackagesContent";
+import ShowLessons from "../features/packages/pages/ShowLessons";
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
@@ -57,6 +58,7 @@ const AppRoutes = () => {
       <Route path="/schedule/lessoncontent" element={<LessonContentPage />} />
       <Route path="/manage-subscription" element={<ManageSubscription />} />
       <Route path="/packages-content" element={<PackageContent />} />
+      <Route path="/show-lessons" element={<ShowLessons />} />
   
 
     </Routes>
