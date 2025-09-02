@@ -1,5 +1,17 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Cancel, ChevronDown, ChevronUp, Copon, Renew } from "../../../utils/icons";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
+import {
+  Cancel,
+  ChevronDown,
+  ChevronUp,
+  Copon,
+  Renew,
+} from "../../../utils/icons";
 import { Line } from "../../../utils/Illustrations";
 import { STATUS_CONFIG } from "../../../constants/STATUS_CONFIG";
 import { useSubscriptions } from "../hooks/useSubscriptions";
@@ -14,7 +26,7 @@ const Card = React.memo(({ item }) => {
   const contentRef = useRef(null);
 
   const { cancelSubscription, renewSubscription } = useSubscriptions();
-  const { fetchGroups } = useGroups(item.package_id);
+  useGroups(item.package_id);
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
   const mappedItem = useMemo(
@@ -25,7 +37,7 @@ const Card = React.memo(({ item }) => {
       subject: item.package_name,
       startDate: formatDate(item.start_date),
       endDate: formatDate(item.end_date),
-      group: item.group_name,
+      group: { group_name: item.group_name, group_id: item.group_id },
       daysLeft: item.days_remaining,
     }),
     [item]
@@ -42,7 +54,9 @@ const Card = React.memo(({ item }) => {
   // Handle expand/collapse animation
   useEffect(() => {
     setContentHeight(
-      isOpen && contentRef.current ? `${contentRef.current.scrollHeight}px` : "0px"
+      isOpen && contentRef.current
+        ? `${contentRef.current.scrollHeight}px`
+        : "0px"
     );
   }, [isOpen]);
 
@@ -51,21 +65,28 @@ const Card = React.memo(({ item }) => {
   }
 
   // Status Badge
-  const StatusBadge = useMemo(() => (
-    <span className={`text-sm px-3 py-1 rounded-full flex items-center gap-2 ${config.color}`}>
-      {config.icon && <config.icon />}
-      {config.label(daysLeft)}
-    </span>
-  ), [config, daysLeft]);
+  const StatusBadge = useMemo(
+    () => (
+      <span
+        className={`text-sm px-3 py-1 rounded-full flex items-center gap-2 ${config.color}`}
+      >
+        {config.icon && <config.icon />}
+        {config.label(daysLeft)}
+      </span>
+    ),
+    [config, daysLeft]
+  );
 
   // Toggle Icon
-  const ToggleIcon = useMemo(() => (
-    isOpen ? (
-      <ChevronUp className="w-3 h-3 text-gray-600 transition-transform" />
-    ) : (
-      <ChevronDown className="w-3 h-3 text-gray-600 transition-transform" />
-    )
-  ), [isOpen]);
+  const ToggleIcon = useMemo(
+    () =>
+      isOpen ? (
+        <ChevronUp className="w-3 h-3 text-gray-600 transition-transform" />
+      ) : (
+        <ChevronDown className="w-3 h-3 text-gray-600 transition-transform" />
+      ),
+    [isOpen]
+  );
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
@@ -113,7 +134,11 @@ const Card = React.memo(({ item }) => {
           </div>
 
           {/* Group Info & Actions */}
-          <GroupInfo group={group} onChange={fetchGroups} />
+          <GroupInfo
+            group={group}
+            packageId={item.package_id}
+            subscriptionId={item.id}
+          />
 
           {/* Coupon */}
           {config.actions.includes("useCoupon") && (
