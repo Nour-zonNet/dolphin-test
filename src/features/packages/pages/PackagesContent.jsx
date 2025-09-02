@@ -2,6 +2,7 @@ import { Book, Group, Teacher } from "../../../utils/icons";
 import { Card } from "../components/Card";
 import SearchFilterBar from "../components/SearchFilterBar";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 // Data
 const packageData = [
@@ -36,6 +37,7 @@ const packageData = [
 
 export const PackageContent = () => {
   const [filteredPackages, setFilteredPackages] = React.useState(packageData);
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-white flex flex-col  ">
       {/* Status Bar */}
@@ -98,7 +100,7 @@ export const PackageContent = () => {
                   </div>
 
                   <div className="flex justify-end">
-                    <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-orangedeep hover:bg-foundationorangenormal-hover rounded-3xl text-deepnavy font-semibold text-sm sm:text-base">
+                    <button onClick={() => navigate("/show-lessons")} className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-orangedeep hover:bg-foundationorangenormal-hover rounded-3xl text-deepnavy font-semibold text-sm sm:text-base">
                       <Book className="w-6 h-6 sm:w-8 sm:h-8" />
                       عرض الدروس
                     </button>
