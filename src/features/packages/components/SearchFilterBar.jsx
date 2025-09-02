@@ -1,79 +1,78 @@
 import * as React from "react";
-import {  XIcon } from "lucide-react";
+import { XIcon } from "lucide-react";
 import { FilterIcon, Search } from "../../../utils/icons";
 
-const SearchFilterBar = ({
-  packages,
-  onFilterChange,
-  placeholder = "استكشف ..",
-//   filterOptions = {},
-}) => {
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [showFilters, setShowFilters] = React.useState(false);
-  const [selectedFilters, setSelectedFilters] = React.useState({
-    instructor: "",
-    group: "",
-  });
+const SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = "استكشف .." }) => {
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isFiltersVisible, setIsFiltersVisible] = React.useState(false);
+  const [activeFilters, setActiveFilters] = React.useState({ instructor: "", group: "" });
 
-  // Extract unique instructors and groups from packages
-  const instructors = [...new Set(packages.map((pkg) => pkg.instructor))];
-  const groups = [...new Set(packages.map((pkg) => pkg.group))];
+  const instructors = React.useMemo(
+    () => Array.from(new Set(packages.map((pkg) => pkg.instructor))).filter(Boolean),
+    [packages]
+  );
 
-  // Handle search input change
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    applyFilters(value, selectedFilters);
-  };
+  const groups = React.useMemo(
+    () => Array.from(new Set(packages.map((pkg) => pkg.group))).filter(Boolean),
+    [packages]
+  );
 
-  // Handle filter selection
-  const handleFilterChange = (filterType, value) => {
-    const newFilters = {
-      ...selectedFilters,
-      [filterType]: value,
-    };
-    setSelectedFilters(newFilters);
-    applyFilters(searchTerm, newFilters);
-  };
+  const applyFilters = React.useCallback(
+    (queryValue, filtersValue) => {
+      const normalizedQuery = queryValue.trim().toLowerCase();
+      let filtered = packages;
 
-  // Clear all filters
-  const clearFilters = () => {
-    setSelectedFilters({ instructor: "", group: "" });
-    setSearchTerm("");
+      if (normalizedQuery) {
+        filtered = filtered.filter((pkg) => {
+          const title = (pkg.title || "").toLowerCase();
+          const instructor = (pkg.instructor || "").toLowerCase();
+          const group = (pkg.group || "").toLowerCase();
+          return (
+            title.includes(normalizedQuery) ||
+            instructor.includes(normalizedQuery) ||
+            group.includes(normalizedQuery)
+          );
+        });
+      }
+
+      if (filtersValue.instructor) {
+        filtered = filtered.filter((pkg) => pkg.instructor === filtersValue.instructor);
+      }
+
+      if (filtersValue.group) {
+        filtered = filtered.filter((pkg) => pkg.group === filtersValue.group);
+      }
+
+      onFilterChange(filtered);
+    },
+    [packages, onFilterChange]
+  );
+
+  const handleSearchChange = React.useCallback(
+    (event) => {
+      const value = event.target.value;
+      setSearchQuery(value);
+      applyFilters(value, activeFilters);
+    },
+    [activeFilters, applyFilters]
+  );
+
+  const handleFilterChange = React.useCallback(
+    (filterKey, value) => {
+      setActiveFilters((previous) => {
+        const next = { ...previous, [filterKey]: value };
+        applyFilters(searchQuery, next);
+        return next;
+      });
+    },
+    [searchQuery, applyFilters]
+  );
+
+  const clearFilters = React.useCallback(() => {
+    setActiveFilters({ instructor: "", group: "" });
+    setSearchQuery("");
     applyFilters("", { instructor: "", group: "" });
-  };
-
-  // Apply filters and notify parent component
-  const applyFilters = (searchValue, filters) => {
-    let filteredPackages = packages;
-
-    // Apply search filter
-    if (searchValue) {
-      filteredPackages = filteredPackages.filter(
-        (pkg) =>
-          pkg.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-          pkg.instructor.toLowerCase().includes(searchValue.toLowerCase()) ||
-          pkg.group.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    }
-
-    // Apply instructor filter
-    if (filters.instructor) {
-      filteredPackages = filteredPackages.filter(
-        (pkg) => pkg.instructor === filters.instructor
-      );
-    }
-
-    // Apply group filter
-    if (filters.group) {
-      filteredPackages = filteredPackages.filter(
-        (pkg) => pkg.group === filters.group
-      );
-    }
-
-    // Notify parent component
-    onFilterChange(filteredPackages);
-  };
+  }, [applyFilters]);
 
   return (
     <div className="px-4 sm:px-6 relative">
@@ -82,16 +81,16 @@ const SearchFilterBar = ({
           <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
           <input
             type="text"
-            value={searchTerm}
+            value={searchQuery}
             onChange={handleSearchChange}
             placeholder={placeholder}
             className="text-lg sm:text-xl text-neutral-700 outline-none border-none bg-transparent w-full"
           />
-          {searchTerm && (
+          {searchQuery && (
             <button
               onClick={() => {
-                setSearchTerm("");
-                applyFilters("", selectedFilters);
+                setSearchQuery("");
+                applyFilters("", activeFilters);
               }}
               className="p-1 hover:bg-gray-100 rounded-full"
             >
@@ -101,22 +100,22 @@ const SearchFilterBar = ({
         </div>
         <button
           className="h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-full hover:bg-gray-100 relative"
-          onClick={() => setShowFilters(!showFilters)}
+          onClick={() => setIsFiltersVisible(!isFiltersVisible)}
         >
           <FilterIcon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-          {(selectedFilters.instructor || selectedFilters.group) && (
+          {(activeFilters.instructor || activeFilters.group) && (
             <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
           )}
         </button>
       </div>
 
       {/* Filter Dropdown */}
-      {showFilters && (
+      {isFiltersVisible && (
         <div className="absolute top-full left-0 right-0 bg-white border border-[#d9d9d9] rounded-lg shadow-lg mt-2 z-10 p-4">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-semibold text-lg">الفلاتر</h3>
             <div className="flex gap-2">
-              {(selectedFilters.instructor || selectedFilters.group) && (
+              {(activeFilters.instructor || activeFilters.group) && (
                 <button
                   onClick={clearFilters}
                   className="text-sm text-blue-600 hover:text-blue-800"
@@ -125,7 +124,7 @@ const SearchFilterBar = ({
                 </button>
               )}
               <button
-                onClick={() => setShowFilters(false)}
+                onClick={() => setIsFiltersVisible(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <XIcon className="w-5 h-5" />
@@ -139,10 +138,8 @@ const SearchFilterBar = ({
                 المدرس
               </label>
               <select
-                value={selectedFilters.instructor}
-                onChange={(e) =>
-                  handleFilterChange("instructor", e.target.value)
-                }
+                value={activeFilters.instructor}
+                onChange={(e) => handleFilterChange("instructor", e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md"
               >
                 <option value="">كل المدرسين</option>
@@ -159,7 +156,7 @@ const SearchFilterBar = ({
                 المجموعة
               </label>
               <select
-                value={selectedFilters.group}
+                value={activeFilters.group}
                 onChange={(e) => handleFilterChange("group", e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md"
               >
@@ -176,6 +173,6 @@ const SearchFilterBar = ({
       )}
     </div>
   );
-};
+});
 
 export default SearchFilterBar;

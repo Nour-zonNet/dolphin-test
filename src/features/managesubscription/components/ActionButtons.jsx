@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ExclamationMark, Plus } from '../../../utils/icons';
-export const ActionButtons = () => {
+export const ActionButtons = React.memo(() => {
   const navigate = useNavigate();
+  const handleAddPackage = useCallback(() => navigate("/select-packages"), [navigate]);
   return (
     <div className="flex items-center flex-col md:flex-row justify-between gap-4 w-[100%]">
-      <button className="bg-orangedeep w-full md:w-1/2 md:py-4 py-3 rounded-4xl flex items-center justify-center gap-2 cursor-pointer" onClick={() => navigate("/select-packages")}>
+      <button className="bg-orangedeep w-full md:w-1/2 md:py-4 py-3 rounded-4xl flex items-center justify-center gap-2 cursor-pointer" onClick={handleAddPackage}>
         <Plus className="w-4 md:w-6" />
         <p className="font-semibold text-navyteal md:text-2xl text-sm">
           اضافة باقة جديدة
@@ -20,6 +21,6 @@ export const ActionButtons = () => {
       </button>
     </div>
   );
-};
+});
 
 export default ActionButtons

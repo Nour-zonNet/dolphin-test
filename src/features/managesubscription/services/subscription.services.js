@@ -1,27 +1,36 @@
-import api from "@/services/api";   
+import api from "@/services/api";
+import { ENDPOINTS } from "../../../constants/API_ENDPOINTS";
 
 class SubscriptionRepository {
-    // Get all subscriptions
-    async getAll() {
-        const { data } = await api.get("/student/packages/subscription-packages");
-        return data;
-    }
+  // Get all subscriptions
+  async getAll() {
+    const { data } = await api.get(ENDPOINTS.GET_MY_SUBSCRIPTIONS);
+    return data;
+  }
 
-    // Get single subscription
-    async getById(subscriptionId) {
-        const { data } = await api.get(`/student/packages/subscription-packages/${subscriptionId}`);
-        return data;
-    }
+  // Get single subscription
+  async getById(subscriptionId) {
+    const { data } = await api.get(
+      `/student/packages/subscription-packages/${subscriptionId}`
+    );
+    return data;
+  }
 
-      // Cancel subscription
+
+
+  // Cancel subscription
   async cancel(subscriptionId) {
-    const { data } = await api.post(`/student/packages/subscription-packages/${subscriptionId}/cancel`);
+    const { data } = await api.post(
+      `/student/packages/subscription-packages/${subscriptionId}/cancel`
+    );
     return data;
   }
 
   // Renew subscription
   async renew(subscriptionId) {
-    const { data } = await api.post(`/student/packages/subscription-packages/${subscriptionId}/renew`);
+    const { data } = await api.post(
+      `/student/packages/subscription-packages/${subscriptionId}/renew`
+    );
     return data;
   }
 

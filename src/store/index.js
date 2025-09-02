@@ -3,6 +3,7 @@ import authReducer from "@/features/auth/store/authSlice";
 import packagesReducer from "@/features/packages/store/packagesSlice";
 import lessonsReducer from "@/features/lessons/store/lessonsSlice";
 import subscriptionsReducer from "@/features/managesubscription/store/subscriptionSlice";
+import groupsReducer from "@/features/groups/store/groupSlice";
 import modalSlice from "./modalSlice";
 
 const store = configureStore({
@@ -12,6 +13,7 @@ const store = configureStore({
     lessons: lessonsReducer,
     modal : modalSlice ,
     subscriptions: subscriptionsReducer,
+    groups: groupsReducer,
   },
 });
 export default store;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Calender,
@@ -9,8 +9,8 @@ import {
 import WeeklySchedulePopup from "./WeeklySchedulePopup";
 import { CardKite, PackagesBorder, Star } from "@/utils/Illustrations";
 
-const PackageCard = ({ item, color, image }) => {
-  const [open, setOpen] = useState(false);
+const PackageCard = React.memo(({ item, color, image }) => {
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const { t } = useTranslation();
 
         //   {
@@ -25,6 +25,11 @@ const PackageCard = ({ item, color, image }) => {
         //     "package_start_date": "2025-08-09",
         //     "watsapp_link": "https://chat.whatsapp.com/Kv2gWmNXCvT7Hde7ucYz8g?mode=r_c"
         // },
+  const SocialIcons = useMemo(() => [WhatsappCircle, TelegramCircle], []);
+
+  const handleOpenSchedule = useCallback(() => setIsScheduleOpen(true), []);
+  const handleCloseSchedule = useCallback(() => setIsScheduleOpen(false), []);
+
   return (
     <div className="relative w-full mx-auto px-4 pl-8 ">
       {/* Border Illustration */}
@@ -92,7 +97,7 @@ const PackageCard = ({ item, color, image }) => {
           <div className="flex flex-row items-center justify-between gap-4 px-4 py-5 relative z-10">
             {/* Schedule Button */}
             <button
-              onClick={() => setOpen(true)}
+              onClick={handleOpenSchedule}
               className="w-full   text-navyteal text-xs  xs:text-base flex items-center text-nowrap gap-1 max-w-60  bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full  px-4 py-2 sm:py-4  font-medium transition-colors duration-300"
             >
               <Calender />
@@ -101,7 +106,7 @@ const PackageCard = ({ item, color, image }) => {
 
             {/* Social Icons */}
             <div className="flex items-center justify-between  w-full xs:w-auto  px-2 sm:px-4  border-[1px] border-[#5C6064]  rounded-full">
-              {[WhatsappCircle, TelegramCircle].map((Icon, idx) => (
+              {SocialIcons.map((Icon, idx) => (
                 <button key={idx} className="   sm:p-2 rounded-full  ">
                   <Icon className="w-6 sm:w-18" />
                 </button>
@@ -112,9 +117,9 @@ const PackageCard = ({ item, color, image }) => {
       </div>
 
       {/* Popup */}
-      <WeeklySchedulePopup open={open} setOpen={setOpen} />
+      <WeeklySchedulePopup open={isScheduleOpen} setOpen={handleCloseSchedule} />
     </div>
   );
-};
+});
 
 export default PackageCard;

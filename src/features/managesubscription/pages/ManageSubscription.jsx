@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Header } from '../../../components/layout/Header';
 import { ActionButtons, Cards } from '../components';
 import addPackageDolphin from '@/assets/images/add-packages-dolphin.svg'
@@ -6,24 +6,20 @@ import { HomeSupportBtn } from "../../../components";
 import { useSubscriptions } from '../hooks/useSubscriptions';
 
 export const ManageSubscription = () => {
-  const NAVBAR_HEIGHT = 64; // px
-  const MOBILE_BAR_HEIGHT = 56; // px
+  const NAVBAR_HEIGHT = 64;
+  const MOBILE_BAR_HEIGHT = 56;
 
-  // const [subscriptions, setSubscriptions] = useState( [{ id: 1, name: "Premium Plan" }]);
-
-  // Hook from store
   const {
     items: subscriptions,
-    loading,
-    error,
     fetchSubscriptions,
+
   } = useSubscriptions();
 
   useEffect(() => {
     fetchSubscriptions();
-  }, []);
+  }, [fetchSubscriptions]);
 
-  const hasSubscriptions = subscriptions.length > 0; 
+  const hasSubscriptions = useMemo(() => subscriptions.length > 0, [subscriptions]);
 
   return (
     <>
@@ -44,7 +40,10 @@ export const ManageSubscription = () => {
           />
         </div>
       ) : (
-        <Cards subscriptions={subscriptions} />
+        <Cards
+          subscriptions={subscriptions}
+
+        />
       )}
 
       <HomeSupportBtn />

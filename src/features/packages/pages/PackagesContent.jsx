@@ -1,5 +1,4 @@
-import { SearchIcon } from "lucide-react";
-import { Book, FilterIcon, Group, Teacher } from "../../../utils/icons";
+import { Book, Group, Teacher } from "../../../utils/icons";
 import { Card } from "../components/Card";
 import SearchFilterBar from "../components/SearchFilterBar";
 import React from "react";

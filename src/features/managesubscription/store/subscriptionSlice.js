@@ -19,6 +19,14 @@ export const cancelSubscription = createAsyncThunk(
   }
 );
 
+export const getGroupsByPackageId = createAsyncThunk(
+  "subscriptions/groups",
+  async (id) => {
+    const res = await subscriptionRepository.getGroupsByPackageId(id);
+    return res.data;
+  }
+);
+
 export const renewSubscription = createAsyncThunk(
   "subscriptions/renew",
   async (id) => {
@@ -27,7 +35,7 @@ export const renewSubscription = createAsyncThunk(
   }
 );
 
-export const changeGroupSubscription = createAsyncThunk(
+export const  changeGroupSubscription = createAsyncThunk(
   "subscriptions/changeGroup",
   async ({ id, groupId }) => {
     const res = await subscriptionRepository.changeGroup(id, groupId);

@@ -10,18 +10,18 @@ const Packages = () => {
   const { mine, loading } = usePackages();
 
   if (loading) return null;
+
   return (
     <div className="py-18 md:py-18 px-4 sm:px-6 lg:px-10">
       {mine.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 py-8">
-          {mine.map((item) => {
-            const { image, bgColor } = packageFactory(item.id);
-
+          {mine.map((pkg) => {
+            const { image, bgColor } = packageFactory(pkg.id);
             return (
               <PackageCard
-                key={item.id}
-                item={item}
-                color={bgColor} // pass bgColor here
+                key={pkg.id}
+                item={pkg}
+                color={bgColor}
                 image={image}
               />
             );
@@ -40,7 +40,7 @@ const Packages = () => {
         </div>
       )}
 
-     <HomeSupportBtn className="fixed bottom-25 lg:bottom-24 right-0 z-50" />
+      <HomeSupportBtn className="fixed bottom-25 lg:bottom-24 right-0 z-50" />
     </div>
   );
 };
