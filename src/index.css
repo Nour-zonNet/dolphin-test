@@ -164,3 +164,13 @@ body {
 .slider::-moz-range-thumb:hover {
   background: #2563eb;
 }
+
+/* Hide default date picker icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+
+input[type="date"] {
+  -moz-appearance: textfield;
+}

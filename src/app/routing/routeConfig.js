@@ -1,5 +1,4 @@
 import { lazy } from "react";
-
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
 const LessonsSchedule = lazy(() => import("@/features/lessons"));
@@ -17,6 +16,8 @@ const PhonePage = lazy(() => import("@/features/auth/pages/PhonePage"));
 const OtpPage = lazy(() => import("@/features/auth/pages/OtpPage"));
 const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
 const PasswordPage = lazy(() => import("@/features/auth/pages/PasswordPage"));
+const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
+const BalanceDetails = lazy(() => import("@/features/balance/pages/BalanceDetails"));
 
 // Route Configuration
 export const routes = [
@@ -82,6 +83,16 @@ export const routes = [
     path: "/show-lessons",
     element: ShowLessons,
     protected: true,
+  },
+  {
+    path: "/profile",
+    element: ProfilePage,
+    public: true,
+  },
+  {
+    path: "/balance-details",
+    element: BalanceDetails,
+    public: true,
   },
 
 ];
