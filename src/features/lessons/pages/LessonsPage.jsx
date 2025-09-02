@@ -1,6 +1,5 @@
 import { HomeSupportBtn } from "@/components/layout";
 import { ScheduleSlider } from "../components";
-import withAuth from "@/features/auth/hoc/withAuth";
 
 const SchedulePage = () => {
   return (
@@ -11,5 +10,4 @@ const SchedulePage = () => {
   );
 };
 
-const ProtectedComponent = withAuth(SchedulePage);
-export default ProtectedComponent;
+export default SchedulePage;

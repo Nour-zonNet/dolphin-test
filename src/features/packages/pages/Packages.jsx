@@ -4,7 +4,6 @@ import { PackageCard } from "../components";
 import { usePackages } from "../hooks/usePackages";
 import notFoundPackages from "@/assets/images/notFoundPackages.png";
 
-import withAuth from "../../auth/hoc/withAuth";
 import { packageFactory } from "../factory/packageFactory.js";
 
 const Packages = () => {
@@ -45,5 +44,5 @@ const Packages = () => {
     </div>
   );
 };
-const ProtectedComponent = withAuth(Packages);
-export default ProtectedComponent;
+
+export default Packages;

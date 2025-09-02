@@ -5,17 +5,26 @@ import { useAuth } from "../hooks/useAuth";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { token, user } = useAuth();
+  const { isAuthLoading, isFullyAuthenticated, shouldRedirectToLogin } = useAuth();
 
   useEffect(() => {
-    // Redirect to phone step if not authenticated
-    if (!token || !user) {
+    // Only redirect if we're not loading and definitely not authenticated
+    if (shouldRedirectToLogin()) {
       navigate("/auth/phone", { replace: true });
     }
-  }, [token, user, navigate]);
+  }, [shouldRedirectToLogin, navigate]);
+
+  // If we have a token but no user yet, and we're still loading, show loading state
+  if (isAuthLoading()) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   // If user is already logged in, redirect to schedule
-  if (token && user) {
+  if (isFullyAuthenticated()) {
     return <Navigate to="/schedule" replace />;
   }
 

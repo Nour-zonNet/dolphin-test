@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { AppLayout } from "@/components/layout";
+import withAuth from "@/features/auth/hoc/withAuth";
 
 // Simple loading fallback component
 const RouteLoadingFallback = () => (
@@ -16,14 +17,17 @@ const RouteRenderer = ({ route, children }) => {
     return children;
   }
 
+  // For protected routes, wrap with authentication HOC
+  const ProtectedComponent = route.protected ? withAuth(Component) : Component;
+
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
       {route.protected ? (
         <AppLayout>
-          <Component />
+          <ProtectedComponent />
         </AppLayout>
       ) : (
-        <Component />
+        <ProtectedComponent />
       )}
     </Suspense>
   );

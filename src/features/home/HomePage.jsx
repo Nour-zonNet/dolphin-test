@@ -6,8 +6,19 @@ import { useAuth } from "../auth/hooks/useAuth";
 import { Hero, LoginCard, Navbar } from "./components";
 
 const HomePage = () => {
-  const { token, user } = useAuth();
-  if (token && user) {
+  const { isAuthLoading, isFullyAuthenticated } = useAuth();
+  
+  // If we have a token but no user yet, and we're still loading, show loading state
+  if (isAuthLoading()) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+  
+  // If user is authenticated, redirect to schedule
+  if (isFullyAuthenticated()) {
     return <Navigate to="/schedule" replace />;
   }
 
@@ -32,7 +43,7 @@ const HomePage = () => {
       {/* Footer Illustration */}
       <FooterIllustration />
       {/* Background Illustrations */}
-      {/* <Pencel className=" hidden md:block absolute bottom-[50%] left-10 sm:h-20 md:w-40 lg-w-120" />{" "} */}
+      {/* <Pencel className=" hidden md:block absolute bottom-[50%] left-10 sm:h-20 md:w-40 lg:w-120" />{" "} */}
       <RightKite className="  absolute bottom-[45%] right-0 w-50 sm:w-70 md:w-80 " />
     </div>
   );
