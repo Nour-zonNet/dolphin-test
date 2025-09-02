@@ -4,3 +4,7 @@ export { default as InputOtp } from './InputOtp';
 export { default as SubscribeBtn } from './SubscribeBtn';
 export { default as SupportBtn } from './SupportBtn';
 export { default as AddPackageBtn } from './AddPackageBtn';
+export { default as Divider } from './Divider';
+export { default as ProfileButtons } from './ProfileButtons';
+export { default as ProfileInputs } from './ProfileInputs';
+export { default as ProfileCard } from './ProfileCard';

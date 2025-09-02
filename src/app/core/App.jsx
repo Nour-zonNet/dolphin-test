@@ -31,7 +31,7 @@ const App = () => {
         <ModalManager />
 
         {/* Example Modal Buttons - Remove in production */}
-        {/* <div className="fixed top-4 left-4 z-50 bg-white p-4 rounded-lg shadow-lg border">
+        <div className="hidden top-4 left-4 z-50 bg-white p-4 rounded-lg shadow-lg border">
           <h3 className="font-bold mb-3 text-sm">Modal Examples:</h3>
           <div className="space-y-2">
             <button 

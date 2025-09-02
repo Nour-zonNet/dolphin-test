@@ -21,11 +21,8 @@ const PackageContent = lazy(() =>
   }))
 );
 const Board = lazy(() => import("@/features/Board"));
-const LessonExercise = lazy(() =>
-  import("@/features/lessons/pages/LessonExercise").then((module) => ({
-    default: module.LessonExercise,
-  }))
-);
+const LessonExercise = lazy(() => import("@/features/lessons/pages/LessonExercise").then(module => ({ default: module.LessonExercise })));
+const ShowLessons = lazy(() => import("@/features/packages/pages/ShowLessons"));
 
 // Auth Pages
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
@@ -33,6 +30,8 @@ const PhonePage = lazy(() => import("@/features/auth/pages/PhonePage"));
 const OtpPage = lazy(() => import("@/features/auth/pages/OtpPage"));
 const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
 const PasswordPage = lazy(() => import("@/features/auth/pages/PasswordPage"));
+const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
+const BalanceDetails = lazy(() => import("@/features/balance/pages/BalanceDetails"));
 
 // Route Configuration
 export const routes = [
@@ -73,12 +72,7 @@ export const routes = [
   {
     path: "/manage-subscription",
     element: ManageSubscription,
-    // protected: true,
-  },
-  {
-    path: "/main-packages",
-    element: DataPlanSelector,
-    // protected: true,
+    protected: true,
   },
   {
     path: "/packages-content",
@@ -99,6 +93,22 @@ export const routes = [
       { path: "exercise", element: LessonExercise, protected: true },
     ],
   },
+  {
+    path: "/show-lessons",
+    element: ShowLessons,
+    protected: true,
+  },
+  {
+    path: "/profile",
+    element: ProfilePage,
+    public: true,
+  },
+  {
+    path: "/balance-details",
+    element: BalanceDetails,
+    public: true,
+  },
+
 ];
 
 // Helper function to check if route is public

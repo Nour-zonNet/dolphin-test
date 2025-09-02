@@ -75,16 +75,16 @@ const SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = "Ø
   }, [applyFilters]);
 
   return (
-    <div className="px-4 sm:px-6 relative">
-      <div className="flex w-full max-w-2xl mx-auto h-14 sm:h-16 items-center justify-between px-4 sm:px-6 py-2 my-4 sm:my-6 rounded-full border border-[#d9d9d9] bg-white shadow-sm">
-        <div className="flex items-center gap-2 px-2 sm:px-4 flex-1">
-          <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
+    <div className="relative">
+      <div className="flex w-full mx-auto h-14 sm:h-16 items-center justify-between py-2 my-4 sm:my-6 rounded-full border border-[#d9d9d9] bg-white">
+        <div className="flex items-center gap-2 px-10 flex-1">
+          <Search className="w-5 h-5 sm:w-6 sm:h-6" />
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder={placeholder}
-            className="text-lg sm:text-xl text-neutral-700 outline-none border-none bg-transparent w-full"
+            className="text-lg sm:text-xl text-[#404040] outline-none border-none bg-transparent w-full"
           />
           {searchQuery && (
             <button
