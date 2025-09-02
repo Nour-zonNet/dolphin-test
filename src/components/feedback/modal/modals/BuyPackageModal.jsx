@@ -3,7 +3,6 @@ import { Cross, CreditCard, Package, Calendar } from "@/utils/icons";
 
 const BuyPackageModal = ({ onClose, packageData = {}, isExtendMode = false }) => {
 
-  console.log(packageData)
   // Generate features based on package data
   const features = [
     `${packageData.durationText} اشتراك`,

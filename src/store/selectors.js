@@ -1,12 +1,18 @@
 import { createSelector } from "@reduxjs/toolkit";
 
 export const selectAuthLoading = (state) => state.auth.loading;
-export const selectUsersLoading = (state) => state.packages.loading;
-export const selectPostsLoading = (state) => state.lessons.loading;
+export const selectPackagesLoading = (state) => state.packages.loading;
+export const selectLessonsLoading = (state) => state.lessons.loading;
+export const selectGroupsLoading = (state) => state.groups.loading;
 
 // Combine all slice loadings
 export const selectGlobalLoading = createSelector(
-  [selectAuthLoading, selectUsersLoading, selectPostsLoading],
+  [
+    selectAuthLoading,
+    selectPackagesLoading,
+    selectLessonsLoading,
+    selectGroupsLoading,
+  ],
   (authLoading, usersLoading, postsLoading) =>
     authLoading || usersLoading || postsLoading
 );

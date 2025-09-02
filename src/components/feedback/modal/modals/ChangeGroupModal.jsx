@@ -3,42 +3,10 @@ import { Cross, Check } from "../../../../utils/icons";
 import Button from "../../../ui/Button";
 
 const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
-  const [selectedGroup, setSelectedGroup] = useState(groupData.currentGroupId || 1);
-
-  const groups = groupData.groups || [
-    {
-      id: 1,
-      name: "المجموعة 1 ( الصحة العامة)",
-      instructor: "أنيس",
-      days: "الأيام الأحد | الشتاء | الخميس",
-      time: "الوقت 5:00 مساءً",
-      isCurrent: false,
-    },
-    {
-      id: 2,
-      name: "المجموعة 2 ( الصحة العامة)",
-      instructor: "أنيس",
-      days: "الأيام الأحد | الشتاء | الخميس",
-      time: "الوقت 5:00 مساءً",
-      isCurrent: true,
-    },
-    {
-      id: 3,
-      name: "المجموعة 3 ( الصحة العامة)",
-      instructor: "أعبد الرحمن محمد",
-      days: "الأيام الأحد | الشتاء | الخميس",
-      time: "الوقت 5:00 مساءً",
-      isCurrent: false,
-    },
-    {
-      id: 4,
-      name: "المجموعة 4 ( الصحة العامة)",
-      instructor: "أعبد الرحمن محمد",
-      days: "الأيام الأحد | الشتاء | الخميس",
-      time: "الوقت 5:00 مساءً",
-      isCurrent: false,
-    },
-  ];
+  const [selectedGroup, setSelectedGroup] = useState(
+    groupData.currentGroupId || 1
+  );
+ 
 
   const handleConfirm = () => {
     if (onConfirm) {
@@ -62,15 +30,13 @@ const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
         <h2 className="text-2xl font-bold text-navyteal font-cairo mb-2">
           تغيير المجموعة
         </h2>
-        <p className="text-gray-600 text-sm">
-          اختر المجموعة الجديدة المناسبة
-        </p>
+        <p className="text-gray-600 text-sm">اختر المجموعة الجديدة المناسبة</p>
       </div>
       <hr className="border-t border-dashed border-subtext/50 mb-6" />
 
       {/* Group Options */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {groups.map((group) => (
+        {groupData.groups.map((group) => (
           <div
             key={group.id}
             className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${

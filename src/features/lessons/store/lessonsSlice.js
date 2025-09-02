@@ -4,7 +4,6 @@ import { lessonsRepository } from "../services/lessons.services";
 export const fetchLessons = createAsyncThunk("lessons/fetch", async () => {
   const res = await lessonsRepository.getAll();
 
-  console.log(res)
   return res.data;
 });
 

@@ -7,10 +7,8 @@ import { groupsRepository } from "../services/groups.services";
 export const fetchGroupsByPackageId = createAsyncThunk(
   "groups/fetchByPackageId",
   async (packageId) => {
-    console.log(packageId)
 
     const res = await groupsRepository.getByPackageId(packageId);
-    console.log(res)
     return { packageId, groups: res.data };
   }
 );
@@ -18,7 +16,7 @@ export const fetchGroupsByPackageId = createAsyncThunk(
 const groupSlice = createSlice({
   name: "groups",
   initialState: {
-    byPackageId: {},
+    items: {},
     loading: false,
     error: null,
   },
@@ -32,7 +30,7 @@ const groupSlice = createSlice({
       .addCase(fetchGroupsByPackageId.fulfilled, (state, action) => {
         state.loading = false;
         const { packageId, groups } = action.payload;
-        state.byPackageId[packageId] = groups;
+        state.items[packageId] = groups;
       })
       .addCase(fetchGroupsByPackageId.rejected, (state, action) => {
         state.loading = false;
@@ -44,7 +42,7 @@ const groupSlice = createSlice({
 // Selectors
 export const selectGroupsState = (state) => state.groups;
 export const selectGroupsByPackageId = (state, packageId) =>
-  state.groups.byPackageId[packageId] || [];
+  state.groups.items[packageId] || [];
 export const selectGroupsLoading = (state) => state.groups.loading;
 export const selectGroupsError = (state) => state.groups.error;
 

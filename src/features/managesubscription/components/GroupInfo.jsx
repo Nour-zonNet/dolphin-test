@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ChangeGroup } from "../../../utils/icons";
 import ActionButton from "./ActionButton";
 import { useModal } from "@/components/feedback/modal/useModal";
@@ -11,24 +11,24 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
   const { changeGroupSubscription } = useSubscriptions();
 
   const handleChangeGroup = async () => {
-    try {
-      if (!groups || groups.length === 0) {
-        await fetchGroups();
-      }
-      openChangeGroupModal(
-        { packageId, currentGroupId: group?.group_id, groups },
-        (selectedGroupId) => changeGroupSubscription(subscriptionId, selectedGroupId)
-      );
-    } catch (err) {
-      console.error("Failed to open change group modal:", err);
-    }
+    openChangeGroupModal(
+      { packageId, currentGroupId: group?.group_id, groups: groups },
+      (selectedGroupId) =>
+        changeGroupSubscription(subscriptionId, selectedGroupId)
+    );
   };
-
+  useEffect(() => {
+    if (!groups || groups.length === 0) {
+      fetchGroups();
+    }
+  }, [fetchGroups, groups, packageId]);
   return (
     <div className="flex justify-between items-center gap-4">
       <p className="flex flex-row items-center gap-2">
         <span className="font-semibold md:text-[18px] text-sm">المجموعة:</span>
-        <span className="text-status font-semibold md:text-2xl text-[16px]">{group?.group_name}</span>
+        <span className="text-status font-semibold md:text-2xl text-[16px]">
+          {group?.group_name}
+        </span>
       </p>
       <ActionButton primary icon={<ChangeGroup />} onClick={handleChangeGroup}>
         تغيير المجموعة
