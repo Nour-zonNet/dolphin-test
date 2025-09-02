@@ -13,6 +13,7 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
   const handleChangeGroup = async () => {
     openChangeGroupModal(
       { packageId, currentGroupId: group?.group_id, groups: groups },
+      // (groupId) => console.log("Changed to group:", subscriptionId)
       (selectedGroupId) =>
         changeGroupSubscription(subscriptionId, selectedGroupId)
     );

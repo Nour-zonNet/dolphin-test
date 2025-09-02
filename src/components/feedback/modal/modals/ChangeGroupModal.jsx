@@ -7,8 +7,8 @@ const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
     groupData.currentGroupId || 1
   );
  
-
   const handleConfirm = () => {
+    console.log(onConfirm)
     if (onConfirm) {
       onConfirm(selectedGroup);
     }
