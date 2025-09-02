@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentUser } from "@/features/auth/store/authSlice";
-import { fetchPackages } from "@/features/packages/store/packagesSlice";
+import {
+  fetchAllPackages,
+  fetchMyPackages,
+} from "@/features/packages/store/packagesSlice";
 import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
 
 export const useAppInitialization = () => {
@@ -12,21 +15,25 @@ export const useAppInitialization = () => {
   useEffect(() => {
     const initializeApp = async () => {
       const token = localStorage.getItem("token");
-      
+
       if (!token || initialized.current) return;
 
       try {
         initialized.current = true;
-        
+
         // Only fetch user if we don't have one yet
         if (!user) {
           const userResult = await dispatch(fetchCurrentUser());
-          
-          if (userResult.meta.requestStatus === "fulfilled" && userResult.payload) {
+
+          if (
+            userResult.meta.requestStatus === "fulfilled" &&
+            userResult.payload
+          ) {
             // Fetch additional data in parallel for better performance
             await Promise.all([
-              dispatch(fetchPackages()),
-              dispatch(fetchLessons())
+              dispatch(fetchAllPackages()),
+              dispatch(fetchMyPackages()),
+              dispatch(fetchLessons()),
             ]);
           }
         }

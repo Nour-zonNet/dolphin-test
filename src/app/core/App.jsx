@@ -7,30 +7,31 @@ import AppRoutes from "./AppRoutes";
 // Global Components
 import GlobalLoader from "@/components/feedback/GlobalLoader";
 import ModalManager from "@/components/feedback/modal/ModalManager";
-import { useModal } from "@/components/feedback/modal/useModal";
+// import { useModal } from "@/components/feedback/modal/useModal";
 
 const App = () => {
   // Initialize language direction
   useLanguageDirection();
 
   // Modal hook for examples
-  const {
-    openBuyPackageModal,
-    openDetailsModal,
-    openConfirmModal,
-    openChangeGroupModal,
-    openReactivateModal,
-    openExtendPackageModal,
-  } = useModal();
+  // const {
+  //   openBuyPackageModal,
+  //   openDetailsModal,
+  //   openConfirmModal,
+  //   openChangeGroupModal,
+  //   openReactivateModal,
+  //   openExtendPackageModal,
+  // } = useModal();
 
   return (
+    <AppProviders>
       <div className="app-container">
         {/* Global Components */}
         <GlobalLoader />
         <ModalManager />
 
         {/* Example Modal Buttons - Remove in production */}
-        <div className="fixed top-4 left-4 z-50 bg-white p-4 rounded-lg shadow-lg border">
+        {/* <div className="fixed top-4 left-4 z-50 bg-white p-4 rounded-lg shadow-lg border">
           <h3 className="font-bold mb-3 text-sm">Modal Examples:</h3>
           <div className="space-y-2">
             <button 
@@ -98,15 +99,13 @@ const App = () => {
               Extend Package Modal
             </button>
           </div>
-        </div>
+        </div> */}
         <AppRoutes />
       </div>
+      </AppProviders>
   );
 };
 
-export default () => (
-  <AppProviders>
-    {" "}
-    <App />{" "}
-  </AppProviders>
-);
+
+
+export default App;

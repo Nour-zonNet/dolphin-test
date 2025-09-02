@@ -7,14 +7,14 @@ import notFoundPackages from "@/assets/images/notFoundPackages.png";
 import { packageFactory } from "../factory/packageFactory.js";
 
 const Packages = () => {
-  const { items, loading } = usePackages();
+  const { mine, loading } = usePackages();
 
   if (loading) return null;
   return (
     <div className="py-18 md:py-18 px-4 sm:px-6 lg:px-10">
-      {items.length > 0 ? (
+      {mine.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 py-8">
-          {items.map((item) => {
+          {mine.map((item) => {
             const { image, bgColor } = packageFactory(item.id);
 
             return (
@@ -28,7 +28,7 @@ const Packages = () => {
           })}
         </div>
       ) : (
-        <div className="relative flex flex-col justify-center items-center gap-4">
+        <div className="relative flex flex-col justify-center mine-center gap-4">
           <img
             src={notFoundPackages}
             alt="notFoundPackages"

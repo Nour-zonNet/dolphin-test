@@ -1,14 +1,31 @@
 import { lazy } from "react";
+import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
 const LessonsSchedule = lazy(() => import("@/features/lessons"));
 const Packages = lazy(() => import("@/features/packages"));
-const LessonContentPage = lazy(() => import("@/features/content/pages/LessonContentPage").then(module => ({ default: module.LessonContentPage })));
-const ManageSubscription = lazy(() => import("@/features/managesubscription/pages/ManageSubscription").then(module => ({ default: module.ManageSubscription })));
-const PackageContent = lazy(() => import("@/features/packages/pages/PackagesContent").then(module => ({ default: module.PackageContent })));
+const LessonContentPage = lazy(() =>
+  import("@/features/content/pages/LessonContentPage").then((module) => ({
+    default: module.LessonContentPage,
+  }))
+);
+const ManageSubscription = lazy(() =>
+  import("@/features/managesubscription/pages/ManageSubscription").then(
+    (module) => ({ default: module.ManageSubscription })
+  )
+);
+const PackageContent = lazy(() =>
+  import("@/features/packages/pages/PackagesContent").then((module) => ({
+    default: module.PackageContent,
+  }))
+);
 const Board = lazy(() => import("@/features/Board"));
-const LessonExercise = lazy(() => import("@/features/lessons/pages/LessonExercise").then(module => ({ default: module.LessonExercise })));
+const LessonExercise = lazy(() =>
+  import("@/features/lessons/pages/LessonExercise").then((module) => ({
+    default: module.LessonExercise,
+  }))
+);
 
 // Auth Pages
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
@@ -25,7 +42,7 @@ export const routes = [
     element: HomePage,
     public: true,
   },
-  
+
   // Auth Routes
   {
     path: "/login",
@@ -56,7 +73,12 @@ export const routes = [
   {
     path: "/manage-subscription",
     element: ManageSubscription,
-    protected: true,
+    // protected: true,
+  },
+  {
+    path: "/main-packages",
+    element: DataPlanSelector,
+    // protected: true,
   },
   {
     path: "/packages-content",
@@ -81,11 +103,11 @@ export const routes = [
 
 // Helper function to check if route is public
 export const isPublicRoute = (path) => {
-  return routes.some(route => {
+  return routes.some((route) => {
     if (route.path === path) return route.public;
     if (route.children) {
-      return route.children.some(child => 
-        `${route.path}/${child.path}` === path && child.public
+      return route.children.some(
+        (child) => `${route.path}/${child.path}` === path && child.public
       );
     }
     return false;
@@ -94,11 +116,11 @@ export const isPublicRoute = (path) => {
 
 // Helper function to check if route requires layout
 export const requiresLayout = (path) => {
-  return routes.some(route => {
+  return routes.some((route) => {
     if (route.path === path) return route.protected;
     if (route.children) {
-      return route.children.some(child => 
-        `${route.path}/${child.path}` === path && child.protected
+      return route.children.some(
+        (child) => `${route.path}/${child.path}` === path && child.protected
       );
     }
     return false;
