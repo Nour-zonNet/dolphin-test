@@ -2,7 +2,7 @@ import React from "react";
 
 const PlansSearchBar = ({ value, onChange }) => {
   return (
-    <div className="container mx-auto px-4 mt-6">
+    <div className=" mx-auto px-4 mt-6">
       <div className="flex items-center bg-white rounded-full border border-gray-300 px-4 py-2 shadow-sm">
         <input
           type="text"

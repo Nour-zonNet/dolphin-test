@@ -11,7 +11,7 @@ const LessonContentPage = lazy(() =>
   }))
 );
 const ManageSubscription = lazy(() =>
-  import("@/features/managesubscription/pages/ManageSubscription").then(
+  import("@/features/subscription/pages/ManageSubscription").then(
     (module) => ({ default: module.ManageSubscription })
   )
 );
