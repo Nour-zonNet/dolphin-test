@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import OTPInput from "@/components/ui/InputOtp";
 import Button from "@/components/ui/Button";
 import { Lock } from "@/utils/icons";
+import { Link } from "react-router-dom";
 
 const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
   const { t } = useTranslation();
@@ -51,6 +52,7 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
         icon={<Lock />}
         text={loading ? t('auth.loggingIn') : t('auth.completingRegistration')}
       />
+      <Link to={"auth/forgetpassword"} className="underline block text-orangedeep text-center ">نسيت الرقم السرى؟</Link>
     </form>
   );
 };

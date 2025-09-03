@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
-import { Checkout } from "../../features/packages/pages/CheckoutPages";
+import Checkout from "../../features/packages/pages/Checkout";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
@@ -34,6 +34,7 @@ const PhonePage = lazy(() => import("@/features/auth/pages/PhonePage"));
 const OtpPage = lazy(() => import("@/features/auth/pages/OtpPage"));
 const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
 const PasswordPage = lazy(() => import("@/features/auth/pages/PasswordPage"));
+const ForgotPasswordPage = lazy(() => import("@/features/auth/pages/ForgotPasswordPage"));
 
 // Route Configuration
 export const routes = [
@@ -59,6 +60,7 @@ export const routes = [
       { path: "otp", element: OtpPage, public: true, layout: false },
       { path: "register", element: RegisterPage, public: true, layout: false },
       { path: "password", element: PasswordPage, public: true, layout: false },
+      { path: "forgetpassword", element: ForgotPasswordPage, public: true, layout: false },
     ],
   },
 
