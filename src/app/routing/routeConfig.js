@@ -34,6 +34,8 @@ const PhonePage = lazy(() => import("@/features/auth/pages/PhonePage"));
 const OtpPage = lazy(() => import("@/features/auth/pages/OtpPage"));
 const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
 const PasswordPage = lazy(() => import("@/features/auth/pages/PasswordPage"));
+const ForgotPasswordOtpPage = lazy(() => import("@/features/auth/pages/ForgotPasswordOtpPage"));
+const ForgotPasswordResetPage = lazy(() => import("@/features/auth/pages/ForgotPasswordResetPage"));
 const ForgotPasswordPage = lazy(() => import("@/features/auth/pages/ForgotPasswordPage"));
 
 // Route Configuration
@@ -61,6 +63,8 @@ export const routes = [
       { path: "register", element: RegisterPage, public: true, layout: false },
       { path: "password", element: PasswordPage, public: true, layout: false },
       { path: "forgetpassword", element: ForgotPasswordPage, public: true, layout: false },
+      { path: "forgetpassword/otp", element: ForgotPasswordOtpPage, public: true, layout: false },
+      { path: "forgetpassword/reset", element: ForgotPasswordResetPage, public: true, layout: false },
     ],
   },
 

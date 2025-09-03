@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthLayout } from "../components";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 
 const ForgotPasswordPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const navigate = useNavigate();
   const { openStatusModal } = useModal();
 
   const handleSubmit = async (e) => {
@@ -12,7 +14,8 @@ const ForgotPasswordPage = () => {
     // TODO: integrate real API to issue reset / OTP flow
     openStatusModal(MODAL_TYPES.SUCCESS, {
       title: "تم إرسال التعليمات",
-      message: "تم إرسال تعليمات استعادة الرقم السري إلى رقم هاتفك إن كان مسجلاً.",
+      message: "تم إرسال رمز التحقق إلى رقم هاتفك إن كان مسجلاً.",
+      onClose: () => navigate("/auth/forgetpassword/otp", { state: { phoneNumber } })
     });
   };
 
