@@ -23,7 +23,7 @@ export const useAppInitialization = () => {
         initialized.current = true;
 
         if (!user) {
-          fetchCurrentUser();
+          await dispatch(fetchCurrentUser());
 
           await Promise.all([
             dispatch(fetchAllPackages()),
