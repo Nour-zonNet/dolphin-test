@@ -74,14 +74,11 @@ export const routes = [
     path: "/manage-subscription",
     element: ManageSubscription,
     protected: true,
-<<<<<<< HEAD
-=======
   },
   {
     path: "/main-packages",
     element: DataPlanSelector,
     // protected: true,
->>>>>>> 5864e481b6541b13c70dd8fdac21fa56f2a11051
   },
   {
     path: "/checkout",
