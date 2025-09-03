@@ -4,6 +4,8 @@ export const selectAuthLoading = (state) => state.auth.loading;
 export const selectPackagesLoading = (state) => state.packages.loading;
 export const selectLessonsLoading = (state) => state.lessons.loading;
 export const selectGroupsLoading = (state) => state.groups.loading;
+export const selectSubscriptionsLoading = (state) =>
+  state.subscriptions.loading;
 
 // Combine all slice loadings
 export const selectGlobalLoading = createSelector(
@@ -12,7 +14,18 @@ export const selectGlobalLoading = createSelector(
     selectPackagesLoading,
     selectLessonsLoading,
     selectGroupsLoading,
+    selectSubscriptionsLoading,
   ],
-  (authLoading, usersLoading, postsLoading) =>
-    authLoading || usersLoading || postsLoading
+  (
+    authLoading,
+    packagesLoading,
+    lessonsLoading,
+    groupsLoading,
+    subscriptionsLoading
+  ) =>
+    authLoading ||
+    packagesLoading ||
+    lessonsLoading ||
+    groupsLoading ||
+    subscriptionsLoading
 );

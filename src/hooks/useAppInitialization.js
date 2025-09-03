@@ -5,6 +5,7 @@ import {
   fetchAllPackages,
   fetchMyPackages,
 } from "@/features/packages/store/packagesSlice";
+import { fetchSubscriptions } from "@/features/subscription/store/subscriptionSlice";
 import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
 
 export const useAppInitialization = () => {
@@ -21,21 +22,15 @@ export const useAppInitialization = () => {
       try {
         initialized.current = true;
 
-        // Only fetch user if we don't have one yet
         if (!user) {
-          const userResult = await dispatch(fetchCurrentUser());
+          await dispatch(fetchCurrentUser());
 
-          if (
-            userResult.meta.requestStatus === "fulfilled" &&
-            userResult.payload
-          ) {
-            // Fetch additional data in parallel for better performance
-            await Promise.all([
-              dispatch(fetchAllPackages()),
-              dispatch(fetchMyPackages()),
-              dispatch(fetchLessons()),
-            ]);
-          }
+          await Promise.all([
+            dispatch(fetchAllPackages()),
+            dispatch(fetchMyPackages()),
+            dispatch(fetchLessons()),
+            dispatch(fetchSubscriptions()),
+          ]);
         }
       } catch (error) {
         console.error("Failed to initialize app:", error);

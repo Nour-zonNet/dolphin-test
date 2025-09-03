@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { closeModal } from "@/store/modalSlice";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 import { callbackRegistry } from "./useModal";
+import ModalContainer from "./ModalContainer";
 
 import {
   StatusModal,
@@ -104,9 +105,9 @@ const ModalManager = () => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
-        {ModalContent}
-    </div>
+    <ModalContainer onClose={handleClose} labelledBy="modal-title">
+      {ModalContent}
+    </ModalContainer>
   );
 };
 

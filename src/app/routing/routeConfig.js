@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
+import { Checkout } from "../../features/packages/pages/CheckoutPages";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
@@ -11,9 +12,9 @@ const LessonContentPage = lazy(() =>
   }))
 );
 const ManageSubscription = lazy(() =>
-  import("@/features/managesubscription/pages/ManageSubscription").then(
-    (module) => ({ default: module.ManageSubscription })
-  )
+  import("@/features/subscription/pages/ManageSubscription").then((module) => ({
+    default: module.ManageSubscription,
+  }))
 );
 const PackageContent = lazy(() =>
   import("@/features/packages/pages/PackagesContent").then((module) => ({
@@ -72,6 +73,19 @@ export const routes = [
   {
     path: "/manage-subscription",
     element: ManageSubscription,
+    protected: true,
+<<<<<<< HEAD
+=======
+  },
+  {
+    path: "/main-packages",
+    element: DataPlanSelector,
+    // protected: true,
+>>>>>>> 5864e481b6541b13c70dd8fdac21fa56f2a11051
+  },
+  {
+    path: "/checkout",
+    element: Checkout,
     protected: true,
   },
   {

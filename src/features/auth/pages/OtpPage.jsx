@@ -1,17 +1,27 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { AuthLayout } from "../components";
 import { VerificationForm } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { useDispatch } from "react-redux";
 import { showModal } from "../../../store/modalSlice";
 import { MODAL_TYPES } from "../../../constants/MODAL_TYPES";
+import { Overlay, Spinner } from "@/components/feedback";
 
 const OtpPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { verifyOtp } = useAuth();
+  const { verifyOtp,  isFullyAuthenticated } = useAuth();
   const { phoneNumber } = location.state || {};
+
+  // If we have a token but no user yet, and we're still loading, show loading state
+
+
+  // If user is already logged in, redirect to schedule
+  if (isFullyAuthenticated()) {
+    return <Navigate to="/schedule" replace />;
+  }
 
   // Redirect if no phone number
   if (!phoneNumber) {

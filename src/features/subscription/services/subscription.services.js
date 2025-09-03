@@ -16,8 +16,6 @@ class SubscriptionRepository {
     return data;
   }
 
-
-
   // Cancel subscription
   async cancel(subscriptionId) {
     const { data } = await api.post(
@@ -36,10 +34,10 @@ class SubscriptionRepository {
 
   // Change group
   async changeGroup(subscriptionId, groupId) {
-    const { data } = await api.post(
-      `/student/packages/subscription-packages/${subscriptionId}/change-group`,
-      { groupId }
-    );
+    const { data } = await api.post(`/student/change-student-group`, {
+      subscription_id: subscriptionId,
+      new_group_id: groupId,
+    });
     return data;
   }
 }

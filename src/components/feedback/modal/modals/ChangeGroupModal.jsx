@@ -6,7 +6,6 @@ const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
   const [selectedGroup, setSelectedGroup] = useState(
     groupData.currentGroupId || 1
   );
- 
 
   const handleConfirm = () => {
     if (onConfirm) {
