@@ -40,6 +40,14 @@ class SubscriptionRepository {
     });
     return data;
   }
+  // Change group
+  async createTrialSubscription(packageIds) {
+    console.log(packageIds)
+    const { data } = await api.post(ENDPOINTS.CREATE_TRIAL_SUBSCRIPTION, {
+      packageIds: packageIds,
+    });
+    return data;
+  }
 }
 
 export const subscriptionRepository = new SubscriptionRepository();

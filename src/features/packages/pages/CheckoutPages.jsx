@@ -1,5 +1,8 @@
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useModal } from "@/components/feedback/modal/useModal";
+import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
+import { useSubscriptions } from "../../subscription/hooks/useSubscriptions";
 
 // Helper function to get package icon based on subjects
 const getPackageIcon = (subjects) => {
@@ -26,13 +29,31 @@ const getPackageIcon = (subjects) => {
 export const Checkout = () => {
   const location = useLocation();
   const [discountApplied, setDiscountApplied] = useState(false);
+  const { createTrialSubscription } = useSubscriptions();
+  const { openStatusModal } = useModal();
 
   // Get selected packages data from navigation state
   const { selectedPackages = [], totalPrice = 0 } = location.state || {};
   useEffect(() => {
     console.log(selectedPackages);
   }, [selectedPackages]);
+  const onSubmit = async () => {
+    await createTrialSubscription(
+      selectedPackages.map((sub) => ({
+        package_id: sub.id,
+        start_date: null,
+      }))
+    );
+    onPay();
+  };
 
+  const onPay = () => {
+    openStatusModal(MODAL_TYPES.SUCCESS, {
+      title: "تم الدفع بنجاح",
+      message: "شكراً لك! تم تأكيد عملية الدفع وسيتم تفعيل الباقات المختارة.",
+      onClose: () => console.log("closed"),
+    });
+  };
   return (
     <div className="relative min-h-screen bg-white" data-model-id="2176:1306">
       {/* Header */}
@@ -57,7 +78,7 @@ export const Checkout = () => {
           setDiscountApplied={setDiscountApplied}
           totalPrice={totalPrice}
         />
-        <FrameWrapper />
+        <FrameWrapper onSubmitTrial={onSubmit} onPay={onPay} />
       </main>
 
       {/* Success Message */}
@@ -129,11 +150,14 @@ export const GroupWrapper = () => {
 };
 
 // FrameWrapper Component (Buttons)
-export const FrameWrapper = () => {
+export const FrameWrapper = ({ onSubmitTrial, onPay }) => {
   return (
     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 lg:gap-8 mt-8">
       {/* Outline Button */}
-      <button className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 border-2 border-orange-400 rounded-full text-deepbg-orangedeep font-semibold hover:bg-orange-50 transition-colors">
+      <button
+        onClick={onSubmitTrial}
+        className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 border-2 border-orange-400 rounded-full text-deepbg-orangedeep font-semibold hover:bg-orange-50 transition-colors"
+      >
         <img
           className="w-5 h-5 md:w-6 md:h-6"
           alt="Icon"
@@ -145,7 +169,10 @@ export const FrameWrapper = () => {
       </button>
 
       {/* Primary Button */}
-      <button className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-3 bg-orangedeep rounded-full text-white font-semibold hover:bg-orange-600 transition-colors">
+      <button
+        onClick={onPay}
+        className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-3 bg-orangedeep rounded-full text-white font-semibold hover:bg-orange-600 transition-colors"
+      >
         <img
           className="w-5 h-5 md:w-6 md:h-6"
           alt="Icon"

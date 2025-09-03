@@ -42,6 +42,7 @@ export const routes = [
     path: "/",
     element: HomePage,
     public: true,
+    layout: false, // Home page doesn't need AppLayout
   },
 
   // Auth Routes
@@ -49,14 +50,15 @@ export const routes = [
     path: "/login",
     element: LoginPage,
     public: true,
+    layout: false, // Auth pages don't need AppLayout
   },
   {
     path: "/auth",
     children: [
-      { path: "phone", element: PhonePage, public: true },
-      { path: "otp", element: OtpPage, public: true },
-      { path: "register", element: RegisterPage, public: true },
-      { path: "password", element: PasswordPage, public: true },
+      { path: "phone", element: PhonePage, public: true, layout: false },
+      { path: "otp", element: OtpPage, public: true, layout: false },
+      { path: "register", element: RegisterPage, public: true, layout: false },
+      { path: "password", element: PasswordPage, public: true, layout: false },
     ],
   },
 
@@ -79,12 +81,14 @@ export const routes = [
   {
     path: "/main-packages",
     element: DataPlanSelector,
-    // protected: true,
+    protected: true,
+    layout: false, // Packages selector has its own layout
   },
   {
     path: "/checkout",
     element: Checkout,
     protected: true,
+    layout: false, // Checkout page has its own layout
   },
   {
     path: "/packages-content",
@@ -123,10 +127,10 @@ export const isPublicRoute = (path) => {
 // Helper function to check if route requires layout
 export const requiresLayout = (path) => {
   return routes.some((route) => {
-    if (route.path === path) return route.protected;
+    if (route.path === path) return route.layout !== false; // Default to true unless explicitly false
     if (route.children) {
       return route.children.some(
-        (child) => `${route.path}/${child.path}` === path && child.protected
+        (child) => `${route.path}/${child.path}` === path && child.layout !== false
       );
     }
     return false;

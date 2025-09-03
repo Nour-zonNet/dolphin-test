@@ -3,7 +3,6 @@ import { subscriptionRepository } from "../services/subscription.services";
 
 // ===== Helper for error extraction =====
 const handleError = async (error, thunkAPI) => {
-  // If backend sends a proper error response
   if (error.response && error.response.data) {
     return thunkAPI.rejectWithValue(
       error.response.data.message || "Server error"
@@ -73,6 +72,19 @@ export const changeGroupSubscription = createAsyncThunk(
     }
   }
 );
+export const createTrialSubscription = createAsyncThunk(
+  "subscriptions/changeGroup",
+  async (ids, thunkAPI) => {
+    try {
+      const res = await subscriptionRepository.createTrialSubscription(ids);
+      console.log("API data:", res.data); // This is the actual subscription object
+      return res.data; // ← Return the nested data, not the whole response
+    } catch (err) {
+      return handleError(err, thunkAPI);
+    }
+  }
+);
+
 // Slice
 const subscriptionSlice = createSlice({
   name: "subscriptions",
