@@ -115,12 +115,12 @@ export const routes = [
   {
     path: "/profile",
     element: ProfilePage,
-    public: true,
+    // protected: true,
   },
   {
     path: "/balance-details",
     element: BalanceDetails,
-    public: true,
+    protected: true,
   },
 
 ];

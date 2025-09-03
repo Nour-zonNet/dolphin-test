@@ -5,6 +5,7 @@ import lessonsReducer from "@/features/lessons/store/lessonsSlice";
 import subscriptionsReducer from "@/features/subscription/store/subscriptionSlice";
 import groupsReducer from "@/features/groups/store/groupSlice";
 import modalSlice from "./modalSlice";
+import profileReducer from "@/features/profile/store/profileSlice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     modal: modalSlice,
     subscriptions: subscriptionsReducer,
     groups: groupsReducer,
+    profile: profileReducer,
   },
 });
 export default store;

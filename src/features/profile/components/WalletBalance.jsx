@@ -10,7 +10,7 @@ const WalletBalance = () => {
       <h3 className="font-semibold text-lg text-[#BA7C28] md:text-3xl lg:text-5xl text-center">
         الرصيد: 0 ريال
       </h3>
-      <ProfileButtons variant="outline" size="sm" className="w-[210px] mt-2" onClick={() => navigate("/balance-details")}>
+      <ProfileButtons variant="outline" size="sm" className="w-[210px] mt-2 cursor-pointer" onClick={() => navigate("/balance-details")}>
         <img
           className="w-6 h-6"
           alt="Details"

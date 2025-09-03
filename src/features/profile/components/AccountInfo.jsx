@@ -1,19 +1,31 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ProfileCard } from '@/components';
 import { ProfileInputs } from '@/components';
 import { ProfileButtons } from '@/components';
 import flag from "@/assets/authentication/flag.svg";
 import ChangeGradeModal from '@/components/profile/modal/ChangeGradeModal';
-const AccountInfo = () => {
-  const [name, setName] = useState("يوستينا صلاح");
-  const [phone] = useState("09954321890");
-  const [grade, setGrade] = useState("الصف الأول ابتدائي");
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+const AccountInfo = ({ user }) => {
+  const [name, setName] = useState("يوستينا صلاح");
+  const [phone, setPhone] = useState("09954321890");
+  const [grade, setGrade] = useState("الصف الأول ابتدائي");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
-    const handleCloseModal = () => {
-      setIsModalOpen(false);
-    };
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setPhone(user.phoneNumber || "");
+      setGrade(user.gradeName || "");
+    }
+  }, [user]);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+  
+  const handleSave = () => {
+    console.log("Saving Changes: ", { name, phone, grade });
+  }
 
   return (
     <>
@@ -92,7 +104,7 @@ const AccountInfo = () => {
           </div>
         </div>
 
-        <ProfileButtons variant="primary" size="md" className="my-8 w-full max-w-6xl cursor-pointer bg-orangedeep hover:bg-btnClicked">
+        <ProfileButtons variant="primary" size="md" className="my-8 w-full max-w-6xl cursor-pointer bg-orangedeep hover:bg-btnClicked" onClick={handleSave}>
           <img
             className="w-6 md:w-8"
             alt="Save"
