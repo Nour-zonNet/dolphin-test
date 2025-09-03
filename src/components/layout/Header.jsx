@@ -7,7 +7,8 @@ export const Header = ({ title, balance, showBalanceSection = true }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="w-full relative bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-8">
+    // <div className="w-full relative bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-8">
+    <div className="py-8">
       <div className="w-[90%] mx-auto flex items-center md:items-center justify-between">
         {/* Back Button */}
         <Link

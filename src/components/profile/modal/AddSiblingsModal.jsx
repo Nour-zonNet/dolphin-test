@@ -34,7 +34,7 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
             />
           </button>
           <div className="flex-1 text-center">
-            <h2 className="font-semibold text-navyteal text-xl md:text-[32px]">
+            <h2 className="font-semibold text-navyteal text-xl md:text-xl lg:text-[32px]">
               اضافة أخ أو أخت
             </h2>
           </div>
@@ -58,7 +58,7 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
 
           {/* Full Name Field */}
           <div className="space-y-4">
-            <label className="block font-semibold text-navyteal text-xl md:text-2xl">
+            <label className="block font-semibold text-navyteal text-xl xl:text-2xl">
               الأسم الكامل
             </label>
             <input

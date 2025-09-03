@@ -1,41 +1,17 @@
 import React, { useState } from "react";
 import Divider from "../../ui/Divider";
-import { ConfirmCheck, GreenCheck } from "@/utils/icons";
+import { ArrowNext } from "@/utils/icons";
 
 const AddBalanceModal = ({ isOpen, onClose, onSubmit }) => {
-  const [couponCode, setCouponCode] = useState("");
-  const [couponValue, setCouponValue] = useState("");
-  const [error, setError] = useState("");
+  const [amount, setAmount] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-  const [isValid, setIsValid] = useState(false);
-
-  // Example validation
-  const validateCoupon = (code) => {
-    if (!code) {
-      setIsValid(false);
-      setError("");
-      return;
-    }
-    if (code === "EXPIRED123") {
-      setIsValid(false);
-      setError("هذا الكوبون منتهي الصلاحية");
-    } else if (code === "VALID100") {
-      setIsValid(true);
-      setError("");
-      setCouponValue("100");
-    } else {
-      setIsValid(false);
-      setError("");
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isValid) {
-      setSuccessMsg("تم اضافة 100 ريال إلى رصيدك");
-      onSubmit?.({ couponCode, couponValue });
-      setCouponCode("");
-      setCouponValue("");
+    if (amount) {
+      setSuccessMsg(`تم إيداع ${amount} ريال في رصيدك`);
+      onSubmit?.({ amount });
+      setAmount("");
       setTimeout(() => {
         setSuccessMsg("");
         onClose();
@@ -63,7 +39,7 @@ const AddBalanceModal = ({ isOpen, onClose, onSubmit }) => {
             </button>
             <div className="flex-1 text-center">
               <h2 className="font-semibold text-navyteal text-xl md:text-[32px]">
-                إضافة رصيد بكوبون
+                إضافة رصيد
               </h2>
               <p className="text-orangedeep text-base md:text-2xl font-bold mt-2">
                 رصيدك الحالي: <span>0 ريال</span>
@@ -73,47 +49,16 @@ const AddBalanceModal = ({ isOpen, onClose, onSubmit }) => {
           <Divider />
 
           <form onSubmit={handleSubmit} className="py-8 space-y-8">
-            {/* Coupon Code */}
-            <div className="space-y-4 relative">
-              <label className="block font-semibold text-navyteal text-xl md:text-2xl">
-                كود الكوبون
-              </label>
-              <input
-                type="text"
-                value={couponCode}
-                onChange={(e) => {
-                  setCouponCode(e.target.value);
-                  validateCoupon(e.target.value);
-                }}
-                placeholder="ادخل كود الكوبون"
-                className={`w-full h-18 px-6 rounded-[100px] border-[0.5px] text-lg placeholder:text-[#5d5f62] focus:outline-none transition-colors pr-12
-                  ${
-                    error
-                      ? "border-[#B3261E]"
-                      : isValid
-                      ? "border-[#27C840]"
-                      : "border-[#3c3c4366]"
-                  }`}
-                required
-              />
-              {/* Check Icon inside input when valid */}
-              {isValid && (
-                <GreenCheck className="absolute left-12 top-1/2" />
-              )}
-              {/* Error message */}
-              {error && <p className="text-[#B3261E] text-sm md:text-lg flex justify-end">{error}</p>}
-            </div>
-
-            {/* Coupon Value */}
+            {/* Deposit Amount */}
             <div className="space-y-4">
               <label className="block font-semibold text-navyteal text-xl md:text-2xl">
-                قيمة الكوبون
+                قيمة الإيداع
               </label>
               <input
-                type="text"
-                value={couponValue}
-                onChange={(e) => setCouponValue(e.target.value)}
-                placeholder="00000"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="ادخل المبلغ المراد إيداعه"
                 className="w-full h-18 px-6 rounded-[100px] border-[0.5px] border-solid border-[#3c3c4366] text-lg placeholder:text-[#5d5f62] focus:outline-none focus:border-navyteal transition-colors"
                 required
               />
@@ -122,12 +67,12 @@ const AddBalanceModal = ({ isOpen, onClose, onSubmit }) => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={!isValid}
-              className="cursor-pointer w-[60%] mx-auto h-[65px] flex items-center justify-center gap-2 px-4 py-2 bg-[#e89b32] hover:bg-[#d18c2d] rounded-[60px] transition-colors disabled:cursor-not-allowed"
+              disabled={!amount}
+              className="cursor-pointer w-[60%] mx-auto h-[65px] flex items-center justify-center gap-2 px-4 py-2 bg-orangedeep rounded-[60px]"
             >
-              <ConfirmCheck className="w-6 md:w-8" />
+              <ArrowNext className="w-6 md:w-8" />
               <span className="font-semibold text-navyteal text-lg md:text-2xl">
-                تأكيد الإضافة
+                ادفع الآن
               </span>
             </button>
 
