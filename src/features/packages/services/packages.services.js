@@ -1,9 +1,18 @@
 import api from "@/services/api";
+import { ENDPOINTS } from "../../../constants/API_ENDPOINTS";
 
 class PackagesRepository {
   // Get all packages
   async getAll() {
-    const { data } = await api.get("/student/packages");
+    const { data } = await api.get(ENDPOINTS.GRADE_PACKAGES);
+    return data;
+  }
+  async getAllMine() {
+    const { data } = await api.get(ENDPOINTS.MY_PACKAGES);
+    return data;
+  }
+  async getScheduleById(packageId) {
+    const { data } = await api.get(ENDPOINTS.SCHEDULE_OF_PACKAGE + packageId);
     return data;
   }
 

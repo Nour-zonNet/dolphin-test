@@ -1,13 +1,15 @@
 import { useSelector } from "react-redux";
-import { fetchPackages } from "../store/packagesSlice";
+import { fetchAllPackages, fetchMyPackages } from "../store/packagesSlice";
 
 export const usePackages = () => {
-  const { items, loading, error } = useSelector((state) => state.packages);
+  const { all, mine, loading, error } = useSelector((state) => state.packages);
 
   return {
-    items,
+    all,
+    mine,
     loading,
     error,
-    fetchPackages: fetchPackages,
+    fetchAllPackages: fetchAllPackages,
+    fetchMyPackages: fetchMyPackages,
   };
 };

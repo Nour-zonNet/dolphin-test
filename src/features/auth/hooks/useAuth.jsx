@@ -14,6 +14,22 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     Boolean(token && user) //  just in dev mode not production
   );
+  
+  // Helper function to check if authentication is still in progress
+  const isAuthLoading = () => {
+    return token && !user && loading;
+  };
+  
+  // Helper function to check if user is fully authenticated
+  const isFullyAuthenticated = () => {
+    return token && user && !loading;
+  };
+  
+  // Helper function to check if user should be redirected to login
+  const shouldRedirectToLogin = () => {
+    return !loading && (!token || !user);
+  };
+  
   return {
     user,
     token,
@@ -21,6 +37,9 @@ export const useAuth = () => {
     setIsAuthenticated, //  just in dev mode not production
     loading,
     error,
+    isAuthLoading,
+    isFullyAuthenticated,
+    shouldRedirectToLogin,
     loginUser: loginUser,
     checkPhone: checkPhone, //{ phone_number : "**********"  }
     registerUser: registerUser,

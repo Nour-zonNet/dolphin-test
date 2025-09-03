@@ -4,32 +4,31 @@ import { PackageCard } from "../components";
 import { usePackages } from "../hooks/usePackages";
 import notFoundPackages from "@/assets/images/notFoundPackages.png";
 
-import withAuth from "../../auth/hoc/withAuth";
 import { packageFactory } from "../factory/packageFactory.js";
 
 const Packages = () => {
-  const { items, loading } = usePackages();
+  const { mine, loading } = usePackages();
 
   if (loading) return null;
+
   return (
     <div className="py-18 md:py-18 px-4 sm:px-6 lg:px-10">
-      {items.length > 0 ? (
+      {mine.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 py-8">
-          {items.map((item) => {
-            const { image, bgColor } = packageFactory(item.id);
-
+          {mine.map((pkg) => {
+            const { image, bgColor } = packageFactory(pkg.id);
             return (
               <PackageCard
-                key={item.id}
-                item={item}
-                color={bgColor} // pass bgColor here
+                key={pkg.id}
+                item={pkg}
+                color={bgColor}
                 image={image}
               />
             );
           })}
         </div>
       ) : (
-        <div className="relative flex flex-col justify-center items-center gap-4">
+        <div className="relative flex flex-col justify-center mine-center gap-4">
           <img
             src={notFoundPackages}
             alt="notFoundPackages"
@@ -41,9 +40,9 @@ const Packages = () => {
         </div>
       )}
 
-     <HomeSupportBtn className="fixed bottom-25 lg:bottom-24 right-0 z-50" />
+      <HomeSupportBtn className="fixed bottom-25 lg:bottom-24 right-0 z-50" />
     </div>
   );
 };
-const ProtectedComponent = withAuth(Packages);
-export default ProtectedComponent;
+
+export default Packages;

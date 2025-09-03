@@ -5,4 +5,9 @@ export const ENDPOINTS = {
   VERIFY_OTP: "/student/verify",
   GET_PROFILE: "/student/info",
   LOGOUT: "/auth/logout",
+  MY_PACKAGES :"/student/packages/my-packages",
+  GRADE_PACKAGES:"/student/packages",
+  SCHEDULE_OF_PACKAGE:"/student/get-group-schedule/",
+  GET_MY_SUBSCRIPTIONS: "/student/packages/subscription-packages",
+  GROUPS_BY_BACKAGEID: "/student/package-groups"
 };
