@@ -73,11 +73,10 @@ export const changeGroupSubscription = createAsyncThunk(
   }
 );
 export const createTrialSubscription = createAsyncThunk(
-  "subscriptions/changeGroup",
+  "subscriptions/createTrial",
   async (ids, thunkAPI) => {
     try {
       const res = await subscriptionRepository.createTrialSubscription(ids);
-      console.log("API data:", res.data); // This is the actual subscription object
       return res.data; // ← Return the nested data, not the whole response
     } catch (err) {
       return handleError(err, thunkAPI);

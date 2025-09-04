@@ -1,4 +1,3 @@
-// src/features/managesubscription/hooks/useSubscriptions.js
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import {
@@ -11,9 +10,14 @@ import {
 
 export const useSubscriptions = () => {
   // Select only what's needed to minimize re-renders
-  const items = useSelector((state) => state.subscriptions.items, shallowEqual);
-  const loading = useSelector((state) => state.subscriptions.loading);
-  const error = useSelector((state) => state.subscriptions.error);
+  const { items, loading, error } = useSelector(
+    (state) => ({
+      items: state.subscriptions.items,
+      loading: state.subscriptions.loading,
+      error: state.subscriptions.error,
+    }),
+    shallowEqual
+  );
 
   const dispatch = useDispatch();
 

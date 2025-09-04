@@ -35,7 +35,7 @@ const packageData = [
   },
 ];
 
-export const PackageContent = () => {
+const PackageContent = () => {
   const [filteredPackages, setFilteredPackages] = React.useState(packageData);
   const navigate = useNavigate();
   return (
@@ -100,7 +100,10 @@ export const PackageContent = () => {
                   </div>
 
                   <div className="flex justify-end">
-                    <button onClick={() => navigate("/show-lessons")} className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-orangedeep hover:bg-foundationorangenormal-hover rounded-3xl text-deepnavy font-semibold text-sm sm:text-base">
+                    <button
+                      onClick={() => navigate("/show-lessons")}
+                      className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-orangedeep hover:bg-foundationorangenormal-hover rounded-3xl text-deepnavy font-semibold text-sm sm:text-base"
+                    >
                       <Book className="w-6 h-6 sm:w-8 sm:h-8" />
                       عرض الدروس
                     </button>
@@ -114,3 +117,4 @@ export const PackageContent = () => {
     </div>
   );
 };
+export default PackageContent;
