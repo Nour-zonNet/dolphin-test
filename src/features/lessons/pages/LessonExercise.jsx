@@ -1,7 +1,7 @@
 import React from "react";
 import { Board } from "../../Board";
 
-export const LessonExercise = () => {
+const LessonExercise = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col gap-5 items-center py-4 md:py-6">
       {/* Header */}
@@ -48,3 +48,4 @@ export const LessonExercise = () => {
     </div>
   );
 };
+export default LessonExercise;

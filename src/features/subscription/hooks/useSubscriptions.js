@@ -1,4 +1,3 @@
-// src/features/managesubscription/hooks/useSubscriptions.js
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import {
@@ -6,13 +5,19 @@ import {
   cancelSubscription,
   renewSubscription,
   changeGroupSubscription,
+  createTrialSubscription,
 } from "../store/subscriptionSlice";
 
 export const useSubscriptions = () => {
   // Select only what's needed to minimize re-renders
-  const items = useSelector((state) => state.subscriptions.items, shallowEqual);
-  const loading = useSelector((state) => state.subscriptions.loading);
-  const error = useSelector((state) => state.subscriptions.error);
+  const { items, loading, error } = useSelector(
+    (state) => ({
+      items: state.subscriptions.items,
+      loading: state.subscriptions.loading,
+      error: state.subscriptions.error,
+    }),
+    shallowEqual
+  );
 
   const dispatch = useDispatch();
 
@@ -27,6 +32,11 @@ export const useSubscriptions = () => {
   );
   const dispatchRenew = useCallback(
     (id) => dispatch(renewSubscription(id)),
+    [dispatch]
+  );
+
+  const dispatchCreateTrialSub = useCallback(
+    (ids) => dispatch(createTrialSubscription(ids)), //array of object
     [dispatch]
   );
   const dispatchChangeGroup = useCallback(
@@ -44,6 +54,7 @@ export const useSubscriptions = () => {
       cancelSubscription: dispatchCancel,
       renewSubscription: dispatchRenew,
       changeGroupSubscription: dispatchChangeGroup,
+      createTrialSubscription: dispatchCreateTrialSub,
     }),
     [
       items,
@@ -53,6 +64,7 @@ export const useSubscriptions = () => {
       dispatchCancel,
       dispatchRenew,
       dispatchChangeGroup,
+      dispatchCreateTrialSub,
     ]
   );
 };

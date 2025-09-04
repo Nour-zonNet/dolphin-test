@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authRepository } from "../services/auth.services";
+import api from "@/services/api";
+import { fetchAllPackages, fetchMyPackages } from "@/features/packages/store/packagesSlice";
+import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
+import { fetchSubscriptions } from "@/features/subscription/store/subscriptionSlice";
 
 export const fetchCurrentUser = createAsyncThunk(
   "auth/fetchCurrentUser",
@@ -18,9 +22,29 @@ export const fetchCurrentUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (credentials, { rejectWithValue }) => {
+  async (credentials, { rejectWithValue, dispatch }) => {
     try {
       const response = await authRepository.login(credentials);
+
+      // Persist token immediately so subsequent requests are authorized
+      const token = response?.data?.data?.token || response?.data?.token;
+      if (token) {
+        localStorage.setItem("token", token);
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      }
+
+      // Bootstrap data after login
+      try {
+        await Promise.all([
+          dispatch(fetchAllPackages()),
+          dispatch(fetchMyPackages()),
+          dispatch(fetchLessons()),
+          dispatch(fetchSubscriptions()),
+        ]);
+      } catch {
+        // Ignore bootstrap errors here; individual slices handle their own errors
+      }
+
       return response;
     } catch (error) {
       console.log(error);

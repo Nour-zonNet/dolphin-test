@@ -19,7 +19,16 @@ const ModalManager = () => {
 
   if (!type) return null;
 
-  const handleClose = () => dispatch(closeModal());
+  const handleClose = () => {
+    // Execute registered onClose callback if provided via props
+    if (props && props.onCloseId) {
+      const cb = callbackRegistry.get(props.onCloseId);
+      if (cb) {
+        try { cb(); } finally { callbackRegistry.delete(props.onCloseId); }
+      }
+    }
+    dispatch(closeModal());
+  };
 
   // Helper function to execute callbacks from registry
   const executeCallback = (callbackId, ...args) => {

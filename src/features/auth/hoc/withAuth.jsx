@@ -5,12 +5,18 @@ import { Overlay, Spinner } from "@/components/feedback";
 // eslint-disable-next-line no-unused-vars
 const withAuth = (WrappedComponent) => {
   return (props) => {
-    const { shouldRedirectToLogin } = useAuth();
+    const { token, user, shouldRedirectToLogin, loading } = useAuth();
 
-    // If we have a token but no user yet, and we're still loading, show loading state
+    // Avoid flicker: if token exists but user not yet loaded, show blocking loader
+    if (token && !user) {
+      return (
+        <Overlay ariaLabel="Authenticating user">
+          <Spinner size={48} colorClass="border-orange-500" />
+        </Overlay>
+      );
+    }
 
-    // If no token or no user after loading is complete, redirect to login
-    if (shouldRedirectToLogin()) {
+    if (shouldRedirectToLogin() && !loading) {
       return <Navigate to="/login" replace />;
     }
 
