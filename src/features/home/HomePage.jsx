@@ -4,19 +4,13 @@ import { RightKite } from "../../utils/Illustrations";
 import { FooterIllustration } from "../auth/components";
 import { useAuth } from "../auth/hooks/useAuth";
 import { Hero, LoginCard, Navbar } from "./components";
+import { Overlay, Spinner } from "@/components/feedback";
 
 const HomePage = () => {
-  const { isAuthLoading, isFullyAuthenticated } = useAuth();
-  
+  const { isFullyAuthenticated } = useAuth();
+
   // If we have a token but no user yet, and we're still loading, show loading state
-  if (isAuthLoading()) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-  
+
   // If user is authenticated, redirect to schedule
   if (isFullyAuthenticated()) {
     return <Navigate to="/schedule" replace />;

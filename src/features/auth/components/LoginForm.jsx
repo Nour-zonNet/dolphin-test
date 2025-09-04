@@ -5,6 +5,7 @@ import Button from "../../../components/ui/Button";
 import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
 import PhoneField from "./PhoneField";
+import { validatePhone } from "../../../utils/phoneValidation";
 
 const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
   const { t } = useTranslation();
@@ -12,12 +13,19 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
     handleSubmit,
     control,
     setValue,
-
-    formState: { errors, isValid },
+    watch,
+    formState: { errors, touchedFields },
   } = useForm({
-    mode: "onTouched",
+    mode: "onBlur", // Only validate on blur (when user finishes typing)
     defaultValues: { mobile: "", countryCode: null },
   });
+
+  // Watch form values for real-time validation
+  const mobile = watch("mobile");
+  const countryCode = watch("countryCode");
+
+  // Check if phone number is valid
+  const isPhoneValid = mobile && validatePhone(mobile, countryCode);
 
   return (
     <div className="flex justify-center items-center flex-col lg:flex-row mx-auto ">
@@ -28,13 +36,13 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
           alt="Path"
           className="h-29 sm:h-48 md:h-48 lg:h-135 object-contain  lg:mb-6"
         />
-        <FormTitle text={t('auth.loginToAccount')} isMobile />
+        <FormTitle text={t("auth.loginToAccount")} isMobile />
       </div>
 
       {/* Right side form */}
       <div className=" relative  ">
         <div className="flex justify-center ">
-          <FormTitle text={t('auth.loginToAccount')} />
+          <FormTitle text={t("auth.loginToAccount")} />
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -42,7 +50,7 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
         >
           {/* Title */}
           <h2 className="text-lg sm:text-xl md:text-2xl text-subtext font-bold">
-            {t('auth.enterPhoneNumber')}
+            {t("auth.enterPhoneNumber")}
           </h2>
 
           {/* Phone Input */}
@@ -51,6 +59,8 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
             setValue={setValue}
             setPhoneNumber={setPhoneNumber}
             errors={errors}
+            watch={watch}
+            touchedFields={touchedFields}
           />
 
           {/* Backend Error */}
@@ -69,7 +79,7 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
               )
             }
             text={loading ? "جاري المعالجة..." : "متابعة"}
-            disabled={!isValid || loading}
+            disabled={!isPhoneValid || loading}
           />
         </form>
       </div>

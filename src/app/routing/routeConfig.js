@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
+import Checkout from "../../features/packages/pages/Checkout";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
@@ -11,9 +12,9 @@ const LessonContentPage = lazy(() =>
   }))
 );
 const ManageSubscription = lazy(() =>
-  import("@/features/managesubscription/pages/ManageSubscription").then(
-    (module) => ({ default: module.ManageSubscription })
-  )
+  import("@/features/subscription/pages/ManageSubscription").then((module) => ({
+    default: module.ManageSubscription,
+  }))
 );
 const PackageContent = lazy(() =>
   import("@/features/packages/pages/PackagesContent").then((module) => ({
@@ -30,8 +31,9 @@ const PhonePage = lazy(() => import("@/features/auth/pages/PhonePage"));
 const OtpPage = lazy(() => import("@/features/auth/pages/OtpPage"));
 const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
 const PasswordPage = lazy(() => import("@/features/auth/pages/PasswordPage"));
-const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
-const BalanceDetails = lazy(() => import("@/features/balance/pages/BalanceDetails"));
+const ForgotPasswordOtpPage = lazy(() => import("@/features/auth/pages/ForgotPasswordOtpPage"));
+const ForgotPasswordResetPage = lazy(() => import("@/features/auth/pages/ForgotPasswordResetPage"));
+const ForgotPasswordPage = lazy(() => import("@/features/auth/pages/ForgotPasswordPage"));
 
 // Route Configuration
 export const routes = [
@@ -40,6 +42,7 @@ export const routes = [
     path: "/",
     element: HomePage,
     public: true,
+    layout: false, // Home page doesn't need AppLayout
   },
 
   // Auth Routes
@@ -47,14 +50,18 @@ export const routes = [
     path: "/login",
     element: LoginPage,
     public: true,
+    layout: false, // Auth pages don't need AppLayout
   },
   {
     path: "/auth",
     children: [
-      { path: "phone", element: PhonePage, public: true },
-      { path: "otp", element: OtpPage, public: true },
-      { path: "register", element: RegisterPage, public: true },
-      { path: "password", element: PasswordPage, public: true },
+      { path: "phone", element: PhonePage, public: true, layout: false },
+      { path: "otp", element: OtpPage, public: true, layout: false },
+      { path: "register", element: RegisterPage, public: true, layout: false },
+      { path: "password", element: PasswordPage, public: true, layout: false },
+      { path: "forgetpassword", element: ForgotPasswordPage, public: true, layout: false },
+      { path: "forgetpassword/otp", element: ForgotPasswordOtpPage, public: true, layout: false },
+      { path: "forgetpassword/reset", element: ForgotPasswordResetPage, public: true, layout: false },
     ],
   },
 
@@ -73,6 +80,18 @@ export const routes = [
     path: "/manage-subscription",
     element: ManageSubscription,
     protected: true,
+  },
+  {
+    path: "/main-packages",
+    element: DataPlanSelector,
+    protected: true,
+    layout: false, // Packages selector has its own layout
+  },
+  {
+    path: "/checkout",
+    element: Checkout,
+    protected: true,
+    layout: false, // Checkout page has its own layout
   },
   {
     path: "/packages-content",
@@ -98,16 +117,16 @@ export const routes = [
     element: ShowLessons,
     protected: true,
   },
-  {
-    path: "/profile",
-    element: ProfilePage,
-    public: true,
-  },
-  {
-    path: "/balance-details",
-    element: BalanceDetails,
-    public: true,
-  },
+  // {
+  //   path: "/profile",
+  //   element: ProfilePage,
+  //   public: true,
+  // },
+  // {
+  //   path: "/balance-details",
+  //   element: BalanceDetails,
+  //   public: true,
+  // },
 
 ];
 
@@ -127,10 +146,10 @@ export const isPublicRoute = (path) => {
 // Helper function to check if route requires layout
 export const requiresLayout = (path) => {
   return routes.some((route) => {
-    if (route.path === path) return route.protected;
+    if (route.path === path) return route.layout !== false; // Default to true unless explicitly false
     if (route.children) {
       return route.children.some(
-        (child) => `${route.path}/${child.path}` === path && child.protected
+        (child) => `${route.path}/${child.path}` === path && child.layout !== false
       );
     }
     return false;

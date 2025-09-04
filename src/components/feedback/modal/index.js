@@ -1,4 +1,5 @@
 export { default as ModalManager } from './ModalManager';
+export { default as ModalContainer } from './ModalContainer';
 export { useModal } from './useModal';
 
 // Export individual modals if needed

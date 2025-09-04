@@ -86,6 +86,22 @@ export const useModal = () => {
     }));
   };
 
+  const openStatusModal = (
+    type = MODAL_TYPES.SUCCESS,
+    { title = "", message = "", onClose } = {}
+  ) => {
+    // Register onClose callback in registry to keep Redux serializable
+    const onCloseId = onClose ? Date.now().toString() : null;
+    if (onCloseId && onClose) {
+      callbackRegistry.set(onCloseId, onClose);
+    }
+
+    dispatch(openModal({
+      type,
+      props: { title, message, onCloseId }
+    }));
+  };
+
   const closeCurrentModal = () => {
     dispatch(closeModal());
   };
@@ -106,6 +122,7 @@ export const useModal = () => {
     openChangeGroupModal,
     openReactivateModal,
     openExtendPackageModal,
+    openStatusModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

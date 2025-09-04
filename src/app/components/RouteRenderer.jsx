@@ -1,18 +1,19 @@
 import { Suspense } from "react";
 import { AppLayout } from "@/components/layout";
 import withAuth from "@/features/auth/hoc/withAuth";
+import { Overlay, Spinner } from "@/components/feedback";
 
 // Simple loading fallback component
 const RouteLoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-  </div>
+  <Overlay ariaLabel="Loading page">
+    <Spinner size={48} colorClass="border-orange-500" />
+  </Overlay>
 );
 
 // Route renderer component
 const RouteRenderer = ({ route, children }) => {
   const Component = route.element;
-  
+
   if (!Component) {
     return children;
   }
@@ -20,9 +21,12 @@ const RouteRenderer = ({ route, children }) => {
   // For protected routes, wrap with authentication HOC
   const ProtectedComponent = route.protected ? withAuth(Component) : Component;
 
+  // Use layout flag to determine if AppLayout should be applied
+  const shouldUseLayout = route.layout !== false; // Default to true unless explicitly set to false
+
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
-      {route.protected ? (
+      {shouldUseLayout ? (
         <AppLayout>
           <ProtectedComponent />
         </AppLayout>

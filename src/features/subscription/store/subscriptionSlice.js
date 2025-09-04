@@ -3,9 +3,10 @@ import { subscriptionRepository } from "../services/subscription.services";
 
 // ===== Helper for error extraction =====
 const handleError = async (error, thunkAPI) => {
-  // If backend sends a proper error response
   if (error.response && error.response.data) {
-    return thunkAPI.rejectWithValue(error.response.data.message || "Server error");
+    return thunkAPI.rejectWithValue(
+      error.response.data.message || "Server error"
+    );
   }
   return thunkAPI.rejectWithValue(error.message || "Unknown error");
 };
@@ -64,7 +65,20 @@ export const changeGroupSubscription = createAsyncThunk(
   async ({ id, groupId }, thunkAPI) => {
     try {
       const res = await subscriptionRepository.changeGroup(id, groupId);
-      return res;
+      console.log("API data:", res.data); // This is the actual subscription object
+      return res.data; // ← Return the nested data, not the whole response
+    } catch (err) {
+      return handleError(err, thunkAPI);
+    }
+  }
+);
+export const createTrialSubscription = createAsyncThunk(
+  "subscriptions/changeGroup",
+  async (ids, thunkAPI) => {
+    try {
+      const res = await subscriptionRepository.createTrialSubscription(ids);
+      console.log("API data:", res.data); // This is the actual subscription object
+      return res.data; // ← Return the nested data, not the whole response
     } catch (err) {
       return handleError(err, thunkAPI);
     }
@@ -127,13 +141,21 @@ const subscriptionSlice = createSlice({
 
       // ===== Change Group =====
       .addCase(changeGroupSubscription.pending, handlePending)
-      .addCase(changeGroupSubscription.fulfilled, (state) => {
+      .addCase(changeGroupSubscription.fulfilled, (state, action) => {
         state.loading = false;
-        // console.log(state.items)
-        // console.log(action.payload)
-        // // state.items = state.items.map((s) =>
-        // //   s.id === action.payload.id ? action.payload : s
-        // );
+
+        // Access the nested data
+        const updatedSubscription = action.payload;
+
+        if (updatedSubscription && updatedSubscription.id) {
+          state.items = state.items.map((s) =>
+            s.id === updatedSubscription.id
+              ? { ...s, ...updatedSubscription }
+              : s
+          );
+        } else {
+          console.warn("No valid subscription data in payload");
+        }
       })
       .addCase(changeGroupSubscription.rejected, handleRejected)
 

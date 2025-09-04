@@ -5,7 +5,7 @@ import Button from "../../../ui/Button";
 import successImg from "../../../../assets/modal/successModal.svg"
 import failImg from "../../../../assets/modal/warningModal.svg"
 
-const StatusModal = ({ type, onClose, title, message }) => {
+const   StatusModal = ({ type, onClose, title, message }) => {
   const { t } = useTranslation();
 
   return (
@@ -27,7 +27,7 @@ const StatusModal = ({ type, onClose, title, message }) => {
           {title}
         </h2>
       </div>
-
+      
       {/* Message */}
       <p className="mt-6 text-center text-gray-700 text-base md:text-lg font-cairo">
         {message}

@@ -1,22 +1,22 @@
 import { useAuth } from "../hooks/useAuth";
 import { Navigate } from "react-router-dom";
+import { Overlay, Spinner } from "@/components/feedback";
 
 // eslint-disable-next-line no-unused-vars
 const withAuth = (WrappedComponent) => {
   return (props) => {
-    const { isAuthLoading, isFullyAuthenticated } = useAuth();
+    const { token, user, shouldRedirectToLogin, loading } = useAuth();
 
-    // If we have a token but no user yet, and we're still loading, show loading state
-    if (isAuthLoading()) {
+    // Avoid flicker: if token exists but user not yet loaded, show blocking loader
+    if (token && !user) {
       return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
+        <Overlay ariaLabel="Authenticating user">
+          <Spinner size={48} colorClass="border-orange-500" />
+        </Overlay>
       );
     }
 
-    // If no token or no user after loading is complete, redirect to login
-    if (!isFullyAuthenticated()) {
+    if (shouldRedirectToLogin() && !loading) {
       return <Navigate to="/login" replace />;
     }
 

@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { closeModal } from "@/store/modalSlice";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 import { callbackRegistry } from "./useModal";
+import ModalContainer from "./ModalContainer";
 
 import {
   StatusModal,
@@ -18,7 +19,16 @@ const ModalManager = () => {
 
   if (!type) return null;
 
-  const handleClose = () => dispatch(closeModal());
+  const handleClose = () => {
+    // Execute registered onClose callback if provided via props
+    if (props && props.onCloseId) {
+      const cb = callbackRegistry.get(props.onCloseId);
+      if (cb) {
+        try { cb(); } finally { callbackRegistry.delete(props.onCloseId); }
+      }
+    }
+    dispatch(closeModal());
+  };
 
   // Helper function to execute callbacks from registry
   const executeCallback = (callbackId, ...args) => {
@@ -104,9 +114,9 @@ const ModalManager = () => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
-        {ModalContent}
-    </div>
+    <ModalContainer onClose={handleClose} labelledBy="modal-title">
+      {ModalContent}
+    </ModalContainer>
   );
 };
 
