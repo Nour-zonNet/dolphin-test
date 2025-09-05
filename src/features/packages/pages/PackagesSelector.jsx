@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { usePackages } from "../hooks/usePackages";
-import PlansSearchBar from "../components/PlansSearchBar";
+import SearchFilterBar from "../components/SearchFilterBar";
 import PlanCard from "../components/PlanCard";
 import PlansFooter from "../components/PlansFooter";
 import { Header } from "../../../components/layout";
@@ -11,7 +11,7 @@ const DataPlanSelector = () => {
   const { all } = usePackages();
 
   const [selectedPlanIds, setSelectedPlanIds] = React.useState([]);
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [filteredPlans, setFilteredPlans] = React.useState([]);
 
   const getPackageIcon = React.useCallback((subjects) => {
     if (!subjects || subjects.length === 0) return "📦";
@@ -55,14 +55,19 @@ const DataPlanSelector = () => {
     );
   }, []);
 
-  const filteredPlans = React.useMemo(() => {
-    if (!Array.isArray(all) || all.length === 0) return [];
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) return all;
-    return all.filter((plan) =>
-      (plan.name || "").toLowerCase().includes(query)
-    );
-  }, [all, searchQuery]);
+  const filterSource = React.useMemo(() => {
+    if (!Array.isArray(all)) return [];
+    return all.map((plan) => ({
+      ...plan,
+      title: plan.name || "",
+      instructor: plan.instructor || "",
+      group: plan.group || "",
+    }));
+  }, [all]);
+
+  React.useEffect(() => {
+    setFilteredPlans(filterSource);
+  }, [filterSource]);
 
   const handlePlanSelect = React.useCallback((planId) => {
     setSelectedPlanIds((current) => {
@@ -107,9 +112,10 @@ const DataPlanSelector = () => {
   <Header title=" اختر باقتك المناسبة" balance={0}/>
 
       {/* Search Bar */}
-      <PlansSearchBar
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+      <SearchFilterBar
+        packages={filterSource}
+        onFilterChange={setFilteredPlans}
+        placeholder="ابحث عن باقة..."
       />
 
       {/* Warning */}

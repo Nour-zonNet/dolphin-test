@@ -795,10 +795,11 @@ export const Filter = () => (
   </svg>
 );
 
-export const Search = () => (
+export const Search = ({className}) => (
   <svg
     width="22"
     height="23"
+    className={className}
     viewBox="0 0 22 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
