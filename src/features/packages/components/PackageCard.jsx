@@ -52,7 +52,7 @@ const PackageCard = React.memo(({ item, color, image }) => {
           className={`relative rounded-xl border bg-foundblue border-[${color}] w-full overflow-hidden transform  skew-y-[0.1deg] p-2 pr-0 skew-x-2  z-10 shadow-sm transition-all `}
         >
           {/* Decorative Kite */}
-          <div className="absolute flex items-start justify-end z-20 w-full -left-2 pt-8">
+          <div className="absolute flex items-start justify-end z w-full -left-2 pt-8">
             <CardKite fill={color} className="relative left-0" />
           </div>
           {/* Header */}

@@ -4,6 +4,7 @@ import { usePackages } from "../hooks/usePackages";
 import PlansSearchBar from "../components/PlansSearchBar";
 import PlanCard from "../components/PlanCard";
 import PlansFooter from "../components/PlansFooter";
+import { Header } from "../../../components/layout";
 
 const DataPlanSelector = () => {
   const navigate = useNavigate();
@@ -103,20 +104,7 @@ const DataPlanSelector = () => {
   return (
     <div className="min-h-screen  space-y-6">
       {/* Header */}
-      <div className="bg-white shadow-md">
-        <div className=" mx-auto px-4 py-8 flex justify-between items-center">
-          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-            <span className="text-xl text-gray-600">☰</span>
-          </div>
-          <h1 className="font-bold text-lg sm:text-2xl text-gray-800 text-center">
-            اختر باقتك المناسبة
-          </h1>
-          <div className="flex items-center gap-2">
-            <span className="text-navyteal font-semibold">الرصيد:</span>
-            <span className="font-bold text-xl text-blue-900">0 ريال</span>
-          </div>
-        </div>
-      </div>
+  <Header title=" اختر باقتك المناسبة" balance={0}/>
 
       {/* Search Bar */}
       <PlansSearchBar

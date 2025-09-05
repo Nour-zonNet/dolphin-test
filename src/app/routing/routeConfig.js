@@ -123,6 +123,8 @@ export const routes = [
     path: "/manage-subscription",
     element: ManageSubscription,
     protected: true,
+    layout: false, // Checkout page has its own layout
+
   },
   {
     path: "/main-packages",

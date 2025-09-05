@@ -4,6 +4,7 @@ import { useSubscriptions } from "@/features/subscription/hooks/useSubscriptions
 import { useModal } from "@/components/feedback/modal/useModal";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 import { getPackageIcon } from "./utils";
+import { Header } from "../../../../components/layout";
 
 export const Checkout = () => {
   const location = useLocation();
@@ -37,9 +38,9 @@ export const Checkout = () => {
 
   return (
     <div className="relative min-h-screen bg-white">
-      <Header />
+      <Header title={"شراء الباقات"} showBalanceSection={false } />
 
-      <main className="container mx-auto px-4 py-6 md:py-8 space-y-6 md:space-y-8">
+      <main className=" mx-auto px-4 py-6 md:px-8 md:py-8 space-y-6 md:space-y-8">
         <BalanceSummary />
         <SelectedPackages selectedPackages={selectedPackages} />
         <DiscountBar totalPrice={totalPrice} onApply={() => setDiscountApplied(true)} />
@@ -55,38 +56,28 @@ export const Checkout = () => {
   );
 };
 
-const Header = () => (
-  <header className="sticky top-0 z-50 w-full h-16 md:h-20 lg:h-24 bg-white shadow-sm">
-    <div className="container mx-auto h-full flex items-center justify-between px-4 md:px-6">
-      <img className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12" alt="قائمة" src="https://c.animaapp.com/mf3u5boioWZVpp/img/---.svg" />
-      <h1 className="text-xl md:text-2xl font-bold text-[#08233f] font-cairo  flex-1 text-center">
-        شراء الباقة
-      </h1>
-    </div>
-  </header>
-);
 
 const BalanceSummary = () => (
-  <div className="flex flex-row items- justify-between gap-6">
-    <div className="relative w-64 lg:w-64 xl:w-72 h-40 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4">
+  <div className="flex flex-row  justify-between gap-6">
+    <div className="relative w-30  h-20  md:w-45 md:h-30 xl:w-72 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 md:p-6">
       <div className="absolute inset-0 flex items-center justify-center">
         <img className="w-full h-full object-contain" alt="Vector" src="https://c.animaapp.com/mf3u5boioWZVpp/img/vector.svg" />
       </div>
       <div className="relative z-10">
-        <div className="text-lg md:text-xl font-semibold text-blue-800 font-cairo  mb-2">رصيد محفظتك</div>
-        <div className="text-2xl md:text-3xl font-semibold text-blue-600 font-cairo ">1000 ريال</div>
+        <div className="text-sm md:text-xl font-semibold text-blue-800 font-cairo  mb-2">رصيد محفظتك</div>
+        <div className="text-sm md:text-xl font-semibold text-blue-600 font-cairo ">1000 ريال</div>
       </div>
     </div>
 
     <div className="flex-1 space-y-3 ">
       <div className="flex items-center justify-start gap-2">
         <img className="w-5 h-5 md:w-6 md:h-6" alt="Info" src="https://c.animaapp.com/mf3u5boioWZVpp/img/frame-1.svg" />
-        <div className="text-lg md:text-xl font-semibold text-blue-700 font-cairo">رصيدك الحالي متاح للاستخدام</div>
+        <div className="text-sm md:text-xl font-semibold text-blue-700 font-cairo">رصيدك الحالي متاح للاستخدام</div>
       </div>
 
       <div className="flex items-center justify-start gap-2">
         <img className="w-5 h-5 md:w-6 md:h-6" alt="Group" src="https://c.animaapp.com/mf3u5boioWZVpp/img/group-1.png" />
-        <p className="text-base md:text-lg font-semibold text-gray-500 font-cairo">مدة الفترة التجريبية: 1 أيام تجريبية مجانية</p>
+        <p className="text-sm md:text-xl font-semibold text-gray-500 font-cairo">مدة الفترة التجريبية: 1 أيام تجريبية مجانية</p>
       </div>
     </div>
   </div>
@@ -180,19 +171,45 @@ const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
 
 const DiscountBar = ({ totalPrice, onApply }) => (
   <div className="flex flex-col lg:flex-row items-center justify-between gap-6 p-4 md:p-6 bg-white rounded-xl shadow-sm">
-    <div className="w-full">
-      <div className="text-lg md:text-xl font-semibold text-gray-800 font-cairo  mb-4">هل لديك كود خصم؟</div>
-      <div className="flex items-center justify-between space-x-10">
-        <div className="relative flex-1">
-          <div className="flex items-center gap-3 p-4 border border-dashed border-blue-800 rounded-full">
-            <img className="w-5 h-5 md:w-6 md:h-6" alt="Discount" src="https://c.animaapp.com/mf3u5boioWZVpp/img/group.png" />
-            <input type="text" placeholder="أدخل كود الخصم" className="flex-1 font-cairo  outline-none bg-transparent" defaultValue="hggg76789e" />
-            <button className="p-2 hover:bg-gray-100 rounded-full" onClick={onApply}>
-              <img className="w-5 h-5 md:w-6 md:h-6" alt="Apply" src="https://c.animaapp.com/mf3u5boioWZVpp/img/filled.svg" />
+    <div className="w-full flex flex-col gap-4">
+      {/* Title */}
+      <div className="text-base md:text-lg font-semibold text-gray-800 font-cairo">
+        هل لديك كود خصم؟
+      </div>
+
+      {/* Input + Button + Total */}
+      <div className="flex flex-col md:flex-row items-center gap-4 w-full">
+        {/* Input section */}
+        <div className="relative flex-1 w-full">
+          <div className="flex items-center gap-3 p-1 md:p-2 border border-dashed border-blue-800 rounded-full">
+            <img
+              className="w-5 h-5 md:w-6 md:h-6"
+              alt="Discount"
+              src="https://c.animaapp.com/mf3u5boioWZVpp/img/group.png"
+            />
+            <input
+              type="text"
+              placeholder="أدخل كود الخصم"
+              className="flex-1 font-cairo outline-none bg-transparent text-sm md:text-base"
+              defaultValue=""
+            />
+            <button
+              className="p-2 hover:bg-gray-100 rounded-full transition"
+              onClick={onApply}
+            >
+              <img
+                className="w-5 h-5 md:w-6 md:h-6"
+                alt="Appl y"
+                src="https://c.animaapp.com/mf3u5boioWZVpp/img/filled.svg"
+              />
             </button>
           </div>
         </div>
-        <div className="text-xl md:text-2xl font-bold text-blue-800 font-cairo">الاجمالي: {totalPrice} ريال</div>
+
+        {/* Total section */}
+        <div className="text-center md:text-right text-sm md:text-lg font-bold text-blue-800 font-cairo shrink-0">
+          الاجمالي: {totalPrice} ريال
+        </div>
       </div>
     </div>
   </div>
