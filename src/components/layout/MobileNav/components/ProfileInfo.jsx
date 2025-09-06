@@ -18,7 +18,6 @@ const ProfileInfo = () => {
     <Link 
       to="/profile"
       className="flex flex-col items-center text-darkblue hover:scale-105 transition cursor-pointer"
-      onClick={handleLogout}
     >
       <div className="relative w-10 h-10 rounded-full border border-black/40 flex items-center justify-center overflow-hidden bg-white">
         <img
@@ -27,7 +26,7 @@ const ProfileInfo = () => {
           className="w-6 h-6 object-cover group-hover:scale-110 transition"
         />
       </div>
-      <span className="text-base font-medium">    {t('mobileNavigation.profile')}</span>
+      <span className="text-base font-medium">{t('mobileNavigation.profile')}</span>
     </Link>
   );
 };

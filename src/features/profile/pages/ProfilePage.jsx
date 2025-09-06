@@ -17,13 +17,13 @@ const ProfilePage = () => {
      <div className="min-h-screen bg-white flex flex-col">
       <ProfileHeader title="الملف الشخصي" />
       
-      <main className="flex-1 px-4 sm:px-8 lg:px-20 py-8 space-y-16 mx-auto w-full">
-       <div className="flex items-center justify-between">
+      <main className="flex-1 px-4 sm:px-8 lg:px-20 py-4 md:py-8 space-y-16 mx-auto w-full">
+       <div className="flex md:items-center justify-between flex-col md:flex-row">
          <UserProfile user={user} />
          <AddSiblingButton />
        </div>
         
-        <div className="space-y-16">
+        <div className="space-y-8 md:space-y-16">
           <WalletBalance />
           <Divider />
           <AccountInfo user={user} />
