@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
 import Checkout from "../../features/packages/pages/Checkout";
-import ProfilePage from "../../features/profile/pages/ProfilePage";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
@@ -61,8 +60,11 @@ const ForgotPasswordPage = lazy(() =>
     default: module.ForgotPasswordPage,
   }))
 );
-// const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
-// const BalanceDetails = lazy(() => import("@/features/profile/pages/BalanceDetails"));
+const ProfilePage = lazy(() => 
+  import("@/features/profile/pages/ProfilePage"));
+
+const BalanceDetails = lazy(() => 
+  import("@/features/balance/pages/BalanceDetails"));
 
 // Route Configuration
 export const routes = [
@@ -172,17 +174,15 @@ export const routes = [
     path: "/profile",
     element: ProfilePage,
     protected: true,
+    layout: false,
   },
-  // {
-  //   path: "/profile",
-  //   element: ProfilePage,
-  //   // protected: true,
-  // },
-  // {
-  //   path: "/balance-details",
-  //   element: BalanceDetails,
-  //   protected: true,
-  // },
+  {
+    path: "/balance-details",
+    element: BalanceDetails,
+    protected: true,
+    layout: false,
+  },
+
 ];
 
 // Helper function to check if route is public
