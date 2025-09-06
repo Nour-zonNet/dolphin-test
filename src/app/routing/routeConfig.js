@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
 import Checkout from "../../features/packages/pages/Checkout";
+import ProfilePage from "../../features/profile/pages/ProfilePage";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
@@ -167,6 +168,11 @@ export const routes = [
     element: ShowLessons,
     protected: true,
   },
+  {
+    path: "/profile",
+    element: ProfilePage,
+    protected: true,
+  },
   // {
   //   path: "/profile",
   //   element: ProfilePage,
@@ -177,8 +183,6 @@ export const routes = [
   //   element: BalanceDetails,
   //   protected: true,
   // },
-
-
 ];
 
 // Helper function to check if route is public

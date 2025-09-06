@@ -38,7 +38,7 @@ const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
               <div
                 className={`w-8 h-8 md:w-10 md:h-10 bg-[${bgColor}] rounded-sm flex items-center justify-center text-2xl`}
               >
-                <img src={image} alt="" srcset="" />
+                <img src={image} alt="" srcSet="" />
               </div>
               <h3 className="font-semibold text-gray-800 text-sm sm:text-base self-center">
                 {plan.name}
@@ -119,11 +119,11 @@ const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
           </div>
           {plan.weeklyClasses > 0 && (
             <span className=" flex items-center gap-2 text-[#BA7C28] text-sm md:text-lg  font-semibold py-1 rounded-full">
-              <img src={Books} alt="" srcset="" />
+              <img src={Books} alt="" srcSet="" />
               <span className="border-l-3 border-[#D9D9D9] pl-2">
                 {plan.weeklyClasses} حصص أسبوعياً
               </span>
-              <img src={Books} alt="" srcset="" />
+              <img src={Books} alt="" srcSet="" />
               <span>{plan.monthlyClasses} حصص شهريا</span>
             </span>
           )}

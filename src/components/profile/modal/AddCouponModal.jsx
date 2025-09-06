@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Divider from "../../ui/Divider";
-import { ConfirmCheck, GreenCheck } from "@/utils/icons";
+import { ConfirmCheck } from "@/utils/icons";
 
 const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
   const [couponCode, setCouponCode] = useState("");
@@ -97,11 +97,15 @@ const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
                 required
               />
               {/* Check Icon inside input when valid */}
-              {isValid && (
-                <GreenCheck className="absolute left-12 top-1/2" />
-              )}
+              {/* {isValid && (
+                // <GreenCheck className="absolute left-12 top-1/2" />
+              )} */}
               {/* Error message */}
-              {error && <p className="text-[#B3261E] text-sm md:text-lg flex justify-end">{error}</p>}
+              {error && (
+                <p className="text-[#B3261E] text-sm md:text-lg flex justify-end">
+                  {error}
+                </p>
+              )}
             </div>
 
             {/* Coupon Value */}
