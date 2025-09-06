@@ -35,18 +35,18 @@ const ForgotPasswordOtpPage = () => {
     <AuthLayout handleBack={handleBack}>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md mx-auto p-6 bg-white rounded-xl shadow-sm space-y-6"
+        className="w-full max-w-md mx-auto p-6 bg-white rounded-xl  space-y-6"
       >
-        <h1 className="text-xl font-bold text-center">أدخل رمز التحقق</h1>
+        <h1 className="text-xl text-status font-bold text-center"> رمز التحقق</h1>
         <div className="space-y-2">
-          <label className="block text-sm text-gray-700">
-            رمز التحقق (OTP)
+          <label className="block text-sm text-status text-center">
+        ادخل رمز التحقق المرسل الى جوالك
           </label>
 
-<div dir="ltr">
-
-          <OTPInput  length={6}    va onChange={setOtp}/>
-</div>
+          <div className="mt-10" dir="ltr">
+            <OTPInput length={6} va onChange={setOtp} />
+          </div>
+          
           {/* <input
             type="text"
             value={otp}

@@ -72,7 +72,7 @@ const OTPInput = ({ length = 6, type = "text", onChange }) => {
   };
 
   return (
-    <div className="flex gap-4 items-center justify-between w-full">
+    <div className="flex gap-3 items-center justify-between w-full">
       {otp.map((val, i) => (
         <input
           key={i}
@@ -88,7 +88,7 @@ const OTPInput = ({ length = 6, type = "text", onChange }) => {
           pattern="[0-9]*"
           className="aspect-square w-full 
                      text-center text-base sm:text-lg md:text-xl lg:text-2xl font-semibold
-                     border border-[#B3B3B3]/50 bg-verifyinputbg rounded-lg 
+                     border border-[#B3B3B3]/30 bg-verifyinputbg rounded-lg 
                      focus:outline-none focus:ring-2 focus:ring-btnClicked"
         />
       ))}

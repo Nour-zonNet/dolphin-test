@@ -611,7 +611,7 @@ export const Star = ({
   </svg>
 );
 
-export const CardKite = ({ className = "", fill = "#0077B6" }) => (
+export const CardKite = ({ className , fill = "#0077B6" }) => (
   <svg
     className={className}
     width="158"

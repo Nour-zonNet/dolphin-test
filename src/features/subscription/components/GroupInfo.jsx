@@ -6,16 +6,29 @@ import useGroups from "../../groups/hooks/useGroups";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 
 const GroupInfo = ({ group, packageId, subscriptionId }) => {
-  const { openChangeGroupModal } = useModal();
+  const { openChangeGroupModal, openStatusModal } = useModal();
   const { groups, fetchGroups } = useGroups(packageId);
   const { changeGroupSubscription } = useSubscriptions();
 
   const handleChangeGroup = async () => {
     openChangeGroupModal(
       { packageId, currentGroupId: group?.group_id, groups: groups },
-      // (groupId) => console.log("Changed to group:", subscriptionId)
-      (selectedGroupId) =>
-        changeGroupSubscription(subscriptionId, selectedGroupId)
+      async (selectedGroupId) => {
+        try {
+          await changeGroupSubscription(subscriptionId, selectedGroupId);
+          // إظهار مودال النجاح بعد تحديث المجموعة بنجاح
+          openStatusModal("SUCCESS", {
+            title: "تم التحديث بنجاح",
+            message: "تم تحديث بيانات الجدول وستظهر التغييرات عند فتح صفحة الجدول"
+          });
+        } catch {
+          // إظهار مودال الخطأ في حالة فشل التحديث
+          openStatusModal("ERROR", {
+            title: "خطأ في التحديث",
+            message: "حدث خطأ أثناء تحديث المجموعة. يرجى المحاولة مرة أخرى."
+          });
+        }
+      }
     );
   };
   useEffect(() => {

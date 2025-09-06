@@ -6,12 +6,12 @@ const Hero = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="flex flex-row items-center lg:justify-center">
+    <section className="flex flex-row items-center h-85 sm:h-auto lg:justify-center">
       {/* Image */}
     <img
       src={dolphinChild}
       alt="Path"
-      className="h-[60%] sm:h-[70%] lg:h-[100%] "
+      className="h-[70%] sm:h-[80%] lg:h-[100%] "
     />
 
       {/* Text */}

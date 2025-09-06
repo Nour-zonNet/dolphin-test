@@ -9,7 +9,7 @@ const   StatusModal = ({ type, onClose, title, message }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-lg mx-10">
+    <div className="relative w-screen max-w-md bg-white rounded-2xl p-6 shadow-lg">
       {/* Close button */}
       <button
         onClick={onClose}

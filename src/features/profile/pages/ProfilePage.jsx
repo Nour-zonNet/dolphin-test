@@ -14,7 +14,7 @@ const ProfilePage = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading profile</div>;
   return (
-     <div className="min-h-screen bg-white flex flex-col">
+     <div className="min-h-svh bg-white flex flex-col">
       <ProfileHeader title="الملف الشخصي" />
       
       <main className="flex-1 px-4 sm:px-8 lg:px-20 py-8 space-y-16 mx-auto w-full">

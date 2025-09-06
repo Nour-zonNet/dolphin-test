@@ -9,26 +9,25 @@ const ProfileInfo = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    dispatch(logoutUser()); 
+    dispatch(logoutUser());
     // Optionally redirect user after logout
-    window.location.href = "/"; 
+    window.location.href = "/";
     // or use navigate("/login") if using react-router
   };
   return (
-    <Link 
-      to="/profile"
+    <button
       className="flex flex-col items-center text-darkblue hover:scale-105 transition cursor-pointer"
       onClick={handleLogout}
     >
-      <div className="relative w-10 h-10 rounded-full border border-black/40 flex items-center justify-center overflow-hidden bg-white">
+      <div className="relative w-8 h-8 rounded-full border border-black/40 flex items-center justify-center overflow-hidden bg-white">
         <img
           src={profileImg}
           alt="profile"
           className="w-6 h-6 object-cover group-hover:scale-110 transition"
         />
       </div>
-      <span className="text-base font-medium">    {t('mobileNavigation.profile')}</span>
-    </Link>
+      <span     className="text-sm sm:text-base font-semibold">    {t('mobileNavigation.profile')}</span>
+    </button>
   );
 };
 
