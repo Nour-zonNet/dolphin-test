@@ -6,13 +6,15 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
   const [fullName, setFullName] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
   const { classes, loadingClasses, classesError } = useClasses();
+  const [profileImage, setProfileImage] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (fullName.trim() && gradeLevel) {
-      onSubmit({ name: fullName.trim(), grade: Number(gradeLevel) });
+      onSubmit({ name: fullName.trim(), grade: Number(gradeLevel), profileImage });
       setFullName("");
       setGradeLevel("");
+      setProfileImage(null);
       onClose();
     }
   };
@@ -46,16 +48,26 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
         <form onSubmit={handleSubmit} className="py-4 md:py-8 space-y-4 md:space-y-8">
           {/* Profile Picture Section */}
           <div className="flex flex-col items-center gap-3.5">
-            <div className="flex items-center justify-center cursor-pointer">
-              <img
-                className="w-[50px] md:w-full h-full object-cover rounded-lg"
-                alt="Add photo"
-                src="https://c.animaapp.com/mf2i8zbdeyVMjf/img/group-39988.png"
-              />
-            </div>
-            <div className="font-semibold text-black text-sm md:text-base text-center">
-              أضف صورة
-            </div>
+             <label className="flex flex-col items-center justify-center cursor-pointer">
+                <img
+                  className="w-[50px] rounded-full h-[50px] object-cover"
+                  alt="Add photo"
+                  src={
+                    profileImage
+                      ? URL.createObjectURL(profileImage)
+                      : "https://c.animaapp.com/mf2i8zbdeyVMjf/img/group-39988.png"
+                  }
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => setProfileImage(e.target.files[0])}
+                />
+              </label>
+              <div className="font-semibold text-black text-sm md:text-base text-center">
+                {profileImage ? "تم اختيار صورة" : "أضف صورة"}
+              </div>
           </div>
 
           {/* Full Name Field */}

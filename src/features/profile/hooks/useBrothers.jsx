@@ -8,17 +8,11 @@ export const useBrothers = () => {
     );
     const dispatch = useDispatch();
 
-    // useEffect(() => {
-    //     if (brothers.length === 0) {
-    //     dispatch(getBrothers());
-    //     }
-    // }, [dispatch, brothers.length]);
-
     useEffect(() => {
-    if (user?.id) {
-        dispatch(getBrothers()); 
-    }
-    }, [dispatch, user?.id]);      
+        if (brothers.length === 0) {
+        dispatch(getBrothers());
+        }
+    }, [dispatch, brothers.length]);
 
     return {
         brothers,

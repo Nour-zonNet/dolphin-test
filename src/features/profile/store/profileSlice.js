@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchProfile, addBrother, fetchClasses, fetchBrothers, switchAccount } from "../services/profileService";
+import { fetchProfile, addBrother, fetchClasses, fetchBrothers, switchAccount, updateUserGradeApi, updateUserImageApi } from "../services/profileService";
 
 export const getProfile = createAsyncThunk("profile/getProfile", async () => {
   return await fetchProfile();
@@ -23,18 +23,6 @@ export const getBrothers = createAsyncThunk("profile/getBrothers", async () => {
   return await fetchBrothers();
 });
 
-// export const switchUserAccount = createAsyncThunk(
-//   "profile/switchUserAccount",
-//   async (studentId, { rejectWithValue }) => {
-//     try {
-//       const userData = await switchAccount(studentId); // returns userData
-//       return userData;
-//     } catch (err) {
-//       return rejectWithValue(err.response?.data || err.message);
-//     }
-//   }
-// );
-
 export const switchUserAccount = createAsyncThunk(
   "profile/switchUserAccount",
   async (studentId, { rejectWithValue }) => {
@@ -43,7 +31,31 @@ export const switchUserAccount = createAsyncThunk(
 
       const brothers = await fetchBrothers();
 
-      return { ...userData, brothers };
+      return { user: userData, brothers };
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const updateUserImage = createAsyncThunk(
+  "profile/updateUserImage",
+  async ({ userId, file }, { rejectWithValue }) => {
+    try {
+      const data = await updateUserImageApi(userId, file);
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const updateUserGrade = createAsyncThunk(
+  "profile/updateUserGrade",
+  async ({ userId, gradeId }, { rejectWithValue }) => {
+    try {
+      const response = await updateUserGradeApi(userId, gradeId);
+      return response.data; // expect { gradeName: "..." }
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -110,12 +122,42 @@ const profileSlice = createSlice({
       .addCase(switchUserAccount.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload; 
+        state.brothers = action.payload.brothers;
       })
       .addCase(switchUserAccount.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+       // Update grade
+      .addCase(updateUserGrade.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserGrade.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.user) {
+          state.user.gradeName = action.payload.gradeName;
+        }
+      })
+      .addCase(updateUserGrade.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Update profile image
+      .addCase(updateUserImage.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserImage.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.user) {
+          state.user.profilePicture = action.payload.profilePicture;
+        }
+      })
+      .addCase(updateUserImage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
-;
   },
 });
 

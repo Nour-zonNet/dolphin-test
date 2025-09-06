@@ -9,6 +9,7 @@ const ProfileInfo = () => {
   return (
     <Link
       className="flex flex-col items-center text-darkblue hover:scale-105 transition cursor-pointer"
+      to={"/profile"}
     >
       <div className="relative w-8 h-8 rounded-full border border-black/40 flex items-center justify-center overflow-hidden bg-white">
         <img

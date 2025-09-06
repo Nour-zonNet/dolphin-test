@@ -1,20 +1,31 @@
 import React, { useState } from 'react'
 import Divider from '../../ui/Divider';
 import { ConfirmCheck } from '../../../utils/icons';
-
+import { useClasses } from '@/features/profile/hooks/useClasses';
 const ChangeGradeModal = ({ isOpen, onClose, onConfirm  }) => {
     const [confirmText, setConfirmText] = useState("");
     const isDeleteEnabled = confirmText.trim() === "حذف";
-  
+    const [gradeLevel, setGradeLevel] = useState("");
+    const { classes, loadingClasses, classesError } = useClasses();
+
+   const handleConfirm = () => {
+      if (gradeLevel) {
+        const selectedClass = classes.find(cls => cls.id === gradeLevel);
+        if (selectedClass) {
+          onConfirm(selectedClass.name, selectedClass.id); 
+        }
+        setGradeLevel("");
+        onClose();
+      }
+    };
+
     const handleDelete = () => {
       if (isDeleteEnabled) {
         onConfirm();
       }
     };
-
-     const [gradeLevel, setGradeLevel] = useState("");
     
-    if (!isOpen) return null;
+  if (!isOpen) return null;
   return (
       <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-100 p-4">
         <div className="bg-white rounded-[32px] border-[0.5px] border-solid border-[#8c8c8c] w-[95%] md:w-[60%] my-auto">
@@ -55,18 +66,12 @@ const ChangeGradeModal = ({ isOpen, onClose, onConfirm  }) => {
                 required
               >
                 <option value="">اختر الصف الدراسي الجديد</option>
-                <option value="grade-1">الصف الأول</option>
-                <option value="grade-2">الصف الثاني</option>
-                <option value="grade-3">الصف الثالث</option>
-                <option value="grade-4">الصف الرابع</option>
-                <option value="grade-5">الصف الخامس</option>
-                <option value="grade-6">الصف السادس</option>
-                <option value="grade-7">الصف السابع</option>
-                <option value="grade-8">الصف الثامن</option>
-                <option value="grade-9">الصف التاسع</option>
-                <option value="grade-10">الصف العاشر</option>
-                <option value="grade-11">الصف الحادي عشر</option>
-                <option value="grade-12">الصف الثاني عشر</option>
+                {loadingClasses && <option disabled>جاري تحميل الصفوف...</option>}
+                {classes?.map((cls) => (
+                  <option key={cls.id} value={cls.id}>
+                    {cls.name}
+                  </option>
+                ))}
               </select>
               <img
                 className="absolute left-14 top-1/2 transform -translate-y-1/2 w-4 md:w-6 pointer-events-none"
@@ -100,6 +105,8 @@ const ChangeGradeModal = ({ isOpen, onClose, onConfirm  }) => {
               </div>
             </button>
             <button
+              onClick={handleConfirm}
+              disabled={!gradeLevel}
               className="flex w-full h-[60px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep hover:bg-btnClicked transition cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover"
             >
              <ConfirmCheck className="w-6 md:w-8" />

@@ -34,3 +34,26 @@ export const switchAccount = async (studentId) => {
 
   return userData; 
 };
+
+export const updateUserImageApi = async (userId, file) => {
+  const formData = new FormData();
+  // formData.append("id", userId);
+  formData.append("image", file);
+  formData.append("_method", "PATCH");
+
+  const response = await api.post("/student/update-image", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data.data; 
+};
+
+export const updateUserGradeApi = async (userId, gradeId) => {
+  const response = await api.put(`/student/update-grade`, {
+    user_id: userId,
+    grade_id: gradeId,
+  });
+  return response.data.data;
+};
