@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { usePackages } from "../hooks/usePackages";
-import SearchFilterBar from "../components/SearchFilterBar";
+import PlansSearchBar from "../components/PlansSearchBar";
 import PlanCard from "../components/PlanCard";
 import PlansFooter from "../components/PlansFooter";
 import { InfoIcon } from "../../../utils/icons";
@@ -38,19 +38,14 @@ const DataPlanSelector = () => {
     );
   }, []);
 
-  const filterSource = React.useMemo(() => {
-    if (!Array.isArray(all)) return [];
-    return all.map((plan) => ({
-      ...plan,
-      title: plan.name || "",
-      instructor: plan.instructor || "",
-      group: plan.group || "",
-    }));
-  }, [all]);
-
-  React.useEffect(() => {
-    setFilteredPlans(filterSource);
-  }, [filterSource]);
+  const filteredPlans = React.useMemo(() => {
+    if (!Array.isArray(all) || all.length === 0) return [];
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return all;
+    return all.filter((plan) =>
+      (plan.name || "").toLowerCase().includes(query)
+    );
+  }, [all, searchQuery]);
 
   const handlePlanSelect = React.useCallback((planId) => {
     setSelectedPlanIds((current) => {
@@ -94,10 +89,9 @@ const DataPlanSelector = () => {
     
 
       {/* Search Bar */}
-      <SearchFilterBar
-        packages={filterSource}
-        onFilterChange={setFilteredPlans}
-        placeholder="ابحث عن باقة..."
+      <PlansSearchBar
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
       />
 
       {/* Warning */}
