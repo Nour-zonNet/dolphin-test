@@ -6,7 +6,7 @@ import HomeSupportBtn from "./HomeSupportBtn";
 
 const MainLayout = ({ children, handleBack }) => {
   return (
-    <div className="flex flex-col items-stretch relative min-h-screen">
+    <div className="flex flex-col items-stretch relative min-h-svh">
       <HeaderIllustration handleBack={handleBack} />
 
      {children}

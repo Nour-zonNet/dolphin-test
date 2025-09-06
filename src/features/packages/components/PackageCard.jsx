@@ -13,18 +13,6 @@ const PackageCard = React.memo(({ item, color, image }) => {
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const { t } = useTranslation();
 
-        //   {
-        //     "id": 12261,
-        //     "package_name": "باقة مادة الرياضيات",
-        //     "group_id": 754,
-        //     "group_name": "المجموعة 1",
-        //     "start_date": "2025-09-01",
-        //     "end_date": "2025-09-03",
-        //     "days_remaining": 1,
-        //     "status": "trial",
-        //     "package_start_date": "2025-08-09",
-        //     "watsapp_link": "https://chat.whatsapp.com/Kv2gWmNXCvT7Hde7ucYz8g?mode=r_c"
-        // },
   const SocialIcons = useMemo(() => [WhatsappCircle, TelegramCircle], []);
 
   const handleOpenSchedule = useCallback(() => setIsScheduleOpen(true), []);
@@ -52,8 +40,8 @@ const PackageCard = React.memo(({ item, color, image }) => {
           className={`relative rounded-xl border bg-foundblue border-[${color}] w-full overflow-hidden transform  skew-y-[0.1deg] p-2 pr-0 skew-x-2  z-10 shadow-sm transition-all `}
         >
           {/* Decorative Kite */}
-          <div className="absolute flex items-start justify-end z-20 w-full -left-2 pt-8">
-            <CardKite fill={color} className="relative left-0" />
+          <div className="absolute flex items-start justify-end  w-full -left-2 pt-8">
+            <CardKite fill={color} className="relative -left-5 w-30  sm:w-45 md:w-45 " />
           </div>
           {/* Header */}
           <div
@@ -72,7 +60,7 @@ const PackageCard = React.memo(({ item, color, image }) => {
 
             <div>
               <h2 className=" text-sm  sm:text-lg text-navyteal xs:text-xl font-semibold leading-snug">
-                {item.package_name ?? t('packages.healthPackage')}
+                {item.package_name ?? t("packages.healthPackage")}
               </h2>
               <h3 className="text-sm xs:text-base font-medium opacity-90">
                 {item.description}
@@ -85,11 +73,11 @@ const PackageCard = React.memo(({ item, color, image }) => {
             <div className="flex items-center gap-2 bg-[#FCF0E0] min-w-[100px] h-[34px] font-semibold rounded-3xl px-3 shadow-sm">
               <CorrectCircle className="w-4 h-4 text-status" />
               <span className="text-status text-xs xs:text-sm">
-                {item.status ?? t('subscription.active')}
+                {item.status ?? t("subscription.active")}
               </span>
             </div>
             <p className="text-navyteal font-semibold text-xs xs:text-sm">
-              {item.group_name ?? t('packages.firstGroup')}
+              {item.group_name ?? t("packages.firstGroup")}
             </p>
           </div>
 
@@ -101,7 +89,7 @@ const PackageCard = React.memo(({ item, color, image }) => {
               className="w-full   text-navyteal text-xs  xs:text-base flex items-center text-nowrap gap-1 max-w-60  bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full  px-4 py-2 sm:py-4  font-medium transition-colors duration-300"
             >
               <Calender />
-              {t('packages.previewWeeklySchedule')}
+              {t("packages.previewWeeklySchedule")}
             </button>
 
             {/* Social Icons */}
@@ -117,7 +105,10 @@ const PackageCard = React.memo(({ item, color, image }) => {
       </div>
 
       {/* Popup */}
-      <WeeklySchedulePopup open={isScheduleOpen} setOpen={handleCloseSchedule} />
+      <WeeklySchedulePopup
+        open={isScheduleOpen}
+        setOpen={handleCloseSchedule}
+      />
     </div>
   );
 });

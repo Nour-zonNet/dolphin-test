@@ -21,16 +21,16 @@ const ProfileActions = () => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-8 py-8 mb-20">
+    <div className="flex flex-col sm:flex-row items-center gap-8 md:py-8 mb-20">
       {/* Logout Button */}
       <ProfileButtons
         variant="secondary"
-        size="md"
-        className="w-full cursor-pointer"
+        size=""
+        className="w-full cursor-pointer py-2 md:py-4 border border-[#E89B32]"
         onClick={() => setIsLogoutModalOpen(true)}
       >
         <img
-          className="w-6 md:w-8"
+          className="w-4 md:w-6"
           alt="Logout"
           src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1-2.svg"
         />
@@ -40,16 +40,16 @@ const ProfileActions = () => {
       {/* Delete Account Button */}
       <ProfileButtons
         variant="danger"
-        size="md"
-        className="w-full cursor-pointer"
+        size=""
+        className="w-full cursor-pointer py-2 md:py-4 border border-[#B3261E]"
         onClick={() => setIsDeleteModalOpen(true)}
       >
         <img
-          className="w-6 md:w-8"
+          className="w-4 md:w-6"
           alt="Delete"
           src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1-3.svg"
         />
-        <span className="text-navyteal font-semibold text-base md:text-xl">حذف الحساب</span>
+        <span className="text-navyteal font-semibold text-base md:text-xl">تعطيل الحساب</span>
       </ProfileButtons>
 
       {/* Delete Account Modal */}

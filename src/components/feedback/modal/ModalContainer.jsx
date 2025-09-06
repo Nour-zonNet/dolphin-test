@@ -35,5 +35,3 @@ const ModalContainer = ({ children, onClose, labelledBy, describedBy }) => {
 };
 
 export default ModalContainer;
-
-

@@ -13,7 +13,7 @@ const RouteLoadingFallback = () => (
 // Route renderer component
 const RouteRenderer = ({ route, children }) => {
   const Component = route.element;
-  
+
   if (!Component) {
     return children;
   }
@@ -21,9 +21,12 @@ const RouteRenderer = ({ route, children }) => {
   // For protected routes, wrap with authentication HOC
   const ProtectedComponent = route.protected ? withAuth(Component) : Component;
 
+  // Use layout flag to determine if AppLayout should be applied
+  const shouldUseLayout = route.layout !== false; // Default to true unless explicitly set to false
+
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
-      {route.protected ? (
+      {shouldUseLayout ? (
         <AppLayout>
           <ProtectedComponent />
         </AppLayout>

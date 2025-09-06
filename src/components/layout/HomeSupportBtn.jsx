@@ -17,7 +17,7 @@ const HomeSupportBtn = ({ className }) => {
       >
         <SupportIcon width="28" height="28" className="w-6  md:w-8  " />
       </button>
-    </div>
+      </div>
   );
 };
 

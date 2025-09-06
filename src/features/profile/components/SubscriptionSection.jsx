@@ -5,17 +5,17 @@ import SubscriptionCard from './SubscriptionCard'
 const SubscriptionSection = () => {
   return (
      <ProfileCard className="p-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-0 md:items-center justify-between mb-6">
         <h3 className="font-bold text-navyteal text-base md:text-xl">
           الباقات والاشتراكات
         </h3>
-        <ProfileButtons variant="primary" size="sm" className="cursor-pointer bg-orangedeep hover:bg-btnClicked transition w-[170px] md:w-[200px]">
+        <ProfileButtons variant="primary" size="" className="cursor-pointer bg-orangedeep hover:bg-btnClicked transition w-[200px] mx-auto py-2">
           <img
             className="w-4 md:w-6"
             alt="Details"
             src="https://c.animaapp.com/mf29nm7vjLRxgE/img/bold.svg"
           />
-          <span className="text-navyteal font-semibold text-base">تفاصيل الباقات</span>
+          <span className="text-navyteal font-semibold text-sm md:text-base">تفاصيل الباقات</span>
         </ProfileButtons>
       </div>
 

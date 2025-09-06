@@ -12,11 +12,11 @@ const LessonCard = ({ item, color, image }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   return (
-    <div className="relative pt-7  max-w-[]">
+    <div className="relative pt-7 ">
       {/* highlight overlay */}
       <div
         style={{ borderColor: color }}
-        className={`flex flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-gray-400 border-r-quran border-r-10  sm:border-r-14  min-h-[200px] w-full py-4 px-4 overflow-hidden `}
+        className={`flex flex-row items-start xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border border-gray-400 border-r-quran border-r-10  sm:border-r-14   w-full py-4 md:py-8 px-4 overflow-hidden `}
       >
         {/* Left section */}
         <div className="flex-1 w-full">

@@ -2,7 +2,7 @@ import * as React from "react";
 import { XIcon } from "lucide-react";
 import { FilterIcon, Search } from "../../../utils/icons";
 
-const SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = "استكشف .." }) => {
+const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = "استكشف .." }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isFiltersVisible, setIsFiltersVisible] = React.useState(false);
   const [activeFilters, setActiveFilters] = React.useState({ instructor: "", group: "" });
@@ -75,9 +75,9 @@ const SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = "�
   }, [applyFilters]);
 
   return (
-    <div className="relative">
-      <div className="flex w-full mx-auto h-14 sm:h-16 items-center justify-between py-2 my-4 sm:my-6 rounded-full border border-[#d9d9d9] bg-white">
-        <div className="flex items-center gap-2 px-10 flex-1">
+    <div className="relative px-4">
+      <div className="flex w-full mx-auto h-14 sm:h-16 items-center justify-between px-4 py-2 my-4 sm:my-6 rounded-full border border-[#d9d9d9] bg-white">
+        <div className="flex items-center gap-2  flex-1">
           <Search className="w-5 h-5 sm:w-6 sm:h-6" />
           <input
             type="text"

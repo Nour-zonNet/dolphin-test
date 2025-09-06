@@ -1,1 +1,1 @@
-export { default } from "./pages/subscription";
+export { default } from "./pages/ManageSubscription";

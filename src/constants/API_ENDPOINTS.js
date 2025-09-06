@@ -9,5 +9,6 @@ export const ENDPOINTS = {
   GRADE_PACKAGES:"/student/packages",
   SCHEDULE_OF_PACKAGE:"/student/get-group-schedule/",
   GET_MY_SUBSCRIPTIONS: "/student/packages/subscription-packages",
-  GROUPS_BY_BACKAGEID: "/student/package-groups"
+  GROUPS_BY_BACKAGEID: "/student/package-groups",
+  CREATE_TRIAL_SUBSCRIPTION :"/student/create-trial-subscription"
 };

@@ -1,12 +1,9 @@
-import { HomeSupportBtn } from "../../../components";
+import { HomeSupportBtn } from "@/components";
 import { HorizontalLine, VerticalLine } from "@/utils/Illustrations";
-import { AttachmentsSection } from "../attachments/components";
-import { LessonHeader, VideoPlayer } from "../lesson/components";
-import { QuizSection } from "../quiz/components";
+import { LessonHeader, VideoPlayer, AttachmentsSection, QuizSection } from "./components";
 
-export const LessonContentPage = () => {
+const LessonContentPage = () => {
   return (
-    // Tablet Layout
     <>
       <LessonHeader />
       <div className="">
@@ -25,21 +22,10 @@ export const LessonContentPage = () => {
           <HomeSupportBtn />
         </div>
       </div>
-
-      {/* Desktop Layout */}
-      {/* <div className="hidden lg:flex lg:w-[90%] w-[95%] mx-auto bg-white overflow-hidden items-center justify-between mt-14 gap-20"> */}
-        {/* <div className="flex flex-col w-1/2 h-full">
-          <VideoPlayer />
-        </div> */}
-        {/* Right Side: Quiz */}
-        {/* <div className="w-1/2 h-full">
-          <AttachmentsSection />
-          <QuizSection />
-        </div>
-        <HomeSupportBtn />
-      </div> */}
     </>
   );
 };
 
 export default LessonContentPage;
+
+

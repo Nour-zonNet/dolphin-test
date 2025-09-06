@@ -5,11 +5,11 @@ import Button from "../../../ui/Button";
 import successImg from "../../../../assets/modal/successModal.svg"
 import failImg from "../../../../assets/modal/warningModal.svg"
 
-const StatusModal = ({ type, onClose, title, message }) => {
+const   StatusModal = ({ type, onClose, title, message }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-lg mx-10">
+    <div className="relative w-screen max-w-md bg-white rounded-2xl p-6 shadow-lg">
       {/* Close button */}
       <button
         onClick={onClose}
@@ -27,7 +27,7 @@ const StatusModal = ({ type, onClose, title, message }) => {
           {title}
         </h2>
       </div>
-
+      
       {/* Message */}
       <p className="mt-6 text-center text-gray-700 text-base md:text-lg font-cairo">
         {message}
