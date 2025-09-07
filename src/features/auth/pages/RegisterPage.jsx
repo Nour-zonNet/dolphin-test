@@ -39,19 +39,27 @@ const RegisterPage = () => {
       })
     );
 
-    if (res?.payload?.success) {
+    if (res?.meta?.requestStatus === "fulfilled") {
       navigate("/schedule");
-    } else {
-      dispatch(
-        showModal({
-          type: MODAL_TYPES.WARNING,
-          props: {
-            title: "هنالك خطاء ",
-            message: res.payload || res.error.message,
-          },
-        })
-      );
+      return;
     }
+
+    const payload = res?.payload;
+    const errorMsg =
+      (typeof payload === "string" && payload) ||
+      payload?.error ||
+      res?.error?.message ||
+      "حدث خطأ أثناء التسجيل";
+
+    dispatch(
+      showModal({
+        type: MODAL_TYPES.WARNING,
+        props: {
+          title: "هنالك خطاء ",
+          message: String(errorMsg),
+        },
+      })
+    );
   };
 
   const handleBack = () => {

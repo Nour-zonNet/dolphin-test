@@ -12,7 +12,15 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: "",
+      grade: "",
+      password: "",
+      confirmPassword: "",
+      inviteCode: "",
+    },
+  });
 
   const password = watch("password");
 
@@ -53,7 +61,8 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                 <input
                   type="text"
                   placeholder={t('auth.fullNamePlaceholder')}
-                  {...field}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
                   className="placeholder:text-base placeholder:sm:text-base placeholder:md:text-2xl border placeholder:text-bordercolor rounded-full border-graycustom/50 px-4 py-2 md:py-4"
                 />
               )}
@@ -169,7 +178,8 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                 <input
                   type="text"
                   placeholder={t('auth.inviteCodePlaceholder')}
-                  {...field}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
                   className="border rounded-full border-graycustom/50 px-4 py-2 md:py-4"
                 />
               )}
@@ -187,9 +197,11 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               {loading ? t('auth.registering') : t('auth.completeRegistration')}
             </button>
 
-            {error && (
-              <p className="text-red-500 text-sm text-center mt-2">{error}</p>
-            )}
+            {error ? (
+              <p className="text-red-500 text-sm text-center mt-2">
+                {typeof error === 'string' ? error : (error?.message || (typeof error === 'object' ? JSON.stringify(error) : String(error)))}
+              </p>
+            ) : null}
           </div>
         </form>
       </div>
