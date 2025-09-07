@@ -18,7 +18,7 @@ export const Header = ({ title, balance, showBalanceSection = true }) => {
         </button>
 
         {/* Centered Title */}
-        <h1 className=" font-bold text-navyteal md:text-2xl text-[16px]">
+        <h1 className="absolute left-1/2 -translate-x-1/2 font-bold text-navyteal md:text-2xl text-[16px] text-center">
           {title}
         </h1>
 
