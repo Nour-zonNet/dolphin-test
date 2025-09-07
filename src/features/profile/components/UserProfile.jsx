@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown } from "@/utils/icons";
 import { useBrothers } from "../hooks/useBrothers";
 import { useDispatch, useSelector } from "react-redux";
 import { switchUserAccount, updateUserImage, getBrothers } from "../store/profileSlice";
+import { Plus } from "@/utils/icons";
+import AddSiblingsModal from "@/components/profile/modal/AddSiblingsModal";
 
 const UserProfile = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const user = useSelector((state) => state.profile.user);
   const dispatch = useDispatch();
   const { brothers = [], loadingBrothers } = useBrothers();
   const [open, setOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState({}); 
 
+  if (!user) return null;
   const handleImageChange = (e, userId) => {
   const file = e.target.files[0];
     if (!file) return;
@@ -26,25 +30,64 @@ const UserProfile = () => {
   };
 
   const handleSwitch = async (bro) => {
-    if (bro.id === user.id) return; // Skip switching if current user
+    if (bro.id === user.id) return; 
     try {
       await dispatch(switchUserAccount(bro.id)).unwrap();
       await dispatch(getBrothers()).unwrap();
+
+      // Clear local preview
+      setSelectedImages({});
+
       setOpen(false);
     } catch (err) {
       console.error("Failed to switch account:", err);
     }
   };
 
+  const handleAddSibling = async (siblingData) => {
+    if (brothers.length >= 3) {
+        toast.error("لا يمكنك إضافة أكثر من 3 إخوة");
+        return;
+      }
+    // try {
+    //   setSubmitting(true);
+    //   await dispatch(addSibling(siblingData)).unwrap();
+    //   setIsModalOpen(false);
+    // } catch (err) {
+    //   console.error("Error adding sibling:", err);
+    //   alert("فشل إضافة الأخ/الأخت. حاول مرة أخرى");
+    // } finally {
+    //   setSubmitting(false);
+    // }
+    try {
+        await dispatch(addSibling(siblingData)).unwrap();
+        toast.success("تمت إضافة الأخ بنجاح");
+      } catch (err) {
+        toast.error("فشل في إضافة الأخ");
+      }
+  };
+
+  // useEffect(() => {
+  //   return () => {
+  //     Object.values(selectedImages).forEach((file) => URL.revokeObjectURL(file));
+  //   };
+  // }, [selectedImages]);
+
   return (
     <div className="flex items-center gap-4 md:gap-[37px] py-4 md:py-8">
       {/* Current user profile */}
       <div className="relative">
         <img
+          key={user?.profilePicture} 
           className="w-[70px] md:w-[150px] h-[70px] md:h-[150px] rounded-full object-cover"
           alt="Profile"
-          src={user?.profilePicture || "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png"}
+          src={
+            selectedImages[user.id]
+              ? URL.createObjectURL(selectedImages[user.id])
+              : user?.profilePicture || "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png"
+          }
         />
+
         <label className="absolute bottom-1 md:bottom-2.5 left-2.5 cursor-pointer">
           <img
             className="w-6 md:w-8 h-6 md:h-8"
@@ -73,27 +116,28 @@ const UserProfile = () => {
 
         {/* Brothers dropdown */}
         <div className="relative">
-          <button onClick={() => setOpen(!open)}>
+          <button onClick={() => setOpen(!open)} className="focus:outline-0">
             <ChevronDown className="w-3 md:w-6 cursor-pointer -mt-8" />
           </button>
 
           {open && (
-            <div className="absolute top-4 bg-white shadow-lg rounded-lg w-56 max-h-60 overflow-y-auto z-50">
+            <div className="absolute top-4 bg-white shadow-lg rounded-4xl w-96 overflow-y-auto z-50 p-4">
               {loadingBrothers && (
                 <p className="p-3 text-sm text-gray-500">جاري التحميل...</p>
               )}
               {!loadingBrothers && brothers.length === 0 && (
                 <p className="p-3 text-sm text-gray-500">لا يوجد إخوة</p>
               )}
-              {brothers.map((bro) => (
+              {brothers.map((bro, index) => (
                 <div
                   key={bro.id}
-                  className="flex items-center justify-between p-2 hover:bg-gray-100 rounded cursor-pointer"
+                  className={`flex items-center justify-between p-4 cursor-pointer 
+                    ${index !== brothers.length - 1 ? "border-b-[0.5px] border-[#8C8C8C88]" : ""}`}
                   onClick={() => handleSwitch(bro)}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-4">
                     <img
-                        className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
+                        className="w-10 h-10 md:w-16 md:h-16 rounded-full object-cover border-[0.5px] border-black/10"
                         src={
                           selectedImages[bro.id] // show local selected file first
                             ? URL.createObjectURL(selectedImages[bro.id])
@@ -101,9 +145,14 @@ const UserProfile = () => {
                         }
                         alt={bro.student_name}
                       />
-                    <span className="text-right text-sm md:text-base">
-                      {bro.student_name} — {bro.class_name}
-                    </span>
+                    <div className="space-y-2">
+                      <p className="text-base md:text-xl font-bold text-navyteal">
+                        {bro.student_name}
+                      </p>
+                      <p className="text-sm md:text-base font-regular text-navyteal">
+                        {bro.class_name}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Show image upload for current user */}
@@ -124,6 +173,15 @@ const UserProfile = () => {
                   )}
                 </div>
               ))}
+              <button onClick={() => setIsModalOpen(true)} className="focus:outline-0 rounded-[32px] flex items-center gap-2 py-2 md:py-3 px-6 cursor-pointer">
+                  <Plus className="w-3 md:w-4" />
+                  <span className="text-navyteal text-sm md:text-base font-bold">اضافة أخ او أخت</span>
+              </button>
+                <AddSiblingsModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={handleAddSibling}
+                />
             </div>
           )}
         </div>

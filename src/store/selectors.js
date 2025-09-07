@@ -4,6 +4,7 @@ export const selectAuthLoading = (state) => state.auth.loading;
 export const selectPackagesLoading = (state) => state.packages.loading;
 export const selectLessonsLoading = (state) => state.lessons.loading;
 export const selectGroupsLoading = (state) => state.groups.loading;
+export const selectProfileLoading = (state) => state.profile.loading;
 export const selectSubscriptionsLoading = (state) =>
   state.subscriptions.loading;
 

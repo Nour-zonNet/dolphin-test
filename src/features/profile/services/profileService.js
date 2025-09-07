@@ -37,7 +37,7 @@ export const switchAccount = async (studentId) => {
 
 export const updateUserImageApi = async (userId, file) => {
   const formData = new FormData();
-  // formData.append("id", userId);
+  formData.append("id", userId);
   formData.append("image", file);
   formData.append("_method", "PATCH");
 
@@ -47,7 +47,7 @@ export const updateUserImageApi = async (userId, file) => {
     },
   });
 
-  return response.data.data; 
+  return response.data.data.userData; 
 };
 
 export const updateUserGradeApi = async (userId, gradeId) => {
@@ -57,3 +57,18 @@ export const updateUserGradeApi = async (userId, gradeId) => {
   });
   return response.data.data;
 };
+
+export const logoutApi = async () => {
+  try {
+    await api.post("/student/logout");
+  } catch (err) {
+    console.warn("Logout API failed (ignoring):", err?.response?.data || err);
+  }
+
+  // always clear client-side
+  localStorage.removeItem("token");
+  delete api.defaults.headers.common["Authorization"];
+
+  return true;
+};
+

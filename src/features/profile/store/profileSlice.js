@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchProfile, addBrother, fetchClasses, fetchBrothers, switchAccount, updateUserGradeApi, updateUserImageApi } from "../services/profileService";
+import { fetchProfile, addBrother, fetchClasses, fetchBrothers, switchAccount, updateUserGradeApi, updateUserImageApi, logoutApi } from "../services/profileService";
 
 export const getProfile = createAsyncThunk("profile/getProfile", async () => {
   return await fetchProfile();
@@ -55,10 +55,26 @@ export const updateUserGrade = createAsyncThunk(
   async ({ userId, gradeId }, { rejectWithValue }) => {
     try {
       const response = await updateUserGradeApi(userId, gradeId);
-      return response.data; // expect { gradeName: "..." }
+      return response.data; 
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
+  }
+);
+
+export const logout = createAsyncThunk(
+  "profile/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await logoutApi(); 
+    } catch (err) {
+      console.warn("Logout API failed, continuing local logout:", err?.response?.data || err);
+    }
+
+    // Always clear locally
+    localStorage.removeItem("token");
+      delete api.defaults.headers.common["Authorization"];
+    return true;
   }
 );
 
@@ -66,6 +82,8 @@ const profileSlice = createSlice({
   name: "profile",
   initialState: {
     user: null,
+    brothers: [],
+    classes: [],
     loading: false,
     error: null,
   },
@@ -93,36 +111,47 @@ const profileSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(getClasses.pending, (state) => {
-        state.loadingClasses = true;
-        state.classesError = null;
+        state.loading = true;
+        state.error = null;
       })
       .addCase(getClasses.fulfilled, (state, action) => {
-        state.loadingClasses = false;
+        state.loading = false;
         state.classes = action.payload;
       })
       .addCase(getClasses.rejected, (state, action) => {
-        state.loadingClasses = false;
-        state.classesError = action.error.message;
+        state.loading = false;
+        state.error = action.error.message;
       })
       .addCase(getBrothers.pending, (state) => {
-        state.loadingBrothers = true;
-        state.brothersError = null;
+        state.loading = true;
+        state.error = null;
       })
       .addCase(getBrothers.fulfilled, (state, action) => {
-        state.loadingBrothers = false;
+        state.loading = false;
         state.brothers = action.payload;
       })
       .addCase(getBrothers.rejected, (state, action) => {
-        state.loadingBrothers = false;
-        state.brothersError = action.error.message;
+        state.loading = false;
+        state.error = action.error.message;
       })
       .addCase(switchUserAccount.pending, (state) => {
         state.loading = true;
       })
       .addCase(switchUserAccount.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload; 
-        state.brothers = action.payload.brothers;
+        if (action.payload.user) {
+          const timestamp = new Date().getTime();
+          state.user = {
+            ...action.payload.user,
+            profilePicture: `${action.payload.user.profilePicture}?t=${timestamp}`
+          };
+        }
+        if (action.payload.brothers) {
+          state.brothers = action.payload.brothers.map((bro) => ({
+            ...bro,
+            profilePicture: bro.profilePicture ? `${bro.profilePicture}?t=${new Date().getTime()}` : bro.profilePicture
+          }));
+        }
       })
       .addCase(switchUserAccount.rejected, (state, action) => {
         state.loading = false;
@@ -150,11 +179,40 @@ const profileSlice = createSlice({
       })
       .addCase(updateUserImage.fulfilled, (state, action) => {
         state.loading = false;
-        if (state.user) {
-          state.user.profilePicture = action.payload.profilePicture;
+        if (state.user && action.payload) {
+          const timestamp = new Date().getTime();
+          // Update the user with new data from API
+          state.user = {
+            ...state.user,
+            ...action.payload,
+            profilePicture: `${action.payload.profilePicture}?t=${timestamp}`
+          };
+
+          // Update brothers images 
+          state.brothers = state.brothers?.map((bro) => ({
+            ...bro,
+            profilePicture: bro.profilePicture
+              ? `${bro.profilePicture}?t=${new Date().getTime()}`
+              : bro.profilePicture
+          }));
         }
       })
       .addCase(updateUserImage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+       // Logout
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.brothers = [];
+        state.error = null;
+        localStorage.removeItem("token");
+      })
+      .addCase(logout.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

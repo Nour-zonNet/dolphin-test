@@ -50,7 +50,7 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
           <div className="flex flex-col items-center gap-3.5">
              <label className="flex flex-col items-center justify-center cursor-pointer">
                 <img
-                  className="w-[50px] rounded-full h-[50px] object-cover"
+                  className="w-[50px] h-[50px] md:w-[100px] md:h-[100px] rounded-full"
                   alt="Add photo"
                   src={
                     profileImage
