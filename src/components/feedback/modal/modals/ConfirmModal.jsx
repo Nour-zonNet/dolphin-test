@@ -1,78 +1,53 @@
-import { Cross, Check } from "../../../../utils/icons";
+import { CheckCircle } from "lucide-react";
+import { Cross, Check, Info, CorrectCircle } from "../../../../utils/icons";
 import Button from "../../../ui/Button";
 
 const ConfirmModal = ({ onClose, onConfirm, modalData = {} }) => {
   const {
-    title = "تأكيد الإجراء",
-    message = "هل أنت متأكد من رغبتك في تنفيذ هذا الإجراء؟",
-    confirmText = "تأكيد",
-    cancelText = "إلغاء",
-    type = "default", // default, danger, warning
-    icon = null,
+    title = "طلب إعادة تفعيل الاشتراك",
+    message = "هل أنت متأكد من رغبتك في إرسال طلب إعادة تفعيل الاشتراك؟ سيتم مراجعة طلبك من قبل فريق العمل وسيتم إعادة التفعيل قريباً.",
+    confirmText = "تأكيد الإرسال",
   } = modalData;
 
-  const getButtonStyles = () => {
-    switch (type) {
-      case "danger":
-        return "bg-red-500 hover:bg-red-600";
-      case "warning":
-        return "bg-yellow-500 hover:bg-yellow-600";
-      default:
-        return "bg-blue-500 hover:bg-blue-600";
-    }
-  };
-
   const handleConfirm = () => {
-    if (onConfirm) {
-      onConfirm();
-    }
+    if (onConfirm) onConfirm();
     onClose();
   };
 
   return (
-    <div className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-lg mx-4">
+    <div className="relative w-screen max-w-md bg-white rounded-2xl p-6 shadow-lg">
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
+        className="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 hover:bg-gray-100"
       >
-        <Cross width="14" height="14" />
+        <Cross width="16" height="16" />
       </button>
 
-      {/* Header */}
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 font-cairo mb-2">
+      {/* Icon + Title */}
+      <div className="flex flex-col items-center mt-4">
+        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+          <Info width="20" height="20" className="text-blue-500" />
+        </div>
+        <h2 className="mt-4 font-bold text-gray-800 text-lg md:text-xl text-center font-cairo">
           {title}
         </h2>
-        {icon && (
-          <div className="flex justify-center mb-3">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              {icon}
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Divider */}
+      <div className="border-t border-dashed border-gray-300 my-4 w-full" />
 
       {/* Message */}
-      <div className="mb-8">
-        <p className="text-gray-700 text-base leading-relaxed font-cairo text-center">
-          {message}
-        </p>
-      </div>
+      <p className="text-center text-gray-700 text-base leading-relaxed font-cairo">
+        {message}
+      </p>
 
-      {/* Action Buttons */}
-      <div className="flex space-x-3 space-x-reverse">
-        <button
-          onClick={onClose}
-          className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-        >
-          {cancelText}
-        </button>
+      {/* Confirm Button */}
+      <div className="flex justify-center mt-8">
         <Button
           onClick={handleConfirm}
-          icon={<Check color="white" />}
+          icon={<CorrectCircle color="#E89B32" fill="black" />}
           text={confirmText}
-          className={`flex-1 text-white py-3 px-4 rounded-lg font-medium ${getButtonStyles()}`}
         />
       </div>
     </div>

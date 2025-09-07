@@ -65,7 +65,7 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
 
           {/* Backend Error */}
           {error && (
-            <p className="text-red-500 text-xs sm:text-sm text-right">
+            <p className="text-red-500 text-xs sm:text-sm">
               {error}
             </p>
           )}

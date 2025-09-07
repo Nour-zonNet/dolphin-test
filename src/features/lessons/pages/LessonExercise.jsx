@@ -1,5 +1,4 @@
 import React from "react";
-import { Board } from "../../Board";
 
 const LessonExercise = () => {
   return (
@@ -17,10 +16,10 @@ const LessonExercise = () => {
           </h1>
         </div>
       </header>
-
+{/* 
       <div className="px-4 w-full ">
         <Board />
-      </div>
+      </div> */}
 
       {/* Action Buttons */}
       <div className="flex flex-row gap-4 md:gap-8 justify-center items-center w-full max-w-4xl mb-12">

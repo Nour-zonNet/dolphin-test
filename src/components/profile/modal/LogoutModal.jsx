@@ -1,17 +1,24 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Divider from '../../ui/Divider';
 import { ConfirmCheck } from '../../../utils/icons';
+import { useDispatch } from 'react-redux';
+import { performLogout } from '@/features/auth/store/authSlice';
 
 const LogoutModal = ({ isOpen, onClose, onConfirm  }) => {
-    const [confirmText, setConfirmText] = useState("");
-    const isDeleteEnabled = confirmText.trim() === "حذف";
-  
-    const handleDelete = () => {
-      if (isDeleteEnabled) {
+    const dispatch = useDispatch();
+    // No confirmation text needed; simple confirm action
+
+    const handleConfirm = () => {
+      // Prefer parent-provided confirm if passed
+      if (typeof onConfirm === 'function') {
         onConfirm();
+        onClose && onClose();
+        return;
       }
+      // Prefer thunk to ensure API call then local clear
+      dispatch(performLogout());
+      onClose && onClose();
     };
-    
     if (!isOpen) return null;
   return (
       <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-100 p-4">
@@ -63,7 +70,9 @@ const LogoutModal = ({ isOpen, onClose, onConfirm  }) => {
               </div>
             </button>
             <button
-              onClick={onConfirm}
+
+              onClick={handleConfirm}
+
               className="flex w-full h-[60px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep hover:bg-btnClicked transition cursor-pointer rounded-[32px]"
             >
               <ConfirmCheck className="w-6 md:w-8" />
