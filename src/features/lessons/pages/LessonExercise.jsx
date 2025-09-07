@@ -3,7 +3,7 @@ import { Board } from "../../Board";
 
 const LessonExercise = () => {
   return (
-    <div className="min-h-screen bg-white flex flex-col gap-5 items-center py-4 md:py-6">
+    <div className="min-h-svh bg-white flex flex-col gap-5 items-center py-4 md:py-6">
       {/* Header */}
       <header className="w-full max-w-4xl bg-white shadow-sm rounded-lg p-4 mb-6">
         <div className="flex justify-between items-center">

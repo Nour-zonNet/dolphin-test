@@ -11,8 +11,6 @@ const LogoutModal = ({ isOpen, onClose, onConfirm  }) => {
         onConfirm();
       }
     };
-
-     const [gradeLevel, setGradeLevel] = useState("");
     
     if (!isOpen) return null;
   return (
@@ -65,9 +63,10 @@ const LogoutModal = ({ isOpen, onClose, onConfirm  }) => {
               </div>
             </button>
             <button
+              onClick={onConfirm}
               className="flex w-full h-[60px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep hover:bg-btnClicked transition cursor-pointer rounded-[32px]"
             >
-             <ConfirmCheck className="w-6 md:w-8" />
+              <ConfirmCheck className="w-6 md:w-8" />
               <div className="font-semibold text-lg md:text-2xl">
                 تأكيد 
               </div>

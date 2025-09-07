@@ -114,7 +114,6 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       localStorage.removeItem("token"); // remove token
-      authRepository.logout(); // call backend logout if needed
     },
   },
   extraReducers: (builder) => {

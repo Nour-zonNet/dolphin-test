@@ -17,13 +17,13 @@ const HomePage = () => {
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col bg-white ">
+    <div className="min-h-svh relative flex flex-col gap-2 bg-white ">
       {/* Navbar */}
       <Navbar />
       {/* Hero + Login Section */}
-      <main className="flex flex-col   items-center  px-4  lg:px-16 lg:py-20">
+      <main className="flex flex-col   items-center  px-4  lg:px-16 py-10 sm:py-auto lg:py-18">
         {/* Hero (Left on Desktop / Top on Mobile) */}
-        <div className="flex-1 flex justify-center">
+        <div className=" flex ">
           <Hero />
         </div>
 
@@ -38,7 +38,7 @@ const HomePage = () => {
       <FooterIllustration />
       {/* Background Illustrations */}
       {/* <Pencel className=" hidden md:block absolute bottom-[50%] left-10 sm:h-20 md:w-40 lg:w-120" />{" "} */}
-      <RightKite className="  absolute bottom-[45%] right-0 w-50 sm:w-70 md:w-80 " />
+      <RightKite className="  absolute bottom-[40%]  sm:bottom-[45%] right-0 w-50 sm:w-70 md:w-80 " />
     </div>
   );
 };

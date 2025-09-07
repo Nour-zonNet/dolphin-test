@@ -1,5 +1,6 @@
 import { useLanguageDirection } from "@/hooks/useLanguageDirection";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // App Components
 import AppProviders from "./AppProviders";
 import AppRoutes from "./AppRoutes";
@@ -31,6 +32,20 @@ const App = () => {
         <ModalManager />
 
         <AppRoutes />
+
+        {/* Toast notifications */}
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={true} // change to true if Arabic UI is RTL
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </div>
     </AppProviders>
   );

@@ -5,11 +5,16 @@ import Divider from "@/components/ui/Divider"
 import TransactionsFilter from '../components/TransactionsFilter'
 import NoTransactions from '../components/NoTransactions'
 import { HomeSupportBtn } from '@/components'
+import { useProfile } from "@/features/profile/hooks/useProfile"
+
 const BalanceDetails = () => {
+    const { user, loading, error } = useProfile();
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error loading profile</div>;
   return (
     <div>
         <Header title="تفاصيل الرصيد" balance={0} showBalanceSection={false}/>
-        <BalanceCard />
+        <BalanceCard user={user}/>
         <BalanceActionsButtons />
         <Divider />
         <TransactionsFilter />

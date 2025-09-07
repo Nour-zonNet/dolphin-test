@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback,  } from "react";
 import { useLocation } from "react-router-dom";
 import { useSubscriptions } from "@/features/subscription/hooks/useSubscriptions";
 import { useModal } from "@/components/feedback/modal/useModal";
@@ -9,12 +9,6 @@ import { Header } from "../../../../components/layout";
 export const Checkout = () => {
   const location = useLocation();
   const [discountApplied, setDiscountApplied] = useState(false);
-  const [discountCode, setDiscountCode] = useState("");
-  const [discountError, setDiscountError] = useState("");
-  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
-  const [isSubmittingTrial, setIsSubmittingTrial] = useState(false);
-  const [isPaying, setIsPaying] = useState(false);
-  const [packageStartDates, setPackageStartDates] = useState({});
   const { createTrialSubscription } = useSubscriptions();
   const { openStatusModal } = useModal();
 
@@ -26,86 +20,31 @@ export const Checkout = () => {
   }, [selectedPackages]);
 
   const handleSubmitTrial = useCallback(async () => {
-    try {
-      setIsSubmittingTrial(true);
-      await createTrialSubscription(
-        selectedPackages.map((pkg) => ({
-          package_id: pkg.id,
-          start_date: packageStartDates[pkg.id] || null,
-        }))
-      );
-      openStatusModal(MODAL_TYPES.SUCCESS, {
-        title: "تم بدء الفترة التجريبية",
-        message: "تم تفعيل الفترة التجريبية للباقات المختارة.",
-      });
-    } finally {
-      setIsSubmittingTrial(false);
-    }
-  }, [createTrialSubscription, openStatusModal, selectedPackages, packageStartDates]);
+    await createTrialSubscription(
+      selectedPackages.map((pkg) => ({ package_id: pkg.id, start_date: null }))
+    );
+    openStatusModal(MODAL_TYPES.SUCCESS, {
+      title: "تم بدء الفترة التجريبية",
+      message: "تم تفعيل الفترة التجريبية للباقات المختارة.",
+    });
+  }, [createTrialSubscription, openStatusModal, selectedPackages]);
 
   const handlePay = useCallback(() => {
-    setIsPaying(true);
-    setTimeout(() => {
-      openStatusModal(MODAL_TYPES.SUCCESS, {
-        title: "تم الدفع بنجاح",
-        message: "شكراً لك! تم تأكيد عملية الدفع وسيتم تفعيل الباقات المختارة.",
-      });
-      setIsPaying(false);
-    }, 800);
+    openStatusModal(MODAL_TYPES.SUCCESS, {
+      title: "تم الدفع بنجاح",
+      message: "شكراً لك! تم تأكيد عملية الدفع وسيتم تفعيل الباقات المختارة.",
+    });
   }, [openStatusModal]);
-
-  const discountedTotal = useMemo(() => {
-    if (!discountApplied) return totalPrice;
-    // Apply a simple 10% discount UX-wise when a code is applied
-    const discounted = Math.max(0, Math.round(totalPrice * 0.9));
-    return discounted;
-  }, [discountApplied, totalPrice]);
-
-  const handleApplyDiscount = useCallback(() => {
-    setDiscountError("");
-    setIsApplyingDiscount(true);
-    setTimeout(() => {
-      const isValid = discountCode.trim().length >= 4; // simple UX validation
-      if (isValid) {
-        setDiscountApplied(true);
-      } else {
-        setDiscountApplied(false);
-        setDiscountError("يرجى إدخال كود خصم صالح");
-      }
-      setIsApplyingDiscount(false);
-    }, 400);
-  }, [discountCode]);
 
   return (
     <div className="relative min-h-screen bg-white">
-      <Header title={"شراء الباقات"} showBalanceSection={false } />
+      <Header balance={0} title=" شراء الباقات" />
 
-      <main className="mx-auto px-4 py-6 md:px-8 md:py-8 space-y-6 md:space-y-8 max-w-6xl">
+      <main className="container mx-auto px-4 py-6 md:py-8 space-y-6 md:space-y-8">
         <BalanceSummary />
-        <SelectedPackages
-          selectedPackages={selectedPackages}
-          packageStartDates={packageStartDates}
-          onChangeStartDate={(id, value) =>
-            setPackageStartDates((prev) => ({ ...prev, [id]: value }))
-          }
-        />
-        <DiscountBar
-          totalPrice={totalPrice}
-          discountedTotal={discountedTotal}
-          discountApplied={discountApplied}
-          isApplying={isApplyingDiscount}
-          error={discountError}
-          code={discountCode}
-          onCodeChange={setDiscountCode}
-          onApply={handleApplyDiscount}
-        />
-        <Actions
-          onSubmitTrial={handleSubmitTrial}
-          onPay={handlePay}
-          isSubmittingTrial={isSubmittingTrial}
-          isPaying={isPaying}
-          disabled={!selectedPackages || selectedPackages.length === 0}
-        />
+        <SelectedPackages selectedPackages={selectedPackages} />
+        <DiscountBar totalPrice={totalPrice} onApply={() => setDiscountApplied(true)} />
+        <Actions onSubmitTrial={handleSubmitTrial} onPay={handlePay} />
       </main>
 
       {discountApplied && (
@@ -118,33 +57,34 @@ export const Checkout = () => {
 };
 
 
+
 const BalanceSummary = () => (
-  <div className="flex flex-row justify-between gap-4 lg:gap-6">
-    <div className="relative w-30  sm:w-auto h-20 md:h-30 xl:w-72 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 md:p-6">
+  <div className="flex flex-col lg:flex-row  items-center lg:items-start  justify-between gap-6">
+    <div className="relative w-50 sm:w-50 lg:w-40 xl:w-46 h-40 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4">
       <div className="absolute inset-0 flex items-center justify-center">
         <img className="w-full h-full object-contain" alt="Vector" src="https://c.animaapp.com/mf3u5boioWZVpp/img/vector.svg" />
       </div>
       <div className="relative z-10">
-        <div className="text-sm md:text-xl font-semibold text-blue-800 font-cairo  mb-2">رصيد محفظتك</div>
-        <div className="text-sm md:text-xl font-semibold text-blue-600 font-cairo ">1000 ريال</div>
+        <div className="text-lg md:text-xl text-center md:text-right font-semibold text-blue-800 font-cairo mb-2">رصيد محفظتك</div>
+        <div className="text-2xl md:text-3xl text-center  font-semibold text-blue-600 font-cairo">1000 ريال</div>
       </div>
     </div>
 
     <div className="flex-1 space-y-3">
-      <div className="flex items-center justify-start gap-2">
+      <div className="flex items-center gap-2">
         <img className="w-5 h-5 md:w-6 md:h-6" alt="Info" src="https://c.animaapp.com/mf3u5boioWZVpp/img/frame-1.svg" />
-        <div className="text-sm md:text-xl font-semibold text-blue-700 font-cairo">رصيدك الحالي متاح للاستخدام</div>
+        <div className="text-lg md:text-xl font-semibold text-blue-700 font-cairo">رصيدك الحالي متاح للاستخدام</div>
       </div>
-
-      <div className="flex items-center justify-start gap-2">
+      <div className="flex items-center gap-2">
         <img className="w-5 h-5 md:w-6 md:h-6" alt="Group" src="https://c.animaapp.com/mf3u5boioWZVpp/img/group-1.png" />
-        <p className="text-sm md:text-xl font-semibold text-gray-500 font-cairo">مدة الفترة التجريبية: 1 أيام تجريبية مجانية</p>
+        <p className="text-base md:text-lg font-semibold text-gray-500 font-cairo">مدة الفترة التجريبية: 1 أيام تجريبية مجانية</p>
       </div>
     </div>
   </div>
 );
 
-const SelectedPackages = ({ selectedPackages, packageStartDates, onChangeStartDate }) => {
+
+const SelectedPackages = ({ selectedPackages }) => {
   if (!selectedPackages || selectedPackages.length === 0) {
     return (
       <div className="w-full bg-gray-50 rounded-2xl md:rounded-3xl overflow-hidden border border-gray-200 relative">
@@ -164,7 +104,7 @@ const SelectedPackages = ({ selectedPackages, packageStartDates, onChangeStartDa
       <div className="p-4 md:p-6 border-b border-gray-200">
         <h2 className="text-xl md:text-2xl font-semibold text-blue-800 font-cairo text-center">الباقات المختارة ({selectedPackages.length})</h2>
       </div>
-      <div className="max-h-[28rem] md:max-h-80 lg:max-h-96 overflow-y-auto">
+      <div className="max-h-96 md:max-h-80 lg:max-h-96 overflow-y-auto">
         <div className="p-4 md:p-6 space-y-6 md:space-y-8">
           {selectedPackages.map((pkg, index) => (
             <React.Fragment key={pkg.id || index}>
@@ -173,8 +113,6 @@ const SelectedPackages = ({ selectedPackages, packageStartDates, onChangeStartDa
                 price={`${pkg.finalPrice || 0} ريال`}
                 icon={getPackageIcon(pkg.subjects)}
                 showDatePicker={true}
-                dateValue={packageStartDates[pkg.id] || ""}
-                onDateChange={(value) => onChangeStartDate?.(pkg.id, value)}
               />
               {index < selectedPackages.length - 1 && (
                 <div className="border-t border-gray-200 my-4"></div>
@@ -193,18 +131,18 @@ const SelectedPackages = ({ selectedPackages, packageStartDates, onChangeStartDa
   );
 };
 
-const PackageItem = ({ title, price, icon, showDatePicker, status, dateValue, onDateChange }) => (
+const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
   <div className="flex flex-col items-start justify-between gap-4">
-    <div className="w-full flex items-center gap-3 justify-between">
-      <div className="flex items-center gap-3 justify-start lg:justify-start">
+    <div className="w-full flex items-center gap-3 justify-between ">
+      <div className=" flex items-center gap-3 justify-start lg:justify-start">
         <div className="w-12 h-12 md:w-14 md:h-14 bg-blue-100 rounded-lg flex items-center justify-center">
           <img className="w-8 h-8 md:w-10 md:h-10 object-contain" alt="Package" src={icon} />
         </div>
-        <div className="lg:text-left">
+        <div className=" lg:text-left">
           <div className="font-cairo font-semibold text-lg text-gray-800">{title}</div>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex  gap-2">
         <p className="font-cairo font-semibold text-blue-800 text-lg">
           سعر الباقة: <span className="text-xl">{price}</span>
         </p>
@@ -212,19 +150,14 @@ const PackageItem = ({ title, price, icon, showDatePicker, status, dateValue, on
     </div>
     <div className="w-full lg:w-auto">
       {showDatePicker ? (
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full">
-          <div className="font-cairo font-semibold text-gray-800 text-sm md:text-base shrink-0">اختر موعد بداية الباقة:</div>
-          <div className="flex-1 flex items-center gap-2 p-2 md:p-3 border border-gray-300 rounded-full bg-white">
+        <div className="flex flex-row items-center gap-4">
+          <div className="font-cairo font-semibold text-gray-800 text-sm md:text-base">اختر موعد بداية الباقة:</div>
+          <div className="flex-1 flex items-center gap-2 p-3 border border-gray-400 rounded-full">
             <img className="w-5 h-5 md:w-6 md:h-6" alt="Calendar" src="https://c.animaapp.com/mf3u5boioWZVpp/img/frame-1410117192.svg" />
-            <input
-              type="date"
-              className="flex-1 font-cairo text-sm text-gray-700 outline-none bg-transparent"
-              value={dateValue}
-              onChange={(e) => onDateChange?.(e.target.value)}
-            />
+            <span className="font-cairo text-sm text-gray-700 flex-1 ">السبت 09 -08 - 2025</span>
           </div>
         </div>
-      ) : (
+      ) : ( 
         <div className="flex items-center gap-4">
           <div className="font-cairo font-semibold text-gray-800 text-sm md:text-base">اختر موعد بداية الباقة:</div>
           <div className="flex items-center gap-2 p-3 border border-gray-400 rounded-full">
@@ -237,74 +170,43 @@ const PackageItem = ({ title, price, icon, showDatePicker, status, dateValue, on
   </div>
 );
 
-const DiscountBar = ({ totalPrice, discountedTotal, discountApplied, isApplying, error, code, onCodeChange, onApply }) => (
+const DiscountBar = ({ totalPrice, onApply }) => (
   <div className="flex flex-col lg:flex-row items-center justify-between gap-6 p-4 md:p-6 bg-white rounded-xl shadow-sm">
-    <div className="w-full flex flex-col gap-3 md:gap-4">
-      <div className="text-base md:text-lg font-semibold text-gray-800 font-cairo">
-        هل لديك كود خصم؟
-      </div>
-
-      <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 w-full">
+    <div className="w-full">
+      <div className="text-lg md:text-xl font-semibold text-gray-800 font-cairo mb-4">هل لديك كود خصم؟</div>
+      <div className="flex flex-col lg:flex-row items-center gap-4">
         <div className="relative flex-1 w-full">
-          <div className={`flex items-center gap-3 p-1 md:p-2 border ${error ? "border-red-400" : "border-dashed border-blue-800"} rounded-full`}>
-            <img
-              className="w-5 h-5 md:w-6 md:h-6"
-              alt="Discount"
-              src="https://c.animaapp.com/mf3u5boioWZVpp/img/group.png"
-            />
+          <div className="flex items-center gap-3 p-4 border border-dashed border-blue-800 rounded-full">
+            <img className="w-5 h-5 md:w-6 md:h-6" alt="Discount" src="https://c.animaapp.com/mf3u5boioWZVpp/img/group.png" />
             <input
               type="text"
               placeholder="أدخل كود الخصم"
-              className="flex-1 font-cairo outline-none bg-transparent text-sm md:text-base"
-              value={code}
-              onChange={(e) => onCodeChange?.(e.target.value)}
-              disabled={isApplying}
+              className="flex-1 font-cairo outline-none bg-transparent"
+              defaultValue="hggg76789e"
             />
-            <button
-              className="px-3 py-2 bg-blue-600 text-white rounded-full transition disabled:opacity-60 disabled:cursor-not-allowed"
-              onClick={onApply}
-              disabled={isApplying}
-            >
-              {isApplying ? "جارٍ التحقق" : "تطبيق"}
+            <button className="p-2 hover:bg-gray-100 rounded-full" onClick={onApply}>
+              <img className="w-5 h-5 md:w-6 md:h-6" alt="Apply" src="https://c.animaapp.com/mf3u5boioWZVpp/img/filled.svg" />
             </button>
           </div>
-          {error ? (
-            <div className="text-xs text-red-500 font-cairo mt-1 px-3">{error}</div>
-          ) : null}
         </div>
-
-        <div className="text-center md:text-right text-sm md:text-lg font-bold text-blue-800 font-cairo shrink-0">
-          {discountApplied ? (
-            <div className="flex items-center gap-2">
-              <span className="line-through text-gray-400">{totalPrice} ريال</span>
-              <span className="text-blue-800">{discountedTotal} ريال</span>
-            </div>
-          ) : (
-            <>الاجمالي: {totalPrice} ريال</>
-          )}
+        <div className="text-xl md:text-2xl font-bold text-blue-800 font-cairo">
+          الاجمالي: {totalPrice} ريال
         </div>
       </div>
     </div>
   </div>
 );
 
-const Actions = ({ onSubmitTrial, onPay, isSubmittingTrial, isPaying, disabled }) => (
+
+const Actions = ({ onSubmitTrial, onPay }) => (
   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 lg:gap-8 mt-8">
-    <button
-      onClick={onSubmitTrial}
-      disabled={disabled || isSubmittingTrial}
-      className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 border-2 border-orange-400 rounded-full text-deepbg-orangedeep font-semibold hover:bg-orange-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-    >
+    <button onClick={onSubmitTrial} className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 border-2 border-orange-400 rounded-full text-deepbg-orangedeep font-semibold hover:bg-orange-50 transition-colors">
       <img className="w-5 h-5 md:w-6 md:h-6" alt="Icon" src="https://c.animaapp.com/mf3u5boioWZVpp/img/frame.svg" />
-      <span className="font-cairo text-base md:text-lg">{isSubmittingTrial ? "جارٍ البدء" : "بدء الفترة التجريبية"}</span>
+      <span className="font-cairo text-base md:text-lg">بدء الفترة التجريبية</span>
     </button>
-    <button
-      onClick={onPay}
-      disabled={disabled || isPaying}
-      className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-3 bg-orangedeep rounded-full text-white font-semibold hover:bg-orange-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-    >
+    <button onClick={onPay} className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-3 bg-orangedeep rounded-full text-white font-semibold hover:bg-orange-600 transition-colors">
       <img className="w-5 h-5 md:w-6 md:h-6" alt="Icon" src="https://c.animaapp.com/mf3u5boioWZVpp/img/left-2.png" />
-      <span className="font-cairo text-base md:text-lg">{isPaying ? "جارٍ الدفع" : "ادفع الان"}</span>
+      <span className="font-cairo text-base md:text-lg">ادفع الان</span>
     </button>
   </div>
 );

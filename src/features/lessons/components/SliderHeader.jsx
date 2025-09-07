@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { LeftArrow, RightArrow } from "@/utils/icons";
 
 const SliderHeader = ({ dayLabel, dayDate }) => {
-  const { t, i18n } = useTranslation();
+  const {  i18n } = useTranslation();
   
   // Format date nicely based on current language
   const formattedDate = new Date(dayDate).toLocaleDateString(
@@ -14,7 +14,7 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
     }
   );
   return (
-    <div className="flex items-center justify-between  gap-4 border-[1px] border-dashed border-oceandeep rounded-full px-10 py-5">
+    <div className="flex items-center justify-between  gap-4 border-[1px] border-dashed border-oceandeep rounded-full py-2 sm:py-4 md:px-6 px-6 ">
       <SliderNavButton
         direction="prev"
         ariaLabel="Previous slide"

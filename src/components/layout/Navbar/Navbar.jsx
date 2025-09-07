@@ -24,7 +24,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-full flex flex-row items-center justify-between py-8 md:py-10 lg:py-12 px-3 sm:px-6 bg-white shadow-[0px_2px_4px_rgba(192,192,192,0.25)] z-50">
+    <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-full flex flex-row items-center justify-between py-6 md:py-10 lg:py-12 px-3 sm:px-6 bg-white shadow-[0px_2px_4px_rgba(192,192,192,0.25)] z-50">
       {/* Tabs Section */}
       <div className="flex items-center gap-3 sm:gap-6 text-base sm:text-lg md:text-xl font-bold w-full md:w-auto">
         {TABS.map((tab) => (
