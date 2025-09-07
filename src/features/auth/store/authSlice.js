@@ -12,9 +12,9 @@ export const fetchCurrentUser = createAsyncThunk(
       const response = await authRepository.getProfile();
       return response.data;
     } catch (error) {
-      console.log(error.response.data.errors[0]);
+      console.log(error);
       return rejectWithValue(
-        error.response?.data?.errors[0] || "Failed to fetch user"
+        error.response?.data?.error || "Failed to fetch user"
       );
     }
   }
