@@ -8,6 +8,9 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    branches:
+      - deployment
 
 jobs:
   test:
