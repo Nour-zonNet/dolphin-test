@@ -14,32 +14,30 @@ export const useAppInitialization = () => {
   const initialized = useRef(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const initializeApp = async () => {
+      const token = localStorage.getItem("token");
 
-    if (!token || initialized.current) return;
+      if (!token || initialized.current) return;
 
-    initialized.current = true;
+      try {
+        initialized.current = true;
 
-    // Step 1: fetch user if not already loaded
-    if (!user) {
-      dispatch(fetchCurrentUser());
-    }
-  }, [dispatch, user]);
+        if (!user) {
+          await dispatch(fetchCurrentUser());
 
-  useEffect(() => {
-    // Step 2: once we have a user, fetch the rest of the data
-    if (user && !initialized.current) {
-      initialized.current = true;
+          await Promise.all([
+            dispatch(fetchAllPackages()),
+            dispatch(fetchMyPackages()),
+            dispatch(fetchLessons()),
+            dispatch(fetchSubscriptions()),
+          ]);
+        }
+      } catch (error) {
+        console.error("Failed to initialize app:", error);
+        initialized.current = false; // Reset on error to allow retry
+      }
+    };
 
-      Promise.all([
-        dispatch(fetchAllPackages()),
-        dispatch(fetchMyPackages()),
-        dispatch(fetchLessons()),
-        dispatch(fetchSubscriptions()),
-      ]).catch((error) => {
-        console.error("Failed to fetch app data:", error);
-        initialized.current = false; // allow retry if needed
-      });
-    }
+    initializeApp();
   }, [dispatch, user]);
 };
