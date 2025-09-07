@@ -1,4 +1,4 @@
-import dolphinLogo from "@/assets/Logo/dolphinLogo.png";
+import dolphinLogo from "@/assets/logo/dolphinLogo.png";
 import { Books } from "../../../utils/icons";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../../components/ui/LanguageSwitcher";
@@ -20,7 +20,7 @@ const Navbar = () => {
       {/* Nav buttons */}
       <div className="flex gap-2 sm:gap-3 items-center">
         {/* Show language switcher only on md+ screens */}
-        <div className="hidden md:block">
+        <div >
           <LanguageSwitcher />
         </div>
 
