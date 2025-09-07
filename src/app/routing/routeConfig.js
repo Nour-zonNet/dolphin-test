@@ -14,7 +14,6 @@ const ManageSubscription = lazy(() => import("@/features/subscription"));
 const PackageContent = lazy(() =>
   import("@/features/packages/pages/PackagesContent")
 );
-const Board = lazy(() => import("@/features/Board"));
 const LessonExercise = lazy(() =>
   import("@/features/lessons/pages/LessonExercise")
 );
@@ -144,11 +143,7 @@ export const routes = [
     element: PackageContent,
     protected: true,
   },
-  {
-    path: "/board",
-    element: Board,
-    protected: true,
-  },
+
 
   // Nested Schedule Routes
   {

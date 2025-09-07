@@ -19,12 +19,13 @@ import useGroups from "../../groups/hooks/useGroups";
 import ActionButton from "./ActionButton";
 import GroupInfo from "./GroupInfo";
 import InfoRow from "./InfoRow";
+import { useModal } from "@/components/feedback/modal/useModal";
 
 const Card = React.memo(({ item }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
-
+  const { openConfirmModal, openStatusModal } = useModal();
   const { cancelSubscription, renewSubscription } = useSubscriptions();
   useGroups(item.package_id);
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
@@ -87,7 +88,57 @@ const Card = React.memo(({ item }) => {
       ),
     [isOpen]
   );
+  const handleCancelClick = () => {
+    openConfirmModal(
+      {
+        title: "إلغاء الاشتراك",
+        message: "هل أنت متأكد من رغبتك في إلغاء الاشتراك؟",
+        confirmText: "تأكيد الإلغاء",
+        type: "danger",
+      },
+      async () => {
+        try {
+          await cancelSubscription(item.package_id).unwrap();
+          openStatusModal("SUCCESS", {
+            title: "تم الإلغاء بنجاح",
+            message: "تم إلغاء الاشتراك وسيتم تطبيق التغييرات فوراً.",
+          });
+        } catch {
+          openStatusModal("ERROR", {
+            title: "فشل في الإلغاء",
+            message:
+              "حدث خطأ أثناء إلغاء الاشتراك. حاول مرة أخرى.  مفيش endpoints",
+          });
+        }
+      }
+    );
+  };
 
+  const handleRenewClick = () => {
+    openConfirmModal(
+      {
+        title: "تجديد الاشتراك",
+        message: "هل تريد تأكيد تجديد الاشتراك؟",
+        confirmText: "تأكيد التجديد",
+        type: "default",
+      },
+      async () => {
+        try {
+          await renewSubscription(item.package_id).unwrap();
+          openStatusModal("SUCCESS", {
+            title: "تم التجديد بنجاح",
+            message: "تم تجديد الاشتراك وسيتم تفعيله فوراً.",
+          });
+        } catch {
+          openStatusModal("ERROR", {
+            title: "فشل في التجديد",
+            message:
+              " حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى. مفيش endpoints",
+          });
+        }
+      }
+    );
+  };
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
       {/* Header */}
@@ -154,7 +205,7 @@ const Card = React.memo(({ item }) => {
               full
               danger
               icon={<Cancel />}
-              onClick={() => cancelSubscription(item.id)}
+              onClick={handleCancelClick}
             >
               إلغاء الاشتراك
             </ActionButton>
@@ -169,7 +220,7 @@ const Card = React.memo(({ item }) => {
                 full
                 primary
                 icon={<Renew />}
-                onClick={() => renewSubscription(item.id)}
+                onClick={handleRenewClick}
               >
                 {config.buttonText}
               </ActionButton>

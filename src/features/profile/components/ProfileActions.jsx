@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { ProfileButtons } from '@/components'
-import { DeleteAccountModal, LogoutModal } from '@/components/profile/modal';
+import React, { useState } from "react";
+import { ProfileButtons } from "@/components";
+import { DeleteAccountModal, LogoutModal } from "@/components/profile/modal";
 
 const ProfileActions = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -34,7 +34,9 @@ const ProfileActions = () => {
           alt="Logout"
           src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1-2.svg"
         />
-        <span className="text-navyteal font-semibold text-base md:text-xl">تسجيل خروج</span>
+        <span className="text-navyteal font-semibold text-base md:text-xl">
+          تسجيل خروج
+        </span>
       </ProfileButtons>
 
       {/* Delete Account Button */}
@@ -49,7 +51,9 @@ const ProfileActions = () => {
           alt="Delete"
           src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1-3.svg"
         />
-        <span className="text-navyteal font-semibold text-base md:text-xl">حذف الحساب</span>
+        <span className="text-navyteal font-semibold text-base md:text-xl">
+          حذف الحساب
+        </span>
       </ProfileButtons>
 
       {/* Delete Account Modal */}
@@ -66,7 +70,7 @@ const ProfileActions = () => {
         onConfirm={handleConfirmLogout}
       />
     </div>
-  )
-}
+  );
+};
 
-export default ProfileActions
+export default ProfileActions;
