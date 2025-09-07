@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { performLogout } from "@/features/auth/store/authSlice";
 import { ProfileButtons } from "@/components";
 import { DeleteAccountModal, LogoutModal } from "@/components/profile/modal";
 
 const ProfileActions = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
   // Delete modal handlers
   const handleCloseDeleteModal = () => setIsDeleteModalOpen(false);
@@ -16,7 +19,7 @@ const ProfileActions = () => {
   // Logout modal handlers
   const handleCloseLogoutModal = () => setIsLogoutModalOpen(false);
   const handleConfirmLogout = () => {
-    console.log("Logout confirmed");
+    dispatch(performLogout());
     setIsLogoutModalOpen(false);
   };
 

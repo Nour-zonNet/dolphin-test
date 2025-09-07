@@ -20,6 +20,20 @@ export const fetchCurrentUser = createAsyncThunk(
   }
 );
 
+// Perform logout via API (best-effort), then clear client state/token regardless
+export const performLogout = createAsyncThunk(
+  "auth/performLogout",
+  async (_, { dispatch }) => {
+    try {
+      await authRepository.logout();
+    } catch {
+      // ignore API errors on logout
+    } finally {
+      dispatch(logoutUser());
+    }
+  }
+);
+
 export const loginUser = createAsyncThunk(
   "auth/login",
   async (credentials, { rejectWithValue, dispatch }) => {
@@ -114,7 +128,9 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       localStorage.removeItem("token"); // remove token
-      authRepository.logout(); // call backend logout if needed
+      if (api?.defaults?.headers?.common?.Authorization) {
+        delete api.defaults.headers.common["Authorization"]; // clear auth header
+      }
     },
   },
   extraReducers: (builder) => {
