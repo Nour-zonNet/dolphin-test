@@ -120,7 +120,7 @@ export const Checkout = () => {
 
 const BalanceSummary = () => (
   <div className="flex flex-row justify-between gap-4 lg:gap-6">
-    <div className="relative w-30 sm:w-auto h-20 md:h-30 xl:w-72 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 md:p-6">
+    <div className="relative w-30  sm:w-auto h-20 md:h-30 xl:w-72 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 md:p-6">
       <div className="absolute inset-0 flex items-center justify-center">
         <img className="w-full h-full object-contain" alt="Vector" src="https://c.animaapp.com/mf3u5boioWZVpp/img/vector.svg" />
       </div>
