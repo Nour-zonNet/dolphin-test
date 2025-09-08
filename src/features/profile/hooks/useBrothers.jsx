@@ -3,21 +3,23 @@ import { useEffect } from "react";
 import { getBrothers } from "../store/profileSlice";
 
 export const useBrothers = () => {
-    const { brothers = [], loadingBrothers, brothersError, user } = useSelector(
-        (state) => state.profile
-    );
-    const dispatch = useDispatch();
+  const {
+    brothers = [],
+    loadingBrothers,
+    brothersError,
+  } = useSelector((state) => state.profile);
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        if (brothers.length === 0) {
-        dispatch(getBrothers());
-        }
-    }, [dispatch, brothers.length]);
+  useEffect(() => {
+    if (brothers.length === 0) {
+      dispatch(getBrothers());
+    }
+  }, [dispatch, brothers.length]);
 
-    return {
-        brothers,
-        loadingBrothers,
-        brothersError,
-        refreshBrothers: () => dispatch(getBrothers()),
-    };
+  return {
+    brothers,
+    loadingBrothers,
+    brothersError,
+    refreshBrothers: () => dispatch(getBrothers()),
+  };
 };

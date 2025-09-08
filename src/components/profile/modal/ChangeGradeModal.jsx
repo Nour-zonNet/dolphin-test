@@ -3,10 +3,8 @@ import Divider from '../../ui/Divider';
 import { ConfirmCheck } from '../../../utils/icons';
 import { useClasses } from '@/features/profile/hooks/useClasses';
 const ChangeGradeModal = ({ isOpen, onClose, onConfirm  }) => {
-    const [confirmText, setConfirmText] = useState("");
-    const isDeleteEnabled = confirmText.trim() === "حذف";
     const [gradeLevel, setGradeLevel] = useState("");
-    const { classes, loadingClasses, classesError } = useClasses();
+    const { classes, loadingClasses } = useClasses();
 
    const handleConfirm = () => {
       if (gradeLevel) {
@@ -19,11 +17,7 @@ const ChangeGradeModal = ({ isOpen, onClose, onConfirm  }) => {
       }
     };
 
-    const handleDelete = () => {
-      if (isDeleteEnabled) {
-        onConfirm();
-      }
-    };
+ 
     
   if (!isOpen) return null;
   return (

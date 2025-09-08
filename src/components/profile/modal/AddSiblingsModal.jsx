@@ -5,7 +5,7 @@ import { useClasses } from '@/features/profile/hooks/useClasses';
 const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
   const [fullName, setFullName] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
-  const { classes, loadingClasses, classesError } = useClasses();
+  const { classes, loadingClasses } = useClasses();
   const [profileImage, setProfileImage] = useState(null);
 
   const handleSubmit = (e) => {

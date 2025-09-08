@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { ProfileCard } from '@/components';
 import { ProfileInputs } from '@/components';
 import { ProfileButtons } from '@/components';
-import flag from "@/assets/authentication/flag.svg";
 import ChangeGradeModal from '@/components/profile/modal/ChangeGradeModal';
-import { useClasses } from '@/features/profile/hooks/useClasses';
+import { updateUserGrade } from '@/features/profile/store/profileSlice'
 
 const AccountInfo = ({ user }) => {
   const [name, setName] = useState("يوستينا صلاح");
   const [phone, setPhone] = useState("09954321890");
   const [grade, setGrade] = useState(user?.gradeName || "");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { classes } = useClasses();
+  const dispatch = useDispatch();
 
   const handleConfirmGrade = async (gradeName, gradeId) => {
     setGrade(gradeName);
-    await dispatch(updateUserGrade({ userId: user.id, gradeId })); 
+    await dispatch(updateUserGrade({ userId: user.id, gradeId }));
   };
 
   useEffect(() => {

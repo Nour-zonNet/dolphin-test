@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { ChevronDown } from "@/utils/icons";
 import { useBrothers } from "../hooks/useBrothers";
 import { useDispatch, useSelector } from "react-redux";
-import { switchUserAccount, updateUserImage, getBrothers } from "../store/profileSlice";
+import { switchUserAccount, updateUserImage, getBrothers, addSibling } from "../store/profileSlice";
 import { Plus } from "@/utils/icons";
 import AddSiblingsModal from "@/components/profile/modal/AddSiblingsModal";
+import { toast } from "react-toastify";
 
 const UserProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,7 +63,7 @@ const UserProfile = () => {
     try {
         await dispatch(addSibling(siblingData)).unwrap();
         toast.success("تمت إضافة الأخ بنجاح");
-      } catch (err) {
+      } catch  {
         toast.error("فشل في إضافة الأخ");
       }
   };

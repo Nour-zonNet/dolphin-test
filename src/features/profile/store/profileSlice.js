@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchProfile, addBrother, fetchClasses, fetchBrothers, switchAccount, updateUserGradeApi, updateUserImageApi, logoutApi } from "../services/profileService";
+import api from "@/services/api";
 
 export const getProfile = createAsyncThunk("profile/getProfile", async () => {
   return await fetchProfile();
@@ -64,7 +65,7 @@ export const updateUserGrade = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   "profile/logout",
-  async (_, { rejectWithValue }) => {
+  async () => {
     try {
       await logoutApi(); 
     } catch (err) {

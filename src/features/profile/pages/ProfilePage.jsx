@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { selectGlobalLoading } from "@/store/selectors";
 
 const ProfilePage = () => {
-  const { user, loading, error } = useProfile();
+  const { user } = useProfile();
   const globalLoading = useSelector(selectGlobalLoading);
   // if (loading) return <div>Loading...</div>;
   // if (error) return <div>Error loading profile</div>;

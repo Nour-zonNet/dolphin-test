@@ -8,7 +8,6 @@ const AddSiblingButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useDispatch();
   const brothers = useSelector((state) => state.profile.brothers || []);
-  const [submitting, setSubmitting] = useState(false);
 
 const handleAddSibling = async (siblingData) => {
   if (brothers.length >= 3) {
@@ -28,7 +27,7 @@ const handleAddSibling = async (siblingData) => {
   try {
       await dispatch(addSibling(siblingData)).unwrap();
       toast.success("تمت إضافة الأخ بنجاح");
-    } catch (err) {
+    } catch  {
       toast.error("فشل في إضافة الأخ");
     }
 };

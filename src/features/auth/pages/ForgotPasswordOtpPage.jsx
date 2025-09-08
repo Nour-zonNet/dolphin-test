@@ -10,7 +10,7 @@ const ForgotPasswordOtpPage = () => {
   const location = useLocation();
   const { openStatusModal } = useModal();
   const { phoneNumber } = location.state || {};
-  const [otp, setOtp] = useState("");
+  const [, setOtp] = useState("");
 
   if (!phoneNumber) {
     navigate("/auth/forgetpassword", { replace: true });
@@ -37,16 +37,19 @@ const ForgotPasswordOtpPage = () => {
         onSubmit={handleSubmit}
         className="w-full max-w-md mx-auto p-6 bg-white rounded-xl  space-y-6"
       >
-        <h1 className="text-xl text-status font-bold text-center"> رمز التحقق</h1>
+        <h1 className="text-xl text-status font-bold text-center">
+          {" "}
+          رمز التحقق
+        </h1>
         <div className="space-y-2">
           <label className="block text-sm text-status text-center">
-        ادخل رمز التحقق المرسل الى جوالك
+            ادخل رمز التحقق المرسل الى جوالك
           </label>
 
           <div className="mt-10" dir="ltr">
             <OTPInput length={6} va onChange={setOtp} />
           </div>
-          
+
           {/* <input
             type="text"
             value={otp}

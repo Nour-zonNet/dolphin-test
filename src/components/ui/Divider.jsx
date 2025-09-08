@@ -1,7 +1,7 @@
 import React from 'react'
 import { DashedLine } from '@/utils/Illustrations'
 
-const Divider = ({ className = "" }) => {
+const Divider = () => {
   return (
     <div>
       <DashedLine className="w-[100%]" />

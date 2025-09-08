@@ -15,8 +15,9 @@ const WeeklySchedulePopup = ({ open, setOpen, packageId }) => {
     if (open) {
       fetchScheduleData();
     }
-  }, [open, packageId]);
+  }, [fetchScheduleData, open, packageId]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchScheduleData = async () => {
     try {
       setLoading(true);
