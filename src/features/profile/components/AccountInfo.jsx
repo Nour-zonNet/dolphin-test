@@ -39,7 +39,7 @@ const AccountInfo = ({ user }) => {
     <ProfileCard className="p-4 md:p-8">
       <div className="flex flex-col items-center gap-8 h-full">
         <div className="text-center">
-          <h3 className="font-bold text-navyteal text-xl md:text-2xl mb-2">
+          <h3 className="font-bold text-navyteal text-base md:text-2xl mb-2">
             بيانات الحساب
           </h3>
           <img
@@ -53,8 +53,7 @@ const AccountInfo = ({ user }) => {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="space-y-4 w-full">
               <div className="flex items-center gap-2">
-                <label className="font-semibold text-lg text-navyteall lg:ms-10">
-                   الاسم
+                <label className="font-semibold text-base md:text-lg text-navyteal lg:ms-10">الاسم
                 </label>
               </div>
               <ProfileInputs 
@@ -66,7 +65,7 @@ const AccountInfo = ({ user }) => {
             
             <div className="space-y-4 w-full relative">
               <div className="flex items-center gap-2">
-                <label className="font-semibold text-lg text-navyteall lg:ms-10">
+                <label className="font-semibold text-base md:text-lg text-navyteal lg:ms-10">
                   رقم الجوال
                 </label>
                 <span className="text-[#676565] text-base">
@@ -76,18 +75,19 @@ const AccountInfo = ({ user }) => {
               <ProfileInputs 
                 value={phone}
                 disabled
-                className="border-[#aaaaaa] border-[0.5px]"
+                className="relative border-[#aaaaaa] border-[0.5px] px-12"
               />
+              <img src={flag} alt="Country" className="absolute top-1/2 right-8" />
               {/* <div className="absolute top-15 right-4"><img src={flag} alt="flag" /></div> */}
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2 flex flex-col lg:flex-row lg:items-center justify-between">
-              <label className="font-semibold text-lg text-navyteal lg:ms-10">
+              <label className="font-semibold text-base md:text-lg text-navyteal lg:ms-10">
                 الصف الدراسي الحالي
               </label>
-              <p className="text-[#676565] text-base">
+              <p className="text-[#676565] text-sm md:text-base">
                 ( يمكنك تغيير صفك الدراسي إذا كنت قد انتقلت إلي صف أعلي )
               </p>
             </div>
@@ -113,11 +113,11 @@ const AccountInfo = ({ user }) => {
 
         <ProfileButtons variant="primary" size="" className="my-4 md:my-8 py-2 md:py-4 w-full max-w-6xl cursor-pointer bg-orangedeep hover:bg-btnClicked" onClick={handleSave}>
           <img
-            className="w-4 md:w-6"
+            className="w-4 md:w-5 lg:w-6"
             alt="Save"
             src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1.svg"
           />
-          <span className="text-navyteal text-lg md:text-xl font-semibold">حفظ التغييرات</span>
+          <span className="text-navyteal text-base md:text-xl font-semibold">حفظ التغييرات</span>
         </ProfileButtons>
       </div>
     </ProfileCard>

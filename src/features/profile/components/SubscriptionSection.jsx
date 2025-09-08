@@ -9,9 +9,9 @@ const SubscriptionSection = () => {
         <h3 className="font-bold text-navyteal text-base md:text-xl">
           الباقات والاشتراكات
         </h3>
-        <ProfileButtons variant="primary" size="" className="cursor-pointer bg-orangedeep hover:bg-btnClicked transition w-[200px] mx-auto py-2">
+        <ProfileButtons variant="primary" size="" className="cursor-pointer bg-orangedeep hover:bg-btnClicked transition w-[200px] mx-auto md:mx-0 py-2">
           <img
-            className="w-4 md:w-6"
+            className="w-4 md:w-5 lg:w-6"
             alt="Details"
             src="https://c.animaapp.com/mf29nm7vjLRxgE/img/bold.svg"
           />
@@ -30,7 +30,7 @@ const SubscriptionSection = () => {
       </div>
 
       <div className="text-center">
-        <button className="font-bold text-[#BA7C28] text-base md:text-xl underline cursor-pointer">
+        <button className="font-bold text-[#BA7C28] text-base md:text-lg lg:text-xl underline cursor-pointer">
           عرض كل اشتراكاتي
         </button>
       </div>

@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { ChevronDown } from "@/utils/icons";
 import { useBrothers } from "../hooks/useBrothers";
 import { useDispatch, useSelector } from "react-redux";
-import { switchUserAccount, updateUserImage, getBrothers } from "../store/profileSlice";
+import { switchUserAccount, updateUserImage, getBrothers, addSibling } from "../store/profileSlice";
 import { Plus } from "@/utils/icons";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import AddSiblingsModal from "@/components/profile/modal/AddSiblingsModal";
 
 const UserProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const user = useSelector((state) => state.profile.user);
   const dispatch = useDispatch();
   const { brothers = [], loadingBrothers } = useBrothers();
@@ -73,13 +76,26 @@ const UserProfile = () => {
   //   };
   // }, [selectedImages]);
 
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //       setOpen(false);
+  //     }
+  //   };
+
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
+
   return (
     <div className="flex items-center gap-4 md:gap-[37px] py-4 md:py-8">
       {/* Current user profile */}
       <div className="relative">
         <img
           key={user?.profilePicture} 
-          className="w-[70px] md:w-[150px] h-[70px] md:h-[150px] rounded-full object-cover"
+          className="w-[70px] md:w-[100px] lg:w-[150px] h-[70px] md:h-[100px] lg:h-[150px] rounded-full object-cover"
           alt="Profile"
           src={
             selectedImages[user.id]
@@ -88,7 +104,7 @@ const UserProfile = () => {
           }
         />
 
-        <label className="absolute bottom-1 md:bottom-2.5 left-2.5 cursor-pointer">
+        <label className="absolute bottom-0 lg:bottom-2.5 left-0 lg:left-2.5 cursor-pointer">
           <img
             className="w-6 md:w-8 h-6 md:h-8"
             alt="Edit"
@@ -106,22 +122,22 @@ const UserProfile = () => {
       {/* Name & Grade */}
       <div className="flex items-center md:gap-6">
         <div className="flex flex-col gap-2 md:gap-4">
-          <h2 className="text-subtext text-base md:text-[32px] font-semibold">
+          <h2 className="text-subtext text-base md:text-2xl lg:text-[32px] font-semibold text-nowrap">
             {user?.name || "—"}
           </h2>
-          <p className="text-[#BA7C28] text-sm md:text-xl font-semibold">
+          <p className="text-[#BA7C28] text-[12px] md:text-base lg:text-xl font-semibold">
             {user?.gradeName || "—"}
           </p>
         </div>
-
-        {/* Brothers dropdown */}
-        <div className="relative">
           <button onClick={() => setOpen(!open)} className="focus:outline-0">
-            <ChevronDown className="w-3 md:w-6 cursor-pointer -mt-8" />
+            <ChevronDown className="w-4 lg:w-6 cursor-pointer -mt-4 md:-mt-5 ms-2" />
           </button>
 
+        {/* Brothers dropdown */}
+        <div className="relative" ref={dropdownRef}>
+
           {open && (
-            <div className="absolute top-4 bg-white shadow-lg rounded-4xl w-96 overflow-y-auto z-50 p-4">
+            <div className="absolute top-2 -right-50 lg:-right-10 bg-white border border-[#D9D9D966] rounded-4xl w-64 md:w-96 overflow-y-auto z-50 p-4">
               {loadingBrothers && (
                 <p className="p-3 text-sm text-gray-500">جاري التحميل...</p>
               )}
@@ -132,7 +148,7 @@ const UserProfile = () => {
                 <div
                   key={bro.id}
                   className={`flex items-center justify-between p-4 cursor-pointer 
-                    ${index !== brothers.length - 1 ? "border-b-[0.5px] border-[#8C8C8C88]" : ""}`}
+                    ${index !== brothers.length - 1 ? "border-b-[0.5px] border-[#8C8C8C44]" : ""}`}
                   onClick={() => handleSwitch(bro)}
                 >
                   <div className="flex items-center gap-4">
@@ -146,10 +162,10 @@ const UserProfile = () => {
                         alt={bro.student_name}
                       />
                     <div className="space-y-2">
-                      <p className="text-base md:text-xl font-bold text-navyteal">
+                      <p className="text-base md:text-xl font-bold text-navyteal text-nowrap">
                         {bro.student_name}
                       </p>
-                      <p className="text-sm md:text-base font-regular text-navyteal">
+                      <p className="text-sm md:text-base font-regular text-navyteal text-nowrap">
                         {bro.class_name}
                       </p>
                     </div>
@@ -173,19 +189,23 @@ const UserProfile = () => {
                   )}
                 </div>
               ))}
-              <button onClick={() => setIsModalOpen(true)} className="focus:outline-0 rounded-[32px] flex items-center gap-2 py-2 md:py-3 px-6 cursor-pointer">
+              <button onClick={() => {
+                setIsModalOpen(true);
+                setOpen(false);
+                }}
+                className="focus:outline-0 rounded-[32px] flex items-center gap-2 py-2 md:py-3 px-6 cursor-pointer">
                   <Plus className="w-3 md:w-4" />
                   <span className="text-navyteal text-sm md:text-base font-bold">اضافة أخ او أخت</span>
               </button>
-                <AddSiblingsModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSubmit={handleAddSibling}
-                />
             </div>
           )}
         </div>
       </div>
+      <AddSiblingsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleAddSibling}
+      />
     </div>
   );
 };

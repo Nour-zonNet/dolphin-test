@@ -37,11 +37,11 @@ const handleAddSibling = async (siblingData) => {
     <div className="flex items-center justify-center py-2">
         <button onClick={() => setIsModalOpen(true)} className="focus:outline-0 rounded-[32px] flex items-center gap-2 py-2 md:py-3 px-6 bg-[#E89B32] hover:bg-btnClicked transition cursor-pointer">
             <img
-            className="w-4 md:w-6"
+            className="w-4 md:w-5 lg:w-6"
             alt="Add"
             src="https://c.animaapp.com/mf29nm7vjLRxgE/img/group.png"
             />
-            <span className="text-navyteal font-semibold text-sm md:text-xl">اضافة أخ او أخت</span>
+            <span className="text-navyteal font-semibold text-sm md:text-base lg:text-xl">اضافة أخ او أخت</span>
         </button>
         <AddSiblingsModal
           isOpen={isModalOpen}

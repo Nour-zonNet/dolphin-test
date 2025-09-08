@@ -1,75 +1,108 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronDown, DatePicker, SearchTransactions } from "@/utils/icons";
 import highlight from "@/assets/balance/highlight.svg";
 
 const TransactionsFilter = () => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState("جميع الأشهر");
+
+  const monthOptions = [
+    "الشهر الحالي",
+    "الشهر الماضي",
+    "آخر 3 شهور",
+  ];
+
+  const handleSelectMonth = (month) => {
+    setSelectedMonth(month);
+    setIsDropdownOpen(false);
+  }
   return (
     <div className="w-[90%] mx-auto mt-10 relative">
       <div className="relative">
-        <h2 className="text-xl md:text-[32px] font-bold text-navyteal">
+        <h2 className="text-base md:text-[32px] font-bold text-navyteal">
           سجل المعاملات
         </h2>
         <img
           src={highlight}
           alt="highlight"
-          className="absolute top-0 right-12 md:right-18 -z-1 w-24 md:w-auto"
+          className="absolute top-0 right-10 md:right-18 -z-1 w-24 md:w-auto"
         />
       </div>
 
       {/* Main filter box */}
-      <div className="flex flex-col lg:flex-row items-center justify-between rounded-4xl border border-[#8C8C8C] overflow-hidden shadow-sm bg-white mt-12 relative pb-28 lg:pb-0">
-        <div className="flex flex-col lg:flex-row items-center justify-between w-full">
-          {/* From Date */}
-          <div className="flex items-center gap-2 px-4 py-4 lg:py-0 flex-1 lg:border-l-3 border-[#165072] w-full">
-            <div className="flex flex-row lg:flex-col gap-14 lg:gap-2 ms-0 lg:ms-14 w-full border-b-[0.5px] border-[#D9D9D9]">
-              <span className="text-black font-bold text-lg">من تاريخ:</span>
-              <div className="flex items-center">
-                <DatePicker className="w-5" />
-                <input
-                  type="date"
-                  className="appearance-none bg-transparent text-base md:text-xl font-bold text-[#8C8C8C] focus:outline-none"
-                  placeholder="mm/dd/yyyy"
-                />
+      <div className="flex items-stretch flex-col md:flex-row gap-6 my-12">
+        <div className="flex flex-col md:flex-row items-center justify-between w-full rounded-2xl md:rounded-4xl border-[0.5px] border-[#8C8C8C66] overflow-hidden bg-white relative">
+          <div className="flex flex-col lg:flex-row items-center justify-between w-full">
+            {/* From Date */}
+            <div className="flex items-center gap-2 px-4 py-4 lg:py-0 flex-1 lg:border-l-3 md:border-[#165072] w-full border-b md:border-b-0 border-[#D9D9D9]">
+              <div className="flex flex-row lg:flex-col items-center gap-8 lg:gap-2 ms-0 lg:ms-14 w-full">
+                <span className="text-black font-bold text-[12px] md:text-lg text-nowrap">
+                  من تاريخ:
+                </span>
+                <div className="flex items-center">
+                  <DatePicker className="w-4 md:w-5" />
+                  <input
+                    type="date"
+                    className="appearance-none bg-transparent text-sm md:text-xl font-bold text-[#8C8C8C] focus:outline-none"
+                    placeholder="mm/dd/yyyy"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* To Date */}
+            <div className="flex items-center gap-2 px-4 flex-1 w-full py-4 md:py-0 lg:mt-0 border-b md:border-b-0 border-[#D9D9D9]">
+              <div className="flex flex-row lg:flex-col items-center gap-8 lg:gap-2 ms-0 lg:ms-14 w-full">
+                <span className="text-black font-bold text-[12px] md:text-lg text-nowrap">
+                  إلى تاريخ:
+                </span>
+                <div className="flex items-center">
+                  <DatePicker className="w-4 md:w-5" />
+                  <input
+                    type="date"
+                    className="appearance-none bg-transparent text-sm md:text-xl font-bold text-[#8C8C8C] focus:outline-none"
+                    placeholder="mm/dd/yyyy"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* To Date */}
-          <div className="flex items-center gap-2 px-4 flex-1 lg:border-l-3 border-[#165072] w-full mt-6 lg:mt-0">
-            <div className="flex flex-row lg:flex-col gap-14 lg:gap-2 ms-0 lg:ms-14 w-full border-b-[0.5px] border-[#D9D9D9]">
-              <span className="text-black font-bold text-lg">إلى تاريخ:</span>
-              <div className="flex items-center">
-                <DatePicker className="w-5" />
-                <input
-                  type="date"
-                  className="appearance-none bg-transparent text-base md:text-xl font-bold text-[#8C8C8C] focus:outline-none"
-                  placeholder="mm/dd/yyyy"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Dropdown (Desktop Layout) */}
-          <div className="hidden lg:flex items-center gap-4 px-4 cursor-pointer min-w-[120px] ms-0 lg:ms-14 mt-6 lg:mt-0">
-            <span className="text-black font-bold text-lg">جميع الأشهر</span>
-            <ChevronDown className="w-4" />
-          </div>
+          {/* Search Button */}
+          <button
+            className="flex bg-orangedeep rounded-tr rounded-tl md:rounded-4xl 
+                      w-full md:w-[140px] h-[50px] md:h-[90px] 
+                      items-center justify-center 
+                      cursor-pointer"
+          >
+            <SearchTransactions className="w-5 md:w-6" />
+          </button>
         </div>
 
-        {/* Search Button (Desktop Layout) */}
-        <button className="hidden lg:flex bg-orangedeep rounded-4xl w-[140px] h-[90px] p-4 items-center justify-center lg:static absolute bottom-4 left-4">
-          <SearchTransactions className="w-6 h-6 text-black" />
-        </button>
-
-        {/* Mobile Layout for search and all months */}
-        <div className="flex items-center justify-between">
-          <div className="flex lg:hidden items-center gap-4 mt-4 cursor-pointer">
-            <span className="text-black font-bold text-lg">جميع الأشهر</span>
+         {/* Dropdown */}
+        <div className="relative h-[50px] md:h-[90px]">
+          <div
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="flex items-center justify-center gap-4 px-4 min-h-16 md:min-h-22 cursor-pointer min-w-[200px] rounded-2xl md:rounded-4xl border-[0.5px] border-[#8C8C8C66]
+            ] overflow-hidden bg-white"
+          >
+            <span className="text-black font-bold text-base md:text-lg">{selectedMonth}</span>
             <ChevronDown className="w-4" />
           </div>
-          <button className="flex lg:hidden bg-orangedeep rounded rounded-bl-4xl w-[140px] h-[90px] items-center justify-center">
-            <SearchTransactions className="w-6 h-6 text-black" />
-          </button>
+
+          {isDropdownOpen && (
+            <div className="absolute top-full mt-2 w-full py-4 px-10 bg-white border-[0.5px] border-[#8C8C8C66] rounded-2xl text-center z-10">
+              {monthOptions.map((month) => (
+                <div
+                  key={month}
+                  onClick={() => handleSelectMonth(month)}
+                  className="px-4 cursor-pointer font-bold text-nowrap text-base md:text-lg text-black border-b border-[#D9D9D9] last:border-b-0 py-4"
+                >
+                  {month}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
