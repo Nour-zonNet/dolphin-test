@@ -4,11 +4,10 @@ import { ChevronDown } from "@/utils/icons";
 import { useBrothers } from "../hooks/useBrothers";
 import { useDispatch, useSelector } from "react-redux";
 import { switchUserAccount, updateUserImage, getBrothers, addSibling } from "../store/profileSlice";
+import { toast } from "react-toastify";
 import { Plus } from "@/utils/icons";
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddSiblingsModal from "@/components/profile/modal/AddSiblingsModal";
-import { toast } from "react-toastify";
 
 const UserProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

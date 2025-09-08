@@ -24,11 +24,7 @@ const ProfileActions = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="flex flex-col sm:flex-row items-center gap-8 py-8 mb-20">
-=======
     <div className="flex flex-col md:flex-row items-center gap-8 md:py-8 mb-20">
->>>>>>> feature/handle-popups
       {/* Logout Button */}
       <ProfileButtons
         variant="secondary"
@@ -37,11 +33,7 @@ const ProfileActions = () => {
         onClick={() => setIsLogoutModalOpen(true)}
       >
         <img
-<<<<<<< HEAD
-          className="w-6 md:w-8"
-=======
           className="w-4 md:w-5 lg:w-6"
->>>>>>> feature/handle-popups
           alt="Logout"
           src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1-2.svg"
         />

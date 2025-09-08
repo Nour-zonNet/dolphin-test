@@ -30,22 +30,6 @@ const TransactionsFilter = () => {
       </div>
 
       {/* Main filter box */}
-<<<<<<< HEAD
-      <div className="flex items-stretch flex-col md:flex-row gap-6 my-20">
-        <div className="flex flex-col md:flex-row items-center justify-between w-full rounded-2xl md:rounded-4xl border-[0.5px] border-[#8C8C8C66] overflow-hidden shadow-sm bg-white relative">
-          <div className="flex flex-col lg:flex-row items-center justify-between w-full">
-            {/* From Date */}
-            <div className="flex items-center gap-2 px-4 py-4 lg:py-0 flex-1 lg:border-l-3 md:border-[#165072] w-full border-b md:border-b-0 border-[#D9D9D9]">
-              <div className="flex flex-row lg:flex-col gap-8 lg:gap-2 ms-0 lg:ms-14 w-full">
-                <span className="text-black font-bold text-lg text-nowrap">
-                  من تاريخ:
-                </span>
-                <div className="flex items-center">
-                  <DatePicker className="w-5" />
-                  <input
-                    type="date"
-                    className="appearance-none bg-transparent text-base md:text-xl font-bold text-[#8C8C8C] focus:outline-none"
-=======
       <div className="flex items-stretch flex-col md:flex-row gap-6 my-12">
         <div className="flex flex-col md:flex-row items-center justify-between w-full rounded-2xl md:rounded-4xl border-[0.5px] border-[#8C8C8C66] overflow-hidden bg-white relative">
           <div className="flex flex-col lg:flex-row items-center justify-between w-full">
@@ -60,7 +44,6 @@ const TransactionsFilter = () => {
                   <input
                     type="date"
                     className="appearance-none bg-transparent text-sm md:text-xl font-bold text-[#8C8C8C] focus:outline-none"
->>>>>>> feature/handle-popups
                     placeholder="mm/dd/yyyy"
                   />
                 </div>
@@ -69,17 +52,6 @@ const TransactionsFilter = () => {
 
             {/* To Date */}
             <div className="flex items-center gap-2 px-4 flex-1 w-full py-4 md:py-0 lg:mt-0 border-b md:border-b-0 border-[#D9D9D9]">
-<<<<<<< HEAD
-              <div className="flex flex-row lg:flex-col gap-8 lg:gap-2 ms-0 lg:ms-14 w-full">
-                <span className="text-black font-bold text-lg text-nowrap">
-                  إلى تاريخ:
-                </span>
-                <div className="flex items-center">
-                  <DatePicker className="w-5" />
-                  <input
-                    type="date"
-                    className="appearance-none bg-transparent text-base md:text-xl font-bold text-[#8C8C8C] focus:outline-none"
-=======
               <div className="flex flex-row lg:flex-col items-center gap-8 lg:gap-2 ms-0 lg:ms-14 w-full">
                 <span className="text-black font-bold text-[12px] md:text-lg text-nowrap">
                   إلى تاريخ:
@@ -89,7 +61,6 @@ const TransactionsFilter = () => {
                   <input
                     type="date"
                     className="appearance-none bg-transparent text-sm md:text-xl font-bold text-[#8C8C8C] focus:outline-none"
->>>>>>> feature/handle-popups
                     placeholder="mm/dd/yyyy"
                   />
                 </div>
@@ -100,14 +71,6 @@ const TransactionsFilter = () => {
           {/* Search Button */}
           <button
             className="flex bg-orangedeep rounded-tr rounded-tl md:rounded-4xl 
-<<<<<<< HEAD
-                       w-full md:w-[140px] h-[60px] md:h-[90px] 
-                       items-center justify-center 
-                       cursor-pointer"
-          >
-            <SearchTransactions className="w-6 h-6 text-black" />
-          </button>
-=======
                       w-full md:w-[140px] h-[50px] md:h-[90px] 
                       items-center justify-center 
                       cursor-pointer"
@@ -140,7 +103,6 @@ const TransactionsFilter = () => {
               ))}
             </div>
           )}
->>>>>>> feature/handle-popups
         </div>
 
         {/* Dropdown (Desktop Layout) */}

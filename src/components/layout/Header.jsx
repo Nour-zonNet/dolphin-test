@@ -18,11 +18,7 @@ export const Header = ({ title, balance, showBalanceSection = true }) => {
         </button>
 
         {/* Centered Title */}
-<<<<<<< HEAD
-        <h1 className="absolute left-1/2 -translate-x-1/2 font-bold text-navyteal md:text-2xl text-[16px] text-center">
-=======
         <h1 className="absolute left-1/2 -translate-x-1/2 font-bold text-navyteal md:text-2xl text-sm text-center">
->>>>>>> feature/handle-popups
           {title}
         </h1>
 

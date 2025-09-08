@@ -9,11 +9,7 @@ const BalanceActionsButtons = () => {
   return (
     <div>
         {/* Action Buttons */}
-<<<<<<< HEAD
-        <div className="flex flex-col xl:flex-row w-[90%] mx-auto gap-[18px] justify-center items-center my-6 md:my-14">
-=======
         <div className="flex flex-col md:flex-row w-[90%] lg:w-[50%] mx-auto gap-[18px] justify-center items-center my-8 md:my-14">
->>>>>>> feature/handle-popups
             <button
             onClick={() => setIsAddBalanceModalOpen(true)} 
             className="flex w-full h-[45px] md:h-[60px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover"
