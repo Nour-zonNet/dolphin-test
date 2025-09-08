@@ -15,7 +15,7 @@ const ProfileInputs = ({
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
-        className="w-full h-full px-10 text-sm md:text-lg text-[#5d6062] bg-transparent outline-none disabled:bg-gray-50"
+        className="w-full h-full px-10 text-[12px] md:text-lg text-[#5d6062] bg-transparent outline-none disabled:bg-gray-50"
         {...props}
       />
     </div>

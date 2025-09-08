@@ -6,7 +6,7 @@ const ProfileHeader = ({ title }) => {
             <div className="w-[90%] mx-auto flex items-center md:items-center justify-between">
                 {/* Centered Content */}
                 <div className="flex-1 text-center">
-                <h1 className="font-bold text-navyteal text-sm md:text-3xl">{title}</h1>
+                <h1 className="font-bold text-navyteal text-sm md:text-2xl lg:text-3xl">{title}</h1>
             </div>
       </div>
     </div>
