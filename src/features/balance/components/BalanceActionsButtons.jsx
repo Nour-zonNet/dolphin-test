@@ -9,13 +9,13 @@ const BalanceActionsButtons = () => {
   return (
     <div>
         {/* Action Buttons */}
-        <div className="flex flex-col xl:flex-row w-[90%] mx-auto gap-[18px] justify-center items-center my-6 md:my-14">
+        <div className="flex flex-col md:flex-row w-[90%] lg:w-[50%] mx-auto gap-[18px] justify-center items-center my-8 md:my-14">
             <button
             onClick={() => setIsAddBalanceModalOpen(true)} 
             className="flex w-full h-[45px] md:h-[60px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover"
             >
-            <Plus className="w-4 md:w-6" />
-            <div className="font-semibold text-base md:text-2xl">
+            <Plus className="w-3 md:w-6" />
+            <div className="font-semibold text-sm md:text-2xl">
                 إضافة رصيد
             </div>
             </button>
@@ -24,7 +24,7 @@ const BalanceActionsButtons = () => {
             className="flex w-full h-[45px] md:h-[60px] items-center justify-center gap-2 px-4 py-2 border border-orangedeep hover:bg-btnClicked transition cursor-pointer rounded-[32px]"
             >
             <Gift className="w-4 md:w-6" />
-            <div className="font-semibold text-base md:text-2xl">
+            <div className="font-semibold text-sm md:text-2xl">
                 كوبون لإضافة رصيد 
             </div>
             </button>

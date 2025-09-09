@@ -12,13 +12,13 @@ export const Header = ({ title, balance, showBalanceSection = true }) => {
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="outline-0 border border-bordercolor md:w-[60px] md:h-[60px] w-[40px] h-[40px] rounded-full flex items-center justify-center"
+          className="outline-0 border border-bordercolor md:w-[60px] md:h-[60px] w-[35px] h-[35px] rounded-full flex items-center justify-center"
         >
           <RightArrow className="w-[20px] md:w-[40px]" />
         </button>
 
         {/* Centered Title */}
-        <h1 className="absolute left-1/2 -translate-x-1/2 font-bold text-navyteal md:text-2xl text-[16px] text-center">
+        <h1 className="absolute left-1/2 -translate-x-1/2 font-bold text-navyteal md:text-2xl text-sm text-center">
           {title}
         </h1>
 
@@ -27,7 +27,6 @@ export const Header = ({ title, balance, showBalanceSection = true }) => {
           <div className="flex items-center flex-row  md:flex-row gap-2">
             <div className="flex items-center gap-2">
               <Balance className="w-4 md:w-6" />
-              {/* <p className="font-bold text-navyteal md:text-xl text-sm">{balance}</p> */}
             </div>
             <span className="font-bold text-navyteal md:text-2xl text-[16px]">
               {balance} ريال

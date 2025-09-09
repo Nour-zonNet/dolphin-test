@@ -13,7 +13,7 @@ const HeaderIllustration = ({ handleBack }) => {
           onClick={() => handleBack()}
           className="
           absolute right-0 top-0 mx-4 sm:mx-4 md:mx-6 lg:mx-20  my-6 sm:my-6 md:my-12 lg:my-15 
-          border-[0.5px] border-bordercolor
+          border-[0.5px] border-bordercolor/60
           w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16
           rounded-full flex items-center justify-center
         "
