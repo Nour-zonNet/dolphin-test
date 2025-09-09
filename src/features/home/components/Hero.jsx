@@ -6,16 +6,16 @@ const Hero = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="flex flex-row-reverse items-center justify-start px-4 sm:px-6 lg:px-12 py-8 lg:py-0 max-w-7xl mx-auto pt-0 ">
+    <section className="flex flex-row-reverse items-center justify-start px-4 sm:px-6 lg:px-12 py-0 lg:py-0 max-w-7xl mx-auto pt-0 ">
       {/* Text Content */}
       <div className="w-full  flex flex-col  mt-2   relative">
         {/* Flash Icon */}
         <div className="absolute -top-6 sm:-top-8 left-4 md:left-0 -translate-x-1/2  lg:-left-10 lg:translate-x-0">
-          <img src={flash} alt="flash" className="w-10 sm:w-12 lg:w-12" />
+          <img src={flash} alt="flash" className="w-8 sm:w-12 lg:w-12" />
         </div>
 
         {/* Title */}
-        <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-bold text-[#1B648E] mb-4 lg:mb-6 leading-tight">
+        <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-bold text-[#1B648E] mb-4 lg:mb-6 pt-5 leading-tight">
           <span className="block text-nowrap">{t("home.welcome")}</span>
           <span className="block relative mt-2">{t("home.platformName")}</span>
         </h1>
