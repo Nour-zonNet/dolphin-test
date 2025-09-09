@@ -39,7 +39,8 @@ const RegisterPage = () => {
     );
 
     if (res?.meta?.requestStatus === "fulfilled") {
-      navigate("/auth/add");
+      // navigate("/auth/add");
+      navigate("/schedule");
       return;
     }
 
