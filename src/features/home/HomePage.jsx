@@ -21,7 +21,7 @@ const HomePage = () => {
       <Navbar />
 
       {/* Hero + Login Section */}
-      <main className="flex-1 flex flex-col  items-center justify-around  px-4 sm:px-6 py-8  pb-40 max-w-7xl mx-auto w-full">
+      <main className="flex-1 flex flex-col  items-center justify-between sm:justify-around  px-4 sm:px-6 py-8  pb-35 max-w-7xl mx-auto w-full">
         {/* Hero Section (Left on Desktop / Top on Mobile) */}
         <Hero />
 
