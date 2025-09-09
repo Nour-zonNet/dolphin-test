@@ -226,5 +226,5 @@ const profileSlice = createSlice({
   },
 });
 
-export const { clearProfile } = profileSlice.actions;
+export const { clearProfile, addBrotherLocal } = profileSlice.actions;
 export default profileSlice.reducer;
