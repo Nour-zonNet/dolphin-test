@@ -32,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Uses the latest stable Node.js version
+          node-version: '20'
           cache: 'npm'
           
       - name: Install dependencies
@@ -82,7 +82,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Uses the latest stable Node.js version
+          node-version: '20'
           cache: 'npm'
           
       - name: Install dependencies
@@ -174,6 +174,23 @@ jobs:
             echo "color=warning" >> $GITHUB_OUTPUT
             echo "message=⚠️ Deployment was skipped!" >> $GITHUB_OUTPUT
           fi
+
+      - name: Get timestamp
+        id: timestamp
+        run: |
+          # Default to current timestamp
+          current_ts=$(date +%s)
+          
+          # Try to get commit timestamp based on event type
+          if [ "${{ github.event_name }}" = "push" ] && [ -n "${{ github.event.head_commit.timestamp }}" ]; then
+            commit_ts=$(date -d '${{ github.event.head_commit.timestamp }}' +%s 2>/dev/null || echo $current_ts)
+            echo "ts=$commit_ts" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "pull_request" ] && [ -n "${{ github.event.pull_request.updated_at }}" ]; then
+            pr_ts=$(date -d '${{ github.event.pull_request.updated_at }}' +%s 2>/dev/null || echo $current_ts)
+            echo "ts=$pr_ts" >> $GITHUB_OUTPUT
+          else
+            echo "ts=$current_ts" >> $GITHUB_OUTPUT
+          fi
           
       - name: Send Slack notification
         uses: 8398a7/action-slack@v3
@@ -218,7 +235,7 @@ jobs:
                   }
                 ],
                 "footer": "GitHub Actions",
-                "ts": ${{ github.event.head_commit.timestamp && github.event.head_commit.timestamp || github.event.repository.updated_at }}
+                "ts": ${{ steps.timestamp.outputs.ts }}
               }]
             }
         env:
