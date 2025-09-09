@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Divider from "../../ui/Divider";
 import { ConfirmCheck } from "@/utils/icons";
+import { Riyal } from "../../../utils/Illustrations";
 
 const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
   const [couponCode, setCouponCode] = useState("");
@@ -50,13 +51,13 @@ const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
       <div className="bg-white rounded-[32px] border-[0.5px] border-solid border-[#8c8c8c] w-[95%] md:w-[60%] my-auto">
         <div className="w-[90%] mx-auto">
           {/* Header */}
-          <div className="relative flex items-center justify-between py-4 md:py-8">
+          <div className="relative flex items-center justify-between py-2 md:py-8">
             <button
               onClick={onClose}
               className="absolute right-0 w-[50px] h-[50px] flex items-center justify-center rounded-full cursor-pointer"
             >
               <img
-                className="w-8 md:w-auto"
+                className="w-6 md:w-auto"
                 alt="Close"
                 src="https://c.animaapp.com/mf2i8zbdeyVMjf/img/frame.svg"
               />
@@ -65,9 +66,13 @@ const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
               <h2 className="font-semibold text-navyteal text-base md:text-[32px]">
                 إضافة رصيد بكوبون
               </h2>
-              <p className="text-orangedeep text-sm md:text-2xl font-bold mt-2">
-                رصيدك الحالي: <span>0 ريال</span>
-              </p>
+              <div className="text-orangedeep text-sm md:text-2xl font-bold mt-2 flex items-center justify-center gap-2">
+                رصيدك الحالي: 
+                <div className="flex items-center gap-1">
+                  <span>0</span>
+                  <Riyal className="w-4 md:w-6 lg:w-8"/>
+                </div>
+              </div>
             </div>
           </div>
           <Divider />

@@ -8,9 +8,7 @@ import { HomeSupportBtn } from '@/components'
 import { useProfile } from "@/features/profile/hooks/useProfile"
 
 const BalanceDetails = () => {
-    const { user, loading, error } = useProfile();
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error loading profile</div>;
+  const { user } = useProfile();
   return (
     <div>
         <Header title="تفاصيل الرصيد" balance={0} showBalanceSection={false}/>

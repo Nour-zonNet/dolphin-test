@@ -14,16 +14,6 @@ const handleAddSibling = async (siblingData) => {
       toast.error("لا يمكنك إضافة أكثر من 3 إخوة");
       return;
     }
-  // try {
-  //   setSubmitting(true);
-  //   await dispatch(addSibling(siblingData)).unwrap();
-  //   setIsModalOpen(false);
-  // } catch (err) {
-  //   console.error("Error adding sibling:", err);
-  //   alert("فشل إضافة الأخ/الأخت. حاول مرة أخرى");
-  // } finally {
-  //   setSubmitting(false);
-  // }
   try {
       await dispatch(addSibling(siblingData)).unwrap();
       toast.success("تمت إضافة الأخ بنجاح");
@@ -40,7 +30,7 @@ const handleAddSibling = async (siblingData) => {
             alt="Add"
             src="https://c.animaapp.com/mf29nm7vjLRxgE/img/group.png"
             />
-            <span className="text-navyteal font-semibold text-sm md:text-base lg:text-xl">اضافة أخ او أخت</span>
+            <span className="text-navyteal font-semibold text-sm md:text-xl">اضافة أخ او أخت</span>
         </button>
         <AddSiblingsModal
           isOpen={isModalOpen}

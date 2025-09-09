@@ -8,10 +8,10 @@ import SubscriptionSection from "../components/SubscriptionSection";
 import { ProfileActions } from "../components";
 import { MobileNav } from "@/components";
 import { useProfile } from "@/features/profile/hooks/useProfile";
-import Header from "../../../components/layout/Header";
+import { HomeSupportBtn } from '@/components'
 
 const ProfilePage = () => {
-  const { user, loading, error } = useProfile();
+  const { user } = useProfile();
   return (
     <div className="min-h-svh bg-white flex flex-col">
       <ProfileHeader title="الملف الشخصي" />
@@ -32,6 +32,7 @@ const ProfilePage = () => {
         <ProfileActions />
       </main>
       <MobileNav />
+      <HomeSupportBtn />
     </div>
   );
 };

@@ -20,7 +20,7 @@ export const QuizSection = () => {
             </div>
           </div>
           <div className="flex flex-col items-start">
-            <button className="cursor-pointer flex items-center justify-center md:gap-4 gap-2 md:py-2.5 py-2 rounded-3xl mb-4 bg-orangedeep md:w-[200px] w-[120px]">
+            <button className="cursor-pointer flex items-center justify-center md:gap-4 gap-2 md:py-2.5 py-1.5 rounded-3xl mb-4 bg-orangedeep md:w-[200px] w-[120px]">
               <ArrowNext className="w-4 md:w-6" />
               <span className="font-semibold text-navyteal md:text-lg text-sm">ابدأ الاختبار</span>
             </button>

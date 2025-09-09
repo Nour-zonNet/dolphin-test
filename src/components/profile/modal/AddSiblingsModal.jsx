@@ -1,14 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import Divider from '../../ui/Divider';
 import { useClasses } from '@/features/profile/hooks/useClasses';
 import uploadImg from '@/assets/images/upload-img.svg';
+import camera from '@/assets/images/camera.svg';
+import { ClosePopup } from '@/utils/icons';
 
 const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
   const [fullName, setFullName] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
   const { classes, loadingClasses } = useClasses();
   const [profileImage, setProfileImage] = useState(null);
-  const popupRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,20 +25,21 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
   if (!isOpen) return null;
 
   return (
-     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-100 p-4">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-100 p-4">
       <div className="bg-white rounded-[32px] border-[0.5px] border-solid border-[#8c8c8c] w-[95%] md:w-[60%] my-auto">
         <div className="w-[90%] mx-auto">
         {/* Header */}
-        <div className="relative flex items-center justify-between py-4 md:py-6 lg:py-8">
+        <div className="relative flex items-center justify-between py-2 md:py-8">
           <button
             onClick={onClose}
             className="absolute right-0 w-[50px] h-[50px] flex items-center justify-center rounded-full cursor-pointer"
           >
             <img
-              className="w-4 md:w-8 lg:w-auto"
+              className="w-6 md:w-8 lg:w-auto"
               alt="Close"
               src="https://c.animaapp.com/mf2i8zbdeyVMjf/img/frame.svg"
             />
+            {/* <ClosePopup className="w-4 lg:w-8" /> */}
           </button>
           <div className="w-full text-center">
             <h2 className="font-semibold text-navyteal text-base md:text-xl lg:text-[32px]">
@@ -52,7 +54,7 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
           <div className="flex flex-col items-center gap-3.5">
             <label className="relative flex flex-col items-center justify-center cursor-pointer">
                 <img
-                  className="w-[50px] h-[50px] md:w-[70px] md:h-[70px] lg:w-[100px] lg:h-[100px] rounded-full"
+                  className="w-[50px] h-[50px] md:w-[80px] md:h-[80px] lg:w-[100px] lg:h-[100px] rounded-full"
                   alt="Add photo"
                   src={
                     profileImage
@@ -62,9 +64,9 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
 
                 />
                 <img
-                    className="w-5 md:w-6 h-5 md:h-6 lg:w-8 lg:h-8 absolute bottom-0 right-0 cursor-pointer"
+                    className="w-5 md:w-7 h-5 md:h-7 lg:w-8 lg:h-8 absolute bottom-0 right-0 cursor-pointer"
                     alt="Edit"
-                    src="https://c.animaapp.com/mf29nm7vjLRxgE/img/frame-1.svg"
+                    src={camera}
                   />
                 <input
                   type="file"
@@ -73,14 +75,14 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
                   onChange={(e) => setProfileImage(e.target.files[0])}
                 />
               </label>
-              <div className="font-semibold text-black text-sm md:text-base text-center">
+              <div className="font-semibold text-black text-sm md:text-lg text-center">
                 {profileImage ? "تم اختيار صورة" : "أضف صورة"}
               </div>
           </div>
 
           {/* Full Name Field */}
           <div className="space-y-4">
-            <label className="block font-semibold text-navyteal text-sm md:text-base lg:text-2xl">
+            <label className="block font-semibold text-navyteal text-sm md:text-lg lg:text-2xl">
               الأسم الكامل
             </label>
             <input
@@ -95,7 +97,7 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
 
           {/* Grade Level Field */}
           <div className="space-y-4 mb-4">
-            <label className="block font-semibold text-navyteal text-sm md:text-base lg:text-2xl">
+            <label className="block font-semibold text-navyteal text-sm md:text-lg lg:text-2xl">
               الصف الدراسي الجديد
             </label>
             <div className="relative">
