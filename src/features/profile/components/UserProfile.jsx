@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useRef } from "react";
+import  {  useState, useRef } from "react";
 import { ChevronDown } from "@/utils/icons";
 import { useBrothers } from "../hooks/useBrothers";
 import { useDispatch, useSelector } from "react-redux";

@@ -11,7 +11,7 @@ import { useProfile } from "@/features/profile/hooks/useProfile";
 import Header from "../../../components/layout/Header";
 
 const ProfilePage = () => {
-  const { user, loading, error } = useProfile();
+  const { user } = useProfile();
   return (
     <div className="min-h-svh bg-white flex flex-col">
       <ProfileHeader title="الملف الشخصي" />

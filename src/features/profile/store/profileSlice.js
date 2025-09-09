@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "@/services/api";
 import { profileRepository } from "../services/profileService";
 
 // Get profile

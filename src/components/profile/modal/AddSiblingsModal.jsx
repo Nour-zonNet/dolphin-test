@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import Divider from '../../ui/Divider';
 import { useClasses } from '@/features/profile/hooks/useClasses';
 import uploadImg from '@/assets/images/upload-img.svg';
@@ -8,7 +8,6 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
   const [gradeLevel, setGradeLevel] = useState("");
   const { classes, loadingClasses } = useClasses();
   const [profileImage, setProfileImage] = useState(null);
-  const popupRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
