@@ -32,7 +32,7 @@ const HomePage = () => {
       </main>
 
       {/* Floating Social Buttons */}
-      <HomeSupportBtn />
+    <HomeSupportBtn />
 
       {/* Footer Illustration */}
       <FooterIllustration />
