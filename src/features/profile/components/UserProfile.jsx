@@ -1,5 +1,6 @@
 
-import  {  useState, useRef } from "react";
+
+import React, { useState, useRef } from "react";
 import { ChevronDown } from "@/utils/icons";
 import { useBrothers } from "../hooks/useBrothers";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,10 +24,7 @@ const UserProfile = () => {
   const file = e.target.files[0];
     if (!file) return;
 
-    // update local preview
     setSelectedImages((prev) => ({ ...prev, [userId]: file }));
-
-    // send to backend
     dispatch(updateUserImage({ userId, file }))
       .unwrap()
 
@@ -38,7 +36,6 @@ const UserProfile = () => {
       await dispatch(switchUserAccount(bro.id)).unwrap();
       await dispatch(getBrothers()).unwrap();
 
-      // Clear local preview
       setSelectedImages({});
 
       setOpen(false);
@@ -52,16 +49,6 @@ const UserProfile = () => {
         toast.error("لا يمكنك إضافة أكثر من 3 إخوة");
         return;
       }
-    // try {
-    //   setSubmitting(true);
-    //   await dispatch(addSibling(siblingData)).unwrap();
-    //   setIsModalOpen(false);
-    // } catch (err) {
-    //   console.error("Error adding sibling:", err);
-    //   alert("فشل إضافة الأخ/الأخت. حاول مرة أخرى");
-    // } finally {
-    //   setSubmitting(false);
-    // }
     try {
         await dispatch(addSibling(siblingData)).unwrap();
         toast.success("تمت إضافة الأخ بنجاح");
@@ -70,31 +57,13 @@ const UserProfile = () => {
       }
   };
 
-  // useEffect(() => {
-  //   return () => {
-  //     Object.values(selectedImages).forEach((file) => URL.revokeObjectURL(file));
-  //   };
-  // }, [selectedImages]);
-
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-  //       setOpen(false);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
-
   return (
     <div className="flex items-center gap-4 md:gap-[37px] py-4 md:py-8">
       {/* Current user profile */}
       <div className="relative">
         <img
-          key={user?.profilePicture} 
+          // key={user?.profilePicture} 
+          key={user.id + (user.profilePicture || "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png")}
           className="w-[70px] md:w-[100px] lg:w-[150px] h-[70px] md:h-[100px] lg:h-[150px] rounded-full object-cover"
           alt="Profile"
           src={
@@ -153,6 +122,7 @@ const UserProfile = () => {
                 >
                   <div className="flex items-center gap-4">
                     <img
+                        key={bro.id + (bro.profilePicture || "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png")}
                         className="w-10 h-10 md:w-16 md:h-16 rounded-full object-cover border-[0.5px] border-black/10"
                         src={
                           selectedImages[bro.id] // show local selected file first
@@ -162,10 +132,10 @@ const UserProfile = () => {
                         alt={bro.student_name}
                       />
                     <div className="space-y-2">
-                      <p className="text-base md:text-xl font-bold text-navyteal text-nowrap">
+                      <p className="text-[12px] md:text-xl font-bold text-navyteal text-nowrap">
                         {bro.student_name}
                       </p>
-                      <p className="text-sm md:text-base font-regular text-navyteal text-nowrap">
+                      <p className="text-[12px] md:text-base font-regular text-navyteal text-nowrap">
                         {bro.class_name}
                       </p>
                     </div>

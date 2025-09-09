@@ -32,9 +32,9 @@ const Packages = () => {
           <img
             src={notFoundPackages}
             alt="notFoundPackages"
-            className="w-full max-w-[450px] sm:max-w-[450px] md:max-w-[450px] lg:max-w-[450px] object-contain mx-auto pt-20"
+            className="w-full max-w-[450px] sm:max-w-[450px] md:max-w-[450px] lg:max-w-[450px] object-contain mx-auto pt-10"
           />
-          <div className=" ml-0 xs:ml-20">
+          <div className="ml-0 xs:ml-20 mb-10">
             <AddPackageBtn />
           </div>
         </div>

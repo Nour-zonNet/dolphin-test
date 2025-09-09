@@ -17,13 +17,13 @@ export const AttachmentItem = ({ title, size, hasImportantBadge, hasDownloadIcon
         </div>
 
         {hasImportantBadge && (
-          <div className="absolute left-12 md:left-10 top-10">
+          <div className="absolute left-12 md:left-20 top-11">
             <ImportantBadge />
           </div>
         )}
       </div>
 
-      <div className="flex-1 text-right mr-4 cursor-pointer">
+      <div className="flex-1 mr-4 cursor-pointer">
         <h3 className="font-semibold text-sm md:text-lg text-navyteal mb-2">{title}</h3>
         <p className="font-normal text-black text-sm md:text-base">{size}</p>
       </div>

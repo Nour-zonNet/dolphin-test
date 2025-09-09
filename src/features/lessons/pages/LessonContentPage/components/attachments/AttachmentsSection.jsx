@@ -10,7 +10,8 @@ export const AttachmentsSection = () => {
   const attachments = [
     { title: "ملخص الدرس", size: "2.5 MB", hasImportantBadge: true, hasDownloadIcon: true, iconSrc: summary },
     { title: "تدريبات الدرس", size: "2.5 MB", hasImportantBadge: true, hasDownloadIcon: true, iconSrc: exams },
-    { title: "الدرس الرابع: الأفعال المساعدة", size: "2.5 MB", hasImportantBadge: false, hasDownloadIcon: true, iconSrc: filePdf },
+    { title: "الدرس الرابع: الأفعال المساعدة", size
+      : "2.5 MB", hasImportantBadge: false, hasDownloadIcon: true, iconSrc: filePdf },
   ];
 
   const { t } = useTranslation();

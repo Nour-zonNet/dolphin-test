@@ -3,15 +3,17 @@ import { useDispatch } from 'react-redux'
 import { ProfileCard } from '@/components';
 import { ProfileInputs } from '@/components';
 import { ProfileButtons } from '@/components';
+import { useDispatch } from 'react-redux'; 
+import { updateUserGrade } from '@/features/profile/store/profileSlice';
+import flag from "@/assets/authentication/flag.svg";
 import ChangeGradeModal from '@/components/profile/modal/ChangeGradeModal';
-import { updateUserGrade } from '@/features/profile/store/profileSlice'
 
 const AccountInfo = ({ user }) => {
+  const dispatch = useDispatch(); 
   const [name, setName] = useState("يوستينا صلاح");
   const [phone, setPhone] = useState("09954321890");
   const [grade, setGrade] = useState(user?.gradeName || "");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const dispatch = useDispatch();
 
   const handleConfirmGrade = async (gradeName, gradeId) => {
     setGrade(gradeName);
@@ -75,9 +77,9 @@ const AccountInfo = ({ user }) => {
               <ProfileInputs 
                 value={phone}
                 disabled
-                className="border-[#aaaaaa] border-[0.5px]"
+                className="relative border-[#aaaaaa] border-[0.5px] px-10"
               />
-              {/* <div className="absolute top-15 right-4"><img src={flag} alt="flag" /></div> */}
+              <img src={flag} alt="Country" className="absolute top-[52%] md:top-1/2 right-8 w-8 md:w-auto" />
             </div>
           </div>
 

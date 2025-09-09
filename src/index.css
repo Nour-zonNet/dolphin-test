@@ -174,3 +174,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 input[type="date"] {
   -moz-appearance: textfield;
 }
+
+/* global.css */
+:root {
+  --btn-radius: 70px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --btn-radius: 55px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --btn-radius: 90px;
+  }
+}

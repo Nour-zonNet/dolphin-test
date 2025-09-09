@@ -5,16 +5,8 @@ import { ProfileButtons } from "@/components";
 import { DeleteAccountModal, LogoutModal } from "@/components/profile/modal";
 
 const ProfileActions = () => {
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const dispatch = useDispatch();
-
-  // Delete modal handlers
-  const handleCloseDeleteModal = () => setIsDeleteModalOpen(false);
-  const handleConfirmDelete = () => {
-    setIsDeleteModalOpen(false);
-  };
-
   // Logout modal handlers
   const handleCloseLogoutModal = () => setIsLogoutModalOpen(false);
   const handleConfirmLogout = () => {
@@ -27,8 +19,8 @@ const ProfileActions = () => {
       {/* Logout Button */}
       <ProfileButtons
         variant="secondary"
-        size="md"
-        className="w-full cursor-pointer"
+        size=""
+        className="w-full cursor-pointer py-3 lg:py-4 border border-[#E89B32]"
         onClick={() => setIsLogoutModalOpen(true)}
       >
         <img
@@ -44,9 +36,9 @@ const ProfileActions = () => {
       {/* Delete Account Button */}
       <ProfileButtons
         variant="danger"
-        size="md"
-        className="w-full cursor-pointer"
-        onClick={() => setIsDeleteModalOpen(true)}
+        size=""
+        className="w-full cursor-pointer py-3 lg:py-4 border border-[#B3261E]"
+        // onClick={() => setIsDeleteModalOpen(true)}
       >
         <img
           className="w-6 md:w-8"
@@ -54,16 +46,16 @@ const ProfileActions = () => {
           src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1-3.svg"
         />
         <span className="text-navyteal font-semibold text-base md:text-xl">
-          حذف الحساب
+          تعطيل الحساب
         </span>
       </ProfileButtons>
 
       {/* Delete Account Modal */}
-      <DeleteAccountModal
+      {/* <DeleteAccountModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
-      />
+      /> */}
 
       {/* Logout Modal */}
       <LogoutModal
