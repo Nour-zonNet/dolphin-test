@@ -25,7 +25,6 @@ const BuyPackageModal = ({ onClose, packageData = [], isExtendMode = false }) =>
   const uniqueFeatures = [...new Set(allFeatures)];
 
   const handlePurchase = () => {
-    console.log(`${isExtendMode ? 'Extending' : 'Purchasing'} ${packages.length} packages:`, packages);
     onClose();
   };
 

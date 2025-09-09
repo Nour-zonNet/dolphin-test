@@ -84,6 +84,9 @@ const profileSlice = createSlice({
       state.user = null;
       state.error = null;
     },
+    addBrotherLocal: (state, action) => {
+      state.brothers.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -135,13 +138,15 @@ const profileSlice = createSlice({
           const timestamp = new Date().getTime();
           state.user = {
             ...action.payload.user,
-            profilePicture: `${action.payload.user.profilePicture}?t=${timestamp}`
+            profilePicture: `${action.payload.user.profilePicture}?t=${timestamp}`,
           };
         }
         if (action.payload.brothers) {
           state.brothers = action.payload.brothers.map((bro) => ({
             ...bro,
-            profilePicture: bro.profilePicture ? `${bro.profilePicture}?t=${new Date().getTime()}` : bro.profilePicture
+            profilePicture: bro.profilePicture
+              ? `${bro.profilePicture}?t=${new Date().getTime()}`
+              : bro.profilePicture,
           }));
         }
       })
@@ -149,7 +154,7 @@ const profileSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-       // Update grade
+      // Update grade
       .addCase(updateUserGrade.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -177,15 +182,15 @@ const profileSlice = createSlice({
           state.user = {
             ...state.user,
             ...action.payload,
-            profilePicture: `${action.payload.profilePicture}?t=${timestamp}`
+            profilePicture: `${action.payload.profilePicture}?t=${timestamp}`,
           };
 
-          // Update brothers images 
+          // Update brothers images
           state.brothers = state.brothers?.map((bro) => ({
             ...bro,
             profilePicture: bro.profilePicture
               ? `${bro.profilePicture}?t=${new Date().getTime()}`
-              : bro.profilePicture
+              : bro.profilePicture,
           }));
         }
       })
@@ -193,7 +198,7 @@ const profileSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-       // Logout
+      // Logout
       .addCase(logout.pending, (state) => {
         state.loading = true;
       })
@@ -211,6 +216,6 @@ const profileSlice = createSlice({
   },
 });
 
-export const { clearProfile } = profileSlice.actions;
+export const { clearProfile ,addBrotherLocal} = profileSlice.actions;
 
 export default profileSlice.reducer;

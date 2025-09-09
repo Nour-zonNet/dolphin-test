@@ -4,7 +4,7 @@ import { getBrothers } from "../store/profileSlice";
 
 export const useBrothers = () => {
   const {
-    brothers = [],
+    brothers,
     loadingBrothers,
     brothersError,
   } = useSelector((state) => state.profile);

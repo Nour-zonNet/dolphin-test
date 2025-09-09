@@ -25,42 +25,40 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
   const password = watch("password");
 
   return (
-    <div className="flex justify-center items-center lg:justify-center lg:space-x-10  lg:items-stretch flex-col lg:flex-row mx-auto">
+    <div className="flex justify-center items-center lg:justify-center lg:space-x-10  lg:items-stretch flex-col lg:flex-row mx-auto pb-35 pt-2">
       {/* Left side image + title (mobile view) */}
-      <div className="flex items-center lg:items-stretch justify-center gap-2">
+      <div className="flex items-center lg:items-center justify-end flex-1/3 gap-2">
         <img
           src={dolphinChild}
           alt="Path"
           className="h-29 sm:h-48 md:h-48 lg:h-135 object-contain  lg:mb-6"
         />
-        <FormTitle text={t('auth.loginToAccount')} isMobile />
+        <FormTitle text={t("auth.loginToAccount")} isMobile />
       </div>
 
       {/* Right side form */}
-      <div className=" relative w-full flex  justify-center items-center lg:items-stretch lg:justify-start  flex-col  mx-auto">
+      <div className=" relative w-full flex  flex-2/3 justify-center items-center lg:items-start  lg:justify-start  flex-col  mx-auto">
         <div className="flex">
-
-          <FormTitle text={t('auth.loginToAccount')} />
+          <FormTitle text={t("auth.loginToAccount")} />
         </div>
 
         <form
-     
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-6 w-full max-w-lg rounded-2xl"
         >
           {/* الاسم الكامل */}
           <div className="flex flex-col gap-2">
             <label className="text-[#144B6B] font-semibold text-base sm:text-base md:text-2xl">
-              {t('auth.fullName')}
+              {t("auth.fullName")}
             </label>
             <Controller
               name="name"
               control={control}
-              rules={{ required: t('auth.fullNameRequired') }}
+              rules={{ required: t("auth.fullNameRequired") }}
               render={({ field }) => (
                 <input
                   type="text"
-                  placeholder={t('auth.fullNamePlaceholder')}
+                  placeholder={t("auth.fullNamePlaceholder")}
                   value={field.value ?? ""}
                   onChange={field.onChange}
                   className="placeholder:text-base placeholder:sm:text-base placeholder:md:text-2xl border placeholder:text-bordercolor rounded-full border-graycustom/50 px-4 py-2 md:py-4"
@@ -77,21 +75,21 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
           {/* الصف الدراسي */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-base sm:text-base md:text-2xl text-[#144B6B]">
-              {t('auth.grade')}
+              {t("auth.grade")}
             </label>
             <Controller
               name="grade"
               control={control}
-              rules={{ required: t('auth.gradeRequired') }}
+              rules={{ required: t("auth.gradeRequired") }}
               render={({ field }) => (
                 <select
                   {...field}
                   className="border rounded-full placeholder:text-bordercolor text-graycustom border-graycustom/50 px-4 py-2 md:py-4"
                 >
-                  <option value="">{t('auth.selectGrade')}</option>
-                  <option value="1">{t('auth.grade1')}</option>
-                  <option value="2">{t('auth.grade2')}</option>
-                  <option value="3">{t('auth.grade3')}</option>
+                  <option value="">{t("auth.selectGrade")}</option>
+                  <option value="1">{t("auth.grade1")}</option>
+                  <option value="2">{t("auth.grade2")}</option>
+                  <option value="3">{t("auth.grade3")}</option>
                 </select>
               )}
             />
@@ -105,20 +103,20 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
           {/* كلمة المرور */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-base sm:text-base md:text-2xl text-[#144B6B]">
-              {t('auth.password')}
+              {t("auth.password")}
             </label>
             <Controller
               name="password"
               control={control}
               rules={{
-                required: t('auth.passwordRequired'),
+                required: t("auth.passwordRequired"),
                 minLength: {
                   value: 6,
-                  message: t('auth.password6Digits'),
+                  message: t("auth.password6Digits"),
                 },
                 pattern: {
                   value: /^[0-9]+$/,
-                  message: t('auth.passwordNumbersOnly'),
+                  message: t("auth.passwordNumbersOnly"),
                 },
               }}
               render={({ field }) => (
@@ -140,15 +138,15 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
           {/* تأكيد كلمة المرور */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-base sm:text-base md:text-2xl text-[#144B6B]">
-              {t('auth.confirmPassword')}
+              {t("auth.confirmPassword")}
             </label>
             <Controller
               name="confirmPassword"
               control={control}
               rules={{
-                required: t('auth.confirmPasswordRequired'),
+                required: t("auth.confirmPasswordRequired"),
                 validate: (value) =>
-                  value === password || t('auth.passwordsNotMatch'),
+                  value === password || t("auth.passwordsNotMatch"),
               }}
               render={({ field }) => (
                 <OTPInput
@@ -169,7 +167,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
           {/* كود الدعوة */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-base sm:text-base md:text-2xl text-[#144B6B]">
-              {t('auth.inviteCode')}
+              {t("auth.inviteCode")}
             </label>
             <Controller
               name="inviteCode"
@@ -177,7 +175,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               render={({ field }) => (
                 <input
                   type="text"
-                  placeholder={t('auth.inviteCodePlaceholder')}
+                  placeholder={t("auth.inviteCodePlaceholder")}
                   value={field.value ?? ""}
                   onChange={field.onChange}
                   className="border rounded-full border-graycustom/50 px-4 py-2 md:py-4"
@@ -194,12 +192,17 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               className="bg-orangedeep text-navyteal font-bold py-3 px-8 rounded-full flex items-center justify-center gap-2 hover:bg-yellow-600 transition"
             >
               <Lock size={18} />
-              {loading ? t('auth.registering') : t('auth.completeRegistration')}
+              {loading ? t("auth.registering") : t("auth.completeRegistration")}
             </button>
 
             {error ? (
               <p className="text-red-500 text-sm text-center mt-2">
-                {typeof error === 'string' ? error : (error?.message || (typeof error === 'object' ? JSON.stringify(error) : String(error)))}
+                {typeof error === "string"
+                  ? error
+                  : error?.message ||
+                    (typeof error === "object"
+                      ? JSON.stringify(error)
+                      : String(error))}
               </p>
             ) : null}
           </div>

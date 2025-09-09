@@ -31,7 +31,6 @@ const AccountInfo = ({ user }) => {
   };
   
   const handleSave = () => {
-    console.log("Saving Changes: ", { name, phone, grade });
   }
 
   return (

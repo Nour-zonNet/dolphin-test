@@ -12,41 +12,40 @@ const WeeklySchedulePopup = ({ open, setOpen, packageId }) => {
 
   // Fetch schedule data from API
   useEffect(() => {
-    if (open) {
-      fetchScheduleData();
-    }
-  }, [fetchScheduleData, open, packageId]);
+    if (!open) return;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fetchScheduleData = async () => {
-    try {
-      setLoading(true);
-      // Replace with your actual API endpoint
-      const response = await fetch(`/api/schedules/${packageId}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch schedule data');
+    const fetchScheduleData = async () => {
+      try {
+        setLoading(true);
+        // Replace with your actual API endpoint
+        const response = await fetch(`/api/schedules/${packageId}`);
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch schedule data');
+        }
+
+        const data = await response.json();
+        setSchedule(data);
+      } catch (err) {
+        console.error("Error fetching schedule:", err);
+        setError(err.message);
+
+        // Fallback to default schedule if API fails
+        setSchedule({
+          [t('lessons.sunday')]: [{ time: "9:00م", doctor: t('lessons.defaultTeacher') }],
+          [t('lessons.tuesday')]: [
+            { time: "9:00م", doctor: t('lessons.defaultTeacher') },
+            { time: "9:00م", doctor: t('lessons.defaultTeacher') },
+          ],
+          [t('lessons.thursday')]: [{ time: "9:00م", doctor: t('lessons.defaultTeacher') }],
+        });
+      } finally {
+        setLoading(false);
       }
-      
-      const data = await response.json();
-      setSchedule(data);
-    } catch (err) {
-      console.error("Error fetching schedule:", err);
-      setError(err.message);
-      
-      // Fallback to default schedule if API fails
-      setSchedule({
-        [t('lessons.sunday')]: [{ time: "9:00م", doctor: t('lessons.defaultTeacher') }],
-        [t('lessons.tuesday')]: [
-          { time: "9:00م", doctor: t('lessons.defaultTeacher') },
-          { time: "9:00م", doctor: t('lessons.defaultTeacher') },
-        ],
-        [t('lessons.thursday')]: [{ time: "9:00م", doctor: t('lessons.defaultTeacher') }],
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchScheduleData();
+  }, [open, packageId, t]);
 
   const days = [t('lessons.sunday'), t('lessons.tuesday'), t('lessons.thursday')];
   const maxRows = Math.max(...days.map((d) => (schedule[d] || []).length));

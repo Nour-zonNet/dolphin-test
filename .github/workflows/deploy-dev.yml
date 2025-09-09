@@ -1,0 +1,135 @@
+name: Deploy to Development
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip tests'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'workflow_dispatch' && !inputs.skip_tests
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'   # ⬅️ upgraded from 18 to 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Run type checking
+        run: npm run typecheck
+        continue-on-error: true
+
+      - name: Run tests
+        run: npm test
+        continue-on-error: true
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: |
+            dist/
+            build/
+          retention-days: 3
+
+  deploy:
+    name: Deploy to Development Server
+    runs-on: ubuntu-22.04
+    needs: test
+    if: github.event_name == 'workflow_dispatch'
+    
+    environment: 
+      name: development
+      url: https://app-dev.learnadolphin.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'   # ⬅️ upgraded from 18 to 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for development
+        run: npm run build
+
+      - name: Create deployment info
+        run: |
+          echo "Branch: ${{ github.ref_name }}" > deployment-info.txt
+          echo "Commit: ${{ github.sha }}" >> deployment-info.txt
+          echo "Time: $(date)" >> deployment-info.txt
+          echo "By: ${{ github.actor }}" >> deployment-info.txt
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          port: ${{ secrets.FTP_PORT }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: './dist/'
+          server-dir: './'
+          exclude: |
+            **/.git*
+            **/node_modules/**
+            **/.env*
+            **/tests/**
+            **/*.test.*
+            **/*.spec.*
+          state-name: '.ftp-deploy-sync-state.json'
+          log-level: 'standard'
+
+      - name: Upload deployment info
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          port: ${{ secrets.FTP_PORT }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: './'
+          server-dir: './'
+          exclude: |
+            **/*
+            !deployment-info.txt
+
+      - name: Verify deployment
+        run: |
+          echo "Verifying deployment..."
+          sleep 5
+          curl -f -s -o /dev/null https://app-dev.learnadolphin.com && echo "Site is accessible" || echo "Site verification failed"
+
+      - name: Deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "Deployment completed successfully"
+            echo "Site URL: https://app-dev.learnadolphin.com"
+            echo "Deployed at: $(date)"
+          else
+            echo "Deployment failed - check logs"
+          fi

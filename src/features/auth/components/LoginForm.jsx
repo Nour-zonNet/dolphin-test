@@ -7,7 +7,7 @@ import FormTitle from "./FormTitle";
 import PhoneField from "./PhoneField";
 import { validatePhone } from "../../../utils/phoneValidation";
 
-const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
+const LoginForm = ({ onSubmit, loading,  setPhoneNumber }) => {
   const { t } = useTranslation();
   const {
     handleSubmit,
@@ -28,7 +28,7 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
   const isPhoneValid = mobile && validatePhone(mobile, countryCode);
 
   return (
-    <div className="flex justify-center items-center flex-col lg:flex-row mx-auto ">
+    <div className="flex justify-center items-center flex-col lg:flex-row mx-auto  mt-15">
       {/* Left side image + title (mobile view) */}
       <div className="flex items-center justify-center flex-none gap-2">
         <img
@@ -63,12 +63,12 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
             touchedFields={touchedFields}
           />
 
-          {/* Backend Error */}
-          {error && (
-            <p className="text-red-500 text-xs sm:text-sm">
-              {error}
-            </p>
-          )}
+          {/* Backend Error
+          // {error && (
+          //   <p className="text-orangedeep text-xs sm:text-sm">
+          //     {error}
+          //   </p>
+          // )} */}
 
           {/* Submit Button */}
           <Button

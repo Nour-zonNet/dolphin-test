@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Vite environment variable: must start with VITE_
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://api.example.com",
+  baseURL: import.meta.env.VITE_API_URL || "https://admintest.learnadolphin.com/api",
   headers: {
     "Content-Type": "application/json",
   },

@@ -14,7 +14,6 @@ const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
     }
     onClose();
   };
-  console.log(groupData);
 
   return (
     <div
