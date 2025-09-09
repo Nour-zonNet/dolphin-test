@@ -30,7 +30,7 @@ const ScheduleSlider = () => {
       <img
         src={notFoundImage}
         alt="No lessons found"
-        className="max-h-full w-auto object-contain"
+        className="max-h-full w-auto object-contain mt-12"
       />
     </div>
   );
@@ -44,7 +44,7 @@ const ScheduleSlider = () => {
         dayDate={days[activeIndex].date}
       />
 
-      <div className="slider py-3">
+      <div className="slider py-6">
         <Swiper
           modules={[Navigation, Pagination]}
           spaceBetween={30}

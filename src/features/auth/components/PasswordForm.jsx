@@ -11,20 +11,20 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
 
   return (
     <form
-      className="w-full max-w-lg my-auto mx-auto space-y-10 mt-20"
+      className="w-full max-w-lg my-auto mx-auto mt-20"
       onSubmit={handleSubmit(onSubmit)} // 👈 مهم
     >
       {/* ---- Header ---- */}
-      <div className="flex flex-col items-center justify-center">
-        <h2 className="mb-4 text-3xl sm:text-2xl text-status font-bold text-center sm:text-right">
+      <div className="flex flex-col items-center justify-center mb-10">
+        <h2 className="mb-2 text-2xl sm:text-2xl text-status font-bold text-center sm:text-right">
           {t('auth.loginToAccount')}
         </h2>
         <p className="text-subtext text-lg">{t('auth.enterPassword')}</p>
-        <p className="text-orangedeep text-lg">{phoneNumber && phoneNumber}</p>
+        <p className="text-orangedeep font-extrabold text-lg">{phoneNumber && phoneNumber}</p>
       </div>
 
       {/* ---- Password OTP Input ---- */}
-      <div className="relative w-full " dir="ltr">
+      <div className="relative w-full mb-10 " dir="ltr">
         <Controller
           name="password"
           control={control}
@@ -52,7 +52,7 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
         icon={<Lock />}
         text={loading ? t('auth.loggingIn') : t('auth.completingRegistration')}
       />
-      <Link to={"/auth/forgetpassword"} className="underline block text-orangedeep text-center ">نسيت الرقم السرى؟</Link>
+      <Link to={"/auth/forgetpassword"} className="underline block text-orangedeep text-center mt-4 ">نسيت الرقم السرى؟</Link>
     </form>
   );
 };
