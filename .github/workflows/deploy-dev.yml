@@ -10,14 +10,10 @@ on:
         type: boolean
   push:
     branches:
-      - develop
       - deployment
-      - main
   pull_request:
     branches:
-      - develop
       - deployment
-      - main
     types: [opened, synchronize, reopened, closed]
 
 jobs:
