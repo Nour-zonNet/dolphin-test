@@ -25,9 +25,9 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
   const password = watch("password");
 
   return (
-    <div className="flex justify-center items-center lg:justify-center lg:space-x-10  lg:items-stretch flex-col lg:flex-row mx-auto">
+    <div className="flex justify-center items-center lg:justify-center lg:space-x-10  lg:items-stretch flex-col lg:flex-row mx-auto pb-35 pt-2">
       {/* Left side image + title (mobile view) */}
-      <div className="flex items-center lg:items-stretch justify-center gap-2">
+      <div className="flex items-center lg:items-center justify-end flex-1/3 gap-2">
         <img
           src={dolphinChild}
           alt="Path"
@@ -37,7 +37,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
       </div>
 
       {/* Right side form */}
-      <div className=" relative w-full flex  justify-center items-center lg:items-stretch lg:justify-start  flex-col  mx-auto">
+      <div className=" relative w-full flex  flex-2/3 justify-center items-center lg:items-start  lg:justify-start  flex-col  mx-auto">
         <div className="flex">
 
           <FormTitle text={t('auth.loginToAccount')} />

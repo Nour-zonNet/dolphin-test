@@ -1,5 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchProfile, addBrother, fetchClasses, fetchBrothers, switchAccount, updateUserGradeApi, updateUserImageApi, logoutApi } from "../services/profileService";
+import {
+  fetchProfile,
+  addBrother,
+  fetchClasses,
+  fetchBrothers,
+  switchAccount,
+  updateUserGradeApi,
+  updateUserImageApi,
+  logoutApi,
+} from "../services/profileService";
 import api from "@/services/api";
 
 export const getProfile = createAsyncThunk("profile/getProfile", async () => {
@@ -56,28 +65,28 @@ export const updateUserGrade = createAsyncThunk(
   async ({ userId, gradeId }, { rejectWithValue }) => {
     try {
       const response = await updateUserGradeApi(userId, gradeId);
-      return response.data; 
+      return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
-export const logout = createAsyncThunk(
-  "profile/logout",
-  async () => {
-    try {
-      await logoutApi(); 
-    } catch (err) {
-      console.warn("Logout API failed, continuing local logout:", err?.response?.data || err);
-    }
-
-    // Always clear locally
-    localStorage.removeItem("token");
-      delete api.defaults.headers.common["Authorization"];
-    return true;
+export const logout = createAsyncThunk("profile/logout", async () => {
+  try {
+    await logoutApi();
+  } catch (err) {
+    console.warn(
+      "Logout API failed, continuing local logout:",
+      err?.response?.data || err
+    );
   }
-);
+
+  // Always clear locally
+  localStorage.removeItem("token");
+  delete api.defaults.headers.common["Authorization"];
+  return true;
+});
 
 const profileSlice = createSlice({
   name: "profile",
@@ -92,6 +101,9 @@ const profileSlice = createSlice({
     clearProfile: (state) => {
       state.user = null;
       state.error = null;
+    },
+    addBrotherLocal: (state, action) => {
+      state.brothers.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -144,13 +156,15 @@ const profileSlice = createSlice({
           const timestamp = new Date().getTime();
           state.user = {
             ...action.payload.user,
-            profilePicture: `${action.payload.user.profilePicture}?t=${timestamp}`
+            profilePicture: `${action.payload.user.profilePicture}?t=${timestamp}`,
           };
         }
         if (action.payload.brothers) {
           state.brothers = action.payload.brothers.map((bro) => ({
             ...bro,
-            profilePicture: bro.profilePicture ? `${bro.profilePicture}?t=${new Date().getTime()}` : bro.profilePicture
+            profilePicture: bro.profilePicture
+              ? `${bro.profilePicture}?t=${new Date().getTime()}`
+              : bro.profilePicture,
           }));
         }
       })
@@ -158,7 +172,7 @@ const profileSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-       // Update grade
+      // Update grade
       .addCase(updateUserGrade.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -186,15 +200,15 @@ const profileSlice = createSlice({
           state.user = {
             ...state.user,
             ...action.payload,
-            profilePicture: `${action.payload.profilePicture}?t=${timestamp}`
+            profilePicture: `${action.payload.profilePicture}?t=${timestamp}`,
           };
 
-          // Update brothers images 
+          // Update brothers images
           state.brothers = state.brothers?.map((bro) => ({
             ...bro,
             profilePicture: bro.profilePicture
               ? `${bro.profilePicture}?t=${new Date().getTime()}`
-              : bro.profilePicture
+              : bro.profilePicture,
           }));
         }
       })
@@ -202,7 +216,7 @@ const profileSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-       // Logout
+      // Logout
       .addCase(logout.pending, (state) => {
         state.loading = true;
       })
@@ -220,5 +234,5 @@ const profileSlice = createSlice({
   },
 });
 
-export const { clearProfile } = profileSlice.actions;
+export const { clearProfile, addBrotherLocal } = profileSlice.actions;
 export default profileSlice.reducer;

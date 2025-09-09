@@ -12,11 +12,10 @@ const RegisterPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { registerUser, loading, error,  isFullyAuthenticated } = useAuth();
+  const { registerUser, loading, error, isFullyAuthenticated } = useAuth();
   const { phoneNumber } = location.state || {};
 
   // If we have a token but no user yet, and we're still loading, show loading state
-
 
   // If user is already logged in, redirect to schedule
   if (isFullyAuthenticated()) {
@@ -40,7 +39,7 @@ const RegisterPage = () => {
     );
 
     if (res?.meta?.requestStatus === "fulfilled") {
-      navigate("/schedule");
+      navigate("/auth/add");
       return;
     }
 
