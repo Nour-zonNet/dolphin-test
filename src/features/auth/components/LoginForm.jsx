@@ -7,7 +7,7 @@ import FormTitle from "./FormTitle";
 import PhoneField from "./PhoneField";
 import { validatePhone } from "../../../utils/phoneValidation";
 
-const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
+const LoginForm = ({ onSubmit, loading,  setPhoneNumber }) => {
   const { t } = useTranslation();
   const {
     handleSubmit,
@@ -63,12 +63,12 @@ const LoginForm = ({ onSubmit, loading, error, setPhoneNumber }) => {
             touchedFields={touchedFields}
           />
 
-          {/* Backend Error */}
-          {error && (
-            <p className="text-orangedeep text-xs sm:text-sm">
-              {error}
-            </p>
-          )}
+          {/* Backend Error
+          // {error && (
+          //   <p className="text-orangedeep text-xs sm:text-sm">
+          //     {error}
+          //   </p>
+          // )} */}
 
           {/* Submit Button */}
           <Button
