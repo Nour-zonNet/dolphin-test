@@ -12,7 +12,6 @@ const ProfileActions = () => {
   // Delete modal handlers
   const handleCloseDeleteModal = () => setIsDeleteModalOpen(false);
   const handleConfirmDelete = () => {
-    console.log("Account deletion confirmed");
     setIsDeleteModalOpen(false);
   };
 

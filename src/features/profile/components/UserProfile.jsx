@@ -26,8 +26,7 @@ const UserProfile = () => {
     // send to backend
     dispatch(updateUserImage({ userId, file }))
       .unwrap()
-      .then(() => console.log("Profile image updated successfully"))
-      .catch((err) => console.error("Failed to update profile image:", err));
+
   };
 
   const handleSwitch = async (bro) => {

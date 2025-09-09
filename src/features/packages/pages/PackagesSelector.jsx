@@ -13,7 +13,6 @@ const DataPlanSelector = () => {
 
   const [selectedPlanIds, setSelectedPlanIds] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState("");
-  console.log(all);
 
   const formatPrice = React.useCallback((plan) => {
     if (plan.discountPercentage > 0) {

@@ -56,7 +56,6 @@ const MyComponent = () => {
   const handleDelete = () => {
     openConfirmModal(
       { title: "Delete Item", message: "Are you sure?" },
-      () => console.log("Item deleted") // Callback function
     );
   };
 };
@@ -70,7 +69,6 @@ openChangeGroupModal(
   { currentGroup: "Group A", availableGroups: ["A", "B", "C"] },
   (selectedGroup) => {
     // This callback is executed when user confirms
-    console.log("Changed to:", selectedGroup);
     // Update user's group in backend
   }
 );

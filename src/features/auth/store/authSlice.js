@@ -12,7 +12,7 @@ export const fetchCurrentUser = createAsyncThunk(
       const response = await authRepository.getProfile();
       return response.data;
     } catch (error) {
-      console.log(error);
+      
       return rejectWithValue(
         error.response?.data?.error || "Failed to fetch user"
       );
@@ -61,7 +61,7 @@ export const loginUser = createAsyncThunk(
 
       return response;
     } catch (error) {
-      console.log(error);
+      
       return rejectWithValue(
         error.response?.data?.error || "Login failed. Please try again."
       );
@@ -77,8 +77,7 @@ export const registerUser = createAsyncThunk(
 
       return response.data; // هترجع بيانات المستخدم + token
     } catch (err) {
-      console.log(err);
-      console.log(err.response.data.error);
+      
       return rejectWithValue(err.response.data.error || "Server error");
     }
   }
@@ -92,7 +91,7 @@ export const checkPhone = createAsyncThunk(
 
       return response;
     } catch (error) {
-      console.log(error);
+      
       error.response?.data?.errors[0];
       return rejectWithValue(error.response?.data?.errors[0] || "Server error");
     }
@@ -104,10 +103,9 @@ export const verifyOtp = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await authRepository.verifyOtp(data);
-      console.log(response);
       return response;
     } catch (error) {
-      console.log(error);
+      
       return rejectWithValue(error.response.data.error || "Server error");
     }
   }

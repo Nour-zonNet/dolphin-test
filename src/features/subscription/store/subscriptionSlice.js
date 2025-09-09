@@ -65,7 +65,6 @@ export const changeGroupSubscription = createAsyncThunk(
   async ({ id, groupId }, thunkAPI) => {
     try {
       const res = await subscriptionRepository.changeGroup(id, groupId);
-      console.log("API data:", res.data); // This is the actual subscription object
       return res.data; // ← Return the nested data, not the whole response
     } catch (err) {
       return handleError(err, thunkAPI);

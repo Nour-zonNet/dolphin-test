@@ -21,7 +21,7 @@ i18n
   .init({
     resources,
     fallbackLng: "ar", // Default to Arabic since the app is primarily in Arabic
-    debug: import.meta.env && import.meta.env.DEV,
+    // debug: import.meta.env && import.meta.env.DEV,
     supportedLngs: ["ar", "en"],
     nonExplicitSupportedLngs: true,
 
