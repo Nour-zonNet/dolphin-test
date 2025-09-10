@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import {
   Calender,
   CorrectCircle,
@@ -9,7 +10,8 @@ import {
 import WeeklySchedulePopup from "./WeeklySchedulePopup";
 import { CardKite, PackagesBorder, Star } from "@/utils/Illustrations";
 
-const PackageCard = React.memo(({ item, color, image }) => {
+const PackageCard = React.memo(({ item, color, image, status = "active",
+  daysRemaining = 0 }) => {
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const { t } = useTranslation();
 
@@ -17,7 +19,7 @@ const PackageCard = React.memo(({ item, color, image }) => {
 
   const handleOpenSchedule = useCallback(() => setIsScheduleOpen(true), []);
   const handleCloseSchedule = useCallback(() => setIsScheduleOpen(false), []);
-
+  const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
   return (
     <div className="relative w-full mx-auto px-4 pl-8 ">
       {/* Border Illustration */}
@@ -69,11 +71,19 @@ const PackageCard = React.memo(({ item, color, image }) => {
           </div>
 
           {/* Status & Group */}
-          <div className="flex  items-center gap-3  px-4 relative z-10">
-            <div className="flex items-center gap-2 bg-[#FCF0E0] min-w-[100px] h-[34px] font-semibold rounded-3xl px-3 shadow-sm">
+          <div className="flex items-center gap-3 px-4 relative z-10">
+            {/* <div className="flex items-center gap-2 bg-[#FCF0E0] min-w-[100px] h-[34px] font-semibold rounded-3xl px-3 shadow-sm">
               <CorrectCircle className="w-4 h-4 text-status" />
               <span className="text-status text-xs xs:text-sm">
                 {item.status ?? t("subscription.active")}
+              </span>
+            </div> */}
+            <div className={`flex items-center justify-center gap-2 rounded-3xl px-2 py-1 ${config.color}`}>
+              <config.icon className="w-5" />
+              <span className="font-semibold text-sm md:text-base">
+                {typeof config.label === "function"
+                  ? config.label(daysRemaining)
+                  : config.label}
               </span>
             </div>
             <p className="text-navyteal font-semibold text-xs xs:text-sm">
@@ -108,6 +118,8 @@ const PackageCard = React.memo(({ item, color, image }) => {
       <WeeklySchedulePopup
         open={isScheduleOpen}
         setOpen={handleCloseSchedule}
+        groupId={item.group_id}
+        packageName={item.package_name}
       />
     </div>
   );

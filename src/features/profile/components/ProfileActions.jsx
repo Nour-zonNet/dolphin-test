@@ -41,7 +41,7 @@ const ProfileActions = () => {
         // onClick={() => setIsDeleteModalOpen(true)}
       >
         <img
-          className="w-6 md:w-8"
+          className="w-4 md:w-5 lg:w-6"
           alt="Delete"
           src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1-3.svg"
         />

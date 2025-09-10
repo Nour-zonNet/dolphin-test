@@ -13,7 +13,7 @@ export const STATUS_CONFIG = {
     icon: Checked 
   },
   trial: {
-    color: "border border-[#99A1A7] text-status h-9 w-32 px-4 font-semibold",
+    color: "border border-[#99A1A7] text-status md:h-9 md:w-32 px-4 font-semibold",
     label: () => "تجريبي",
     actions: ["reactivate"],
     message: "انتهت الفترة التجريبية الخاصة بك مدد الاشتراك لمتابعة الاستفادة",
@@ -35,7 +35,7 @@ export const STATUS_CONFIG = {
     icon: Finished
   },
   cancelled: {
-    color: "bg-[#FFD8E4] text-status h-9 w-32 px-4 font-semibold",
+    color: "bg-[#FFD8E4] text-status md:h-9 md:w-32 px-4 font-semibold",
     label: () => "ملغاة",
     actions: ["canceled"],
     message: "لقد قمت بتغيير الاشتراك لإعادة التفعيل أرسل طلب عبر الضغط علي زر  إعادة تفعيل الاشتراك",

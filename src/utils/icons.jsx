@@ -530,8 +530,9 @@ export const SupportIcon = ({ className, width = "48", height = "48" }) => (
   </svg>
 );
 
-export const Cross = ({ width = "21", height = "21", fill = "#404040" }) => (
+export const Cross = ({ className, width = "21", height = "21", fill = "#404040" }) => (
   <svg
+    className={className}
     width={width}
     height={height}
     viewBox="0 0 21 21"
@@ -992,10 +993,9 @@ export const Finished = () => (
   </svg>
 );
 
-export const Experimental = () => (
+export const Experimental = ({ className }) => (
   <svg
-    width="25"
-    height="25"
+    className={className}
     viewBox="0 0 25 25"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

@@ -11,8 +11,8 @@ class PackagesRepository {
     const { data } = await api.get(ENDPOINTS.MY_PACKAGES);
     return data;
   }
-  async getScheduleById(packageId) {
-    const { data } = await api.get(ENDPOINTS.SCHEDULE_OF_PACKAGE + packageId);
+  async getScheduleById(groupId) {
+    const { data } = await api.get(ENDPOINTS.SCHEDULE_OF_PACKAGE + groupId);
     return data;
   }
 

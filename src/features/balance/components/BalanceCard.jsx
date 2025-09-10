@@ -4,7 +4,7 @@ import { Riyal } from "@/utils/Illustrations";
 
 const BalanceCard = ({ user }) => {
   return (
-    <div className="flex items-center justify-center w-[90%] mx-auto">
+    <div className="flex items-center justify-center w-[90%] mx-auto mb-10">
         <div className="relative inline-block mt-6 md:mt-12 px-4 mx-auto">
         {/* The card image */}
         <div className="flex items-center justify-center">

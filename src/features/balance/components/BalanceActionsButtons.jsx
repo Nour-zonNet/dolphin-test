@@ -12,7 +12,8 @@ const BalanceActionsButtons = () => {
         <div className="flex flex-col md:flex-row w-[90%] lg:w-[60%] mx-auto gap-[18px] justify-center items-center my-8 md:my-14">
             <button
             onClick={() => setIsAddBalanceModalOpen(true)} 
-            className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover"
+            disabled
+            className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover disabled:cursor-not-allowed"
             >
             <Plus className="w-3 md:w-4 lg:w-6" />
             <div className="font-semibold text-sm md:text-2xl">
@@ -21,7 +22,8 @@ const BalanceActionsButtons = () => {
             </button>
             <button
             onClick={() => setIsModalOpen(true)} 
-            className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 border border-orangedeep hover:bg-btnClicked transition cursor-pointer rounded-[32px]"
+            disabled
+            className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 border border-orangedeep cursor-pointer rounded-[32px] disabled:cursor-not-allowed"
             >
             <Gift className="w-4 lg:w-6" />
             <div className="font-semibold text-sm md:text-2xl">
