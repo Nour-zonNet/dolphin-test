@@ -10,26 +10,31 @@ import books from "@/assets/schedule/books.svg";
 import { formatArabicTime, getRemainingTime } from "../../../utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "../../../utils/icons";
 
-const LessonCard = ({ item, color, image }) => {
+const LessonCard = ({ item, color, image, lessonDate }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { start, end } = useMemo(() => {
-    const today = new Date();
-    const [hours, minutes, seconds] = "17:00:00".split(":").map(Number);
-    const startDate = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      hours,
-      minutes,
-      seconds
-    );
-    const durationMinutes = item.duration || 60;
-    const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
-    return { start: startDate, end: endDate };
-  }, [item.start_time, item.duration]);
+  // parse HH:mm:ss from API
+  const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
 
+  // استخدم اليوم اللي جالك من الـ Slider
+  const baseDate = new Date(lessonDate);
+
+  const startDate = new Date(
+    baseDate.getFullYear(),
+    baseDate.getMonth(),
+    baseDate.getDate(),
+    hours,
+    minutes,
+    seconds || 0
+  );
+
+  const durationMinutes = item.duration || 60;
+  const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+
+  return { start: startDate, end: endDate };
+}, [item.start_time, item.duration, lessonDate]);
   const lessonStatus = useMemo(() => {
     const now = new Date();
     if (now >= start && now <= end) return "live";
@@ -37,7 +42,10 @@ const LessonCard = ({ item, color, image }) => {
     return "upcoming";
   }, [start, end]);
 
-  const handleEnterLesson = useCallback(() => navigate("lessoncontent"), [navigate]);
+  const handleEnterLesson = useCallback(
+    () => navigate("lessoncontent"),
+    [navigate]
+  );
   const renderButton = () => {
     if (lessonStatus === "upcoming") {
       return (
@@ -99,27 +107,47 @@ const LessonCard = ({ item, color, image }) => {
       );
     }
   };
-  const { statusText, statusColor, statusIcon } = useMemo(() => {
-    if (lessonStatus === "upcoming") {
-      return {
-        statusText: `متبقي ${getRemainingTime(item.start_time)}`,
-        statusColor: "text-[#ba7c28]",
-        statusIcon: <SandGlass className="w-4" />,
-      };
-    }
-    if (lessonStatus === "live") {
-      return {
-        statusText: "الحصة بدأت",
-        statusColor: "text-green-600",
-        statusIcon: <NotifyIcon className="w-4" />,
-      };
-    }
+const { statusText, statusColor, statusIcon } = useMemo(() => {
+  const now = new Date();
+
+  // نشوف هل يوم الحصة هو نفس يوم النهارده
+  const isSameDay =
+    start.getDate() === now.getDate() &&
+    start.getMonth() === now.getMonth() &&
+    start.getFullYear() === now.getFullYear();
+
+  if (!isSameDay) {
     return {
-      statusText: "انتهت الحصة",
-      statusColor: "text-red-500",
-      statusIcon: <TimeCheck className="w-4" />,
+      statusText: `الحصة يوم ${start.toLocaleDateString("ar-EG", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      })} - ${formatArabicTime(item.start_time)}`,
+      statusColor: "text-blue-600",
+      statusIcon: <SandGlass className="w-4" />,
     };
-  }, [lessonStatus, item.start_time]);
+  }
+
+  if (lessonStatus === "upcoming") {
+    return {
+      statusText: `متبقي ${getRemainingTime(item.start_time)}`,
+      statusColor: "text-[#ba7c28]",
+      statusIcon: <SandGlass className="w-4" />,
+    };
+  }
+  if (lessonStatus === "live") {
+    return {
+      statusText: "الحصة بدأت",
+      statusColor: "text-green-600",
+      statusIcon: <NotifyIcon className="w-4" />,
+    };
+  }
+  return {
+    statusText: "انتهت الحصة",
+    statusColor: "text-red-500",
+    statusIcon: <TimeCheck className="w-4" />,
+  };
+}, [lessonStatus, item.start_time, start]);
 
   return (
     <div className="relative">

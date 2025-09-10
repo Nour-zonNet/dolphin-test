@@ -20,17 +20,16 @@ export const Checkout = () => {
   }, [selectedPackages]);
 
   const handleSubmitTrial = useCallback(async () => {
-    const res = await createTrialSubscription(
+     await createTrialSubscription(
       selectedPackages.map((pkg) => ({ package_id: pkg.id, start_date: null }))
     );
-    console.log("Trial subscription response:", res);
-    console.log("selectedPackages checkout:", selectedPackages);
+
     // window.location.href = "/schedule";
 
     openStatusModal(MODAL_TYPES.SUCCESS, {
       title: "تم بدء الفترة التجريبية",
       message: "تم تفعيل الفترة التجريبية للباقات المختارة.",
-      onClose: () => (window.location.href = "/schedule"),
+      // onClose: () => (window.location.href = "/schedule"),
     });
   }, [createTrialSubscription, openStatusModal, selectedPackages]);
 

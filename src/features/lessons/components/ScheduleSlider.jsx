@@ -70,6 +70,7 @@ const ScheduleSlider = () => {
                           item={lesson}
                           image={image}
                           color={bgColor}
+                           lessonDate={day.date}  
                         />
                       );
                     })}

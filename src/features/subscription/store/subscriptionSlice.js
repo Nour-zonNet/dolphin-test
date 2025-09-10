@@ -75,9 +75,11 @@ export const createTrialSubscription = createAsyncThunk(
   "subscriptions/createTrial",
   async (ids, thunkAPI) => {
     try {
+      console.log( ids);
       const res = await subscriptionRepository.createTrialSubscription(ids);
       return res.data; // ← Return the nested data, not the whole response
     } catch (err) {
+      console.log(err);
       return handleError(err, thunkAPI);
     }
   }
