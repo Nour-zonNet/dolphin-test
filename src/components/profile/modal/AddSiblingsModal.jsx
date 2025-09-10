@@ -17,10 +17,10 @@ const handleSubmit = (e) => {
   if (fullName.trim() && gradeLevel && profileImage) {
     const formData = new FormData();
     formData.append("name", fullName.trim());
-    formData.append("grade", gradeLevel); // keep as string, API will parse
+    formData.append("grade", gradeLevel);
     formData.append("image", profileImage);
 
-    onSubmit(formData); // <-- send FormData, not plain object
+    onSubmit(formData); 
     setFullName("");
     setGradeLevel("");
     setProfileImage(null);
