@@ -62,7 +62,10 @@ const Card = React.memo(({ item }) => {
   }, [isOpen]);
 
   function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString("ar-EG");
+    const d = new Date(dateString);
+    const dayName = d.toLocaleDateString("ar-EG", { weekday: "long" });
+    const datePart = d.toLocaleDateString("ar-EG");
+    return `${dayName} - ${datePart}`;
   }
 
   // Status Badge
@@ -143,10 +146,10 @@ const Card = React.memo(({ item }) => {
     <div className="w-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
       {/* Header */}
       <div
-        className="flex md:items-center justify-between p-4 cursor-pointer select-none"
+        className="flex flex-col  sm:flex-row gap-3 sm:gap-0 md:items-center justify-between p-3 sm:p-4 cursor-pointer select-none"
         onClick={toggleOpen}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-3 sm:gap-4">
           {image && (
             <img
               src={image}
@@ -154,15 +157,13 @@ const Card = React.memo(({ item }) => {
               className={`${config.bg} rounded h-[50px] w-[50px]`}
             />
           )}
-          <h3 className="font-semibold md:text-xl text-sm text-navyteal">
+          <h3 className="font-semibold text-base sm:text-lg md:text-xl text-navyteal">
             {title}
           </h3>
-        </div>
-
-        <div className="flex items-center gap-4">
-          {StatusBadge}
           {ToggleIcon}
         </div>
+
+        <div className="flex items-center justify-center gap-4">{StatusBadge}</div>
       </div>
 
       {/* Expandable Content */}
@@ -171,14 +172,14 @@ const Card = React.memo(({ item }) => {
         style={{ height: contentHeight }}
         className="transition-all duration-500 ease-in-out overflow-hidden"
       >
-        <div className="p-4 border-t border-gray-300 space-y-4 ">
+        <div className="p-3 sm:p-4 border-t border-gray-300 space-y-4 ">
           {/* Subscription Info */}
-          <div className="flex  items-start justify-start  gap-4">
-            <div className="flex  ">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-start gap-3 md:gap-4">
+            <div className="flex">
               <Line className="h-12" fill={config.fill} />
               <div className="flex flex-col gap-2">
-                <InfoRow label="تاريخ الاشتراك:" value={startDate} />
-                <InfoRow label="تاريخ الانتهاء:" value={endDate} />
+                <InfoRow label="تاريخ الاشتراك: " value={startDate} />
+                <InfoRow label="تاريخ الانتهاء: " value={endDate} />
               </div>
             </div>
             <InfoRow label="المواد:" value={subject} strong />
