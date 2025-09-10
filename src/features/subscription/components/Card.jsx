@@ -71,7 +71,7 @@ const Card = React.memo(({ item }) => {
       <span
         className={`text-sm px-3 py-1 rounded-full flex items-center gap-2 ${config.color}`}
       >
-        {config.icon && <config.icon />}
+        {config.icon && <config.icon className="w-4 md:w-6" />}
         {config.label(daysLeft)}
       </span>
     ),

@@ -14,7 +14,7 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (fullName.trim() && gradeLevel) {
-      onSubmit({ name: fullName.trim(), grade: Number(gradeLevel), profileImage });
+      onSubmit({ name: fullName.trim(), grade: Number(gradeLevel), image: profileImage });
       setFullName("");
       setGradeLevel("");
       setProfileImage(null);
