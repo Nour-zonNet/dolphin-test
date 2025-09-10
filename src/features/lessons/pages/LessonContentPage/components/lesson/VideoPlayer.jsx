@@ -54,7 +54,7 @@ const VideoPlayer = () => {
         <div className="absolute md:bottom-12 bottom-2 left-6 right-6 flex items-center justify-between text-white">
           <div className="flex items-center gap-3">
             <Fullscreen className="md:w-5 md:h-5 cursor-pointer" onClick={() => videoRef.current.requestFullscreen()} />
-            <Settings fill="white" className="md:w-6 md:h-6 cursor-pointer" />
+            <Settings fill="white" className="md:w-5 cursor-pointer" />
           </div>
           <span className="bg-black/50 rounded-[64px] px-3 py-1 text-sm">50:07</span>
         </div>

@@ -32,6 +32,7 @@ const Packages = () => {
           <img
             src={notFoundPackages}
             alt="notFoundPackages"
+
             className="w-full max-w-[300px] sm:max-w-[300px] md:max-w-[300px] lg:max-w-[300px] object-contain mx-auto "
           />
           <div className=" flex justify-center  ml-20 text-center xs:ml-20">

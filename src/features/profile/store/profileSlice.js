@@ -1,38 +1,38 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { profileRepository } from "../services/profileService";
 
-// Get profile
+import api from "@/services/api";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchProfile, addBrother, fetchClasses, fetchBrothers, switchAccount, updateUserGradeApi, updateUserImageApi, logoutApi } from "../services/profileService";
+
 export const getProfile = createAsyncThunk("profile/getProfile", async () => {
-  return await profileRepository.getProfile();
+  return await fetchProfile();
 });
 
-// Add sibling
 export const addSibling = createAsyncThunk(
   "profile/addSibling",
   async (siblingData, { dispatch }) => {
-    const result = await profileRepository.addBrother(siblingData);
-    dispatch(getProfile()); // refresh profile
+    const result = await addBrother(siblingData);
+    // After adding, refresh profile
+    dispatch(getProfile());
     return result;
   }
 );
 
-// Get classes
 export const getClasses = createAsyncThunk("profile/getClasses", async () => {
-  return await profileRepository.getClasses();
+  return await fetchClasses();
 });
 
-// Get brothers
 export const getBrothers = createAsyncThunk("profile/getBrothers", async () => {
-  return await profileRepository.getBrothers();
+  return await fetchBrothers();
 });
 
-// Switch account
 export const switchUserAccount = createAsyncThunk(
   "profile/switchUserAccount",
   async (studentId, { rejectWithValue }) => {
     try {
-      const userData = await profileRepository.switchAccount(studentId);
-      const brothers = await profileRepository.getBrothers();
+      const userData = await switchAccount(studentId); // returns userData + token
+
+      const brothers = await fetchBrothers();
+
       return { user: userData, brothers };
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -40,35 +40,45 @@ export const switchUserAccount = createAsyncThunk(
   }
 );
 
-// Update image
 export const updateUserImage = createAsyncThunk(
   "profile/updateUserImage",
   async ({ userId, file }, { rejectWithValue }) => {
     try {
-      return await profileRepository.updateUserImage(userId, file);
+      const data = await updateUserImageApi(userId, file);
+      return data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
-// Update grade
 export const updateUserGrade = createAsyncThunk(
   "profile/updateUserGrade",
   async ({ userId, gradeId }, { rejectWithValue }) => {
     try {
-      return await profileRepository.updateUserGrade(userId, gradeId);
+      const response = await updateUserGradeApi(userId, gradeId);
+      return response.data; 
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
-// Logout
-export const logout = createAsyncThunk("profile/logout", async () => {
-  await profileRepository.logout();
-  return true;
-});
+export const logout = createAsyncThunk(
+  "profile/logout",
+  async () => {
+    try {
+      await logoutApi(); 
+    } catch (err) {
+      console.warn("Logout API failed, continuing local logout:", err?.response?.data || err);
+    }
+
+    // Always clear locally
+    localStorage.removeItem("token");
+      delete api.defaults.headers.common["Authorization"];
+      return true;
+  }
+);
 
 const profileSlice = createSlice({
   name: "profile",
@@ -216,6 +226,5 @@ const profileSlice = createSlice({
   },
 });
 
-export const { clearProfile ,addBrotherLocal} = profileSlice.actions;
-
+export const { clearProfile, addBrotherLocal } = profileSlice.actions;
 export default profileSlice.reducer;

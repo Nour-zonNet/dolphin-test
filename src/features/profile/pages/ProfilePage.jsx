@@ -8,7 +8,7 @@ import SubscriptionSection from "../components/SubscriptionSection";
 import { ProfileActions } from "../components";
 import { MobileNav } from "@/components";
 import { useProfile } from "@/features/profile/hooks/useProfile";
-import Header from "../../../components/layout/Header";
+import { HomeSupportBtn } from '@/components'
 
 const ProfilePage = () => {
   const { user } = useProfile();
@@ -32,6 +32,7 @@ const ProfilePage = () => {
         <ProfileActions />
       </main>
       <MobileNav />
+      <HomeSupportBtn />
     </div>
   );
 };

@@ -14,7 +14,7 @@ const LessonContentPage = () => {
           <div className="flex flex-col xl:flex-row items-center gap-10 xl:w-1/2 w-full">
             <VerticalLine className="hidden xl:flex" />
             <HorizontalLine className="flex xl:hidden w-[100%]" />
-            <div className="w-full">
+            <div className="w-full mb-10">
               <AttachmentsSection />
               <QuizSection />
             </div>

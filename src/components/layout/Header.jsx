@@ -12,7 +12,7 @@ export const Header = ({ title, balance, showBalanceSection = true }) => {
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="outline-0 border border-bordercolor md:w-[60px] md:h-[60px] w-[35px] h-[35px] rounded-full flex items-center justify-center"
+          className="outline-0 border border-bordercolor md:w-[60px] md:h-[60px] w-[35px] h-[35px] rounded-full flex items-center justify-center cursor-pointer"
         >
           <RightArrow className="w-[20px] md:w-[40px]" />
         </button>
