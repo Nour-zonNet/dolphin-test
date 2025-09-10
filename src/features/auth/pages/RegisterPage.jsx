@@ -7,6 +7,9 @@ import { useDispatch } from "react-redux";
 import { showModal } from "../../../store/modalSlice";
 import { MODAL_TYPES } from "../../../constants/MODAL_TYPES";
 import { Overlay, Spinner } from "@/components/feedback";
+import { fetchAllPackages, fetchMyPackages } from "../../packages/store/packagesSlice";
+import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
+import { fetchSubscriptions } from "@/features/subscription/store/subscriptionSlice";
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
@@ -40,6 +43,12 @@ const RegisterPage = () => {
 
     if (res?.meta?.requestStatus === "fulfilled") {
       // navigate("/auth/add");
+           await Promise.all([
+            dispatch(fetchAllPackages()),
+            dispatch(fetchMyPackages()),
+            dispatch(fetchLessons()),
+            dispatch(fetchSubscriptions()),
+          ]);
       navigate("/schedule");
       return;
     }

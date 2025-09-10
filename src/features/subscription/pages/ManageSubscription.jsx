@@ -7,7 +7,7 @@ import { useSubscriptions } from "../hooks/useSubscriptions";
 
   return (
     <>
-      <Header title="الباقات والاشتراكات" balance="0" showBalanceSection={false} />
+      <Header title="الباقات والاشتراكات" onBack={"/subscriptions"} balance="0" showBalanceSection={false} />
       <main className="pt-8 flex justify-center flex-col items-center w-[90%] mx-auto">
         <ActionButtons />
 

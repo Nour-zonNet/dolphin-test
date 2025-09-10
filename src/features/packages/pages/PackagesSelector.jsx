@@ -84,7 +84,7 @@ const DataPlanSelector = () => {
   return (
     <div className="min-h-svh  space-y-4">
       {/* Header */}
-      <Header balance={"0"} title=" اختر باقتك المناسبة"/>
+      <Header balance={"0"} title=" اختر باقتك المناسبة" onBack={"/manage-subscription"}/>
     
 
       {/* Search Bar */}

@@ -3,7 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 // import { useTranslation } from "react-i18next";
 import { Balance, RightArrow } from "@/utils/icons";
 
-export const Header = ({ title, balance, showBalanceSection = true }) => {
+export const Header = ({
+  title,
+  balance,
+  onBack,
+  showBalanceSection = true,
+}) => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
   return (
@@ -11,7 +16,7 @@ export const Header = ({ title, balance, showBalanceSection = true }) => {
       <div className="w-[90%] mx-auto flex items-center md:items-center justify-between">
         {/* Back Button */}
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate(onBack)}
           className="outline-0 border border-bordercolor md:w-[60px] md:h-[60px] w-[35px] h-[35px] rounded-full flex items-center justify-center cursor-pointer"
         >
           <RightArrow className="w-[20px] md:w-[40px]" />
