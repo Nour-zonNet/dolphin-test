@@ -50,7 +50,7 @@ export default function MyPhone({ value, onChange }) {
   return (
     <div
       dir="ltr"
-      className="p-1 px-4 border border-graycustom/50 rounded-full focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-colors"
+      className="p-1 px-4 border border-graycustom/50 rounded-full focus-within:border-orangedeep focus-within:ring-1 focus-within:ring-orangedeep transition-colors "
     >
       <PhoneInput
         value={value}
@@ -60,7 +60,7 @@ export default function MyPhone({ value, onChange }) {
         preferredCountries={SUPPORTED_COUNTRIES}
         disableCountryGuess={false}
         forceDialCode
-        inputClassName="border-0! w-full text-base! rounded-none focus:outline-0! focus:ring-0!"
+        inputClassName="border-0! w-full text-base! rounded-none focus:outline-0! focus:ring-0! !focus:outline-orangedeep"
         countrySelectorStyleProps={{
           flagClassName: "border-0! w-7 h-7 bg-none!",
           buttonClassName: "border-0! bg-none! hover:bg-gray-50! transition-colors",

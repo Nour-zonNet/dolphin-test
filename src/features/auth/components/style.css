@@ -1,0 +1,4 @@
+select option:hover {
+  background-color: red ;  /* الأزرق */
+  color: #fff;
+}

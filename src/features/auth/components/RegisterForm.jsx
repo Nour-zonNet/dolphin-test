@@ -4,7 +4,7 @@ import { Lock } from "../../../utils/icons";
 import OTPInput from "../../../components/ui/InputOtp";
 import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
-
+import "./style.css"
 const RegisterForm = ({ onSubmit, loading, error }) => {
   const { t } = useTranslation();
   const {
@@ -27,9 +27,9 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
   return (
     <div className="flex justify-center items-center lg:justify-center lg:space-x-10  lg:items-stretch flex-col lg:flex-row mx-auto pb-35 pt-2">
       {/* Left side image + title (mobile view) */}
-      <div className="flex items-center lg:items-center justify-end flex-1/3 gap-2">
+      <div className="flex items-center lg:items-center justify-end flex-1/3 gap-2 ml-10 md:ml-0">
         <img
-          src={dolphinChild}
+          src={dolphinChild}  
           alt="Path"
           className="h-29 sm:h-48 md:h-48 lg:h-135 object-contain  lg:mb-6"
         />
@@ -37,7 +37,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
       </div>
 
       {/* Right side form */}
-      <div className=" relative w-full flex  flex-2/3 justify-center items-center lg:items-start  lg:justify-start  flex-col  mx-auto">
+      <div className=" relative w-full flex  flex-2/3 justify-center items-center lg:items-start  lg:justify-start  flex-col  mx-auto ">
         <div className="flex">
           <FormTitle text={t("auth.loginToAccount")} />
         </div>
@@ -61,7 +61,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   placeholder={t("auth.fullNamePlaceholder")}
                   value={field.value ?? ""}
                   onChange={field.onChange}
-                  className="placeholder:text-base placeholder:sm:text-base placeholder:md:text-2xl border placeholder:text-bordercolor rounded-full border-graycustom/50 px-4 py-2 md:py-4"
+                  className=" focus:outline-orangedeep  placeholder:text-xs placeholder:md:text-2xl border placeholder:text-bordercolor rounded-full border-graycustom/50 px-4 py-2 md:py-4"
                 />
               )}
             />
@@ -74,7 +74,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
 
           {/* الصف الدراسي */}
           <div className="flex flex-col gap-2">
-            <label className="font-semibold text-base sm:text-base md:text-2xl text-[#144B6B]">
+            <label className="font-semibold text-base sm:text-base md:text-2xl  text-[#144B6B]">
               {t("auth.grade")}
             </label>
             <Controller
@@ -84,10 +84,10 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               render={({ field }) => (
                 <select
                   {...field}
-                  className="border rounded-full placeholder:text-bordercolor text-graycustom border-graycustom/50 px-4 py-2 md:py-4"
+                  className="border rounded-full text-xs md:text-base  placeholder:text-xs placeholder:md:text-2xl  placeholder:text-bordercolor focus:outline-orangedeep text-graycustom border-graycustom/50 px-4 py-2 md:py-4"
                 >
-                  <option value="">{t("auth.selectGrade")}</option>
-                  <option value="1">{t("auth.grade1")}</option>
+                  <option className="!text-xs"  value="">{t("auth.selectGrade")}</option>
+                  <option className="!hover:bg-orangedeep" value="1">{t("auth.grade1")}</option>
                   <option value="2">{t("auth.grade2")}</option>
                   <option value="3">{t("auth.grade3")}</option>
                 </select>
@@ -178,7 +178,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   placeholder={t("auth.inviteCodePlaceholder")}
                   value={field.value ?? ""}
                   onChange={field.onChange}
-                  className="border rounded-full border-graycustom/50 px-4 py-2 md:py-4"
+                  className="border rounded-full placeholder:text-xs placeholder:md:text-2xl  border-graycustom/50 px-4 py-2 md:py-4"
                 />
               )}
             />

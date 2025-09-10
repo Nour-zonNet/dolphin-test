@@ -8,7 +8,7 @@ const ProfileInfo = () => {
 
   return (
     <Link
-      className="flex flex-col items-center text-darkblue hover:scale-105 transition cursor-pointer space-y-2"
+      className="flex flex-col items-center justify-between text-darkblue hover:scale-105 transition cursor-pointer space-y-2"
       to={"/profile"}
     >
       <div className="relative w-8 h-8 rounded-full border border-bordercolor/40 flex items-center justify-center overflow-hidden bg-white">
