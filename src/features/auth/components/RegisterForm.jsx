@@ -5,11 +5,11 @@ import { Lock } from "../../../utils/icons";
 import OTPInput from "../../../components/ui/InputOtp";
 import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
-import { useClasses } from '@/features/profile/hooks/useClasses';
+import { useClasses } from "@/features/profile/hooks/useClasses";
 
-import "./style.css"
+import "./style.css";
 const RegisterForm = ({ onSubmit, loading, error }) => {
-    const { classes } = useClasses();
+  const { classes } = useClasses();
   const { t } = useTranslation();
   const {
     control,
@@ -38,7 +38,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
       {/* Left side image + title (mobile view) */}
       <div className="flex items-center lg:items-center justify-end flex-1/3 gap-2 ml-10 md:ml-0">
         <img
-          src={dolphinChild}  
+          src={dolphinChild}
           alt="Path"
           className="h-29 sm:h-48 md:h-48 lg:h-135 object-contain  lg:mb-6"
         />
@@ -71,7 +71,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   placeholder={t("auth.fullNamePlaceholder")}
                   value={field.value ?? ""}
                   onChange={field.onChange}
-                  className=" focus:outline-orangedeep  placeholder:text-xs placeholder:md:text-2xl border placeholder:text-bordercolor rounded-full border-graycustom/50 px-4 py-2 md:py-4"
+                  className=" focus:outline-orangedeep  placeholder:text-xs placeholder:md:text-lg border placeholder:text-bordercolor rounded-full border-graycustom/50 px-4 py-2 md:py-4"
                 />
               )}
             />
@@ -94,9 +94,11 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               render={({ field }) => (
                 <select
                   {...field}
-                  className="border rounded-full text-xs md:text-base  placeholder:text-xs placeholder:md:text-2xl  placeholder:text-bordercolor focus:outline-orangedeep text-graycustom border-graycustom/50 px-4 py-2 md:py-4"
+                  className="border rounded-full text-xs md:text-lg  placeholder:text-xs placeholder:md:text-2xl  placeholder:text-bordercolor focus:outline-orangedeep text-graycustom border-graycustom/50 px-4 py-2 md:py-4"
                 >
-                  <option className="!text-xs" value="">{t("auth.selectGrade")}</option>
+                  <option className="!text-xs" value="">
+                    {t("auth.selectGrade")}
+                  </option>
                   {classes?.map((cls) => (
                     <option key={cls.id} value={String(cls.id)}>
                       {cls.name}
@@ -192,7 +194,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   placeholder={t("auth.inviteCodePlaceholder")}
                   value={field.value ?? ""}
                   onChange={field.onChange}
-                  className="border rounded-full placeholder:text-xs placeholder:md:text-2xl  border-graycustom/50 px-4 py-2 md:py-4"
+                  className="border rounded-full placeholder:text-xs placeholder:md:text-lg  border-graycustom/50 px-4 py-2 md:py-4"
                 />
               )}
             />
@@ -203,7 +205,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-orangedeep text-navyteal font-bold py-3 px-8 rounded-full flex items-center justify-center gap-2 hover:bg-yellow-600 transition"
+              className="bg-orangedeep w-full text-navyteal font-bold text-base md:text-lg py-2 md:py-3 px-8 rounded-full flex items-center justify-center gap-2 hover:bg-yellow-600 transition"
             >
               <Lock size={18} />
               {loading ? t("auth.registering") : t("auth.completeRegistration")}

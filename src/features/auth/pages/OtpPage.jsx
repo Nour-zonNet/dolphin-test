@@ -22,11 +22,11 @@ const OtpPage = () => {
     return <Navigate to="/schedule" replace />;
   }
 
-  // Redirect if no phone number
-  if (!phoneNumber) {
-    navigate("/auth/phone");
-    return null;
-  }
+  // // Redirect if no phone number
+  // if (!phoneNumber) {
+  //   navigate("/auth/phone");
+  //   return null;
+  // }
 
   const handleOtpSubmit = async () =>
     // data

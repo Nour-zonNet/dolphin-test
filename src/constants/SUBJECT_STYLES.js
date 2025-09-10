@@ -9,7 +9,7 @@ export const subjectStyles = {
   },
   "القرأن": {
     image: quranImg,
-    bgColor: "#10B981", // green
+    bgColor: "#2E7D32", // green
   },
   "رياضيات": {
     image: tooth,

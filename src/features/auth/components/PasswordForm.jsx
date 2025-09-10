@@ -52,7 +52,7 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
         icon={<Lock />}
         text={loading ? t('auth.loggingIn') : t('auth.completingRegistration')}
       />
-      <Link to={"/auth/forgetpassword"} className="underline block text-orangedeep text-center mt-4 ">نسيت الرقم السرى؟</Link>
+      <Link to={"/auth/forgetpassword"} className="underline block text-orangedeep text-center mt-6  md:mt-8">نسيت الرقم السرى؟</Link>
     </form>
   );
 };

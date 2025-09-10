@@ -17,8 +17,8 @@ const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
   ];
   return (
     <div
-      className={` rounded-2xl  cursor-pointer border-0   ${
-        selected ? "shadow-md border-1  " : "border-gray-200 "
+      className={` rounded-2xl   cursor-pointer border-0   ${
+        selected ? "border-1  border-gray-400/60" : "border-gray-200/40 "
       }`}
       onClick={() => onSelect(plan.id)}
     >
@@ -26,7 +26,7 @@ const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
         <div
           className={`w-6 h-6 rounded-sm  border flex items-center justify-center ${
             selected
-              ? "bg-blue-500 border-blue-500 text-white"
+              ? "bg-orangedeep border-oranbg-orangedeep text-white"
               : "border-gray-600 border-2  text-gray-400"
           }`}
         >
@@ -63,7 +63,7 @@ const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
                 {" "}
                 سعر الباقة : {formatPrice(plan)}
               </span>
-            </div> 
+            </div>
           </div>
         </div>
       </div>
@@ -92,32 +92,29 @@ const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
             </div>
           )}
           {plan.times && plan.times.length > 0 && (
-            <div className="mt-3 flex items-center  space-x-3">
-              <Calender1 />
-              <span className="text-navyteal font-semibold">
-                موعد البداية :{" "}
-              </span>
-              <span className="text-gray-800 font-medium">
-                {new Date(plan.times[0].start_date).toLocaleDateString("ar-EG")}
-              </span>
+            <div className="flex flex-row justify-between item items-center">
+              <div className=" flex items-center  space-x-3">
+                <Calender1 />
+                <span className="text-navyteal text-sm font-semibold text-nowrap">
+                  موعد البداية :{" "}
+                </span>
+                <span className="text-gray-800 font-medium text-sm">
+                  {new Date(plan.times[0].start_date).toLocaleDateString(
+                    "ar-EG"
+                  )}
+                </span>
+              </div>
+              {plan.times &&
+                plan.times.length > 0 &&
+                plan.times.some((t) => new Date(t.start_date) < new Date()) && (
+                    <span className="border-dashed py-1 border-orangedeep text-sm border px-4 rounded-full md:text-base text-nowrap">
+                      تم بدء الباقة
+                    </span>
+                )}
             </div>
           )}
           <div className="flex items-center justify-between">
-            {plan.times &&
-              plan.times.length > 0 &&
-              plan.times.some((t) => new Date(t.start_date) < new Date()) && (
-                <div>
-                  <span className="border-dashed border-orangedeep border px-4 rounded-full text-base">
-                    تم بدء الباقة
-                  </span>
-                </div>
-              )}
-            <span className="text-nowrap flex items-center gap-2 text-sm  text-status">
-              <Info className="span w-5 text-status " />
-              تفاصيل الباقة
-            </span>
-          </div>
-          {plan.weeklyClasses > 0 && (
+               {plan.weeklyClasses > 0 && (
             <span className=" flex items-center gap-2 text-[#BA7C28] text-sm md:text-lg  font-semibold py-1 rounded-full">
               <img src={Books} alt="" srcSet="" />
               <span className="border-l-3 border-[#D9D9D9] pl-2">
@@ -127,6 +124,12 @@ const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
               <span>{plan.monthlyClasses} حصص شهريا</span>
             </span>
           )}
+            {/* <span className="text-nowrap flex items-center gap-2 text-sm  text-status">
+              <Info className="span w-5 text-status " />
+              تفاصيل الباقة
+            </span> */}
+          </div>
+       
 
           {/* <div className="grid grid-cols-2 gap-4 text-sm">
             <div>

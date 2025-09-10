@@ -16,7 +16,7 @@ const LessonCard = ({ item, color, image }) => {
 
   const { start, end } = useMemo(() => {
     const today = new Date();
-    const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
+    const [hours, minutes, seconds] = "17:00:00".split(":").map(Number);
     const startDate = new Date(
       today.getFullYear(),
       today.getMonth(),
@@ -49,12 +49,12 @@ const LessonCard = ({ item, color, image }) => {
               className="cursor-pointer w-16 xs:w-auto"
             />
           </div>
-          <button
+          {/* <button
             disabled
             className="px-4 py-2 text-nowrap text-gray-400 text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-gray-200 rounded-3xl cursor-not-allowed"
           >
             لم تبدأ بعد
-          </button>
+          </button> */}
         </>
       );
     }
@@ -89,12 +89,12 @@ const LessonCard = ({ item, color, image }) => {
               className="cursor-pointer w-16 xs:w-auto"
             />
           </div>
-          <button
+          {/* <button
             onClick={handleEnterLesson}
             className="px-4 py-2 text-nowrap text-gray-400 text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-gray-200 rounded-3xl cursor-not-allowed"
           >
             عرض المحتوى
-          </button>
+          </button> */}
         </>
       );
     }
@@ -158,7 +158,7 @@ const LessonCard = ({ item, color, image }) => {
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
               <span className="text-status text-xs xs:text-base">
-                {item.teacher ?? t("lessons.defaultTeacher")}
+                {item.teacher_name ?? t("lessons.defaultTeacher")}
               </span>
             </div>
             <div className="font-semibold flex items-center gap-2">
@@ -167,7 +167,7 @@ const LessonCard = ({ item, color, image }) => {
                 alt="group icon"
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
-              <span className="text-status text-xs xs:text-base">
+              <span className="text-status text-xs xs:text-base md:text-lg">
                 {item.group}
               </span>
             </div>
@@ -197,7 +197,7 @@ const LessonCard = ({ item, color, image }) => {
         </div>
 
         {/* Right section */}
-        <div className="flex flex-col items-center justify-center mr-auto xs:space-y-3.5 gap-2 xs:gap-0 px-2 mt-4 xs:mt-0 relative z-10 space-y-2">
+        <div className="flex flex-col items-center justify-center mr-auto xs:space-y-3.5 gap-2 xs:gap-0 px-2 relative z-10 space-y-2">
           {renderButton()}
         </div>
       </div>

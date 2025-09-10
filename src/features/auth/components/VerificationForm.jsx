@@ -29,7 +29,7 @@ const VerificationForm = ({ onSubmit }) => {
       onSubmit={handleSubmit}
          className="w-full max-w-lg my-auto mx-auto  space-y-10 mt-20"
     >
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-status text-center mx-auto">
+      <h2 className="text-xl sm:text-2xl md:text-3xl mb-4 font-bold text-status text-center mx-auto">
         {t('auth.verificationCode')}
       </h2>
       <p className="text-sm sm:text-base md:text-lg text-subtext text-center max-w-md mx-auto">

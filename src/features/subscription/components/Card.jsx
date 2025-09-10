@@ -171,11 +171,11 @@ const Card = React.memo(({ item }) => {
         style={{ height: contentHeight }}
         className="transition-all duration-500 ease-in-out overflow-hidden"
       >
-        <div className="p-4 border-t border-gray-300 space-y-4 text-right">
+        <div className="p-4 border-t border-gray-300 space-y-4 ">
           {/* Subscription Info */}
-          <div className="flex flex-col md:flex-row justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Line className={config.lineColor} fill={config.fill} />
+          <div className="flex  items-start justify-start  gap-4">
+            <div className="flex  ">
+              <Line className="h-12" fill={config.fill} />
               <div className="flex flex-col gap-2">
                 <InfoRow label="تاريخ الاشتراك:" value={startDate} />
                 <InfoRow label="تاريخ الانتهاء:" value={endDate} />

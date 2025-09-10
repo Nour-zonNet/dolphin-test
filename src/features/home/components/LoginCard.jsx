@@ -9,8 +9,8 @@ const LoginCard = () => {
 
   return (
     // Login Card
-    <div className="w-full md:min-w-md md:max-w-xl lg:min-w-xl relative border-2 border-dashed border-[#0C78B9] rounded-full px-4 xs:px-6 py-4 mt-8 flex flex-row items-center justify-center">
-      <Book className="absolute h-8 bottom-10 right-8" />
+    <div className="w-full max-w-90 md:min-w-md md:max-w-xl lg:min-w-2xl relative border-2 border-dashed border-[#0C78B9] rounded-full px-4 xs:px-6 py-4 mt-8 flex flex-row items-center justify-center xl:mt-4">
+      <Book className="absolute h-8 md:h-10 bottom-12 right-8 md:right-15" />
 
       <div className="flex flex-col items-center text-nowrap text-center">
         <h2 className="text-sm xs:text-lg md:text-[32px] lg:text-[40px] font-bold text-subtext">
@@ -28,8 +28,8 @@ const LoginCard = () => {
         </Link>
       </div>
 
-      <div className="absolute top-10 left-8">
-        <Square className=" w-10" />
+      <div className="absolute top-10 left-8 md:left-12 md:top-13">
+        <Square className=" w-9 md:w-11" />
       </div>
     </div>
   );
