@@ -14,11 +14,11 @@ const SUPPORTED_COUNTRIES = ["qa", "eg", "sa"];
  */
 const getDefaultCountry = () => {
   const lang = navigator.language.toLowerCase();
-  
+
   if (lang.includes("eg")) return "eg";
   if (lang.includes("sa")) return "sa";
   if (lang.includes("qa")) return "qa";
-  
+
   return "eg"; // Default fallback
 };
 
@@ -63,7 +63,8 @@ export default function MyPhone({ value, onChange }) {
         inputClassName="border-0! w-full text-base! rounded-none focus:outline-0! focus:ring-0! !focus:outline-orangedeep"
         countrySelectorStyleProps={{
           flagClassName: "border-0! w-7 h-7 bg-none!",
-          buttonClassName: "border-0! bg-none! hover:bg-gray-50! transition-colors",
+          buttonClassName:
+            "border-0! bg-none! hover:bg-gray-50! transition-colors",
           dropdownStyleProps: {
             className: "border-0 focus:outline-0 shadow-lg",
           },

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-const OTPInput = ({ length = 6, type = "text", onChange }) => {
+const OTPInput = ({ length = 6, type = "text", onChange, autoFocusFirst = true }) => {
   const [otp, setOtp] = useState(Array(length).fill(""));
   const inputsRef = useRef([]);
   const autoMoving = useRef(false); // 👈 Flag to detect auto focus movement
@@ -83,7 +83,7 @@ const OTPInput = ({ length = 6, type = "text", onChange }) => {
           onKeyDown={(e) => handleKeyDown(e, i)}
           onPaste={(e) => handlePaste(e, i)}
           onFocus={(e) => handleFocus(e, i)}
-           autoFocus={i === 0} 
+          autoFocus={autoFocusFirst && i === 0}
           inputMode="numeric"
           pattern="[0-9]*"
           className="aspect-square w-full 

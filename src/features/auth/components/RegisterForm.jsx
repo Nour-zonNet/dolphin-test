@@ -1,11 +1,15 @@
 import { useForm, Controller } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Lock } from "../../../utils/icons";
 import OTPInput from "../../../components/ui/InputOtp";
 import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
+import { useClasses } from '@/features/profile/hooks/useClasses';
+
 import "./style.css"
 const RegisterForm = ({ onSubmit, loading, error }) => {
+    const { classes } = useClasses();
   const { t } = useTranslation();
   const {
     control,
@@ -23,6 +27,11 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
   });
 
   const password = watch("password");
+  const nameInputRef = useRef(null);
+
+  useEffect(() => {
+    nameInputRef.current?.focus();
+  }, []);
 
   return (
     <div className="flex justify-center items-center lg:justify-center lg:space-x-10  lg:items-stretch flex-col lg:flex-row mx-auto pb-35 pt-2">
@@ -57,6 +66,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               rules={{ required: t("auth.fullNameRequired") }}
               render={({ field }) => (
                 <input
+                  ref={nameInputRef}
                   type="text"
                   placeholder={t("auth.fullNamePlaceholder")}
                   value={field.value ?? ""}
@@ -86,10 +96,12 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   {...field}
                   className="border rounded-full text-xs md:text-base  placeholder:text-xs placeholder:md:text-2xl  placeholder:text-bordercolor focus:outline-orangedeep text-graycustom border-graycustom/50 px-4 py-2 md:py-4"
                 >
-                  <option className="!text-xs"  value="">{t("auth.selectGrade")}</option>
-                  <option className="!hover:bg-orangedeep" value="1">{t("auth.grade1")}</option>
-                  <option value="2">{t("auth.grade2")}</option>
-                  <option value="3">{t("auth.grade3")}</option>
+                  <option className="!text-xs" value="">{t("auth.selectGrade")}</option>
+                  {classes?.map((cls) => (
+                    <option key={cls.id} value={String(cls.id)}>
+                      {cls.name}
+                    </option>
+                  ))}
                 </select>
               )}
             />
@@ -125,6 +137,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   type="password"
                   value={field.value || ""}
                   onChange={field.onChange}
+                  autoFocusFirst={false}
                 />
               )}
             />
@@ -154,6 +167,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   type="password"
                   value={field.value || ""}
                   onChange={field.onChange}
+                  autoFocusFirst={false}
                 />
               )}
             />
