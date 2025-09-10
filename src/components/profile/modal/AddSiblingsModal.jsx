@@ -11,16 +11,22 @@ const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
   const { classes, loadingClasses } = useClasses();
   const [profileImage, setProfileImage] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (fullName.trim() && gradeLevel) {
-      onSubmit({ name: fullName.trim(), grade: Number(gradeLevel), profileImage });
-      setFullName("");
-      setGradeLevel("");
-      setProfileImage(null);
-      onClose();
-    }
-  };
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (fullName.trim() && gradeLevel && profileImage) {
+    const formData = new FormData();
+    formData.append("name", fullName.trim());
+    formData.append("grade", gradeLevel); // keep as string, API will parse
+    formData.append("image", profileImage);
+
+    onSubmit(formData); // <-- send FormData, not plain object
+    setFullName("");
+    setGradeLevel("");
+    setProfileImage(null);
+    onClose();
+  }
+};
   
   if (!isOpen) return null;
 

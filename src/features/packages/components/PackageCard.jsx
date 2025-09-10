@@ -95,6 +95,7 @@ const PackageCard = React.memo(({ item, color, image, status = "active",
           <div className="flex flex-row items-center justify-between gap-4 px-4 py-5 relative z-10">
             {/* Schedule Button */}
             <button
+              type="button"
               onClick={handleOpenSchedule}
               className="w-full   text-navyteal text-xs  xs:text-base flex items-center text-nowrap gap-1 max-w-60  bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full  px-4 py-2 sm:py-4  font-medium transition-colors duration-300"
             >

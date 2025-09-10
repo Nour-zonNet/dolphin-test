@@ -104,6 +104,7 @@
     "time": "الوقت",
     "remainingTime": "الوقت المتبقي",
     "defaultTeacher": "أ.حنان",
+    "saturday": "السبت",
     "sunday": "الأحد",
     "monday": "الاثنين",
     "tuesday": "الثلاثاء",
@@ -115,7 +116,7 @@
     "firstGroup": "المجموعة الاولى",
     "previewWeeklySchedule": "معاينة الجدول الأسبوعي",
     "weeklySchedule": "الجدول الأسبوعي",
-    "noLesson": "-"
+     "noLesson": "لا يوجد حصص لهذا الأسبوع"
   },
   "mobileNavigation": {
     "home": "الرئيسية",

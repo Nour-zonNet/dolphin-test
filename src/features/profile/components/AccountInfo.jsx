@@ -4,7 +4,7 @@ import { ProfileCard } from '@/components';
 import { ProfileInputs } from '@/components';
 import { ProfileButtons } from '@/components';
 import { updateUserGrade } from '@/features/profile/store/profileSlice';
-import flag from "@/assets/authentication/flag.svg";
+// import flag from "@/assets/authentication/flag.svg";
 import ChangeGradeModal from '@/components/profile/modal/ChangeGradeModal';
 
 const AccountInfo = ({ user }) => {
@@ -78,7 +78,7 @@ const AccountInfo = ({ user }) => {
                 disabled
                 className="relative border-[#aaaaaa] border-[0.5px] px-10"
               />
-              <img src={flag} alt="Country" className="absolute top-[52%] md:top-1/2 right-8 w-8 md:w-auto" />
+              {/* <img src={flag} alt="Country" className="absolute top-[52%] md:top-1/2 right-8 w-8 md:w-auto" /> */}
             </div>
           </div>
 

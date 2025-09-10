@@ -9,8 +9,8 @@ export const getProfile = createAsyncThunk("profile/getProfile", async () => {
 
 export const addSibling = createAsyncThunk(
   "profile/addSibling",
-  async (siblingData, { dispatch }) => {
-    const result = await addBrother(siblingData);
+  async (formData, { dispatch }) => {
+    const result = await addBrother(formData);
     // After adding, refresh profile
     dispatch(getProfile());
     return result;

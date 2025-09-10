@@ -11,14 +11,14 @@ const ProfileInfo = () => {
       className="flex flex-col items-center justify-between text-darkblue hover:scale-105 transition cursor-pointer space-y-2"
       to={"/profile"}
     >
-      <div className="relative w-8 h-8 rounded-full border border-bordercolor/40 flex items-center justify-center overflow-hidden bg-white">
+      <div className="relative rounded-full border border-bordercolor/40 flex items-center justify-center overflow-hidden bg-white">
         <img
           src={profileImg}
           alt="profile"
           className="w-6 h-6 object-cover group-hover:scale-110 transition"
         />
       </div>
-      <span     className="text-xs text-[#7A8085] sm:text-xs font-semibold">
+      <span className="text-xs text-[#7A8085] sm:text-xs font-semibold">
         {t('mobileNavigation.profile')}</span>
     </Link>
   );

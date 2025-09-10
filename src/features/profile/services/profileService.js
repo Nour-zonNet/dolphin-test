@@ -5,9 +5,18 @@ export const fetchProfile = async () => {
   return response.data.data; 
 };
 
-export const addBrother = async (payload) => {
-  const response = await api.post("/student/add-brother", payload);
-  return response.data.data; 
+// export const addBrother = async (payload) => {
+//   const response = await api.post("/student/add-brother", payload);
+//   return response.data.data; 
+// };
+
+export const addBrother = async (formData) => {
+  const response = await api.post("/student/add-brother", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data.data;
 };
 
 export const fetchClasses = async () => {

@@ -11,7 +11,7 @@ const BalanceDetails = () => {
   const { user } = useProfile();
   return (
     <div>
-        <Header title="تفاصيل الرصيد" balance={0} showBalanceSection={false}/>
+        <Header title="تفاصيل الرصيد" balance={0} showBalanceSection={false} onBack={"/profile"} />
         <BalanceCard user={user}/>
         <BalanceActionsButtons />
         <Divider />

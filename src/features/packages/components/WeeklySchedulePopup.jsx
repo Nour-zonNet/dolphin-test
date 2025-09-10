@@ -8,19 +8,19 @@ import { usePackages } from "@/features/packages/hooks/usePackages";
 const WeeklySchedulePopup = ({ open, setOpen, groupId, packageName }) => {
   const { t } = useTranslation();
   const { schedules, loading, error, getSchedule } = usePackages();
-
+const key = String(groupId);
 useEffect(() => {
-  if (open && groupId && schedules?.[groupId] === undefined) {
-    getSchedule(groupId);
+  if (open && groupId && schedules?.[key] === undefined) {
+    getSchedule(key);
   }
-}, [open, groupId, getSchedule, schedules?.[groupId]]);
+}, [open, groupId, getSchedule, schedules]);
 
+if (!open) return null;
 const schedule = schedules?.[groupId] || {};
 const days = Object.keys(schedule);
-
-const maxRows = Math.max(0, ...days.map((d) => (schedule[d] || []).length));
-if (!open) return null;
-
+const maxRows = schedule
+  ? Math.max(0, ...days.map((d) => (schedule[d] || []).length))
+  : 0;
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="relative w-full max-w-xl lg:max-w-2xl bg-white rounded-3xl shadow-lg overflow-hidden px-4 sm:px-6 max-h-[90vh] overflow-y-auto">
@@ -42,80 +42,69 @@ if (!open) return null;
           </button>
         </div>
 
-         {/* Loading */}
-        {loading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-navyteal"></div>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && !loading && (
-          <div className="text-center py-4 text-red-500">{error}</div>
-        )}
-
-        {/* Schedule Table */}
-        {!loading && !error && days.length > 0 && (
-          <div className="overflow-x-auto pb-4">
-            <table className="w-full text-center border-collapse min-w-[500px]">
-              <thead>
-                <tr className="bg-softblue text-navyteal">
-                  {days.map((day, idx) => (
-                    <th
-                      key={day}
-                      className={`py-2 sm:py-3 font-medium text-xl sm:text-base
-                        ${idx === 0 ? "rounded-br-4xl" : ""}
-                        ${idx === days.length - 1 ? "rounded-tl-4xl" : ""}`}
-                    >
-                      {t(`lessons.${day}`)}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {Array.from({ length: maxRows }).map((_, rowIdx) => (
-                  <tr
-                    key={rowIdx}
-                    className="border-t border-dashed border-normalblue/60 first:border-t-0"
+       {/* Schedule Table */}
+      {!loading && !error && days.length > 0 && (
+        <div className="overflow-x-auto pb-4">
+          <table className="w-full text-center border-collapse min-w-[500px]">
+            <thead>
+              <tr className="bg-softblue text-navyteal">
+                {days.map((day, idx) => (
+                  <th
+                    key={day}
+                    className={`py-2 sm:py-3 font-medium text-xl sm:text-base
+                      ${idx === 0 ? "rounded-br-4xl" : ""}
+                      ${idx === days.length - 1 ? "rounded-tl-4xl" : ""}`}
                   >
-                    {days.map((day, colIdx) => {
-                      const daySchedule = schedule[day] || [];
-                      const item = daySchedule[rowIdx];
-                      return (
-                        <td
-                          key={colIdx}
-                          className="p-3 sm:p-6 border-l border-normalblue/60 last:border-l-0"
-                        >
-                          {item ? (
-                            <div className="flex flex-col items-center gap-2">
-                              <div className="flex items-center gap-1 text-xs sm:text-sm text-darkblue">
-                                <Clock width="16" height="16" /> {item.time}
-                              </div>
-                              <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-normalblue whitespace-nowrap">
-                                <Teacher /> {item.teacher_name}
-                              </div>
-                            </div>
-                          ) : (
-                            <span className="text-gray-400 text-xs sm:text-sm">
-                              {t("packages.noLesson")}
-                            </span>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
+                    {t(`lessons.${day}`)}
+                  </th>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: maxRows }).map((_, rowIdx) => (
+                <tr
+                  key={rowIdx}
+                  className="border-t border-dashed border-normalblue/60 first:border-t-0"
+                >
+                  {days.map((day, colIdx) => {
+                    const daySchedule = schedule[day] || [];
+                    const item = daySchedule[rowIdx];
+                    return (
+                      <td
+                        key={colIdx}
+                        className="p-3 sm:p-6 border-l border-normalblue/60 last:border-l-0"
+                      >
+                        {item ? (
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="flex items-center gap-1 text-xs sm:text-sm text-darkblue">
+                              <Clock width="16" height="16" /> {item.time}
+                            </div>
+                            <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-normalblue whitespace-nowrap">
+                              <Teacher /> {item.teacher_name}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 text-xs sm:text-sm">
+                            {t("packages.noLesson")}
+                          </span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-        {/* No schedule fallback */}
-        {!loading && !error && days.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            {t("packages.noLesson") ?? "لا يوجد دروس لهذا الأسبوع"}
-          </div>
-        )}
+      {/* No schedule fallback */}
+      {!loading && !error && days.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          {t("packages.noLesson")}
+        </div>
+      )}
+
       </div>
     </div>
   );
