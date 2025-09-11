@@ -362,10 +362,12 @@ export const CorrectCircle = ({
   height = "25",
   color = "#08233F",
   fill = "#E89B32",
+  className,
 }) => (
   <svg
     width={width}
     height={height}
+    className={className}
     viewBox="0 0 25 25"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -396,10 +398,11 @@ export const CorrectCircle = ({
   </svg>
 );
 
-export const Calender = ({ width = "19", height = "19" }) => (
+export const Calender = ({ width = "19", height = "19", className }) => (
   <svg
     width={width}
     height={height}
+    className={className}
     viewBox="0 0 19 19"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -449,10 +452,10 @@ export const WhatsappCircle = ({ width = "37", height = "37", className }) => (
   </svg>
 );
 
-export const TelegramCircle = ({ width = "37", height = "37", className }) => (
+export const TelegramCircle = ({ className }) => (
   <svg
-    width={width}
-    height={height}
+    width="37"
+    height="37"
     className={className}
     viewBox="0 0 37 37"
     fill="none"

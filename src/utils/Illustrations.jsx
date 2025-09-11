@@ -561,7 +561,7 @@ export const PackagesBorder = ({
 export const Star = ({
   width = "107",
   height = "108",
-  className = "",
+  className ,
   fill = "#0077B6",
 }) => (
   <svg

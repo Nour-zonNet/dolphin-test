@@ -1,9 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authRepository } from "../services/auth.services";
 import api from "@/services/api";
-import { fetchAllPackages, fetchMyPackages } from "@/features/packages/store/packagesSlice";
+import {
+  fetchAllPackages,
+  fetchMyPackages,
+} from "@/features/packages/store/packagesSlice";
 import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
 import { fetchSubscriptions } from "@/features/subscription/store/subscriptionSlice";
+// 🔹 Generic handlers
+const handlePending = (state) => {
+  state.loading = true;
+  state.error = null;
+};
+
+const handleRejected = (state, action) => {
+  state.loading = false;
+  state.error = action.payload || action.error?.message || "Unknown error";
+};
 
 export const fetchCurrentUser = createAsyncThunk(
   "auth/fetchCurrentUser",
@@ -12,7 +25,6 @@ export const fetchCurrentUser = createAsyncThunk(
       const response = await authRepository.getProfile();
       return response.data;
     } catch (error) {
-      
       return rejectWithValue(
         error.response?.data?.error || "Failed to fetch user"
       );
@@ -61,7 +73,6 @@ export const loginUser = createAsyncThunk(
 
       return response;
     } catch (error) {
-      
       return rejectWithValue(
         error.response?.data?.error || "Login failed. Please try again."
       );
@@ -77,7 +88,6 @@ export const registerUser = createAsyncThunk(
 
       return response.data; // هترجع بيانات المستخدم + token
     } catch (err) {
-      
       return rejectWithValue(err.response.data.error || "Server error");
     }
   }
@@ -91,7 +101,6 @@ export const checkPhone = createAsyncThunk(
 
       return response;
     } catch (error) {
-      
       error.response?.data?.errors[0];
       return rejectWithValue(error.response?.data?.errors[0] || "Server error");
     }
@@ -105,12 +114,49 @@ export const verifyOtp = createAsyncThunk(
       const response = await authRepository.verifyOtp(data);
       return response;
     } catch (error) {
-      
       return rejectWithValue(error.response.data.error || "Server error");
     }
   }
 );
-// --- Load token from localStorage when app starts
+
+export const sendOtpResetPassword = createAsyncThunk(
+  "auth/sendOtpResetPassword",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await authRepository.sendOtpResetPassword(credentials);
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error.response.data.error || "Server error");
+    }
+  }
+);
+export const verifyOtpResetPassword = createAsyncThunk(
+  "auth/verifyOtpResetPassword",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await authRepository.verifyOtpResetPassword(credentials);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error.response.data.error || "Server error");
+    }
+  }
+);
+
+export const resetPassword = createAsyncThunk(
+  "auth/ResetPassword",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await authRepository.resetPassword(credentials);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error.response.data.error || "Server error");
+    }
+  }
+);
 const savedToken = localStorage.getItem("token");
 
 const authSlice = createSlice({
@@ -122,6 +168,10 @@ const authSlice = createSlice({
     error: null,
   },
   reducers: {
+    setToken: (state, action) => {
+      state.token = action.payload;
+      localStorage.setItem("token", action.payload); // ✅ persist token
+    },
     logoutUser: (state) => {
       state.user = null;
       state.token = null;
@@ -201,8 +251,38 @@ const authSlice = createSlice({
         state.token = null; // ممكن تمسح التوكن لو API رجع unauthorized
         localStorage.removeItem("token");
       });
+    // send OTP reset password
+    builder
+      .addCase(sendOtpResetPassword.pending, handlePending)
+      .addCase(sendOtpResetPassword.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(sendOtpResetPassword.rejected, handleRejected);
+
+    // verify OTP reset password
+    builder
+      .addCase(verifyOtpResetPassword.pending, handlePending)
+      .addCase(verifyOtpResetPassword.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(verifyOtpResetPassword.rejected, handleRejected);
+
+    // reset password
+    builder
+      .addCase(resetPassword.pending, handlePending)
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(resetPassword.rejected, handleRejected);
+
+    // perform logout
+    builder.addCase(performLogout.fulfilled, (state) => {
+      state.user = null;
+      state.token = null;
+      localStorage.removeItem("token");
+    });
   },
 });
 
-export const { logoutUser } = authSlice.actions;
+export const { logoutUser, setToken } = authSlice.actions;
 export default authSlice.reducer;

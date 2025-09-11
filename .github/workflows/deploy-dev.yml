@@ -8,84 +8,100 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    branches:
+      - deployment
+  pull_request:
+    branches:
+      - deployment
+    types: [opened, synchronize, reopened, closed]
 
 jobs:
   test:
     name: Run Tests
-    runs-on: ubuntu-22.04
-    if: github.event_name == 'workflow_dispatch' && !inputs.skip_tests
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'workflow_dispatch' && !inputs.skip_tests) ||
+      (github.event_name == 'push') ||
+      (github.event_name == 'pull_request' && github.event.action != 'closed')
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'   # ⬅️ upgraded from 18 to 20
+          node-version: '20'
           cache: 'npm'
-
+          
       - name: Install dependencies
         run: npm ci
-
+        
       - name: Run linting
         run: npm run lint
         continue-on-error: true
-
+        
       - name: Run type checking
         run: npm run typecheck
         continue-on-error: true
-
+        
       - name: Run tests
         run: npm test
         continue-on-error: true
-
+        
       - name: Build application
         run: npm run build
-
+        
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-files
+          name: build-files-${{ github.run_number }}
           path: |
             dist/
             build/
-          retention-days: 3
+          retention-days: 7
 
   deploy:
     name: Deploy to Development Server
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'workflow_dispatch'
+    if: |
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'push') ||
+      (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
     
     environment: 
       name: development
       url: https://app-dev.learnadolphin.com
-
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'   # ⬅️ upgraded from 18 to 20
+          node-version: '20'
           cache: 'npm'
-
+          
       - name: Install dependencies
         run: npm ci
-
+        
       - name: Build for development
         run: npm run build
-
+        
       - name: Create deployment info
         run: |
           echo "Branch: ${{ github.ref_name }}" > deployment-info.txt
           echo "Commit: ${{ github.sha }}" >> deployment-info.txt
           echo "Time: $(date)" >> deployment-info.txt
           echo "By: ${{ github.actor }}" >> deployment-info.txt
-
+          echo "Event: ${{ github.event_name }}" >> deployment-info.txt
+          echo "PR Number: ${{ github.event.number || 'N/A' }}" >> deployment-info.txt
+          
       - name: Deploy via FTP
+        id: deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -103,7 +119,7 @@ jobs:
             **/*.spec.*
           state-name: '.ftp-deploy-sync-state.json'
           log-level: 'standard'
-
+          
       - name: Upload deployment info
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -116,20 +132,111 @@ jobs:
           exclude: |
             **/*
             !deployment-info.txt
-
+            
       - name: Verify deployment
+        id: verify
         run: |
           echo "Verifying deployment..."
-          sleep 5
-          curl -f -s -o /dev/null https://app-dev.learnadolphin.com && echo "Site is accessible" || echo "Site verification failed"
-
-      - name: Deployment status
-        if: always()
-        run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            echo "Deployment completed successfully"
-            echo "Site URL: https://app-dev.learnadolphin.com"
-            echo "Deployed at: $(date)"
+          sleep 10
+          if curl -f -s -o /dev/null https://app-dev.learnadolphin.com; then
+            echo "verification=success" >> $GITHUB_OUTPUT
+            echo "Site is accessible"
           else
-            echo "Deployment failed - check logs"
+            echo "verification=failed" >> $GITHUB_OUTPUT
+            echo "Site verification failed"
+            exit 1
           fi
+
+  notify:
+    name: Send Slack Notification
+    runs-on: ubuntu-latest
+    needs: [test, deploy]
+    if: always()
+    
+    steps:
+      - name: Determine deployment status
+        id: status
+        run: |
+          if [[ "${{ needs.deploy.result }}" == "success" && "${{ needs.test.result }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "color=good" >> $GITHUB_OUTPUT
+            echo "message=✅ Deployment completed successfully!" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.deploy.result }}" == "failure" || "${{ needs.test.result }}" == "failure" ]]; then
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "color=danger" >> $GITHUB_OUTPUT
+            echo "message=❌ Deployment failed!" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.deploy.result }}" == "cancelled" || "${{ needs.test.result }}" == "cancelled" ]]; then
+            echo "status=cancelled" >> $GITHUB_OUTPUT
+            echo "color=warning" >> $GITHUB_OUTPUT
+            echo "message=⚠️ Deployment was cancelled!" >> $GITHUB_OUTPUT
+          else
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            echo "color=warning" >> $GITHUB_OUTPUT
+            echo "message=⚠️ Deployment was skipped!" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get timestamp
+        id: timestamp
+        run: |
+          # Default to current timestamp
+          current_ts=$(date +%s)
+          
+          # Try to get commit timestamp based on event type
+          if [ "${{ github.event_name }}" = "push" ] && [ -n "${{ github.event.head_commit.timestamp }}" ]; then
+            commit_ts=$(date -d '${{ github.event.head_commit.timestamp }}' +%s 2>/dev/null || echo $current_ts)
+            echo "ts=$commit_ts" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "pull_request" ] && [ -n "${{ github.event.pull_request.updated_at }}" ]; then
+            pr_ts=$(date -d '${{ github.event.pull_request.updated_at }}' +%s 2>/dev/null || echo $current_ts)
+            echo "ts=$pr_ts" >> $GITHUB_OUTPUT
+          else
+            echo "ts=$current_ts" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              "channel": "${{ secrets.SLACK_CHANNEL || '#deployments' }}",
+              "attachments": [{
+                "color": "${{ steps.status.outputs.color }}",
+                "title": "🚀 Development Deployment",
+                "fields": [
+                  {
+                    "title": "Repository",
+                    "value": "${{ github.repository }}",
+                    "short": true
+                  },
+                  {
+                    "title": "Branch",
+                    "value": "${{ github.ref_name }}",
+                    "short": true
+                  },
+                  {
+                    "title": "Commit",
+                    "value": "<https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${{ github.sha }}>",
+                    "short": true
+                  },
+                  {
+                    "title": "Triggered by",
+                    "value": "${{ github.actor }}",
+                    "short": true
+                  },
+                  {
+                    "title": "Event",
+                    "value": "${{ github.event_name }}",
+                    "short": true
+                  },
+                  {
+                    "title": "Status",
+                    "value": "${{ steps.status.outputs.message }}",
+                    "short": true
+                  }
+                ],
+                "footer": "GitHub Actions",
+                "ts": ${{ steps.timestamp.outputs.ts }}
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

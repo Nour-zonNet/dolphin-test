@@ -1,27 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthLayout } from "../components";
-import { useModal } from "@/components/feedback/modal/useModal";
-import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
+// import { useModal } from "@/components/feedback/modal/useModal";
+// import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 
 const ForgotPasswordPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
-  const { openStatusModal } = useModal();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: integrate real API to issue reset / OTP flow
-    openStatusModal(MODAL_TYPES.SUCCESS, {
-      title: "تم إرسال التعليمات",
-      message: "تم إرسال رمز التحقق إلى رقم هاتفك إن كان مسجلاً.",
-      onClose: () => navigate("/auth/forgetpassword/otp", { state: { phoneNumber } })
-    });
+
+    navigate("/auth/forgetpassword/otp", { state: { phoneNumber } });
   };
 
   return (
     <AuthLayout handleBack={() => window.history.back()}>
-      <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto p-6 bg-white rounded-xl shadow-sm space-y-6">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md mx-auto p-6 bg-white rounded-xl shadow-sm space-y-6"
+      >
         <h1 className="text-xl font-bold text-center">استعادة الرقم السري</h1>
         <div className="space-y-2">
           <label className="block text-sm text-gray-700">رقم الجوال</label>
@@ -46,5 +44,3 @@ const ForgotPasswordPage = () => {
 };
 
 export default ForgotPasswordPage;
-
-

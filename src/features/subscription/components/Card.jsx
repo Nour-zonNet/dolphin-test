@@ -26,7 +26,7 @@ const Card = React.memo(({ item }) => {
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
-  const { cancelSubscription, renewSubscription } = useSubscriptions();
+  const { cancelSubscription } = useSubscriptions();
   useGroups(item.package_id);
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
@@ -47,9 +47,27 @@ const Card = React.memo(({ item }) => {
   const { title, image, status, subject, startDate, endDate, group, daysLeft } =
     mappedItem;
 
+  const normalizeStatus = useCallback((raw) => {
+    if (!raw) return "active";
+    const s = String(raw).toLowerCase().trim();
+    // Map possible Arabic/legacy values to internal keys
+    if (s === "فعالة" || s === "active") return "active";
+    if (s === "تجريبي" || s === "trial") return "trial";
+    if (s === "منتهي" || s === "expired") return "expired";
+    if (s === "ملغاة" || s === "canceled" || s === "cancelled")
+      return "cancelled";
+    // Default
+    return "active";
+  }, []);
+
+  const statusKey = useMemo(
+    () => normalizeStatus(status),
+    [normalizeStatus, status]
+  );
+
   const config = useMemo(
-    () => STATUS_CONFIG[status] || STATUS_CONFIG["فعالة"],
-    [status]
+    () => STATUS_CONFIG[statusKey] || STATUS_CONFIG.active,
+    [statusKey]
   );
 
   // Handle expand/collapse animation
@@ -62,7 +80,10 @@ const Card = React.memo(({ item }) => {
   }, [isOpen]);
 
   function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString("ar-EG");
+    const d = new Date(dateString);
+    const dayName = d.toLocaleDateString("ar-EG", { weekday: "long" });
+    const datePart = d.toLocaleDateString("ar-EG");
+    return `${dayName} - ${datePart}`;
   }
 
   // Status Badge
@@ -98,55 +119,41 @@ const Card = React.memo(({ item }) => {
       },
       async () => {
         try {
-          await cancelSubscription(item.package_id).unwrap();
+          await cancelSubscription(item.id).unwrap();
           openStatusModal("SUCCESS", {
             title: "تم الإلغاء بنجاح",
             message: "تم إلغاء الاشتراك وسيتم تطبيق التغييرات فوراً.",
           });
-        } catch {
+        } catch (error) {
+          const getErrorMessage = (err) => {
+            if (!err) return "حدث خطأ أثناء إلغاء الاشتراك. حاول مرة أخرى.";
+            if (typeof err === "string") return err;
+            if (Array.isArray(err))
+              return err[0] || "حدث خطأ أثناء إلغاء الاشتراك. حاول مرة أخرى.";
+            if (err && typeof err === "object") {
+              if (err.data && err.data.error) return err.data.error;
+              if (err.message) return err.message;
+            }
+            return "حدث خطأ أثناء إلغاء الاشتراك. حاول مرة أخرى.";
+          };
           openStatusModal("ERROR", {
             title: "فشل في الإلغاء",
-            message:
-              "حدث خطأ أثناء إلغاء الاشتراك. حاول مرة أخرى.  مفيش endpoints",
+            message: getErrorMessage(error),
           });
         }
       }
     );
   };
 
-  const handleRenewClick = () => {
-    openConfirmModal(
-      {
-        title: "تجديد الاشتراك",
-        message: "هل تريد تأكيد تجديد الاشتراك؟",
-        confirmText: "تأكيد التجديد",
-        type: "default",
-      },
-      async () => {
-        try {
-          await renewSubscription(item.package_id).unwrap();
-          openStatusModal("SUCCESS", {
-            title: "تم التجديد بنجاح",
-            message: "تم تجديد الاشتراك وسيتم تفعيله فوراً.",
-          });
-        } catch {
-          openStatusModal("ERROR", {
-            title: "فشل في التجديد",
-            message:
-              " حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى. مفيش endpoints",
-          });
-        }
-      }
-    );
-  };
+  // Renew flow is currently not wired in the UI
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
       {/* Header */}
       <div
-        className="flex md:items-center justify-between p-4 cursor-pointer select-none"
+        className="flex flex-col  sm:flex-row gap-3 sm:gap-0 md:items-center justify-between p-3 sm:p-4 cursor-pointer select-none"
         onClick={toggleOpen}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-3 sm:gap-4">
           {image && (
             <img
               src={image}
@@ -154,14 +161,14 @@ const Card = React.memo(({ item }) => {
               className={`${config.bg} rounded h-[50px] w-[50px]`}
             />
           )}
-          <h3 className="font-semibold md:text-xl text-sm text-navyteal">
+          <h3 className="font-semibold text-base sm:text-lg md:text-xl text-navyteal">
             {title}
           </h3>
+          {ToggleIcon}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-center gap-4">
           {StatusBadge}
-          {ToggleIcon}
         </div>
       </div>
 
@@ -171,66 +178,83 @@ const Card = React.memo(({ item }) => {
         style={{ height: contentHeight }}
         className="transition-all duration-500 ease-in-out overflow-hidden"
       >
-        <div className="p-4 border-t border-gray-300 space-y-4 text-right">
+        <div className="p-3 sm:p-4 border-t border-gray-300 space-y-4 ">
           {/* Subscription Info */}
-          <div className="flex flex-col md:flex-row justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Line className={config.lineColor} fill={config.fill} />
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-start gap-3 md:gap-4">
+            <div className="flex">
+              <Line className="h-12" fill={config.fill} />
               <div className="flex flex-col gap-2">
-                <InfoRow label="تاريخ الاشتراك:" value={startDate} />
-                <InfoRow label="تاريخ الانتهاء:" value={endDate} />
+                <InfoRow label="تاريخ الاشتراك: " value={startDate} />
+                <InfoRow label="تاريخ الانتهاء: " value={endDate} />
               </div>
             </div>
             <InfoRow label="المواد:" value={subject} strong />
           </div>
 
           {/* Group Info & Actions */}
-          <GroupInfo
-            group={group}
-            packageId={item.package_id}
-            subscriptionId={item.id}
-          />
-
+          {/* {config.actions.includes("changeGroup") && ( */}
+          {status != "cancelled" && (
+            <GroupInfo
+              group={group}
+              packageId={item.package_id}
+              subscriptionId={item.id}
+            />
+          )}
+          {/* )} */}
           {/* Coupon */}
-          {config.actions.includes("useCoupon") && (
-            <ActionButton outline icon={<Copon />}>
-              استخدام كوبون لإضافة أيام
-            </ActionButton>
-          )}
+          {/* Actions */}
+          <div className="flex flex-col gap-3 mt-6">
+            {config.actions.map((action) => {
+              switch (action) {
+                case "useCoupon":
+                  return (
+                    <ActionButton key="coupon" outline icon={<Copon />}>
+                      استخدام كوبون لإضافة أيام
+                    </ActionButton>
+                  );
 
-          {/* Cancel */}
-          {config.actions.includes("cancel") && (
-            <ActionButton
-              outline
-              full
-              danger
-              icon={<Cancel />}
-              onClick={handleCancelClick}
-            >
-              إلغاء الاشتراك
-            </ActionButton>
-          )}
+                case "cancel":
+                  return (
+                    <ActionButton
+                      key="cancel"
+                      outline
+                      full
+                      danger
+                      icon={<Cancel />}
+                      onClick={handleCancelClick}
+                    >
+                      إلغاء الاشتراك
+                    </ActionButton>
+                  );
 
-          {/* Renew / Reactivate */}
-          {(config.actions.includes("renew") ||
-            config.actions.includes("canceled") ||
-            config.actions.includes("reactivate")) && (
-            <div className="flex flex-col items-center mt-6">
-              <ActionButton
-                full
-                primary
-                icon={<Renew />}
-                onClick={handleRenewClick}
-              >
-                {config.buttonText}
-              </ActionButton>
-              {config.message && (
-                <div className="bg-[#F9F9F9] w-full mt-6 mb-4 text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
-                  {config.message}
-                </div>
-              )}
-            </div>
-          )}
+                case "renew":
+                case "reactivate":
+                  return (
+                    <div
+                      key={action}
+                      className="flex flex-col items-center mt-4 gap-2"
+                    >
+                      <ActionButton
+                        full
+                        primary
+                        icon={<Renew />}
+                        // onClick={handleRenewClick}
+                      >
+                        {config.buttonText}
+                      </ActionButton>
+                      {config.message && (
+                        <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
+                          {config.message}
+                        </div>
+                      )}
+                    </div>
+                  );
+
+                default:
+                  return null;
+              }
+            })}
+          </div>
         </div>
       </div>
     </div>

@@ -10,26 +10,31 @@ import books from "@/assets/schedule/books.svg";
 import { formatArabicTime, getRemainingTime } from "../../../utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "../../../utils/icons";
 
-const LessonCard = ({ item, color, image }) => {
+const LessonCard = ({ item, color, image, lessonDate }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { start, end } = useMemo(() => {
-    const today = new Date();
-    const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
-    const startDate = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      hours,
-      minutes,
-      seconds
-    );
-    const durationMinutes = item.duration || 60;
-    const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
-    return { start: startDate, end: endDate };
-  }, [item.start_time, item.duration]);
+  // parse HH:mm:ss from API
+  const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
 
+  // استخدم اليوم اللي جالك من الـ Slider
+  const baseDate = new Date(lessonDate);
+
+  const startDate = new Date(
+    baseDate.getFullYear(),
+    baseDate.getMonth(),
+    baseDate.getDate(),
+    hours,
+    minutes,
+    seconds || 0
+  );
+
+  const durationMinutes = item.duration || 60;
+  const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+
+  return { start: startDate, end: endDate };
+}, [item.start_time, item.duration, lessonDate]);
   const lessonStatus = useMemo(() => {
     const now = new Date();
     if (now >= start && now <= end) return "live";
@@ -37,7 +42,10 @@ const LessonCard = ({ item, color, image }) => {
     return "upcoming";
   }, [start, end]);
 
-  const handleEnterLesson = useCallback(() => navigate("lessoncontent"), [navigate]);
+  const handleEnterLesson = useCallback(
+    () => navigate("lessoncontent"),
+    [navigate]
+  );
   const renderButton = () => {
     if (lessonStatus === "upcoming") {
       return (
@@ -49,12 +57,12 @@ const LessonCard = ({ item, color, image }) => {
               className="cursor-pointer w-16 xs:w-auto"
             />
           </div>
-          <button
+          {/* <button
             disabled
             className="px-4 py-2 text-nowrap text-gray-400 text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-gray-200 rounded-3xl cursor-not-allowed"
           >
             لم تبدأ بعد
-          </button>
+          </button> */}
         </>
       );
     }
@@ -89,37 +97,57 @@ const LessonCard = ({ item, color, image }) => {
               className="cursor-pointer w-16 xs:w-auto"
             />
           </div>
-          <button
+          {/* <button
             onClick={handleEnterLesson}
             className="px-4 py-2 text-nowrap text-gray-400 text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-gray-200 rounded-3xl cursor-not-allowed"
           >
             عرض المحتوى
-          </button>
+          </button> */}
         </>
       );
     }
   };
-  const { statusText, statusColor, statusIcon } = useMemo(() => {
-    if (lessonStatus === "upcoming") {
-      return {
-        statusText: `متبقي ${getRemainingTime(item.start_time)}`,
-        statusColor: "text-[#ba7c28]",
-        statusIcon: <SandGlass className="w-4" />,
-      };
-    }
-    if (lessonStatus === "live") {
-      return {
-        statusText: "الحصة بدأت",
-        statusColor: "text-green-600",
-        statusIcon: <NotifyIcon className="w-4" />,
-      };
-    }
+const { statusText, statusColor, statusIcon } = useMemo(() => {
+  const now = new Date();
+
+  // نشوف هل يوم الحصة هو نفس يوم النهارده
+  const isSameDay =
+    start.getDate() === now.getDate() &&
+    start.getMonth() === now.getMonth() &&
+    start.getFullYear() === now.getFullYear();
+
+  if (!isSameDay) {
     return {
-      statusText: "انتهت الحصة",
-      statusColor: "text-red-500",
-      statusIcon: <TimeCheck className="w-4" />,
+      statusText: `الحصة يوم ${start.toLocaleDateString("ar-EG", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      })} - ${formatArabicTime(item.start_time)}`,
+      statusColor: "text-[#ba7c28]",
+      statusIcon: <SandGlass className="w-4" />,
     };
-  }, [lessonStatus, item.start_time]);
+  }
+
+  if (lessonStatus === "upcoming") {
+    return {
+      statusText: `متبقي ${getRemainingTime(item.start_time)}`,
+      statusColor: "text-[#ba7c28]",
+      statusIcon: <SandGlass className="w-4" />,
+    };
+  }
+  if (lessonStatus === "live") {
+    return {
+      statusText: "الحصة بدأت",
+      statusColor: "text-green-600",
+      statusIcon: <NotifyIcon className="w-4" />,
+    };
+  }
+  return {
+    statusText: "انتهت الحصة",
+    statusColor: "text-red-500",
+    statusIcon: <TimeCheck className="w-4" />,
+  };
+}, [lessonStatus, item.start_time, start]);
 
   return (
     <div className="relative">
@@ -158,7 +186,7 @@ const LessonCard = ({ item, color, image }) => {
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
               <span className="text-status text-xs xs:text-base">
-                {item.teacher ?? t("lessons.defaultTeacher")}
+                {item.teacher_name ?? t("lessons.defaultTeacher")}
               </span>
             </div>
             <div className="font-semibold flex items-center gap-2">
@@ -167,7 +195,7 @@ const LessonCard = ({ item, color, image }) => {
                 alt="group icon"
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
-              <span className="text-status text-xs xs:text-base">
+              <span className="text-status text-xs xs:text-base md:text-lg">
                 {item.group}
               </span>
             </div>
@@ -197,7 +225,7 @@ const LessonCard = ({ item, color, image }) => {
         </div>
 
         {/* Right section */}
-        <div className="flex flex-col items-center justify-center mr-auto xs:space-y-3.5 gap-2 xs:gap-0 px-2 mt-4 xs:mt-0 relative z-10 space-y-2">
+        <div className="flex flex-col items-center justify-center mr-auto xs:space-y-3.5 gap-2 xs:gap-0 px-2 relative z-10 space-y-2">
           {renderButton()}
         </div>
       </div>

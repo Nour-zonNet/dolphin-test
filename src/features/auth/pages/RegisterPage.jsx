@@ -26,10 +26,10 @@ const RegisterPage = () => {
   }
 
   // Redirect if no phone number
-  if (!phoneNumber) {
-    navigate("/auth/phone");
-    return null;
-  }
+  // if (!phoneNumber) {
+  //   navigate("/auth/phone");
+  //   return null;
+  // }
 
   const handleRegisterSubmit = async (data) => {
     const res = await dispatch(

@@ -38,10 +38,10 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
     }
   }, [fetchGroups, groups, packageId]);
   return (
-    <div className="flex justify-between items-center gap-4">
+    <div className="flex flex-row items-center justify-between  sm:items-center gap-3 sm:gap-4">
       <p className="flex flex-row items-center gap-2">
-        <span className="font-semibold md:text-[18px] text-sm">المجموعة:</span>
-        <span className="text-status font-semibold md:text-2xl text-[16px]">
+        <span className="font-semibold text-sm md:text-[18px]">المجموعة:</span>
+        <span className="text-status font-semibold text-sm max-w-25 md:max-w-auto md:text-2xl truncate text-ellipsis pl-10 ">
           {group?.group_name}
         </span>
       </p>

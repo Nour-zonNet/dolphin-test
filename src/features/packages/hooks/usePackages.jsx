@@ -9,8 +9,7 @@ export const usePackages = () => {
     mine,
     loading,
     error,
-    fetchAllPackages: () => dispatch(fetchAllPackages()),
-    fetchMyPackages: () => dispatch(fetchMyPackages()),
+
     schedules,
     getSchedule: (groupId) => dispatch(fetchScheduleById(groupId)),
     fetchAllPackages: fetchAllPackages,

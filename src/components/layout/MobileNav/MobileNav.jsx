@@ -14,13 +14,13 @@ const MobileNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white shadow-[0_-1px_1px_0_rgba(0,0,0,0.15)] z-50">
-    <div className="flex justify-between px-4 sm:px-6 items-stretch py-2 h-16">
+    <div className="flex justify-between px-18  items-stretch py-2 h-16">
 
         {/* Home */}
         <button
           onClick={() =>{ setActiveTab("home"), navigate("/schedule")}}
 
-          className="flex flex-col items-center justify-between h-full transition cursor-pointer hover:scale-105 "
+          className="flex flex-col items-center justify-end gap-2 h-full transition cursor-pointer hover:scale-105 "
         >
           <Home
             className="w-4 h-4 sm:w-6 sm:h-6"
@@ -37,7 +37,7 @@ const MobileNav = () => {
         </button>
 
         {/* Content */}
-        <button
+        {/* <button
           onClick={() => setActiveTab("content")}
           className="flex flex-col items-center cursor-pointer justify-between h-full transition hover:scale-105 "
         >
@@ -54,10 +54,13 @@ const MobileNav = () => {
           >
             {t("mobileNavigation.content")}
           </span>
-        </button>
+        </button> */}
 
         {/* Profile */}
-        <ProfileInfo />
+        <ProfileInfo
+          isActive={activeTab === "profile"}
+          onActivate={() => setActiveTab("profile")}
+        />
       </div>
     </nav>
   );

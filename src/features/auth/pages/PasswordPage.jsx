@@ -24,10 +24,10 @@ const PasswordPage = () => {
   }
 
   // Redirect if no phone number
-  if (!phoneNumber) {
-    navigate("/auth/phone");
-    return null;
-  }
+  // if (!phoneNumber) {
+  //   navigate("/auth/phone");
+  //   return null;
+  // }
 
   const handlePasswordSubmit = async (data) => {
     const res = await dispatch(

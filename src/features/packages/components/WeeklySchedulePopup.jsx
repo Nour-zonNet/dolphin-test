@@ -13,7 +13,7 @@ useEffect(() => {
   if (open && groupId && schedules?.[key] === undefined) {
     getSchedule(key);
   }
-}, [open, groupId, getSchedule, schedules]);
+}, [open, groupId, getSchedule, schedules, key]);
 
 if (!open) return null;
 const schedule = schedules?.[groupId] || {};
