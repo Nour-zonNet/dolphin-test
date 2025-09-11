@@ -7,7 +7,7 @@ import PlansFooter from "../components/PlansFooter";
 import { InfoIcon } from "@/utils/icons";
 import { Header } from "@/components/layout";
 import { HomeSupportBtn } from "@/components/layout";
-import FormatWithCurrency from "@/utils/formatWithCurrency";
+import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
 const DataPlanSelector = () => {
   const navigate = useNavigate();
