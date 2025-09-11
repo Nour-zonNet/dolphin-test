@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
+// import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import {
   Calender,
   TelegramCircle,
