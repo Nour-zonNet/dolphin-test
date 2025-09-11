@@ -1,11 +1,11 @@
 import React from "react";
 import { packageFactory } from "../factory/packageFactory";
-import { Calendar, Calender1 } from "@/utils/icons";
+import { Calender1 } from "@/utils/icons";
 import Books from "@/assets/packages/books.svg";
 import { Info } from "@/utils/icons";
 import FormatWithCurrency  from "@/utils/FormatWithCurrency";
 
-const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
+const PlanCard = ({ plan, selected, onSelect }) => {
   const { image, bgColor } = packageFactory(plan.id.image);
   const colors = [
     "bg-blue-100 text-blue-800",
