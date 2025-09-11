@@ -1,5 +1,6 @@
 import React from "react";
-import { LeftArrow, LeftArrowFilled, RightArrow } from "../../../utils/icons";
+import { LeftArrow, LeftArrowFilled, RightArrow } from "@/utils/icons";
+import FormatWithCurrency from "@/utils/formatWithCurrency";
 
 const PlansFooter = ({
   disabled,
@@ -13,12 +14,19 @@ const PlansFooter = ({
         <div className="text-sm text-gray-700">
           {selectedCount > 0 ? (
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-              {/* <span className="font-medium">
+              <span className="font-medium">
                 {selectedCount} باقة(ات) محددة
-              </span> */}
-              {/* <span className="hidden sm:block">•</span> */}
-              <span className="text-[#185a80] font-bold">
-                الإجمالي: {totalPrice} ريال
+              </span>
+        
+              <span className="hidden sm:block">•</span>
+              <span className="flex items-center gap-1 text-orange-600 font-bold">
+                الإجمالي: 
+                <FormatWithCurrency
+                    amount={totalPrice} 
+                    className="text-orange-600 font-bold"
+                    symbolClass="w-4 h-4 md:w-5 md:h-5"
+                    symbolFill="#ea580c"
+                  />
               </span>
             </div>
           ) : (

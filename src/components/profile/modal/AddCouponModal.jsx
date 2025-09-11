@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Divider from "../../ui/Divider";
 import { ConfirmCheck } from "@/utils/icons";
-import { Riyal } from "../../../utils/Illustrations";
+import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
 const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
   const [couponCode, setCouponCode] = useState("");
@@ -69,8 +69,13 @@ const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
               <div className="text-orangedeep text-sm md:text-2xl font-bold mt-2 flex items-center justify-center gap-2">
                 رصيدك الحالي: 
                 <div className="flex items-center gap-1">
-                  <span>0</span>
-                  <Riyal className="w-4 md:w-6 lg:w-8"/>
+                  <FormatWithCurrency
+                      amount={0}
+                      fractionDigits={0}
+                      className="flex items-center gap-2"
+                      symbolFill="#e89b32" 
+                      symbolClass="w-4 md:w-6 lg:w-8"
+                    />
                 </div>
               </div>
             </div>

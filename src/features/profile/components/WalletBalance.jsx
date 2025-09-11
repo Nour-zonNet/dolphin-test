@@ -1,15 +1,23 @@
 import React from 'react'
 import { ProfileButtons, ProfileCard } from '@/components'
 import { useNavigate } from 'react-router-dom'
+import FormatWithCurrency from '@/utils/FormatWithCurrency';
 
 const WalletBalance = () => {
   const navigate = useNavigate();
   
   return (
-     <ProfileCard className="md:h-[178px] flex flex-col items-center justify-center gap-4 p-6">
-      <h3 className="font-semibold text-lg text-[#BA7C28] md:text-3xl lg:text-5xl text-center">
-        الرصيد: 0 ريال
-      </h3>
+      <ProfileCard className="md:h-[178px] flex flex-col items-center justify-center gap-4 p-6">
+        <h3 className="flex items-center gap-2 font-semibold text-lg text-[#BA7C28] md:text-3xl lg:text-5xl text-center">
+          الرصيد:{" "}
+            <FormatWithCurrency 
+              amount={0} 
+              fractionDigits={0} 
+              className="flex items-center gap-2"
+              symbolFill="#BA7C28"
+              symbolClass="w-6 h-6 md:w-8 md:h-8 xl:w-12 xl:h-12"
+            />
+        </h3>
       <ProfileButtons variant="outline" size="sm" className="w-[210px] mt-2 cursor-pointer" onClick={() => navigate("/balance-details")}>
         <img
           className="w-4 md:w-5 lg:w-6"

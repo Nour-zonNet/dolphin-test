@@ -40,7 +40,7 @@ const App = () => {
           hideProgressBar={false}
           newestOnTop
           closeOnClick
-          rtl={true} // change to true if Arabic UI is RTL
+          rtl={true} 
           pauseOnFocusLoss
           draggable
           pauseOnHover

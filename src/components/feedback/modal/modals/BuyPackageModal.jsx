@@ -1,5 +1,6 @@
 import React from "react";
 import { Cross, CreditCard, Package, Calendar } from "@/utils/icons";
+import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
 const BuyPackageModal = ({ onClose, packageData = [], isExtendMode = false }) => {
   // Handle both single package (object) and multiple packages (array)
@@ -59,11 +60,20 @@ const BuyPackageModal = ({ onClose, packageData = [], isExtendMode = false }) =>
             <h4 className="font-semibold text-gray-900 mb-3">الباقات المحددة:</h4>
             <div className="space-y-3">
               {packages.map((pkg, index) => (
-                <div key={pkg.id || index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <div
+                  key={pkg.id || index}
+                  className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                >
                   <span className="text-gray-700">
                     {index + 1}. {pkg.name}
                   </span>
-                  <span className="text-blue-600 font-medium">{pkg.finalPrice} ريال</span>
+                  <FormatWithCurrency
+                    amount={pkg.finalPrice}
+                    className="text-blue-600 font-medium"
+                    symbolFill="#155dfc"
+                    symbolClass="w-4 h-4 md:w-5 md:h-5"
+                    fractionDigits={0} 
+                  />
                 </div>
               ))}
             </div>
@@ -76,14 +86,34 @@ const BuyPackageModal = ({ onClose, packageData = [], isExtendMode = false }) =>
             <h3 className="font-bold text-gray-900">المجموع:</h3>
             {totalDiscount > 0 && (
               <p className="text-sm text-green-600">
-                وفرت {totalDiscount} ريال
+                وفرت{" "}
+                <FormatWithCurrency
+                  amount={totalDiscount}
+                  className="text-green-600 font-medium"
+                  symbolFill="#155dfc"
+                  symbolClass="w-4 h-4 md:w-5 md:h-5"
+                  fractionDigits={0}
+                />
               </p>
             )}
           </div>
           <div className="text-right">
-            <span className="text-xl font-bold text-blue-600">{totalPrice} ريال</span>
+            <FormatWithCurrency
+              amount={totalPrice}
+              className="text-xl font-bold text-blue-600"
+              symbolFill="#155dfc"
+              symbolClass="w-4 h-4 md:w-5 md:h-5"
+              fractionDigits={0}
+            />
+
             {totalDiscount > 0 && (
-              <div className="text-sm text-gray-400 line-through">{totalOriginalPrice} ريال</div>
+              <FormatWithCurrency
+                amount={totalOriginalPrice}
+                className="text-sm text-gray-400 line-through"
+                symbolFill="#155dfc"
+                symbolClass="w-4 h-4 md:w-5 md:h-5"
+                fractionDigits={0}
+              />
             )}
           </div>
         </div>

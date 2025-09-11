@@ -1,19 +1,21 @@
 import React, { useState } from 'react'
 import Divider from '../../ui/Divider';
-import { ConfirmCheck } from '../../../utils/icons';
+import { ConfirmCheck } from '@/utils/icons';
 import { useClasses } from '@/features/profile/hooks/useClasses';
 const ChangeGradeModal = ({ isOpen, onClose, onConfirm  }) => {
     const [gradeLevel, setGradeLevel] = useState("");
     const { classes, loadingClasses } = useClasses();
-
-   const handleConfirm = () => {
+    
+    const handleConfirm = () => {
       if (gradeLevel) {
-        const selectedClass = classes.find(cls => cls.id === gradeLevel);
+        // const selectedClass = classes.find(cls => cls.id === gradeLevel);
+        const selectedClass = classes.find(cls => cls.id === Number(gradeLevel));
         if (selectedClass) {
           onConfirm(selectedClass.name, selectedClass.id); 
         }
         setGradeLevel("");
-        onClose();
+        // onClose();
+        // setGradeLevel();
       }
     };
     
@@ -96,9 +98,7 @@ const ChangeGradeModal = ({ isOpen, onClose, onConfirm  }) => {
               </div>
             </button>
             <button
-
               onClick={handleConfirm}
-
               className="cursor-pointer w-full lg:w-[60%] mx-auto h-10 md:h-[65px] flex items-center justify-center gap-2 px-4 py-2 bg-[#e89b32] hover:bg-[#d18c2d] rounded-[60px] transition-colors disabled:cursor-not-allowed"
             >
               <ConfirmCheck className="w-4 md:w-6" />
