@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 // import { useTranslation } from "react-i18next";
 import { Balance, RightArrow } from "@/utils/icons";
+import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
 export const Header = ({
   title,
@@ -29,12 +30,18 @@ export const Header = ({
 
         {/* Right Section (optional) */}
         {showBalanceSection && (
-          <div className="flex items-center flex-row  md:flex-row gap-2">
+          <div className="flex items-center flex-row md:flex-row gap-2">
             <div className="flex items-center gap-2">
               <Balance className="w-4 md:w-6" />
             </div>
-            <span className="font-bold text-navyteal md:text-2xl text-[16px]">
-              {balance} ريال
+            <span className="font-bold flex items-center gap-2 text-navyteal md:text-2xl text-[16px]">
+              الرصيد:
+              <FormatWithCurrency
+                amount={balance}
+                className="font-bold flex items-center gap-2 text-navyteal md:text-2xl text-[16px]"
+                symbolClass=""
+                symbolFill="#08233f"
+              />
             </span>
           </div>
         )}

@@ -1,6 +1,6 @@
 import React from "react";
 import card from "@/assets/balance/card.svg";
-import { Riyal } from "@/utils/Illustrations";
+import FormatWithCurrency from '@/utils/FormatWithCurrency';
 
 const BalanceCard = ({ user }) => {
   return (
@@ -19,8 +19,13 @@ const BalanceCard = ({ user }) => {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
             <h2 className="text-base md:text-2xl font-semibold text-white">الرصيد الحالي</h2>
             <h2 className="text-base md:text-[32px] font-bold text-orangedeep mt-0 md:mt-2 flex gap-2 md:gap-4 items-center">
-              <span>0</span> 
-              <Riyal className="w-4 md:w-6 lg:w-8"/>
+              <FormatWithCurrency
+                amount={0}
+                fractionDigits={0}
+                className="flex items-center gap-2"
+                symbolFill="#e89b32"
+                symbolClass="w-4 md:w-6 lg:w-8"
+              />
             </h2>
         </div>
 

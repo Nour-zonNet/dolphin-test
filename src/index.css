@@ -193,6 +193,11 @@ input[type="date"] {
 }
 
 select option:hover {
-  background-color: red  !important ;  /* الأزرق */
+  background-color: red  !important ;
   color: #fff;
+}
+
+#chatwoot-container,
+#chatwoot-launcher {
+  display: none !important;
 }

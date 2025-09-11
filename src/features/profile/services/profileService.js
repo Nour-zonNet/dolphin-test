@@ -80,3 +80,14 @@ export const logoutApi = async () => {
 
   return true;
 };
+
+// Update Profile
+export const updateProfileApi = async (payload) => {
+  const body = {
+    ...payload,
+    _method: "PATCH",
+  }
+  const { data } = await api.post("student/update-profile", body);
+  return data;
+}
+

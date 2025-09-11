@@ -2,7 +2,8 @@ import React from "react";
 import { packageFactory } from "../factory/packageFactory";
 import { Calendar, Calender1 } from "@/utils/icons";
 import Books from "@/assets/packages/books.svg";
-import { Info } from "../../../utils/icons";
+import { Info } from "@/utils/icons";
+import FormatWithCurrency  from "@/utils/FormatWithCurrency";
 
 const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
   const { image, bgColor } = packageFactory(plan.id.image);
@@ -59,9 +60,15 @@ const PlanCard = ({ plan, selected, onSelect, formatPrice }) => {
               </div>
               {/* <span>|</span> */}
 
-              <span className=" float-end self-end text-left text-base">
+              <span className="flex items-center gap-2 float-end self-end text-left text-base">
                 {" "}
-                سعر الباقة : {formatPrice(plan)}
+                سعر الباقة : 
+                <FormatWithCurrency 
+                    amount={plan.finalPrice} 
+                    className="text-lg font-bold text-[#BA7C28]"
+                    symbolClass="w-5 h-5 text-[#BA7C28]"
+                    symbolFill="#BA7C28"
+                  />
               </span>
             </div> 
           </div>

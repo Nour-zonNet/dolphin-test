@@ -4,8 +4,10 @@ import { usePackages } from "../hooks/usePackages";
 import PlansSearchBar from "../components/PlansSearchBar";
 import PlanCard from "../components/PlanCard";
 import PlansFooter from "../components/PlansFooter";
-import { InfoIcon } from "../../../utils/icons";
-import { Header } from "../../../components/layout";
+import { InfoIcon } from "@/utils/icons";
+import { Header } from "@/components/layout";
+import { HomeSupportBtn } from "@/components/layout";
+import FormatWithCurrency from "@/utils/formatWithCurrency";
 
 const DataPlanSelector = () => {
   const navigate = useNavigate();
@@ -14,28 +16,37 @@ const DataPlanSelector = () => {
   const [selectedPlanIds, setSelectedPlanIds] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  const formatPrice = React.useCallback((plan) => {
-    if (plan.discountPercentage > 0) {
-      return (
-        <div className="flex flex-col items-end">
-          <span className="text-[#BA7C28] font-bold text-base">
-            {plan.finalPrice} ريال
-          </span>
-          <span className="text-gray-400 line-through text-base">
-            {plan.originalPrice} ريال
-          </span>
-          <span className="text-green-600 text-base font-medium">
-            خصم {plan.discountPercentage}%
-          </span>
-        </div>
-      );
-    }
+const formatPrice = React.useCallback((plan) => {
+  if (plan.discountPercentage > 0) {
     return (
-      <span className="text-orangedeep font-bold text-lg">
-        {plan.finalPrice} ريال
-      </span>
+      <div className="flex flex-col items-end">
+        <FormatWithCurrency
+          amount={plan.finalPrice}
+          className="text-[#BA7C28] font-bold text-base"
+          symbolFill="#e89b32"
+          symbolClass="w-6 h-6"
+        />
+        <FormatWithCurrency
+          amount={plan.originalPrice}
+          className="text-gray-400 line-through text-base"
+          symbolFill="#e89b32"
+          symbolClass="w-6 h-6"
+        />
+        <span className="text-green-600 text-base font-medium">
+          خصم {plan.discountPercentage}%
+        </span>
+      </div>
     );
-  }, []);
+  }
+  return (
+    <FormatWithCurrency
+      amount={plan.finalPrice}
+      className="flex items-center gap-1 text-orangedeep font-bold text-lg"
+      symbolFill="#e89b32"
+      symbolClass="w-6 h-6"
+    />
+  );
+}, []);
 
   const filteredPlans = React.useMemo(() => {
     if (!Array.isArray(all) || all.length === 0) return [];
@@ -85,7 +96,6 @@ const DataPlanSelector = () => {
     <div className="min-h-svh  space-y-4">
       {/* Header */}
       <Header balance={"0"} title=" اختر باقتك المناسبة" onBack={"/manage-subscription"}/>
-    
 
       {/* Search Bar */}
       <PlansSearchBar
@@ -95,7 +105,7 @@ const DataPlanSelector = () => {
 
       {/* Warning */}
       <div className=" mx-auto px-4 mt-4">
-        <div className="flex items-start gap-2 p-3 rounded-lg  ">
+        <div className="flex items-center gap-1 p-3 rounded-lg  ">
           <div className="w-6 h-6 rounded-full flex items-center justify-center mt-1 flex-shrink-0">
             <InfoIcon />
           </div>
@@ -110,9 +120,14 @@ const DataPlanSelector = () => {
       {selectedPlanIds.length > 0 && (
         <div className=" mx-auto px-4">
           <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-            <p className="text-blue-700 text-sm font-medium">
+            <p className="flex items-center gap-1 text-blue-700 text-sm font-medium">
               تم اختيار {selectedPlanIds.length} باقة(ات) - الإجمالي:{" "}
-              {totalPrice} ريال
+              <FormatWithCurrency 
+                amount={totalPrice}
+                className="flex items-center gap-1 text-blue-700 text-sm font-medium"
+                symbolFill="#1447e6"
+                symbolClass="w-4"
+              />
             </p>
           </div>
         </div>
@@ -139,7 +154,9 @@ const DataPlanSelector = () => {
         totalPrice={totalPrice}
         selectedCount={selectedPlanIds.length}
       />
+      <HomeSupportBtn />
     </div>
+    
   );
 };
 

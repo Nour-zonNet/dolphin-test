@@ -4,7 +4,7 @@ import whatsapp from "@/assets/images/whatsapp.svg";
 import telegram from "@/assets/images/telegram.svg";
 import youtube from "@/assets/images/youtube.svg";
 import snapchat from "@/assets/images/snapchat.svg";
-import message from "@/assets/images/message.svg";
+import LifeChat from "@/assets/images/message.svg";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
 const HomeSupportBtn = ({ className }) => {
@@ -17,7 +17,7 @@ const HomeSupportBtn = ({ className }) => {
   ? [
       { icon: whatsapp, angle: -90, alt: "WhatsApp" },
       { icon: telegram, angle: -40, alt: "Telegram" },
-      { icon: message, angle: 10, alt: "Message" },
+      { icon: LifeChat, angle: 10, alt: "LifeChat", onClick: () => window.$chatwoot.toggle() },
   ]
   : [
       { icon: whatsapp, angle: -90, alt: "WhatsApp" },
@@ -53,6 +53,7 @@ const HomeSupportBtn = ({ className }) => {
           return (
             <button
               key={i}
+              onClick={btn.onClick}
               className={`absolute w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 focus:outline-0 rounded-full bg-orangedeep shadow-lg flex items-center justify-center
                 transition-all duration-300
                 ${isOpen ? "opacity-100 scale-100" : "opacity-0 scale-0"}

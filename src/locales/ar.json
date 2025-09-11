@@ -84,8 +84,7 @@
     "previewWeeklySchedule": "معاينة الجدول الأسبوعي"
   },
   "header": {
-    "balance": "الرصيد",
-    "currency": "ريال"
+    "balance": "الرصيد"
   },
   "modal": {
     "success": "نجح",

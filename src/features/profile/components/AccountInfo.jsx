@@ -6,17 +6,33 @@ import { ProfileButtons } from '@/components';
 import { updateUserGrade } from '@/features/profile/store/profileSlice';
 // import flag from "@/assets/authentication/flag.svg";
 import ChangeGradeModal from '@/components/profile/modal/ChangeGradeModal';
+import { useProfile } from '../hooks/useProfile';
 
 const AccountInfo = ({ user }) => {
   const dispatch = useDispatch(); 
-  const [name, setName] = useState("يوستينا صلاح");
-  const [phone, setPhone] = useState("09954321890");
+  const { handleUpdateProfile } = useProfile();
+
+  const [name, setName] = useState(user?.name || "");
+  const [phone, setPhone] = useState(user?.phoneNumber || "");
   const [grade, setGrade] = useState(user?.gradeName || "");
+  const [gradeId, setGradeId] = useState(user?.grade || null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleConfirmGrade = async (gradeName, gradeId) => {
     setGrade(gradeName);
-    await dispatch(updateUserGrade({ userId: user.id, gradeId }));
+    setGradeId(gradeId);
+    // await dispatch(updateUserGrade({ userId: user.id, gradeId }));
+    try {
+      await handleUpdateProfile({
+        name,
+        grade: gradeId,
+        _method: "PATCH",
+      });
+      setIsModalOpen(false);
+      setIsModalOpen(false); 
+    } catch (error) {
+      console.error("فشل تحديث الصف:", error);
+    }
   };
 
   useEffect(() => {
@@ -32,7 +48,12 @@ const AccountInfo = ({ user }) => {
   };
   
   const handleSave = () => {
-  }
+    handleUpdateProfile({
+      name,
+      grade: gradeId,
+      _method: "PATCH",
+    });
+  };
 
   return (
     <>

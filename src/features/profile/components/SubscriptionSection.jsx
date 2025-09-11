@@ -42,12 +42,13 @@ const SubscriptionSection = () => {
             ))
           )}
       </div>
-
-      <div className="text-center">
-        <Link to="/manage-subscription" className="font-bold text-[#BA7C28] text-base md:text-lg lg:text-xl underline cursor-pointer">
-          عرض كل اشتراكاتي
-        </Link>
-      </div>
+      {items.length > 0 && (
+        <div className="text-center">
+          <Link to="/manage-subscription" className="font-bold text-[#BA7C28] text-base md:text-lg lg:text-xl underline cursor-pointer">
+            عرض كل اشتراكاتي
+          </Link>
+        </div>
+      )}
     </ProfileCard>
   )
 }
