@@ -123,7 +123,7 @@ const { statusText, statusColor, statusIcon } = useMemo(() => {
         day: "numeric",
         month: "long",
       })} - ${formatArabicTime(item.start_time)}`,
-      statusColor: "text-blue-600",
+      statusColor: "text-[#ba7c28]",
       statusIcon: <SandGlass className="w-4" />,
     };
   }

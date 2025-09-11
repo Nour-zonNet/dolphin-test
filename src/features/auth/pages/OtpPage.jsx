@@ -3,13 +3,14 @@ import { Navigate } from "react-router-dom";
 import { AuthLayout } from "../components";
 import { VerificationForm } from "../components";
 import { useAuth } from "../hooks/useAuth";
-// import { useDispatch } from "react-redux";
-// import { showModal } from "../../../store/modalSlice";
-// import { MODAL_TYPES } from "../../../constants/MODAL_TYPES";
-// import { Overlay, Spinner } from "@/components/feedback";
+import { useDispatch } from "react-redux";
+import { showModal } from "../../../store/modalSlice";
+import { MODAL_TYPES } from "../../../constants/MODAL_TYPES";
+import { Overlay, Spinner } from "@/components/feedback";
+import { verifyOtp } from "../store/authSlice";
 
 const OtpPage = () => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { isFullyAuthenticated } = useAuth();
@@ -22,36 +23,34 @@ const OtpPage = () => {
     return <Navigate to="/schedule" replace />;
   }
 
-  // // Redirect if no phone number
-  // if (!phoneNumber) {
-  //   navigate("/auth/phone");
-  //   return null;
-  // }
+  // Redirect if no phone number
+  if (!phoneNumber) {
+    navigate("/auth/phone");
+    return null;
+  }
 
-  const handleOtpSubmit = async () =>
-    // data
-    {
-      // const res = await dispatch(
-      //   verifyOtp({
-      //     phone_number: phoneNumber,
-      //     otp_code: `${data.otp}`,
-      //   })
-      // );
+  const handleOtpSubmit = async (data) => {
+    const res = await dispatch(
+      verifyOtp({
+        phone_number: phoneNumber,
+        otp_code: `${data.otp}`,
+      })
+    );
 
-      // if (res?.payload?.success) {
+    if (res?.payload?.success) {
       navigate("/auth/register", { state: { phoneNumber } });
-      // } else {
-      //   dispatch(
-      //     showModal({
-      //       type: MODAL_TYPES.WARNING,
-      //       props: {
-      //         title: "هنالك خطاء ",
-      //         message: res.payload || res.error.message,
-      //       },
-      //     })
-      //   );
-      // }
-    };
+    } else {
+      dispatch(
+        showModal({
+          type: MODAL_TYPES.WARNING,
+          props: {
+            title: "هنالك خطاء ",
+            message: res.payload || res.error.message,
+          },
+        })
+      );
+    }
+  };
 
   const handleBack = () => {
     navigate("/auth/phone");

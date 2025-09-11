@@ -92,6 +92,7 @@ const Card = React.memo(({ item }) => {
     [isOpen]
   );
   const handleCancelClick = () => {
+    // { subscription_id: id}
     openConfirmModal(
       {
         title: "إلغاء الاشتراك",

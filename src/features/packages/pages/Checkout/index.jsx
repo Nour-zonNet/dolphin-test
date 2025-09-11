@@ -29,7 +29,7 @@ export const Checkout = () => {
     openStatusModal(MODAL_TYPES.SUCCESS, {
       title: "تم بدء الفترة التجريبية",
       message: "تم تفعيل الفترة التجريبية للباقات المختارة.",
-      // onClose: () => (window.location.href = "/schedule"),
+      onClose: () => (window.location.href = "/schedule"),
     });
   }, [createTrialSubscription, openStatusModal, selectedPackages]);
 
