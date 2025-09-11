@@ -142,7 +142,7 @@ export function Check(width = 24, height = 24, color = "#FFFFFF") {
   >
     <path
       d="M20 6L9 17L4 12"
-      stroke={color}
+      stroke=${color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
