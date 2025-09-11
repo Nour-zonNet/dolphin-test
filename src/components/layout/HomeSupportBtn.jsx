@@ -13,18 +13,18 @@ const HomeSupportBtn = ({ className }) => {
   const [radius, setRadius] = useState(70);
   // const radius = 90; // distance from center
 
-  const buttons = isAuthenticated 
-  ? [
-      { icon: whatsapp, angle: -90, alt: "WhatsApp" },
-      { icon: telegram, angle: -40, alt: "Telegram" },
-      { icon: message, angle: 10, alt: "Message" },
-  ]
-  : [
-      { icon: whatsapp, angle: -90, alt: "WhatsApp" },
-      { icon: telegram, angle: -50, alt: "Telegram" },
-      { icon: youtube, angle: -10, alt: "YouTube" },
-      { icon: snapchat, angle: 30, alt: "Snapchat" },
-  ];
+  const buttons = isAuthenticated
+    ? [
+        { icon: whatsapp, angle: -90, alt: "WhatsApp" },
+        { icon: telegram, angle: -40, alt: "Telegram" },
+        { icon: message, angle: 10, alt: "Message" },
+      ]
+    : [
+        { icon: whatsapp, angle: -90, alt: "WhatsApp" },
+        { icon: telegram, angle: -50, alt: "Telegram" },
+        { icon: youtube, angle: -10, alt: "YouTube" },
+        { icon: snapchat, angle: 30, alt: "Snapchat" },
+      ];
 
   useEffect(() => {
     const updateRadius = () => {
@@ -36,13 +36,17 @@ const HomeSupportBtn = ({ className }) => {
         setRadius(100);
       }
     };
-      updateRadius(); 
-      window.addEventListener("resize", updateRadius);
-      return () => window.removeEventListener("resize", updateRadius);
-    }, []);
+    updateRadius();
+    window.addEventListener("resize", updateRadius);
+    return () => window.removeEventListener("resize", updateRadius);
+  }, []);
 
   return (
-    <div className={className ?? "fixed bottom-18 md:bottom-24 lg:bottom-24 right-0 z-50"}>
+    <div
+      className={
+        className ?? "fixed bottom-18 md:bottom-24 lg:bottom-24 right-0 z-50"
+      }
+    >
       <div className="relative w-18 h-18 mx-4 sm:mx-6">
         {/* Extra buttons */}
         {buttons.map((btn, i) => {
@@ -58,7 +62,9 @@ const HomeSupportBtn = ({ className }) => {
                 ${isOpen ? "opacity-100 scale-100" : "opacity-0 scale-0"}
               `}
               style={{
-                transform: `translate(${isOpen ? -x : 0}px, ${isOpen ? y : 0}px)`,
+                transform: `translate(${isOpen ? -x : 0}px, ${
+                  isOpen ? y : 0
+                }px)`,
               }}
             >
               <img src={btn.icon} alt={btn.alt} className="w-6 h-6" />

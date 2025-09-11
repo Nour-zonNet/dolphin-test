@@ -9,7 +9,7 @@ import {
 import WeeklySchedulePopup from "./WeeklySchedulePopup";
 import { CardKite, PackagesBorder, Star } from "@/utils/Illustrations";
 
-const PackageCard = React.memo(({ item, color, image, status = "active", daysRemaining = 0 }) => {
+const PackageCard = React.memo(({ item, color, image,   }) => {
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const { t } = useTranslation();
 
@@ -18,7 +18,7 @@ const PackageCard = React.memo(({ item, color, image, status = "active", daysRem
   
 
   // Get the status configuration
-  const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
+  // const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
 
   return (
     <div className="relative w-full mx-auto pl-3 max-w-2xl">
@@ -69,14 +69,14 @@ const PackageCard = React.memo(({ item, color, image, status = "active", daysRem
           <div className="flex items-center gap-3 px-4 relative z-10">
   
             
-            <div className={`flex items-center justify-center gap-2 rounded-3xl px-2 py-1 ${config.color}`}>
+            {/* <div className={`flex items-center justify-center gap-2 rounded-3xl px-2 py-1 ${config.color}`}>
               <config.icon className="w-5" />
               <span className="font-semibold text-sm md:text-base">
                 {typeof config.label === "function"
                   ? config.label(daysRemaining)
                   : config.label}
               </span>
-            </div>
+            </div> */}
             
             <p className="text-navyteal font-semibold text-xs xs:text-sm md:text-lg truncate pl-20">
               {item.group_name ?? t("packages.firstGroup")}
