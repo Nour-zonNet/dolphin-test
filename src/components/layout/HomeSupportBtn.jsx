@@ -59,7 +59,7 @@ const HomeSupportBtn = ({ className }) => {
             <button
               key={i}
               onClick={btn.onClick}
-              className={`absolute w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 focus:outline-0 rounded-full bg-orangedeep shadow-lg flex items-center justify-center
+              className={`absolute w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 focus:outline-0 rounded-full bg-orangedeep shadow-lg flex items-center justify-center cursor-pointer
                 transition-all duration-300
                 ${isOpen ? "opacity-100 scale-100" : "opacity-0 scale-0"}
               `}
