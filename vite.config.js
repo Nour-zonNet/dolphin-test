@@ -36,11 +36,23 @@ export default defineConfig({
           // Component chunks
           if (id.includes("/src/components/")) return "components";
         },
+        inlineDynamicImports: false,
+        preserveModules: false,
+        format: "es",
       },
     },
     chunkSizeWarningLimit: 1000,
-    target: "esnext",
-    minify: "esbuild",
+    target: "es2015",
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+      mangle: {
+        safari10: true,
+      },
+    },
   },
   resolve: {
     alias: {
