@@ -1,7 +1,7 @@
-import abc from "@/assets/packages/english.svg";
+import React from "react";
 import { Line } from "@/utils/Illustrations";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
-import * as Icons from "@/utils/icons";
+import defaultImage from "@/assets/packages/default.svg";
 
 const SubscriptionCard = ({
   title,
@@ -9,36 +9,42 @@ const SubscriptionCard = ({
   expiryDate,
   status = "active",
   daysRemaining = 0,
+  accentColor,
+  icon,
 }) => {
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
-  const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
+
+  const imgSrc = icon || defaultImage;            
+  const accent = accentColor || "#0077B6"; 
+
   return (
     <div className="w-full rounded-3xl border-[0.5px] border-solid border-[#3c3c4322] p-4 md:p-6">
       <div className="flex items-start flex-col md:flex-row justify-between">
         <div className="flex lg:items-center flex-col gap-8 md:gap-10 lg:gap-20 items-start lg:flex-row">
           <div className="flex flex-col items-start gap-2">
             <div className="flex items-center gap-4">
-              <img
-                src={abc}
-                alt="letters"
-                className="bg-englishLevelOne rounded w-[30px] h-[30px] md:h-[50px] md:w-[50px]"
-              />
+              <div
+                className="rounded w-[30px] h-[30px] md:h-[50px] md:w-[50px] flex items-center justify-center"
+                style={{ backgroundColor: accent }}  
+              >
+                <img
+                  src={imgSrc}
+                  alt="package"
+                  className="w-[22px] h-[22px] md:w-[36px] md:h-[36px]"
+                />
+              </div>
               <div>
                 <h3 className="font-semibold md:text-base lg:text-xl text-sm text-navyteal text-nowrap">
                   {title}
                 </h3>
-                {/* <h3 className="font-semibold md:text-base lg:text-xl text-sm text-navyteal mt-2">(المستوي الأول)</h3> */}
               </div>
             </div>
+
             {/* Status for mobile */}
-            <div
-              className={`flex md:hidden items-center justify-center gap-2 mt-4 lg:mt-0 rounded-3xl px-2 py-1 ${config.color}`}
-            >
-              <Icon className="w-5" />
+            <div className={`flex md:hidden items-center justify-center gap-2 mt-4 lg:mt-0 rounded-3xl px-2 py-1 ${config.color}`}>
+              <config.icon className="w-5" />
               <span className="font-semibold text-sm md:text-base">
-                {typeof config.label === "function"
-                  ? config.label(daysRemaining)
-                  : config.label}
+                {typeof config.label === "function" ? config.label(daysRemaining) : config.label}
               </span>
             </div>
           </div>
@@ -47,33 +53,22 @@ const SubscriptionCard = ({
             <Line className="stroke-[#185A80] hidden md:block" fill="#185A80" />
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-2 md:gap-4">
-                <span className="font-semibold text-[#666565] text-sm md:text-base text-nowrap">
-                  تاريخ الاشتراك:
-                </span>
-                <span className="font-semibold text-black text-sm md:text-base text-nowrap">
-                  {subscriptionDate}
-                </span>
+                <span className="font-semibold text-[#666565] text-sm md:text-base text-nowrap">تاريخ الاشتراك:</span>
+                <span className="font-semibold text-black text-sm md:text-base text-nowrap">{subscriptionDate}</span>
               </div>
               <div className="flex items-center gap-4">
-                <span className="font-semibold text-[#666565] text-sm md:text-base text-nowrap">
-                  تاريخ الانتهاء:
-                </span>
-                <span className="font-semibold text-black text-sm md:text-base text-nowrap">
-                  {expiryDate}
-                </span>
+                <span className="font-semibold text-[#666565] text-sm md:text-base text-nowrap">تاريخ الانتهاء:</span>
+                <span className="font-semibold text-black text-sm md:text-base text-nowrap">{expiryDate}</span>
               </div>
             </div>
           </div>
         </div>
+
         {/* Status for desktop */}
-        <div
-          className={`hidden md:flex items-center justify-center gap-2 mt-4 lg:mt-0 rounded-3xl px-4 md:px-6 py-1 ${config.color}`}
-        >
+        <div className={`hidden md:flex items-center justify-center gap-2 mt-4 lg:mt-0 rounded-3xl px-4 md:px-6 py-1 ${config.color}`}>
           <config.icon className="w-6" />
           <span className="font-semibold text-sm md:text-base">
-            {typeof config.label === "function"
-              ? config.label(daysRemaining)
-              : config.label}
+            {typeof config.label === "function" ? config.label(daysRemaining) : config.label}
           </span>
         </div>
       </div>

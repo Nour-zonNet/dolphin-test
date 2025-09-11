@@ -196,7 +196,22 @@ select option:hover {
   color: #fff;
 }
 
-#chatwoot-container,
-#chatwoot-launcher {
+.woot-widget-bubble  {
   display: none !important;
+}
+
+div[id^="woot-widget-"],
+div[class*="woot-widget"] {
+  bottom: 150px !important; 
+  z-index: 99998 !important;
+}
+
+div[id^="woot-widget-"] iframe {
+  bottom: 120px !important;
+  right: 16px !important;
+}
+
+div[id^="woot-widget-"] .woot-widget--expanded,
+div[id^="woot-widget-"] .woot--widget-bubble {
+  bottom: 120px !important;
 }
