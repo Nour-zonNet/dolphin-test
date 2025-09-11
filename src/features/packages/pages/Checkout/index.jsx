@@ -5,7 +5,7 @@ import { useModal } from "@/components/feedback/modal/useModal";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 import { getPackageIcon } from "./utils";
 import { Header } from "@/components/layout";
-import FormatWithCurrency from "@/utils/formatWithCurrency";
+import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
 export const Checkout = () => {
   const location = useLocation();

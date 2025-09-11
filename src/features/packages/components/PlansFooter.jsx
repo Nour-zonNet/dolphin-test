@@ -1,6 +1,6 @@
 import React from "react";
 import { LeftArrow, LeftArrowFilled, RightArrow } from "@/utils/icons";
-import FormatWithCurrency from "@/utils/formatWithCurrency";
+import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
 const PlansFooter = ({
   disabled,
