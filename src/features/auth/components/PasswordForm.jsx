@@ -82,7 +82,7 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
       <button
         type="button"
         onClick={handleForgotPasswordClick}
-        className="underline block text-orangedeep text-center mt-6  md:mt-8"
+        className="underline block text-orangedeep text-center mt-6 mx-auto  md:mt-8 hover:cursor-pointer"
       >
         نسيت الرقم السرى؟
       </button>
