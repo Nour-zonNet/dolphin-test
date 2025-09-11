@@ -216,6 +216,7 @@ const profileSlice = createSlice({
         state.loading = false;
         state.user = null;
         state.brothers = [];
+        state.classes = [];
         state.error = null;
         localStorage.removeItem("token");
       })

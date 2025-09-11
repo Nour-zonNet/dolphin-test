@@ -47,7 +47,7 @@ const MobileNav = () => {
             <ContentIcon fill="#7A8085" />
           )}
           <span
-             className="text-xs sm:text-xs font-semibold"
+            className="text-xs sm:text-xs font-semibold"
             style={{
               color: activeTab === "content" ? activeColor : inactiveColor,
             }}
