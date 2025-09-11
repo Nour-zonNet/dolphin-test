@@ -1,6 +1,3 @@
-//import { Canceled, Checked, Experimental, Finished } from "../utils/icons";
-
-import { Canceled, Checked, Experimental, Finished } from "../utils/_icons.js";
 
 // constants/STATUS_CONFIG.js
 export const STATUS_CONFIG = {
@@ -12,7 +9,8 @@ export const STATUS_CONFIG = {
     lineColor: "stroke-[#185A80]",
     fill: "#185A80",
     bg: "bg-health",
-    icon: Checked(),
+
+    icon: "Checked",
   },
   trial: {
     color: "border border-[#99A1A7] text-status md:h-9 md:w-32 px-4 font-semibold",
@@ -23,7 +21,8 @@ export const STATUS_CONFIG = {
     fill: "#185A80",
     bg: "bg-health",
     buttonText: "تمديد الاشتراك",
-    icon: Experimental(),
+
+    icon: "Experimental",
   },
   expired: {
     color: "bg-[#595959] h-9 w-32 text-white font-semibold px-4",
@@ -35,7 +34,8 @@ export const STATUS_CONFIG = {
     fill: "#B3261E",
     bg: "bg-health",
     buttonText: "تجديد الاشتراك",
-    icon: Finished(),
+
+    icon: "Finished",
   },
   cancelled: {
     color: "bg-[#FFD8E4] text-status md:h-9 md:w-32 px-4 font-semibold",
@@ -47,6 +47,7 @@ export const STATUS_CONFIG = {
     fill: "#185A80",
     buttonText: "طلب إعادة تفعيل الاشتراك",
     bg: "bg-englishLevelOne",
-    icon: Canceled(),
+
+    icon: "Canceled",
   },
 };
