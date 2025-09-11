@@ -7,18 +7,18 @@ import timeIcon from "@/assets/schedule/time.svg";
 import clock from "@/assets/schedule/clock.svg";
 import sandGlass from "@/assets/schedule/sandGlass.svg";
 import books from "@/assets/schedule/books.svg";
-import { formatArabicTime, getRemainingTime } from "../../../utils/dateHelpers";
-import { NotifyIcon, SandGlass, TimeCheck } from "../../../utils/icons";
+import { formatArabicTime, getRemainingTime } from "@/utils/dateHelpers";
+import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
+import { packageStyles } from "@/constants/PACKAGES_STYLES";
+import tooth from "@/assets/packages/tooth.svg";
 
 const LessonCard = ({ item, color, image, lessonDate }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { start, end } = useMemo(() => {
-  // parse HH:mm:ss from API
   const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
 
-  // استخدم اليوم اللي جالك من الـ Slider
   const baseDate = new Date(lessonDate);
 
   const startDate = new Date(
