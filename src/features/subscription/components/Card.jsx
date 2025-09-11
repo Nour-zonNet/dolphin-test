@@ -13,6 +13,7 @@ import {
   Renew,
 } from "../../../utils/icons";
 import { Line } from "../../../utils/Illustrations";
+import * as Icons from "@/utils/icons";
 import { STATUS_CONFIG } from "../../../constants/STATUS_CONFIG";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 import useGroups from "../../groups/hooks/useGroups";
@@ -68,7 +69,8 @@ const Card = React.memo(({ item }) => {
   const config = useMemo(
     () => STATUS_CONFIG[statusKey] || STATUS_CONFIG.active,
     [statusKey]
-  );
+  ); 
+  const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
 
   // Handle expand/collapse animation
   useEffect(() => {
@@ -92,11 +94,11 @@ const Card = React.memo(({ item }) => {
       <span
         className={`text-sm px-3 py-1 rounded-full flex items-center gap-2 ${config.color}`}
       >
-        {config.icon && <config.icon className="w-4 md:w-6" />}
+        {Icon && <Icon className="w-4 md:w-6" />}
         {config.label(daysLeft)}
       </span>
     ),
-    [config, daysLeft]
+    [Icon, config, daysLeft]
   );
 
   // Toggle Icon

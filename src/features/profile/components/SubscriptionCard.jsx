@@ -1,18 +1,19 @@
-import React from "react";
 import abc from "@/assets/packages/english.svg";
 import { Line } from "@/utils/Illustrations";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
+import * as Icons from "@/utils/icons";
 
 const SubscriptionCard = ({
   title,
   subscriptionDate,
   expiryDate,
   status = "active",
-  daysRemaining = 0
+  daysRemaining = 0,
 }) => {
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
+  const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
   return (
-     <div className="w-full rounded-3xl border-[0.5px] border-solid border-[#3c3c4322] p-4 md:p-6">
+    <div className="w-full rounded-3xl border-[0.5px] border-solid border-[#3c3c4322] p-4 md:p-6">
       <div className="flex items-start flex-col md:flex-row justify-between">
         <div className="flex lg:items-center flex-col gap-8 md:gap-10 lg:gap-20 items-start lg:flex-row">
           <div className="flex flex-col items-start gap-2">
@@ -22,20 +23,24 @@ const SubscriptionCard = ({
                 alt="letters"
                 className="bg-englishLevelOne rounded w-[30px] h-[30px] md:h-[50px] md:w-[50px]"
               />
-                <div>
-                  <h3 className="font-semibold md:text-base lg:text-xl text-sm text-navyteal text-nowrap">{ title }</h3>
-                  {/* <h3 className="font-semibold md:text-base lg:text-xl text-sm text-navyteal mt-2">(المستوي الأول)</h3> */}
-                </div>
+              <div>
+                <h3 className="font-semibold md:text-base lg:text-xl text-sm text-navyteal text-nowrap">
+                  {title}
+                </h3>
+                {/* <h3 className="font-semibold md:text-base lg:text-xl text-sm text-navyteal mt-2">(المستوي الأول)</h3> */}
               </div>
-                {/* Status for mobile */}
-                <div className={`flex md:hidden items-center justify-center gap-2 mt-4 lg:mt-0 rounded-3xl px-2 py-1 ${config.color}`}>
-                  <config.icon className="w-5" />
-                  <span className="font-semibold text-sm md:text-base">
-                    {typeof config.label === "function"
-                      ? config.label(daysRemaining)
-                      : config.label}
-                  </span>
-                </div>
+            </div>
+            {/* Status for mobile */}
+            <div
+              className={`flex md:hidden items-center justify-center gap-2 mt-4 lg:mt-0 rounded-3xl px-2 py-1 ${config.color}`}
+            >
+              <Icon className="w-5" />
+              <span className="font-semibold text-sm md:text-base">
+                {typeof config.label === "function"
+                  ? config.label(daysRemaining)
+                  : config.label}
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-4">
@@ -60,7 +65,7 @@ const SubscriptionCard = ({
             </div>
           </div>
         </div>
-         {/* Status for desktop */}
+        {/* Status for desktop */}
         <div
           className={`hidden md:flex items-center justify-center gap-2 mt-4 lg:mt-0 rounded-3xl px-4 md:px-6 py-1 ${config.color}`}
         >
@@ -71,8 +76,8 @@ const SubscriptionCard = ({
               : config.label}
           </span>
         </div>
-        </div>
       </div>
+    </div>
   );
 };
 

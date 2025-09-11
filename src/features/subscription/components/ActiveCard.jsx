@@ -1,17 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { Cancel, ChangeGroup, Copon } from "../../../utils/icons";
-import { Line } from "../../../utils/Illustrations";
-// import { STATUS_CONFIG } from "../../../constants/STATUS_CONFIG";
+import  { useState, useRef, useEffect } from "react";
+import {  ChangeGroup, Copon } from "../../../utils/icons";
+import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
+import * as Icons from "@/utils/icons";
 const ActiveCard = ({
   title,
   // image,
-  // status,
+  status,
   subject,
   startDate,
   endDate,
   group,
-  // daysLeft,
+  daysLeft,
   onChangeGroup,
   onUseCoupon,
   // onCancel,
@@ -28,8 +27,8 @@ const ActiveCard = ({
     }
   }, [open]);
 
-  // const config = STATUS_CONFIG[status] || STATUS_CONFIG["فعالة"];
-  // const Icon = config.icon;
+  const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
+  const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
 
   return (
     <div className="w-full bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden max-h-[]">
@@ -43,7 +42,7 @@ const ActiveCard = ({
           <h3 className="font-semibold text-xl text-navyteal">{title}</h3>
         </div>
 
-        {/* <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-4">
           <span
             className={`text-sm px-3 py-1 rounded-full flex items-center justify-center gap-2 ${config.color}`}
           >
@@ -54,7 +53,7 @@ const ActiveCard = ({
           ) : (
             <ChevronDown className="w-5 h-5 text-gray-600 transition-transform duration-300" />
           )}
-        </div> */}
+        </div>
       </div>
 
       {/* Smooth expandable content */}
