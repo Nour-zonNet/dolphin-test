@@ -47,8 +47,6 @@
 
 // };
 
-// constants/PACKAGES_STYLES.js
-import tooth from "@/assets/packages/tooth.svg";
 import quran from "@/assets/packages/quran.svg";
 import game from "@/assets/packages/game.svg";
 import english from "@/assets/packages/english.svg";

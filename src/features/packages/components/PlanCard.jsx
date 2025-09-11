@@ -3,7 +3,7 @@ import { packageStyles } from "@/constants/PACKAGE_COLORS";
 import { Calender1 } from "@/utils/icons";
 import Books from "@/assets/packages/books.svg";
 import FormatWithCurrency  from "@/utils/FormatWithCurrency";
-
+import tooth from "@/assets/packages/tooth.svg";
 const PlanCard = ({ plan, selected, onSelect }) => {
   // const { image, bgColor } = packageFactory(plan.id);
 

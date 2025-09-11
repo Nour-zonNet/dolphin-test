@@ -9,8 +9,6 @@ import sandGlass from "@/assets/schedule/sandGlass.svg";
 import books from "@/assets/schedule/books.svg";
 import { formatArabicTime, getRemainingTime } from "@/utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
-import { packageStyles } from "@/constants/PACKAGES_STYLES";
-import tooth from "@/assets/packages/tooth.svg";
 
 const LessonCard = ({ item, color, image, lessonDate }) => {
   const navigate = useNavigate();
