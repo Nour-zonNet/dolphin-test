@@ -193,11 +193,13 @@ const Card = React.memo(({ item }) => {
 
           {/* Group Info & Actions */}
           {/* {config.actions.includes("changeGroup") && ( */}
+          {status != "cancelled" && (
             <GroupInfo
               group={group}
               packageId={item.package_id}
               subscriptionId={item.id}
             />
+          )}
           {/* )} */}
           {/* Coupon */}
           {/* Actions */}
