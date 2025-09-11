@@ -110,25 +110,16 @@ export function Experimental(className = '') {
 
 
 export function Canceled() {
-  return `<svg
-    width="18"
-    height="18"
-    viewBox="0 0 18 18"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <g clipPath="url(#clip0_1129_2509)">
-      <path
-        d="M12.75 8.25V9.75H5.25V8.25H12.75ZM18 9C18 13.9628 13.9628 18 9 18C4.03725 18 0 13.9628 0 9C0 4.03725 4.03725 0 9 0C13.9628 0 18 4.03725 18 9ZM14.25 8.25C14.25 7.42275 13.5773 6.75 12.75 6.75H5.25C4.42275 6.75 3.75 7.42275 3.75 8.25V9.75C3.75 10.5773 4.42275 11.25 5.25 11.25H12.75C13.5773 11.25 14.25 10.5773 14.25 9.75V8.25Z"
-        fill="#B3261E"
-      />
-    </g>
-    <defs>
-      <clipPath id="clip0_1129_2509">
-        <rect width="18" height="18" fill="white" />
-      </clipPath>
-    </defs>
-  </svg>`;
+  return `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1129_2509)">
+<path d="M12.75 8.25V9.75H5.25V8.25H12.75ZM18 9C18 13.9628 13.9628 18 9 18C4.03725 18 0 13.9628 0 9C0 4.03725 4.03725 0 9 0C13.9628 0 18 4.03725 18 9ZM14.25 8.25C14.25 7.42275 13.5773 6.75 12.75 6.75H5.25C4.42275 6.75 3.75 7.42275 3.75 8.25V9.75C3.75 10.5773 4.42275 11.25 5.25 11.25H12.75C13.5773 11.25 14.25 10.5773 14.25 9.75V8.25Z" fill="#B3261E"/>
+</g>
+<defs>
+<clipPath id="clip0_1129_2509">
+<rect width="18" height="18" fill="white"/>
+</clipPath>
+</defs>
+</svg>`;
 }
 
 
