@@ -26,7 +26,7 @@ const Card = React.memo(({ item }) => {
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
-  const { cancelSubscription, renewSubscription } = useSubscriptions();
+  const { cancelSubscription } = useSubscriptions();
   useGroups(item.package_id);
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
@@ -47,9 +47,27 @@ const Card = React.memo(({ item }) => {
   const { title, image, status, subject, startDate, endDate, group, daysLeft } =
     mappedItem;
 
+  const normalizeStatus = useCallback((raw) => {
+    if (!raw) return "active";
+    const s = String(raw).toLowerCase().trim();
+    // Map possible Arabic/legacy values to internal keys
+    if (s === "فعالة" || s === "active") return "active";
+    if (s === "تجريبي" || s === "trial") return "trial";
+    if (s === "منتهي" || s === "expired") return "expired";
+    if (s === "ملغاة" || s === "canceled" || s === "cancelled")
+      return "cancelled";
+    // Default
+    return "active";
+  }, []);
+
+  const statusKey = useMemo(
+    () => normalizeStatus(status),
+    [normalizeStatus, status]
+  );
+
   const config = useMemo(
-    () => STATUS_CONFIG[status] || STATUS_CONFIG["فعالة"],
-    [status]
+    () => STATUS_CONFIG[statusKey] || STATUS_CONFIG.active,
+    [statusKey]
   );
 
   // Handle expand/collapse animation
@@ -92,7 +110,6 @@ const Card = React.memo(({ item }) => {
     [isOpen]
   );
   const handleCancelClick = () => {
-    // { subscription_id: id}
     openConfirmModal(
       {
         title: "إلغاء الاشتراك",
@@ -102,47 +119,33 @@ const Card = React.memo(({ item }) => {
       },
       async () => {
         try {
-          await cancelSubscription(item.package_id).unwrap();
+          await cancelSubscription(item.id).unwrap();
           openStatusModal("SUCCESS", {
             title: "تم الإلغاء بنجاح",
             message: "تم إلغاء الاشتراك وسيتم تطبيق التغييرات فوراً.",
           });
-        } catch {
+        } catch (error) {
+          const getErrorMessage = (err) => {
+            if (!err) return "حدث خطأ أثناء إلغاء الاشتراك. حاول مرة أخرى.";
+            if (typeof err === "string") return err;
+            if (Array.isArray(err))
+              return err[0] || "حدث خطأ أثناء إلغاء الاشتراك. حاول مرة أخرى.";
+            if (err && typeof err === "object") {
+              if (err.data && err.data.error) return err.data.error;
+              if (err.message) return err.message;
+            }
+            return "حدث خطأ أثناء إلغاء الاشتراك. حاول مرة أخرى.";
+          };
           openStatusModal("ERROR", {
             title: "فشل في الإلغاء",
-            message:
-              "حدث خطأ أثناء إلغاء الاشتراك. حاول مرة أخرى.  مفيش endpoints",
+            message: getErrorMessage(error),
           });
         }
       }
     );
   };
 
-  const handleRenewClick = () => {
-    openConfirmModal(
-      {
-        title: "تجديد الاشتراك",
-        message: "هل تريد تأكيد تجديد الاشتراك؟",
-        confirmText: "تأكيد التجديد",
-        type: "default",
-      },
-      async () => {
-        try {
-          await renewSubscription(item.package_id).unwrap();
-          openStatusModal("SUCCESS", {
-            title: "تم التجديد بنجاح",
-            message: "تم تجديد الاشتراك وسيتم تفعيله فوراً.",
-          });
-        } catch {
-          openStatusModal("ERROR", {
-            title: "فشل في التجديد",
-            message:
-              " حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى. مفيش endpoints",
-          });
-        }
-      }
-    );
-  };
+  // Renew flow is currently not wired in the UI
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
       {/* Header */}
@@ -164,7 +167,9 @@ const Card = React.memo(({ item }) => {
           {ToggleIcon}
         </div>
 
-        <div className="flex items-center justify-center gap-4">{StatusBadge}</div>
+        <div className="flex items-center justify-center gap-4">
+          {StatusBadge}
+        </div>
       </div>
 
       {/* Expandable Content */}
@@ -187,52 +192,67 @@ const Card = React.memo(({ item }) => {
           </div>
 
           {/* Group Info & Actions */}
-          <GroupInfo
-            group={group}
-            packageId={item.package_id}
-            subscriptionId={item.id}
-          />
-
+          {/* {config.actions.includes("changeGroup") && ( */}
+            <GroupInfo
+              group={group}
+              packageId={item.package_id}
+              subscriptionId={item.id}
+            />
+          {/* )} */}
           {/* Coupon */}
-          {config.actions.includes("useCoupon") && (
-            <ActionButton outline icon={<Copon />}>
-              استخدام كوبون لإضافة أيام
-            </ActionButton>
-          )}
+          {/* Actions */}
+          <div className="flex flex-col gap-3 mt-6">
+            {config.actions.map((action) => {
+              switch (action) {
+                case "useCoupon":
+                  return (
+                    <ActionButton key="coupon" outline icon={<Copon />}>
+                      استخدام كوبون لإضافة أيام
+                    </ActionButton>
+                  );
 
-          {/* Cancel */}
-          {config.actions.includes("cancel") && (
-            <ActionButton
-              outline
-              full
-              danger
-              icon={<Cancel />}
-              onClick={handleCancelClick}
-            >
-              إلغاء الاشتراك
-            </ActionButton>
-          )}
+                case "cancel":
+                  return (
+                    <ActionButton
+                      key="cancel"
+                      outline
+                      full
+                      danger
+                      icon={<Cancel />}
+                      onClick={handleCancelClick}
+                    >
+                      إلغاء الاشتراك
+                    </ActionButton>
+                  );
 
-          {/* Renew / Reactivate */}
-          {(config.actions.includes("renew") ||
-            config.actions.includes("canceled") ||
-            config.actions.includes("reactivate")) && (
-            <div className="flex flex-col items-center mt-6">
-              <ActionButton
-                full
-                primary
-                icon={<Renew />}
-                onClick={handleRenewClick}
-              >
-                {config.buttonText}
-              </ActionButton>
-              {config.message && (
-                <div className="bg-[#F9F9F9] w-full mt-6 mb-4 text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
-                  {config.message}
-                </div>
-              )}
-            </div>
-          )}
+                case "renew":
+                case "reactivate":
+                  return (
+                    <div
+                      key={action}
+                      className="flex flex-col items-center mt-4 gap-2"
+                    >
+                      <ActionButton
+                        full
+                        primary
+                        icon={<Renew />}
+                        // onClick={handleRenewClick}
+                      >
+                        {config.buttonText}
+                      </ActionButton>
+                      {config.message && (
+                        <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
+                          {config.message}
+                        </div>
+                      )}
+                    </div>
+                  );
+
+                default:
+                  return null;
+              }
+            })}
+          </div>
         </div>
       </div>
     </div>

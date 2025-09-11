@@ -18,9 +18,9 @@ class SubscriptionRepository {
 
   // Cancel subscription
   async cancel(subscriptionId) {
-    const { data } = await api.post(
-      `/student/packages/subscription-packages/${subscriptionId}/cancel`
-    );
+    const { data } = await api.post(ENDPOINTS.CANCEL_SUBSCRIPTION, {
+      subscription_id: subscriptionId,
+    });
     return data;
   }
 

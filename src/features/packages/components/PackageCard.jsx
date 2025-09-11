@@ -15,7 +15,12 @@ const PackageCard = React.memo(({ item, color, image }) => {
 
   const handleOpenSchedule = useCallback(() => setIsScheduleOpen(true), []);
   const handleCloseSchedule = useCallback(() => setIsScheduleOpen(false), []);
-
+  const statusTranslations = {
+    active: "فعالة",
+    trial: "تجريبي",
+    expired: "منتهي",
+    cancelled: "ملغى",
+  };
   return (
     <div className="relative w-full mx-auto pl-3 max-w-2xl ">
       {/* Border Illustration */}
@@ -70,8 +75,8 @@ const PackageCard = React.memo(({ item, color, image }) => {
           <div className="flex  items-center gap-3  px-4 relative z-10">
             <div className="flex items-center gap-2 bg-[#FCF0E0] py-1 font-semibold rounded-3xl px-3 md:px-6 shadow-sm">
               <CorrectCircle className="w-4 h-4 md:h-6 md:w-6 text-status" />
-              <span className="text-status text-xs xs:text-sm md:text-">
-                {item.status ?? t("subscription.active")}
+              <span className="text-status text-xs xs:text-sm md:text-base">
+                {statusTranslations[item.status?.toLowerCase()] || item.status}
               </span>
             </div>
             <p className="text-navyteal font-semibold text-xs xs:text-sm  md:text-lg truncate pl-20">
@@ -80,7 +85,7 @@ const PackageCard = React.memo(({ item, color, image }) => {
           </div>
 
           {/* Schedule & Social */}
-          <div className="flex flex-row items-center justify-center md:justify-between gap-4 px-4 py-5 relative z-10">
+          <div className="flex flex-row items-center justify-between md:justify-between gap-4 px-4 py-5 relative z-10">
             <button
               onClick={handleOpenSchedule}
               className="w-full space-x-1   text-navyteal text-xs  xs:text-base flex items-center justify-center text-nowrap gap-1 max-w-60  bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full  px-4 py-2 sm:py-3  font-medium transition-colors duration-300"
@@ -90,7 +95,7 @@ const PackageCard = React.memo(({ item, color, image }) => {
             </button>
 
             {/* Social Icons */}
-            <div className="flex items-center justify-between py-1  xs:w-auto  px-1 md:px-4 md:py-2  border-[1px] border-[#5C6064]/50   md:gap-4 rounded-full">
+            <div className="flex items-center justify-between py-1  xs:w-auto  px-4 md:px-4 md:py-2  border-[1px] border-[#5C6064]/50   gap-4 rounded-full">
               <button className="  ">
                 <WhatsappCircle className="h-5 sm:h-8" />
               </button>

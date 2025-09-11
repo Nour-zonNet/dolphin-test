@@ -22,6 +22,23 @@ class AuthRepository {
     const { data } = await api.post(ENDPOINTS.VERIFY_OTP, credentials);
     return data;
   }
+
+  async sendOtpResetPassword(credentials) {
+    const { data } = await api.post(ENDPOINTS.SEND_OTP_CODE, credentials);
+    return data;
+  }
+  async verifyOtpResetPassword(credentials) {
+    const { data } = await api.post(
+      ENDPOINTS.VERIFY_OTP_RESET_PASSWORD,
+      credentials
+    );
+    return data;
+  }
+  async resetPassword(credentials) {
+    const { data } = await api.post(ENDPOINTS.RESET_PASSWORD, credentials);
+    return data;
+  }
+  
   async getProfile() {
     const { data } = await api.get(ENDPOINTS.GET_PROFILE);
     return data;

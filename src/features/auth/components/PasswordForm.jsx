@@ -3,11 +3,38 @@ import { useTranslation } from "react-i18next";
 import OTPInput from "@/components/ui/InputOtp";
 import Button from "@/components/ui/Button";
 import { Lock } from "@/utils/icons";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { useModal } from "@/components/feedback/modal/useModal";
+import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 
 const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
   const { t } = useTranslation();
   const { control, handleSubmit } = useForm({ mode: "onChange" });
+  const navigate = useNavigate();
+  const { sendOtpResetPassword } = useAuth();
+  const { openStatusModal } = useModal();
+
+  const handleForgotPasswordClick = async () => {
+    if (!phoneNumber) {
+      navigate("/auth/forgetpassword");
+      return;
+    }
+    try {
+      await sendOtpResetPassword({ phone_number: phoneNumber }).unwrap();
+      openStatusModal(MODAL_TYPES.SUCCESS, {
+        title: "تم إرسال التعليمات",
+        message: "تم إرسال رمز التحقق إلى رقم هاتفك إن كان مسجلاً.",
+        onClose: () => navigate("/auth/forgetpassword/otp", { state: { phoneNumber, otpJustSent: true } }),
+      });
+    } catch (error) {
+      const message = typeof error === "string" ? error : (error?.message || "تعذر إرسال رمز التحقق. حاول مرة أخرى.");
+      openStatusModal(MODAL_TYPES.ERROR, {
+        title: "حدث خطأ",
+        message,
+      });
+    }
+  };
 
   return (
     <form
@@ -52,7 +79,13 @@ const PasswordForm = ({ onSubmit, loading, phoneNumber }) => {
         icon={<Lock />}
         text={loading ? t('auth.loggingIn') : t('auth.completingRegistration')}
       />
-      <Link to={"/auth/forgetpassword"} className="underline block text-orangedeep text-center mt-6  md:mt-8">نسيت الرقم السرى؟</Link>
+      <button
+        type="button"
+        onClick={handleForgotPasswordClick}
+        className="underline block text-orangedeep text-center mt-6  md:mt-8"
+      >
+        نسيت الرقم السرى؟
+      </button>
     </form>
   );
 };
