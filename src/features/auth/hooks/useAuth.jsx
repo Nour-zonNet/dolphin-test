@@ -15,9 +15,10 @@ import { useState, useCallback, useMemo } from "react";
 export const useAuth = () => {
   const { user, token, loading, error } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    Boolean(token && user) // just in dev mode not production
-  );
+  // const [isAuthenticated, setIsAuthenticated] = useState(
+  //   Boolean(token && user) // just in dev mode not production
+  // );
+  const isAuthenticated = Boolean(token && user);
 
   // Helpers
   const isAuthLoading = useCallback(
@@ -50,14 +51,13 @@ export const useAuth = () => {
     [dispatch]
   );
 
-
   // Memoized return object (prevents re-renders in components using this hook)
   return useMemo(
     () => ({
       user,
       token,
       isAuthenticated,
-      setIsAuthenticated, // just in dev mode not production
+      // setIsAuthenticated, // just in dev mode not production
       loading,
       error,
       isAuthLoading,

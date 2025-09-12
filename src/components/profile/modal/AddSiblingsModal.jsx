@@ -3,9 +3,8 @@ import Divider from '../../ui/Divider';
 import { useClasses } from '@/features/profile/hooks/useClasses';
 import uploadImg from '@/assets/images/upload-img.svg';
 import camera from '@/assets/images/camera.svg';
-import { ClosePopup } from '@/utils/icons';
 
-const AddSiblingsModal = ({  isOpen, onClose, onSubmit }) => {
+const AddSiblingsModal = ({  isOpen, onClose, onSubmit, loading }) => {
   const [fullName, setFullName] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
   const { classes, loadingClasses } = useClasses();
@@ -132,16 +131,29 @@ const handleSubmit = (e) => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="cursor-pointer w-full py-2 md:py-3 lg:py-4 flex items-center justify-center gap-2 px-4 bg-[#e89b32] hover:bg-[#d18c2d] rounded-[60px] transition-colors"
+            disabled={loading}
+            className={`cursor-pointer w-full py-2 md:py-3 lg:py-4 flex items-center justify-center gap-2 px-4 rounded-[60px] transition-colors ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#e89b32] hover:bg-[#d18c2d]"
+            }`}
           >
-            <img
-              className="w-3 md:w-4 lg:w-6"
-              alt="Add icon"
-              src="https://c.animaapp.com/mf2i8zbdeyVMjf/img/frame-1.svg"
-            />
-            <span className="font-semibold text-navyteal text-base md:text-xl lg:text-2xl">
-              إضافة
-            </span>
+            {loading ? (
+              <span className="text-navyteal font-semibold text-base md:text-xl lg:text-2xl">
+                جاري الإضافة...
+              </span>
+            ) : (
+              <>
+                <img
+                  className="w-3 md:w-4 lg:w-6"
+                  alt="Add icon"
+                  src="https://c.animaapp.com/mf2i8zbdeyVMjf/img/frame-1.svg"
+                />
+                <span className="font-semibold text-navyteal text-base md:text-xl lg:text-2xl">
+                  إضافة
+                </span>
+              </>
+            )}
           </button>
         </form>
         </div>

@@ -4,11 +4,10 @@ import React, { useState, useRef } from "react";
 import { ChevronDown } from "@/utils/icons";
 import { useBrothers } from "../hooks/useBrothers";
 import { useDispatch, useSelector } from "react-redux";
-import { switchUserAccount, updateUserImage, getBrothers, addSibling } from "../store/profileSlice";
-import { toast } from "react-toastify";
+import { switchUserAccount, updateUserImage, getBrothers, addSibling, addBrotherLocal } from "../store/profileSlice";
 import { Plus } from "@/utils/icons";
-import 'react-toastify/dist/ReactToastify.css';
 import AddSiblingsModal from "@/components/profile/modal/AddSiblingsModal";
+import { useModal } from "@/components/feedback/modal/useModal";
 
 const UserProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,17 +17,88 @@ const UserProfile = () => {
   const { brothers = [], loadingBrothers } = useBrothers();
   const [open, setOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState({}); 
+  const { openStatusModal } = useModal();
 
   if (!user) return null;
-  const handleImageChange = (e, userId) => {
-  const file = e.target.files[0];
-    if (!file) return;
 
-    setSelectedImages((prev) => ({ ...prev, [userId]: file }));
-    dispatch(updateUserImage({ userId, file }))
-      .unwrap()
+  // const handleAddSibling = async (siblingData) => {
+  //   if (brothers.length >= 3) {
+  //     openStatusModal("ERROR", {
+  //       title: "لا يمكنك إضافة أكثر من 3 إخوة",
+  //       message: "لقد وصلت للحد الأقصى المسموح به.",
+  //     });
+  //     return;
+  //   }
 
-  };
+  //   try {
+  //     await dispatch(addSibling(siblingData)).unwrap();
+  //     openStatusModal("SUCCESS", {
+  //       title: "تمت الإضافة بنجاح",
+  //       message: "تمت إضافة الأخ/الأخت بنجاح إلى الحساب.",
+  //     });
+  //     setIsModalOpen(false); 
+  //   } catch {
+  //     openStatusModal("ERROR", {
+  //       title: "فشل في إضافة الأخ",
+  //       message: "حدث خطأ أثناء محاولة الإضافة. حاول مرة أخرى.",
+  //     });
+  //   }
+  // };
+
+  const handleAddSibling = async (siblingData) => {
+  if (brothers.length >= 3) {
+    openStatusModal("ERROR", {
+      title: "لا يمكنك إضافة أكثر من 3 إخوة",
+      message: "لقد وصلت للحد الأقصى المسموح به.",
+    });
+    return;
+  }
+
+  try {
+    // Send request once
+    const newBrother = await dispatch(addSibling(siblingData)).unwrap();
+
+    // Add locally
+    dispatch(addBrotherLocal(newBrother));
+
+    openStatusModal("SUCCESS", {
+      title: "تمت الإضافة بنجاح",
+      message: "تمت إضافة الأخ/الأخت بنجاح إلى الحساب.",
+    });
+
+    setIsModalOpen(false); 
+  } catch {
+    openStatusModal("ERROR", {
+      title: "فشل في إضافة الأخ",
+      message: "حدث خطأ أثناء محاولة الإضافة. حاول مرة أخرى.",
+    });
+  }
+};
+
+    // Close dropdown if clicked outside
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //       setOpen(false);
+  //     }
+  //   };
+
+  //   document.addEventListener("mousedown", handleClickOutside);
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
+
+    const handleImageChange = (e, userId) => {
+    const file = e.target.files[0];
+      if (!file) return;
+
+      setSelectedImages((prev) => ({ ...prev, [userId]: file }));
+      dispatch(updateUserImage({ userId, file }))
+        .unwrap()
+
+    };
 
   const handleSwitch = async (bro) => {
     if (bro.id === user.id) return; 
@@ -42,19 +112,6 @@ const UserProfile = () => {
     } catch (err) {
       console.error("Failed to switch account:", err);
     }
-  };
-
-  const handleAddSibling = async (siblingData) => {
-    if (brothers.length >= 3) {
-        toast.error("لا يمكنك إضافة أكثر من 3 إخوة");
-        return;
-      }
-    try {
-        await dispatch(addSibling(siblingData)).unwrap();
-        toast.success("تمت إضافة الأخ بنجاح");
-      } catch  {
-        toast.error("فشل في إضافة الأخ");
-      }
   };
 
   return (

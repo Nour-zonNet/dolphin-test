@@ -183,7 +183,7 @@ const subscriptionSlice = createSlice({
               : s
           );
         } else {
-          console.warn("No valid subscription data in payload");
+          // console.warn("No valid subscription data in payload");
         }
       })
       .addCase(changeGroupSubscription.rejected, handleRejected)

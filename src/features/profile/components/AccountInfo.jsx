@@ -7,32 +7,46 @@ import { ProfileButtons } from '@/components';
 // import flag from "@/assets/authentication/flag.svg";
 import ChangeGradeModal from '@/components/profile/modal/ChangeGradeModal';
 import { useProfile } from '../hooks/useProfile';
+import { useModal } from "@/components/feedback/modal/useModal";
 
 const AccountInfo = ({ user }) => {
   // const dispatch = useDispatch(); 
   const { handleUpdateProfile } = useProfile();
-
+  const [isSaving, setIsSaving] = useState(false);
+  const [isUpdatingGrade, setIsUpdatingGrade] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phoneNumber || "");
   const [grade, setGrade] = useState(user?.gradeName || "");
   const [gradeId, setGradeId] = useState(user?.grade || null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { openStatusModal } = useModal();
   const handleConfirmGrade = async (gradeName, gradeId) => {
+
     setGrade(gradeName);
     setGradeId(gradeId);
     // await dispatch(updateUserGrade({ userId: user.id, gradeId }));
-    try {
-      await handleUpdateProfile({
-        name,
-        grade: gradeId,
-        _method: "PATCH",
-      });
-      setIsModalOpen(false);
-      setIsModalOpen(false); 
-    } catch (error) {
-      console.error("فشل تحديث الصف:", error);
-    }
+  try {
+  await handleUpdateProfile({
+    name,
+    grade: gradeId,
+    _method: "PATCH",
+  });
+
+  openStatusModal("SUCCESS", {
+    title: "تم تحديث الصف بنجاح",
+    message: `الصف الدراسي الآن هو: ${gradeName}`,
+  });
+
+  setIsModalOpen(false);
+
+} catch (error) {
+  openStatusModal("ERROR", {
+    title: "فشل في تحديث الصف",
+    message: "حدث خطأ أثناء محاولة تحديث الصف. حاول مرة أخرى.",
+  });
+}
+
   };
 
   useEffect(() => {
@@ -47,12 +61,28 @@ const AccountInfo = ({ user }) => {
     setIsModalOpen(false);
   };
   
-  const handleSave = () => {
-    handleUpdateProfile({
+  const handleSave = async () => {
+    setIsSaving(true);
+
+    const result = await handleUpdateProfile({
       name,
       grade: gradeId,
       _method: "PATCH",
     });
+
+    setIsSaving(false);
+
+    if (result.success) {
+      openStatusModal("SUCCESS", {
+        title: "تم حفظ التغييرات",
+        message: "تم حفظ بيانات الحساب بنجاح",
+      });
+    } else {
+      openStatusModal("ERROR", {
+        title: "فشل في الحفظ",
+        message: result.error?.message || "حدث خطأ أثناء محاولة حفظ التغييرات.",
+      });
+    }
   };
 
   return (
@@ -97,7 +127,7 @@ const AccountInfo = ({ user }) => {
               <ProfileInputs 
                 value={phone}
                 disabled
-                className="relative border-[#aaaaaa] border-[0.5px] px-10"
+                className="relative border-[#aaaaaa] border-[0.5px]"
               />
               {/* <img src={flag} alt="Country" className="absolute top-[52%] md:top-1/2 right-8 w-8 md:w-auto" /> */}
             </div>
@@ -132,13 +162,15 @@ const AccountInfo = ({ user }) => {
           </div>
         </div>
 
-        <ProfileButtons variant="primary" size="" className="my-4 md:my-8 py-2 md:py-4 w-full max-w-6xl cursor-pointer bg-orangedeep hover:bg-btnClicked" onClick={handleSave}>
-          <img
-            className="w-4 md:w-6"
-            alt="Save"
-            src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1.svg"
-          />
-          <span className="text-navyteal text-lg md:text-xl font-semibold">حفظ التغييرات</span>
+        <ProfileButtons disabled={isSaving} variant="primary" size="" className="my-4 md:my-8 py-2 md:py-4 w-full max-w-6xl cursor-pointer bg-orangedeep hover:bg-btnClicked" onClick={handleSave}>
+          {isSaving ? (
+          <span className="text-navyteal text-lg md:text-xl font-semibold">... جاري الحفظ</span>
+          ) : (
+            <>
+              <img className="w-4 md:w-6" alt="Save" src="https://c.animaapp.com/mf29nm7vjLRxgE/img/layer-1.svg" />
+              <span className="text-navyteal text-lg md:text-xl font-semibold">حفظ التغييرات</span>
+            </>
+          )}
         </ProfileButtons>
       </div>
     </ProfileCard>
@@ -146,6 +178,8 @@ const AccountInfo = ({ user }) => {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           onConfirm={handleConfirmGrade}
+          currentGradeId={gradeId}
+          setCurrentGradeId={setGradeId}
         />
     </>
   );

@@ -72,7 +72,9 @@ export const logout = createAsyncThunk(
     } catch (err) {
       console.warn("Logout API failed, continuing local logout:", err?.response?.data || err);
     }
-
+    if (window.$chatwoot) {
+      window.$chatwoot.reset();
+    }
     // Always clear locally
     localStorage.removeItem("token");
       delete api.defaults.headers.common["Authorization"];
