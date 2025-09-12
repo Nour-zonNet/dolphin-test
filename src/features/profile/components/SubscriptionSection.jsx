@@ -18,7 +18,7 @@ const getStyleForSub = (sub) => {
 
   const style = packageStyles[key];
   if (!style) {
-    console.warn("No package style for subscription:", { key, sub, known: Object.keys(packageStyles) });
+    // console.warn("No package style for subscription:", { key, sub, known: Object.keys(packageStyles) });
   }
   return style ?? { image: defaultImage, bgColor: "#D8D8EB" };
 };

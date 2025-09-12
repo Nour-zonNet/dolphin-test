@@ -4,7 +4,7 @@ export const ENDPOINTS = {
   REGISTER: "/student/register",
   VERIFY_OTP: "/student/verify",
   GET_PROFILE: "/student/info",
-  LOGOUT: "/auth/logout",
+  LOGOUT: "/student/logout",
   MY_PACKAGES: "/student/packages/my-packages",
   GRADE_PACKAGES: "/student/packages",
   SCHEDULE_OF_PACKAGE: "/student/get-group-schedule/",

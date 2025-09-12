@@ -120,7 +120,7 @@ const subscriptionSlice = createSlice({
       // ===== Cancel =====
       .addCase(cancelSubscription.pending, handlePending)
       .addCase(cancelSubscription.fulfilled, (state, action) => {
-        console.log("cancelSubscription.fulfilled", action);
+        // console.log("cancelSubscription.fulfilled", action);
         state.loading = false;
 
         const updated = action?.payload ?? null;
@@ -160,7 +160,7 @@ const subscriptionSlice = createSlice({
               : s
           );
         } else {
-          console.warn("No valid subscription data in payload");
+          // console.warn("No valid subscription data in payload");
         }
       })
       .addCase(changeGroupSubscription.rejected, handleRejected)
