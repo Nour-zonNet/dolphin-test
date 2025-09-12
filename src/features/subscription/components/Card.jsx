@@ -56,6 +56,7 @@ const Card = React.memo(({ item }) => {
     if (s === "فعالة" || s === "active") return "active";
     if (s === "تجريبي" || s === "trial") return "trial";
     if (s === "منتهي" || s === "expired") return "expired";
+    if (s === "انتظار" || s === "waiting") return "waiting";
     if (s === "ملغاة" || s === "canceled" || s === "cancelled")
       return "cancelled";
     // Default
@@ -238,13 +239,15 @@ const Card = React.memo(({ item }) => {
 
           {/* Group Info & Actions */}
           {/* {config.actions.includes("changeGroup") && ( */}
-          {status !== "cancelled" && status !== "expired" && (
-            <GroupInfo
-              group={group}
-              packageId={item.package_id}
-              subscriptionId={item.id}
-            />
-          )}
+          {status !== "cancelled" &&
+            status !== "expired" &&
+            status !== "waiting" && (
+              <GroupInfo
+                group={group}
+                packageId={item.package_id}
+                subscriptionId={item.id}
+              />
+            )}
           {/* )} */}
           {/* Coupon */}
           {/* Actions */}
