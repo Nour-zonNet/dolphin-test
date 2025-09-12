@@ -77,7 +77,6 @@ const ForgotPasswordOtpPage = () => {
         otp_code: otp,
       }).unwrap();
       // Extract token from response and persist
-      console.log(res)
       const token = res?.data?.token || res?.token;
       if (token) {
         dispatch(setToken(token));

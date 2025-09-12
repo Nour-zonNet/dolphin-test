@@ -131,7 +131,7 @@ const subscriptionSlice = createSlice({
       // ===== Cancel =====
       .addCase(cancelSubscription.pending, handlePending)
       .addCase(cancelSubscription.fulfilled, (state, action) => {
-        console.log("cancelSubscription.fulfilled", action);
+        // console.log("cancelSubscription.fulfilled", action);
         state.loading = false;
 
         const updated = action?.payload ?? null;
@@ -143,7 +143,7 @@ const subscriptionSlice = createSlice({
       })
       .addCase(reactivateSubscription.pending, handlePending)
       .addCase(reactivateSubscription.fulfilled, (state, action) => {
-        console.log("reactivateSubscription.fulfilled", action);
+        // console.log("reactivateSubscription.fulfilled", action);
         state.loading = false;
 
         const updated = action?.payload ?? null;

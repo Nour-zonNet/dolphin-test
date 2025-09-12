@@ -1,5 +1,4 @@
 import { useMemo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import teacherIcon from "@/assets/schedule/teacher.svg";
 import groupIcon from "@/assets/schedule/group.svg";
@@ -7,11 +6,17 @@ import timeIcon from "@/assets/schedule/time.svg";
 import clock from "@/assets/schedule/clock.svg";
 import sandGlass from "@/assets/schedule/sandGlass.svg";
 import books from "@/assets/schedule/books.svg";
-import { formatArabicTime, getRemainingTime } from "@/utils/dateHelpers";
+import { formatArabicTime } from "@/utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
+import { getSessionLink } from "../store/lessonsSlice";
+import { useDispatch } from "react-redux";
+import { useModal } from "@/components/feedback/modal/useModal";
+import { useCountdown } from "../hooks/useCountdown";
 
 const LessonCard = ({ item, color, image, lessonDate }) => {
-  const navigate = useNavigate();
+  const { openStatusModal } = useModal();
+  // const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const { start, end } = useMemo(() => {
@@ -33,6 +38,12 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
 
     return { start: startDate, end: endDate };
   }, [item.start_time, item.duration, lessonDate]);
+
+  const { timeRemaining, isExpired, canEnterLesson } = useCountdown(
+    item.start_time,
+    lessonDate
+  );
+
   const lessonStatus = useMemo(() => {
     const now = new Date();
     if (now >= start && now <= end) return "live";
@@ -40,32 +51,67 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     return "upcoming";
   }, [start, end]);
 
-  const handleEnterLesson = useCallback(
-    () => navigate("lessoncontent"),
-    [navigate]
-  );
-  const renderButton = () => {
-    if (lessonStatus === "upcoming") {
+  const handleEnterLesson = useCallback(async () => {
+    try {
+      const res = await dispatch(
+        getSessionLink({ room_uid: item.session_link, session_id: item.id })
+      ).unwrap();
+      if (res?.status) {
+        // لو فيه لينك شغال → ندخل على الـ URL
+        window.open(res.url, "_blank");
+      } else {
+        // لو مفيش لينك مفتوح
+        openStatusModal("ERROR", {
+          // title: "لا يوجد لقاء مفتوح",
+          message:
+            res?.data?.message || "لا يوجد اجتماع متاح حالياً لهذه الجلسة.",
+        });
+      }
+    } catch (error) {
+      // هندل أي errors جاية من الـ API أو الـ thunk
+      const getErrorMessage = (err) => {
+        if (!err) return "حدث خطأ أثناء الدخول للجلسة. حاول مرة أخرى.";
+        if (typeof err === "string") return err;
+        if (Array.isArray(err)) return err[0] || "حدث خطأ أثناء الدخول للجلسة.";
+        if (err && typeof err === "object") {
+          if (err.data && err.data.error) return err.data.error;
+          if (err.message) return err.message;
+        }
+        return "حدث خطأ أثناء الدخول للجلسة.";
+      };
+
+      openStatusModal("ERROR", {
+        title: "فشل الدخول للجلسة",
+        message: getErrorMessage(error),
+      });
+    }
+  }, [dispatch, item.id, item.session_link, openStatusModal]);
+
+  const renderButton = useCallback(() => {
+    // لو الحصة لسه جاية ولسه فيه وقت متبقي ومينفعش ندخل → يعرض العداد فقط
+    if (
+      lessonStatus === "upcoming" &&
+      timeRemaining &&
+      !isExpired &&
+      !canEnterLesson
+    ) {
       return (
-        <>
-          <div className="flex justify-center text-center items-center align-middle">
-            <img
-              src={clock}
-              alt="clock"
-              className="cursor-pointer w-16 xs:w-auto"
-            />
-          </div>
-          {/* <button
-            disabled
-            className="px-4 py-2 text-nowrap text-gray-400 text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-gray-200 rounded-3xl cursor-not-allowed"
-          >
-            لم تبدأ بعد
-          </button> */}
-        </>
+        <div className="flex justify-center text-center items-center align-middle">
+          <img
+            src={clock}
+            alt="clock"
+            className="cursor-pointer w-16 xs:w-auto"
+          />
+        </div>
       );
     }
 
-    if (lessonStatus === "live") {
+    // لو وقت الحصة جه (العداد خلص) أو الحصة Live أو ينفع ندخل (قبل 5 دقائق) → يعرض زرار الدخول
+    if (
+      lessonStatus === "live" ||
+      (lessonStatus === "upcoming" &&
+        (isExpired || !timeRemaining || canEnterLesson))
+    ) {
       return (
         <>
           <div className="flex justify-center text-center items-center align-middle">
@@ -85,26 +131,27 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       );
     }
 
+    // لو الحصة انتهت
     if (lessonStatus === "ended") {
       return (
-        <>
-          <div className="flex justify-center text-center items-center align-middle">
-            <img
-              src={books}
-              alt="clock"
-              className="cursor-pointer w-16 xs:w-auto"
-            />
-          </div>
-          {/* <button
-            onClick={handleEnterLesson}
-            className="px-4 py-2 text-nowrap text-gray-400 text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-gray-200 rounded-3xl cursor-not-allowed"
-          >
-            عرض المحتوى
-          </button> */}
-        </>
+        <div className="flex justify-center text-center items-center align-middle">
+          <img
+            src={books}
+            alt="ended"
+            className="cursor-pointer w-16 xs:w-auto"
+          />
+        </div>
       );
     }
-  };
+
+    return null;
+  }, [
+    lessonStatus,
+    timeRemaining,
+    isExpired,
+    canEnterLesson,
+    handleEnterLesson,
+  ]);
   const { statusText, statusColor, statusIcon } = useMemo(() => {
     const now = new Date();
 
@@ -127,12 +174,27 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     }
 
     if (lessonStatus === "upcoming") {
-      return {
-        statusText: `متبقي ${getRemainingTime(item.start_time)}`,
-        statusColor: "text-[#ba7c28]",
-        statusIcon: <SandGlass className="w-4" />,
-      };
+      if (timeRemaining && !isExpired && !canEnterLesson) {
+        return {
+          statusText: timeRemaining, // يعرض العدّاد
+          statusColor: "text-[#ba7c28]",
+          statusIcon: <SandGlass className="w-4" />,
+        };
+      } else if (canEnterLesson) {
+        return {
+          statusText: "يمكن الدخول الآن",
+          statusColor: "text-green-600",
+          statusIcon: <NotifyIcon className="w-4" />,
+        };
+      } else {
+        return {
+          statusText: "يمكن الدخول الآن",
+          statusColor: "text-green-600",
+          statusIcon: <NotifyIcon className="w-4" />,
+        };
+      }
     }
+
     if (lessonStatus === "live") {
       return {
         statusText: "الحصة بدأت",
@@ -140,12 +202,20 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         statusIcon: <NotifyIcon className="w-4" />,
       };
     }
+
     return {
       statusText: "انتهت الحصة",
       statusColor: "text-red-500",
       statusIcon: <TimeCheck className="w-4" />,
     };
-  }, [lessonStatus, item.start_time, start]);
+  }, [
+    lessonStatus,
+    timeRemaining,
+    canEnterLesson,
+    isExpired,
+    item.start_time,
+    start,
+  ]);
 
   return (
     <div className="relative">

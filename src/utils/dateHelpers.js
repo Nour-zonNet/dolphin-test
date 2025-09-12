@@ -77,4 +77,4 @@ export function getFormattedDate(date = new Date()) {
 }
 
 // الاستخدام
-console.log(getFormattedDate()); 
+// console.log(getFormattedDate()); 

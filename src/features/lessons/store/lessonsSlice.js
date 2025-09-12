@@ -7,11 +7,22 @@ export const fetchLessons = createAsyncThunk("lessons/fetch", async () => {
   return res.data;
 });
 
+export const getSessionLink = createAsyncThunk(
+  "session/getSessionLink",
+  async (roomUId, { rejectWithValue }) => {
+    try {
+      const { data } = await lessonsRepository.getSessionLink(roomUId);
+      return data; // بيرجع الـ payload
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
 const lessonsSlice = createSlice({
   name: "lessons",
   initialState: {
-    items: [ ],
+    items: [],
     loading: false,
     error: null,
   },
@@ -28,6 +39,18 @@ const lessonsSlice = createSlice({
       .addCase(fetchLessons.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(getSessionLink.pending, (state) => {
+        // state.loading = true;
+        state.error = null;
+      })
+      .addCase(getSessionLink.fulfilled, (state, action) => {
+        state.loading = false;
+        state.link = action.payload;
+      })
+      .addCase(getSessionLink.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
