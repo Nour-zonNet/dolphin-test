@@ -13,7 +13,15 @@ export const packageStyles = {
     bgColor: "#2E7D32",
     image: quranImg,
   },
+  75: {
+    bgColor: "#2E7D32",
+    image: quranImg,
+  },
   73: {
+    bgColor: "#9A8158",
+    image: quranImg,
+  },
+  157: {
     bgColor: "#9A8158",
     image: quranImg,
   },
@@ -21,7 +29,16 @@ export const packageStyles = {
     bgColor: "#0077B6",
     image: tooth,
   },
+  188: {
+    bgColor: "#0077B6",
+    image: tooth,
+  },
+
   185: {
+    bgColor: "#8441BF",
+    image: english,
+  },
+  148: {
     bgColor: "#8441BF",
     image: english,
   },
@@ -29,7 +46,15 @@ export const packageStyles = {
     bgColor: "#BCA7F5",
     image: english,
   },
+  186: {
+    bgColor: "#BCA7F5",
+    image: english,
+  },
   127: {
+    bgColor: "#DFBE37",
+    image: math,
+  },
+  130: {
     bgColor: "#DFBE37",
     image: math,
   },
@@ -50,6 +75,7 @@ export const packageStyles = {
     bgColor: "#BCA7F5",
   },
   171: { image: english, bgColor: "#BCA7F5" },
+  173: { image: english, bgColor: "#BCA7F5" },
   122: {
     image: english,
     bgColor: "#8441BF",
@@ -74,6 +100,10 @@ export const packageStyles = {
     image: english,
     bgColor: "#BCA7F5",
   },
+    179: {
+    image: special,
+    bgColor: "#CD6036",
+  },
   176: {
     image: special,
     bgColor: "#CD6036",
@@ -81,6 +111,10 @@ export const packageStyles = {
   197: {
     image: science,
     bgColor: "#FF6F00",
+  },
+  142: {
+    image: arabic,
+    bgColor: "#C51162",
   },
   139: {
     image: arabic,
