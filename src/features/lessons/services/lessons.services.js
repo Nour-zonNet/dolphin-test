@@ -18,7 +18,7 @@ class LessonsRepository {
       ENDPOINTS.GET_SESSION_LINK,
       roomAndSessionUId
     );
-    console.log(data)
+    // console.log(data)
     return data;
   }
 
