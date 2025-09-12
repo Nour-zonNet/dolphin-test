@@ -30,7 +30,7 @@ const PackageCard = React.memo(
         <div className="relative w-full transition-transform duration-300 pr-0">
           <div
             style={{ borderColor: color }}
-            className={`relative rounded-xl border bg-foundblue w-full overflow-hidden transform skew-y-[0.1deg] p-1 pb-0 pr-0 skew-x-2 z-10 shadow-sm transition-all`}
+            className={`relative rounded-xl border bg-foundblue w-full overflow-hidden transform p-1 pb-0 pr-0  z-10 shadow-sm transition-all`}
           >
             {/* Decorative Kite */}
             <div className="absolute flex items-start justify-end w-full -left-2 pt-8">
@@ -94,10 +94,10 @@ const PackageCard = React.memo(
               {/* Social Icons */}
               <div className="flex items-center justify-between py-1 xs:w-auto px-4 md:px-4 md:py-2 border-[1px] border-[#5C6064]/50 gap-4 rounded-full">
                 <button className="">
-                  <WhatsappCircle className="h-5 sm:h-8" />
+                  <WhatsappCircle className="h-6 sm:h-8" />
                 </button>
                 <button className="">
-                  <TelegramCircle className="h-5 sm:h-8" />
+                  <TelegramCircle className="h-6 sm:h-8" />
                 </button>
               </div>
             </div>

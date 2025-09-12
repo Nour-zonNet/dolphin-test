@@ -1,123 +1,70 @@
-import quranImg from "@/assets/packages/quran.svg";
+import quran from "@/assets/packages/quran.svg";
 import english from "@/assets/packages/english.svg";
 import tooth from "@/assets/packages/tooth.svg";
-import quran from "@/assets/packages/quran.svg";
 import game from "@/assets/packages/game.svg";
 import math from "@/assets/packages/math.svg";
+import talent from "@/assets/packages/talent.svg";
 import skratch from "@/assets/packages/skratch.svg";
 import special from "@/assets/packages/special.svg";
 import science from "@/assets/packages/science.svg";
 import arabic from "@/assets/packages/arabic.svg";
-export const packageStyles = {
-  68: {
-    bgColor: "#2E7D32",
-    image: quranImg,
-  },
-  75: {
-    bgColor: "#2E7D32",
-    image: quranImg,
-  },
-  73: {
-    bgColor: "#9A8158",
-    image: quranImg,
-  },
-  157: {
-    bgColor: "#9A8158",
-    image: quranImg,
-  },
-  123: {
-    bgColor: "#0077B6",
-    image: tooth,
-  },
-  188: {
-    bgColor: "#0077B6",
-    image: tooth,
+
+// Define groups with common styles
+const groups = [
+  {
+    ids: [75, 154, 155, 156, 73, 157, 158, 102, 162, 163, 164, 159, 160, 161],
+    style: { bgColor: "#2E7D32", image: quran },
   },
 
-  185: {
-    bgColor: "#8441BF",
-    image: english,
+  {
+    ids: [198, 123, 188, 189, 190, 191, 192, 193, 194, 195, 196],
+    style: { bgColor: "#0077B6", image: tooth },
   },
-  148: {
-    bgColor: "#8441BF",
-    image: english,
+  {
+    ids: [
+      145, 147, 150, 152, 149, 186, 117, 171, 174, 175, 172, 118, 165, 167, 168,
+      169, 170,
+    ],
+    style: { bgColor: "#BCA7F5", image: english },
   },
-  145: {
-    bgColor: "#BCA7F5",
-    image: english,
+  {
+    ids: [174, 173, 185, 186, 187, 146, 148, 153, 122],
+    style: { bgColor: "#8441BF", image: english },
   },
-  186: {
-    bgColor: "#BCA7F5",
-    image: english,
+  {
+    ids: [127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138],
+    style: { bgColor: "#DFBE37", image: math },
   },
-  127: {
-    bgColor: "#DFBE37",
-    image: math,
+  {
+    ids: [120, 121],
+    style: { bgColor: "#F5EAD7", image: talent },
   },
-  130: {
-    bgColor: "#DFBE37",
-    image: math,
+  {
+    ids: [114, 119],
+    style: { bgColor: "#D8D8EB", image: game },
   },
-  114: {
-    image: game,
-    bgColor: "#D8D8EB",
+  {
+    ids: [113],
+    style: { bgColor: "#D47C7C", image: skratch },
   },
-  135: {
-    image: math,
-    bgColor: "#DFBE37",
+  {
+    ids: [179, 178, 177, 176, 180, 181, 182, 183, 184],
+    style: { bgColor: "#CD6036", image: special },
   },
-  153: {
-    image: english,
-    bgColor: "#8441BF",
+  {
+    ids: [197],
+    style: { bgColor: "#FF6F00", image: science },
   },
-  117: {
-    image: english,
-    bgColor: "#BCA7F5",
+  {
+    ids: [139, 140, 141, 142, 143, 144, 195, 196],
+    style: { bgColor: "#C51162", image: arabic },
   },
-  171: { image: english, bgColor: "#BCA7F5" },
-  173: { image: english, bgColor: "#BCA7F5" },
-  122: {
-    image: english,
-    bgColor: "#8441BF",
-  },
-  165: {
-    image: english,
-    bgColor: "#8441BF",
-  },
-  154: {
-    image: quran,
-    bgColor: "#2E7D32",
-  },
-  102: {
-    image: quran,
-    bgColor: "#2E7D32",
-  },
-  113: {
-    image: skratch,
-    bgColor: "#D47C7C",
-  },
-  172: {
-    image: english,
-    bgColor: "#BCA7F5",
-  },
-    179: {
-    image: special,
-    bgColor: "#CD6036",
-  },
-  176: {
-    image: special,
-    bgColor: "#CD6036",
-  },
-  197: {
-    image: science,
-    bgColor: "#FF6F00",
-  },
-  142: {
-    image: arabic,
-    bgColor: "#C51162",
-  },
-  139: {
-    image: arabic,
-    bgColor: "#C51162",
-  },
-};
+];
+
+// Build the final object dynamically
+export const packageStyles = groups.reduce((acc, group) => {
+  group.ids.forEach((id) => {
+    acc[id] = group.style;
+  });
+  return acc;
+}, {});

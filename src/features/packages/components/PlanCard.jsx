@@ -7,7 +7,6 @@ import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
 const PlanCard = ({ plan, selected, onSelect }) => {
   const { image, bgColor } = packageFactory(plan.id);
-  console.log(plan.package_id);
   const colors = [
     "bg-blue-100 text-blue-800",
     "bg-green-100 text-green-800",
