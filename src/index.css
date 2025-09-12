@@ -196,7 +196,6 @@ select option:hover {
   color: #fff;
 }
 
-#chatwoot-container,
-#chatwoot-launcher {
-  display: none !important;
+.woot-widget-bubble {
+  /* display: none; */
 }
