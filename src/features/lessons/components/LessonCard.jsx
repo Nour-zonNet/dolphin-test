@@ -9,9 +9,14 @@ import sandGlass from "@/assets/schedule/sandGlass.svg";
 import books from "@/assets/schedule/books.svg";
 import { formatArabicTime, getRemainingTime } from "@/utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
+import { getSessionLink } from "../store/lessonsSlice";
+import { useDispatch } from "react-redux";
+import { useModal } from "@/components/feedback/modal/useModal";
 
 const LessonCard = ({ item, color, image, lessonDate }) => {
-  const navigate = useNavigate();
+  const { openStatusModal } = useModal();
+  // const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const { start, end } = useMemo(() => {
@@ -40,10 +45,43 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     return "upcoming";
   }, [start, end]);
 
-  const handleEnterLesson = useCallback(
-    () => navigate("lessoncontent"),
-    [navigate]
-  );
+  const handleEnterLesson = useCallback(async () => {
+    try {
+      const res = await dispatch(
+        getSessionLink({ room_uid: item.session_link, session_id: item.id })
+      ).unwrap();
+      console.log(res);
+      if (res?.status) {
+        // لو فيه لينك شغال → ندخل على الـ URL
+        window.open(res.url, "_blank");
+      } else {
+        // لو مفيش لينك مفتوح
+        openStatusModal("ERROR", {
+          // title: "لا يوجد لقاء مفتوح",
+          message:
+            res?.data?.message || "لا يوجد اجتماع متاح حالياً لهذه الجلسة.",
+        });
+      }
+    } catch (error) {
+      // هندل أي errors جاية من الـ API أو الـ thunk
+      const getErrorMessage = (err) => {
+        if (!err) return "حدث خطأ أثناء الدخول للجلسة. حاول مرة أخرى.";
+        if (typeof err === "string") return err;
+        if (Array.isArray(err)) return err[0] || "حدث خطأ أثناء الدخول للجلسة.";
+        if (err && typeof err === "object") {
+          if (err.data && err.data.error) return err.data.error;
+          if (err.message) return err.message;
+        }
+        return "حدث خطأ أثناء الدخول للجلسة.";
+      };
+
+      openStatusModal("ERROR", {
+        title: "فشل الدخول للجلسة",
+        message: getErrorMessage(error),
+      });
+    }
+  }, [dispatch, item.id, item.session_link, openStatusModal]);
+
   const renderButton = () => {
     if (lessonStatus === "upcoming") {
       return (
@@ -56,8 +94,9 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
             />
           </div>
           {/* <button
-            disabled
-            className="px-4 py-2 text-nowrap text-gray-400 text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-gray-200 rounded-3xl cursor-not-allowed"
+            onClick={handleEnterLesson}
+            // disabled
+            className="px-4 py-2 text-nowrap text-gray-400 text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-gray-200 rounded-3xl "
           >
             لم تبدأ بعد
           </button> */}
@@ -128,7 +167,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
 
     if (lessonStatus === "upcoming") {
       return {
-        statusText: `متبقي ${getRemainingTime(item.start_time)}`,
+        statusText: ` ${getRemainingTime(item.start_time)}`,
         statusColor: "text-[#ba7c28]",
         statusIcon: <SandGlass className="w-4" />,
       };
