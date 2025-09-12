@@ -24,7 +24,7 @@ export const Header = ({
         </button>
 
         {/* Centered Title */}
-        <h1 className="absolute left-1/2 -translate-x-1/2 font-bold text-navyteal md:text-2xl text-sm text-center">
+        <h1 className="absolute md:left-1/2 -translate-x-1/2 font-bold text-navyteal md:text-2xl text-sm text-center">
           {title}
         </h1>
 
@@ -35,11 +35,12 @@ export const Header = ({
               <Balance className="w-4 md:w-6" />
             </div>
             {/* <span className="font-bold flex items-center gap-2 text-navyteal md:text-2xl text-[16px]">
+
               الرصيد:
               <FormatWithCurrency
                 amount={balance}
-                className="font-bold flex items-center gap-2 text-navyteal md:text-2xl text-[16px]"
-                symbolClass=""
+                className="font-bold flex items-center gap-1 text-navyteal md:text-2xl text-[16px]"
+                symbolClass="w-5 h-5 md:w-8 md:h-8 xl:w-10 xl:h-10"
                 symbolFill="#08233f"
               />
             </span> */}
