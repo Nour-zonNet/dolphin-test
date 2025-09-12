@@ -60,9 +60,9 @@ const PlanCard = ({ plan, selected, onSelect }) => {
               </h3>
             </div>
 
-            <div className="flex  justify-between flex-nowrap items-center  mt-2">
+            <div className="flex justify-between flex-nowrap items-center  mt-2">
               <div>
-                <span className=" text-navyteal text-xs px-1 py-1 rounded-full">
+                <span className="text-navyteal text-xs px-1 py-1 rounded-full">
                   {plan.durationText}
                 </span>
                 <span>|</span>
@@ -74,7 +74,7 @@ const PlanCard = ({ plan, selected, onSelect }) => {
               </div>
               {/* <span>|</span> */}
 
-              <span className="flex items-center gap-2 float-end self-end text-left text-base">
+              <span className="flex items-center gap-2 text-nowrap float-end self-end text-left text-base">
                 {" "}
                 سعر الباقة : 
                 <FormatWithCurrency 
@@ -92,8 +92,8 @@ const PlanCard = ({ plan, selected, onSelect }) => {
       {selected && (
         <div className=" pt-4 border-t border-gray-100 p-6 space-y-2 ">
           {plan.subjects && plan.subjects.length > 0 && (
-            <div className="mt-2 flex items-center">
-              <span className="text-navyteal font-semibold text-sm block ml-1 mb-1">
+            <div className="mt-2 flex items-start">
+              <span className="text-navyteal font-semibold text-sm block ml-1 mb-1 text-nowrap">
                 المواد المشمولة :
               </span>
               <div className="flex flex-wrap gap-2">
