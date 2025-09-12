@@ -1,6 +1,13 @@
 import quranImg from "@/assets/packages/quran.svg";
 import english from "@/assets/packages/english.svg";
 import tooth from "@/assets/packages/tooth.svg";
+import quran from "@/assets/packages/quran.svg";
+import game from "@/assets/packages/game.svg";
+import math from "@/assets/packages/math.svg";
+import skratch from "@/assets/packages/skratch.svg";
+import special from "@/assets/packages/special.svg";
+import science from "@/assets/packages/science.svg";
+import arabic from "@/assets/packages/arabic.svg";
 export const packageStyles = {
   68: {
     bgColor: "#2E7D32",
@@ -14,40 +21,69 @@ export const packageStyles = {
     bgColor: "#0077B6",
     image: tooth,
   },
-  122: {
-    bgColor: "#BCA7F5",
+  185: {
+    bgColor: "#8441BF",
     image: english,
   },
-  118: {
+  145: {
     bgColor: "#BCA7F5",
     image: english,
   },
   127: {
-    bgColor: "#0077B6",
+    bgColor: "#DFBE37",
+    image: math,
+  },
+  114: {
+    image: game,
+    bgColor: "#D8D8EB",
+  },
+  135: {
+    image: math,
+    bgColor: "#DFBE37",
+  },
+  153: {
     image: english,
+    bgColor: "#8441BF",
   },
-  139: {
-    bgColor: "#0077B6",
-    image: "",
+  117: {
+    image: english,
+    bgColor: "#BCA7F5",
   },
-  145: {
-    bgColor: "#0077B6",
-    image: "",
+  171: { image: english, bgColor: "#BCA7F5" },
+  122: {
+    image: english,
+    bgColor: "#8441BF",
   },
   165: {
-    bgColor: "#0077B6",
-    image: "",
+    image: english,
+    bgColor: "#8441BF",
+  },
+  154: {
+    image: quran,
+    bgColor: "#2E7D32",
+  },
+  102: {
+    image: quran,
+    bgColor: "#2E7D32",
+  },
+  113: {
+    image: skratch,
+    bgColor: "#D47C7C",
   },
   172: {
-    bgColor: "#0077B6",
-    image: "",
+    image: english,
+    bgColor: "#BCA7F5",
   },
   176: {
-    bgColor: "#0077B6",
-    image: "",
+    image: special,
+    bgColor: "#CD6036",
   },
-  185: {
-    bgColor: "#0077B6",
-    image: "",
+  197: {
+    image: science,
+    bgColor: "#FF6F00",
+  },
+  139: {
+    image: arabic,
+    bgColor: "#C51162",
   },
 };

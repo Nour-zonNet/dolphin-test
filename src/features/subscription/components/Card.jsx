@@ -21,6 +21,7 @@ import ActionButton from "./ActionButton";
 import GroupInfo from "./GroupInfo";
 import InfoRow from "./InfoRow";
 import { useModal } from "@/components/feedback/modal/useModal";
+import { packageFactory } from "../../packages/factory/packageFactory";
 
 const Card = React.memo(({ item }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +46,7 @@ const Card = React.memo(({ item }) => {
     [item]
   );
 
-  const { title, image, status, subject, startDate, endDate, group, daysLeft } =
+  const { title, status, subject, startDate, endDate, group, daysLeft } =
     mappedItem;
 
   const normalizeStatus = useCallback((raw) => {
@@ -69,7 +70,7 @@ const Card = React.memo(({ item }) => {
   const config = useMemo(
     () => STATUS_CONFIG[statusKey] || STATUS_CONFIG.active,
     [statusKey]
-  ); 
+  );
   const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
 
   // Handle expand/collapse animation
@@ -146,6 +147,7 @@ const Card = React.memo(({ item }) => {
       }
     );
   };
+  const { image, bgColor } = packageFactory(item.package_id);
 
   // Renew flow is currently not wired in the UI
   return (
@@ -155,22 +157,22 @@ const Card = React.memo(({ item }) => {
         className="flex flex-col  sm:flex-row gap-3 sm:gap-0 md:items-center justify-between p-3 sm:p-4 cursor-pointer select-none"
         onClick={toggleOpen}
       >
-        <div className="flex items-center justify-between gap-3 sm:gap-4">
-          {image && (
-            <img
-              src={image}
-              alt={title}
-              className={`${config.bg} rounded h-[50px] w-[50px]`}
-            />
-          )}
-          <h3 className="font-semibold text-base sm:text-lg md:text-xl text-navyteal">
-            {title}
-          </h3>
-          {ToggleIcon}
-        </div>
-
-        <div className="flex items-center justify-center gap-4">
-          {StatusBadge}
+        <div className="flex items-center justify-between gap-3 w-full sm:gap-4">
+          <div className="flex flex-row gap-2 items-center">
+            <div
+              style={{ backgroundColor: bgColor }}
+              className={`w-8 h-8 md:w-10 md:h-10 bg-[${bgColor}] rounded-sm flex items-center justify-center text-2xl`}
+            >
+              <img src={image} alt={item.name} />
+            </div>
+            <h3 className="font-semibold text-base sm:text-lg md:text-xl text-navyteal">
+              {title}
+            </h3>
+          </div>
+          <div className="flex items-center justify-center gap-4 ml-2">
+            {StatusBadge}
+            {ToggleIcon}
+          </div>
         </div>
       </div>
 
@@ -184,11 +186,15 @@ const Card = React.memo(({ item }) => {
           {/* Subscription Info */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-start gap-3 md:gap-4">
             <div className="flex">
-              <Line className="h-12" fill={config.fill} />
-              <div className="flex flex-col gap-2">
-                <InfoRow label="تاريخ الاشتراك: " value={startDate} />
-                <InfoRow label="تاريخ الانتهاء: " value={endDate} />
-              </div>
+              {/* <Line className="h-12" fill={config.fill} /> */}
+              <ul className="list-disc list-inside space-y-2  text-gray-700">
+                  <li>
+                    تاريخ الاشتراك :{startDate}
+                </li>
+                <li>
+                  تاريخ الانتهاء :{endDate}
+                </li>
+              </ul>
             </div>
             <InfoRow label="المواد:" value={subject} strong />
           </div>

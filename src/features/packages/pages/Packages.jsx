@@ -17,7 +17,7 @@ const Packages = () => {
       {mine.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 py-8">
           {mine.map((pkg) => {
-            const { image, bgColor } = packageFactory(pkg.id);
+            const { image, bgColor } = packageFactory(pkg.package_id);
             return (
               <PackageCard
                 key={pkg.id}
