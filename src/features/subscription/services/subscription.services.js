@@ -23,6 +23,12 @@ class SubscriptionRepository {
     });
     return data;
   }
+  async reactivate(subscriptionId) {
+    const { data } = await api.post(ENDPOINTS.REACTIVE_SUBSCRIPTION, {
+      subscription_id: subscriptionId,
+  });
+    return data;
+  }
 
   // Renew subscription
   async renew(subscriptionId) {

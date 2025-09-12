@@ -35,6 +35,17 @@ export const cancelSubscription = createAsyncThunk(
     }
   }
 );
+export const reactivateSubscription = createAsyncThunk(
+  "subscriptions/reactivate",
+  async (subscriptionId, thunkAPI) => {
+    try {
+      const res = await subscriptionRepository.reactivate(subscriptionId);
+      return { ...res.data, id: subscriptionId };
+    } catch (err) {
+      return handleError(err, thunkAPI);
+    }
+  }
+);
 
 export const getGroupsByPackageId = createAsyncThunk(
   "subscriptions/groups",
@@ -130,7 +141,19 @@ const subscriptionSlice = createSlice({
           );
         }
       })
-      .addCase(cancelSubscription.rejected, handleRejected)
+      .addCase(reactivateSubscription.pending, handlePending)
+      .addCase(reactivateSubscription.fulfilled, (state, action) => {
+        console.log("reactivateSubscription.fulfilled", action);
+        state.loading = false;
+
+        const updated = action?.payload ?? null;
+        if (updated?.id) {
+          state.items = state.items.map((s) =>
+            s.id === updated.id ? { ...s, status: updated.status } : s
+          );
+        }
+      })
+      .addCase(reactivateSubscription.rejected, handleRejected)
 
       // ===== Renew =====
       .addCase(renewSubscription.pending, handlePending)

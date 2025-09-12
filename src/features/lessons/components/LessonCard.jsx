@@ -15,24 +15,24 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
   const { t } = useTranslation();
 
   const { start, end } = useMemo(() => {
-  const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
+    const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
 
-  const baseDate = new Date(lessonDate);
+    const baseDate = new Date(lessonDate);
 
-  const startDate = new Date(
-    baseDate.getFullYear(),
-    baseDate.getMonth(),
-    baseDate.getDate(),
-    hours,
-    minutes,
-    seconds || 0
-  );
+    const startDate = new Date(
+      baseDate.getFullYear(),
+      baseDate.getMonth(),
+      baseDate.getDate(),
+      hours,
+      minutes,
+      seconds || 0
+    );
 
-  const durationMinutes = item.duration || 60;
-  const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+    const durationMinutes = item.duration || 60;
+    const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
 
-  return { start: startDate, end: endDate };
-}, [item.start_time, item.duration, lessonDate]);
+    return { start: startDate, end: endDate };
+  }, [item.start_time, item.duration, lessonDate]);
   const lessonStatus = useMemo(() => {
     const now = new Date();
     if (now >= start && now <= end) return "live";
@@ -105,47 +105,47 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       );
     }
   };
-const { statusText, statusColor, statusIcon } = useMemo(() => {
-  const now = new Date();
+  const { statusText, statusColor, statusIcon } = useMemo(() => {
+    const now = new Date();
 
-  // نشوف هل يوم الحصة هو نفس يوم النهارده
-  const isSameDay =
-    start.getDate() === now.getDate() &&
-    start.getMonth() === now.getMonth() &&
-    start.getFullYear() === now.getFullYear();
+    // نشوف هل يوم الحصة هو نفس يوم النهارده
+    const isSameDay =
+      start.getDate() === now.getDate() &&
+      start.getMonth() === now.getMonth() &&
+      start.getFullYear() === now.getFullYear();
 
-  if (!isSameDay) {
-    return {
-      statusText: `الحصة يوم ${start.toLocaleDateString("ar-EG", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-      })} - ${formatArabicTime(item.start_time)}`,
-      statusColor: "text-[#ba7c28]",
-      statusIcon: <SandGlass className="w-4" />,
-    };
-  }
+    if (!isSameDay) {
+      return {
+        statusText: `الحصة يوم ${start.toLocaleDateString("ar-EG", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+        })} - ${formatArabicTime(item.start_time)}`,
+        statusColor: "text-[#ba7c28]",
+        statusIcon: <SandGlass className="w-4" />,
+      };
+    }
 
-  if (lessonStatus === "upcoming") {
+    if (lessonStatus === "upcoming") {
+      return {
+        statusText: `متبقي ${getRemainingTime(item.start_time)}`,
+        statusColor: "text-[#ba7c28]",
+        statusIcon: <SandGlass className="w-4" />,
+      };
+    }
+    if (lessonStatus === "live") {
+      return {
+        statusText: "الحصة بدأت",
+        statusColor: "text-green-600",
+        statusIcon: <NotifyIcon className="w-4" />,
+      };
+    }
     return {
-      statusText: `متبقي ${getRemainingTime(item.start_time)}`,
-      statusColor: "text-[#ba7c28]",
-      statusIcon: <SandGlass className="w-4" />,
+      statusText: "انتهت الحصة",
+      statusColor: "text-red-500",
+      statusIcon: <TimeCheck className="w-4" />,
     };
-  }
-  if (lessonStatus === "live") {
-    return {
-      statusText: "الحصة بدأت",
-      statusColor: "text-green-600",
-      statusIcon: <NotifyIcon className="w-4" />,
-    };
-  }
-  return {
-    statusText: "انتهت الحصة",
-    statusColor: "text-red-500",
-    statusIcon: <TimeCheck className="w-4" />,
-  };
-}, [lessonStatus, item.start_time, start]);
+  }, [lessonStatus, item.start_time, start]);
 
   return (
     <div className="relative">

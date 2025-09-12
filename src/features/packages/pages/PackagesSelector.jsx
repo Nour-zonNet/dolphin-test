@@ -8,6 +8,7 @@ import { InfoIcon } from "@/utils/icons";
 import { Header } from "@/components/layout";
 import { HomeSupportBtn } from "@/components/layout";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
+import notFoundPackages from "@/assets/images/allPackages.png";
 
 const DataPlanSelector = () => {
   const navigate = useNavigate();
@@ -139,17 +140,35 @@ const DataPlanSelector = () => {
         )}
 
         {/* Plans */}
-        <div className=" mx-auto px-4 mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid gap-4 pb-28">
-          {filteredPlans.map((plan) => (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              selected={selectedPlanIds.includes(plan.id)}
-              onSelect={handlePlanSelect}
-              formatPrice={formatPrice}
+        {all.length > 0 ? (
+          <div className="mx-auto px-4 mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid gap-4 pb-28">
+            {filteredPlans.map((plan) => (
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                selected={selectedPlanIds.includes(plan.id)}
+                onSelect={handlePlanSelect}
+                formatPrice={formatPrice}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="relative flex flex-col justify-center items-center gap-4 mt-10 mr-20 mx-auto">
+            <img
+              src={notFoundPackages}
+              alt="notFoundPackages"
+              className="w-full max-w-[300px] object-contain mx-auto"
             />
-          ))}
-        </div>
+            <div className="flex justify-center text-center">
+              <button
+                onClick={() => navigate("/schedule")}
+                className="flex items-center text-xs gap-2 ml-20 bg-orangedeep text-darkblue font-medium px-4 sm:px-6 py-2 rounded-full hover:bg-btnClicked focus:bg-btnClicked cursor-pointer sm:text-sm"
+              >
+                <span className="text-base">الرجوع للرئيسية</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <PlansFooter

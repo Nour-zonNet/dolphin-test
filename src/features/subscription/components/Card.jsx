@@ -28,7 +28,7 @@ const Card = React.memo(({ item }) => {
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
-  const { cancelSubscription } = useSubscriptions();
+  const { cancelSubscription, reactivateSubscription } = useSubscriptions();
   useGroups(item.package_id);
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
@@ -147,6 +147,41 @@ const Card = React.memo(({ item }) => {
       }
     );
   };
+  const handleReactivateClick = () => {
+    openConfirmModal(
+      {
+        title: "تجديد الاشتراك",
+        message: "هل أنت متأكد من رغبتك في تجديد الاشتراك؟",
+        confirmText: "تأكيد التجديد",
+        type: "danger",
+      },
+      async () => {
+        try {
+          await reactivateSubscription(item.id).unwrap();
+          openStatusModal("SUCCESS", {
+            title: "تم التجديد بنجاح",
+            message: "تم تجديد الاشتراك وسيتم تطبيق التغييرات فوراً.",
+          });
+        } catch (error) {
+          const getErrorMessage = (err) => {
+            if (!err) return "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+            if (typeof err === "string") return err;
+            if (Array.isArray(err))
+              return err[0] || "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+            if (err && typeof err === "object") {
+              if (err.data && err.data.error) return err.data.error;
+              if (err.message) return err.message;
+            }
+            return "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+          };
+          openStatusModal("ERROR", {
+            title: "فشل في التجديد",
+            message: getErrorMessage(error),
+          });
+        }
+      }
+    );
+  };
   const { image, bgColor } = packageFactory(item.package_id);
 
   // Renew flow is currently not wired in the UI
@@ -188,11 +223,13 @@ const Card = React.memo(({ item }) => {
             <div className="flex">
               {/* <Line className="h-12" fill={config.fill} /> */}
               <ul className="list-disc list-inside space-y-2  text-gray-700">
-                  <li>
-                    تاريخ الاشتراك :{startDate}
+                <li>
+                  تاريخ الاشتراك :{" "}
+                  <span className="font-bold">{startDate}</span>
                 </li>
                 <li>
-                  تاريخ الانتهاء :{endDate}
+                  تاريخ الانتهاء :{" "}
+                  <span className="font-bold"> {endDate} </span>
                 </li>
               </ul>
             </div>
@@ -201,7 +238,7 @@ const Card = React.memo(({ item }) => {
 
           {/* Group Info & Actions */}
           {/* {config.actions.includes("changeGroup") && ( */}
-          {status != "cancelled" && (
+          {status !== "cancelled" && status !== "expired" && (
             <GroupInfo
               group={group}
               packageId={item.package_id}
@@ -242,19 +279,20 @@ const Card = React.memo(({ item }) => {
                       key={action}
                       className="flex flex-col items-center mt-4 gap-2"
                     >
-                      <ActionButton
-                        full
-                        primary
-                        icon={<Renew />}
-                        // onClick={handleRenewClick}
-                      >
-                        {config.buttonText}
-                      </ActionButton>
                       {config.message && (
                         <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
                           {config.message}
                         </div>
                       )}
+                      <ActionButton
+                        full
+                        primary
+                        onClick={handleReactivateClick}
+                        icon={<Renew />}
+                        // onClick={handleRenewClick}
+                      >
+                        {config.buttonText}
+                      </ActionButton>
                     </div>
                   );
 

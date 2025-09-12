@@ -56,3 +56,25 @@ export const getRemainingTime = (time) => {
 
   return result;
 };
+
+export function getFormattedDate(date = new Date()) {
+  const days = [
+    "الأحد",
+    "الاثنين",
+    "الثلاثاء",
+    "الأربعاء",
+    "الخميس",
+    "الجمعة",
+    "السبت",
+  ];
+
+  const dayName = days[date.getDay()];
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${dayName} ${day} - ${month} - ${year}`;
+}
+
+// الاستخدام
+console.log(getFormattedDate()); 

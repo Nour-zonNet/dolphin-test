@@ -1,5 +1,5 @@
 import { packageStyles } from "@/constants/PACKAGES_STYLES";
-import tooth from "@/assets/packages/tooth.svg";
+import reading from "@/assets/packages/reading.svg";
 
 export const packageFactory = (packageId) =>
-  packageStyles[packageId] || { image: tooth, bgColor: "#0077B6" };
+  packageStyles[packageId] || { image: reading, bgColor: "#FFFFBB" };

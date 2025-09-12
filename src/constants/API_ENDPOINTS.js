@@ -11,6 +11,7 @@ export const ENDPOINTS = {
   GET_MY_SUBSCRIPTIONS: "/student/packages/subscription-packages",
   GROUPS_BY_BACKAGEID: "/student/package-groups",
   CREATE_TRIAL_SUBSCRIPTION: "/student/create-trial-subscription",
+  REACTIVE_SUBSCRIPTION: "/student/subscriptions/reactivate-subscription",
   CANCEL_SUBSCRIPTION: "/student/subscriptions/unsubscribe",
   SEND_OTP_CODE: "/student/send-code-for-forget-password",
   VERIFY_OTP_RESET_PASSWORD: "/student/verfiy-code-for-forget-password",

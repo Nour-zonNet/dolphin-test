@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { packageFactory } from "../factory/packageFactory";
 import { Calender1 } from "@/utils/icons";
 import Books from "@/assets/packages/books.svg";
 import { Info } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
-
+import { ChevronDown, ChevronUp } from "../../../utils/icons";
 const PlanCard = ({ plan, selected, onSelect }) => {
+  const [open, setOpen] = React.useState(false);
+  const ToggleIcon = useMemo(
+    () =>
+      open ? (
+        <ChevronUp className="w-3 h-3 text-gray-600 transition-transform" />
+      ) : (
+        <ChevronDown className="w-3 h-3 text-gray-600 transition-transform" />
+      ),
+    [open]
+  );
   const { image, bgColor } = packageFactory(plan.id);
   const colors = [
     "bg-blue-100 text-blue-800",
@@ -19,15 +29,15 @@ const PlanCard = ({ plan, selected, onSelect }) => {
   return (
     <div
       className={` rounded-2xl   cursor-pointer border-0   ${
-        selected ? "border-1  border-gray-400/60" : "border-gray-200/40 "
+        open ? "border-1  border-gray-400/60" : "border-gray-200/40 "
       }`}
-      onClick={() => onSelect(plan.id)}
     >
       <div
-      style={{ borderColor: bgColor }}
+        style={{ borderColor: bgColor }}
         className={`flex justify-between gap-2 md:gap-4 rounded-t-2xl  border-r-10 p-5 bg-[#EAEAEA] items-start `}
       >
         <div
+          onClick={() => onSelect(plan.id)}
           className={`w-6 h-6 rounded-sm  border flex items-center justify-center ${
             selected
               ? "bg-orangedeep  text-white"
@@ -36,20 +46,26 @@ const PlanCard = ({ plan, selected, onSelect }) => {
         >
           {selected ? "✓" : ""}
         </div>
-        <div className="flex items-start gap-3 flex-1">
+        <div
+          o
+          onClick={() => setOpen(!open)}
+          className="flex items-start gap-3 flex-1"
+        >
           <div className="flex-1">
-            <div className="flex  gap-3">
-              <div
-                style={{ backgroundColor: bgColor }}
-                className={`w-8 h-8 md:w-10 md:h-10 bg-[${bgColor}] rounded-sm flex items-center justify-center text-2xl`}
-              >
-                <img src={image} alt={plan.name} />
+            <div className="flex flex-row justify-between items-center">
+              <div className="flex  gap-3">
+                <div
+                  style={{ backgroundColor: bgColor }}
+                  className={`w-8 h-8 md:w-10 md:h-10 bg-[${bgColor}] rounded-sm flex items-center justify-center text-2xl`}
+                >
+                  <img src={image} alt={plan.name} />
+                </div>
+                <h3 className="font-semibold text-gray-800 text-sm sm:text-base self-center">
+                  {plan.name}
+                </h3>
               </div>
-              <h3 className="font-semibold text-gray-800 text-sm sm:text-base self-center">
-                {plan.name}
-              </h3>
+              {ToggleIcon}
             </div>
-
             <div className="flex justify-between flex-nowrap items-center  mt-2">
               <div>
                 <span className="text-navyteal text-xs px-1 py-1 rounded-full">
@@ -79,7 +95,7 @@ const PlanCard = ({ plan, selected, onSelect }) => {
         </div>
       </div>
 
-      {selected && (
+      {open && (
         <div className=" pt-4 border-t border-gray-100 p-6 space-y-2 ">
           {plan.subjects && plan.subjects.length > 0 && (
             <div className="mt-2 flex items-start">
@@ -115,13 +131,13 @@ const PlanCard = ({ plan, selected, onSelect }) => {
                   )}
                 </span>
               </div>
-              {plan.times &&
+              {/* {plan.times &&
                 plan.times.length > 0 &&
                 plan.times.some((t) => new Date(t.start_date) < new Date()) && (
                   <span className="border-dashed py-1 border-orangedeep text-sm border px-4 rounded-full md:text-base text-nowrap">
                     تم بدء الباقة
                   </span>
-                )}
+                )} */}
             </div>
           )}
           <div className="flex items-center justify-between">
