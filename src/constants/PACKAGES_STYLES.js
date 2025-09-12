@@ -8,8 +8,6 @@ import skratch from "@/assets/packages/skratch.svg";
 import special from "@/assets/packages/special.svg";
 import science from "@/assets/packages/science.svg";
 import arabic from "@/assets/packages/arabic.svg";
-
-// Define groups with common styles
 const groups = [
   {
     ids: [75, 154, 155, 156, 73, 157, 158, 102, 162, 163, 164, 159, 160, 161],
@@ -61,7 +59,6 @@ const groups = [
   },
 ];
 
-// Build the final object dynamically
 export const packageStyles = groups.reduce((acc, group) => {
   group.ids.forEach((id) => {
     acc[id] = group.style;

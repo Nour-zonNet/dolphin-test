@@ -251,12 +251,12 @@ const Card = React.memo(({ item }) => {
           <div className="flex flex-col gap-3 mt-6">
             {config.actions.map((action) => {
               switch (action) {
-                case "useCoupon":
-                  return (
-                    <ActionButton key="coupon" outline icon={<Copon />}>
-                      استخدام كوبون لإضافة أيام
-                    </ActionButton>
-                  );
+                // case "useCoupon":
+                //   return (
+                //     <ActionButton key="coupon" outline icon={<Copon />}>
+                //       استخدام كوبون لإضافة أيام
+                //     </ActionButton>
+                //   );
 
                 case "cancel":
                   return (

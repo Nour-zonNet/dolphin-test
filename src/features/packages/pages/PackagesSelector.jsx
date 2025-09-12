@@ -99,6 +99,7 @@ const DataPlanSelector = () => {
         {/* Header */}
         <Header
           balance={"0"}
+          showBalanceSection={false}
           title=" اختر باقتك المناسبة"
           onBack={"/manage-subscription"}
         />
