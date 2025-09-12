@@ -49,7 +49,7 @@ const RegisterPage = () => {
             dispatch(fetchLessons()),
             dispatch(fetchSubscriptions()),
           ]);
-      navigate("/schedule");
+      navigate("/main-packages");
       return;
     }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import Divider from '../../ui/Divider';
-import { ConfirmCheck } from '../../../utils/icons';
+import { ConfirmCheck } from '@/utils/icons';
 import { useDispatch } from 'react-redux';
 import { performLogout } from '@/features/auth/store/authSlice';
 

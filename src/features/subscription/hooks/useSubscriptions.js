@@ -6,6 +6,7 @@ import {
   renewSubscription,
   changeGroupSubscription,
   createTrialSubscription,
+  reactivateSubscription,
 } from "../store/subscriptionSlice";
 
 export const useSubscriptions = () => {
@@ -30,6 +31,11 @@ export const useSubscriptions = () => {
     (id) => dispatch(cancelSubscription(id)),
     [dispatch]
   );
+
+  const dispatchReactivate = useCallback(
+    (id) => dispatch(reactivateSubscription(id)),
+    [dispatch]
+  );
   const dispatchRenew = useCallback(
     (id) => dispatch(renewSubscription(id)),
     [dispatch]
@@ -52,6 +58,7 @@ export const useSubscriptions = () => {
       error,
       fetchSubscriptions: dispatchFetch,
       cancelSubscription: dispatchCancel,
+      reactivateSubscription: dispatchReactivate,
       renewSubscription: dispatchRenew,
       changeGroupSubscription: dispatchChangeGroup,
       createTrialSubscription: dispatchCreateTrialSub,
@@ -62,6 +69,7 @@ export const useSubscriptions = () => {
       error,
       dispatchFetch,
       dispatchCancel,
+      dispatchReactivate,
       dispatchRenew,
       dispatchChangeGroup,
       dispatchCreateTrialSub,

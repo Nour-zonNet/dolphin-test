@@ -1,4 +1,5 @@
 import api from "@/services/api";
+import { ENDPOINTS } from "../../../constants/API_ENDPOINTS";
 
 class LessonsRepository {
   // Get all lessons
@@ -10,6 +11,14 @@ class LessonsRepository {
   // Get single lesson
   async getById(lessonId) {
     const { data } = await api.get(`/lessons/${lessonId}`);
+    return data;
+  }
+  async getSessionLink(roomAndSessionUId) {
+    const { data } = await api.post(
+      ENDPOINTS.GET_SESSION_LINK,
+      roomAndSessionUId
+    );
+    // console.log(data)
     return data;
   }
 

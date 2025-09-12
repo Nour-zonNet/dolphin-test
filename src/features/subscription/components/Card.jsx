@@ -21,13 +21,14 @@ import ActionButton from "./ActionButton";
 import GroupInfo from "./GroupInfo";
 import InfoRow from "./InfoRow";
 import { useModal } from "@/components/feedback/modal/useModal";
+import { packageFactory } from "../../packages/factory/packageFactory";
 
 const Card = React.memo(({ item }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
-  const { cancelSubscription } = useSubscriptions();
+  const { cancelSubscription, reactivateSubscription } = useSubscriptions();
   useGroups(item.package_id);
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
@@ -45,7 +46,7 @@ const Card = React.memo(({ item }) => {
     [item]
   );
 
-  const { title, image, status, subject, startDate, endDate, group, daysLeft } =
+  const { title, status, subject, startDate, endDate, group, daysLeft } =
     mappedItem;
 
   const normalizeStatus = useCallback((raw) => {
@@ -55,6 +56,7 @@ const Card = React.memo(({ item }) => {
     if (s === "فعالة" || s === "active") return "active";
     if (s === "تجريبي" || s === "trial") return "trial";
     if (s === "منتهي" || s === "expired") return "expired";
+    if (s === "انتظار" || s === "waiting") return "waiting";
     if (s === "ملغاة" || s === "canceled" || s === "cancelled")
       return "cancelled";
     // Default
@@ -69,7 +71,7 @@ const Card = React.memo(({ item }) => {
   const config = useMemo(
     () => STATUS_CONFIG[statusKey] || STATUS_CONFIG.active,
     [statusKey]
-  ); 
+  );
   const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
 
   // Handle expand/collapse animation
@@ -146,6 +148,42 @@ const Card = React.memo(({ item }) => {
       }
     );
   };
+  const handleReactivateClick = () => {
+    openConfirmModal(
+      {
+        title: "تجديد الاشتراك",
+        message: "هل أنت متأكد من رغبتك في تجديد الاشتراك؟",
+        confirmText: "تأكيد التجديد",
+        type: "danger",
+      },
+      async () => {
+        try {
+          await reactivateSubscription(item.id).unwrap();
+          openStatusModal("SUCCESS", {
+            title: "تم التجديد بنجاح",
+            message: "تم تجديد الاشتراك وسيتم تطبيق التغييرات فوراً.",
+          });
+        } catch (error) {
+          const getErrorMessage = (err) => {
+            if (!err) return "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+            if (typeof err === "string") return err;
+            if (Array.isArray(err))
+              return err[0] || "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+            if (err && typeof err === "object") {
+              if (err.data && err.data.error) return err.data.error;
+              if (err.message) return err.message;
+            }
+            return "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+          };
+          openStatusModal("ERROR", {
+            title: "فشل في التجديد",
+            message: getErrorMessage(error),
+          });
+        }
+      }
+    );
+  };
+  const { image, bgColor } = packageFactory(item.package_id);
 
   // Renew flow is currently not wired in the UI
   return (
@@ -155,22 +193,22 @@ const Card = React.memo(({ item }) => {
         className="flex flex-col  sm:flex-row gap-3 sm:gap-0 md:items-center justify-between p-3 sm:p-4 cursor-pointer select-none"
         onClick={toggleOpen}
       >
-        <div className="flex items-center justify-between gap-3 sm:gap-4">
-          {image && (
-            <img
-              src={image}
-              alt={title}
-              className={`${config.bg} rounded h-[50px] w-[50px]`}
-            />
-          )}
-          <h3 className="font-semibold text-base sm:text-lg md:text-xl text-navyteal">
-            {title}
-          </h3>
-          {ToggleIcon}
-        </div>
-
-        <div className="flex items-center justify-center gap-4">
-          {StatusBadge}
+        <div className="flex items-center justify-between gap-3 w-full sm:gap-4">
+          <div className="flex flex-row gap-2 items-center">
+            <div
+              style={{ backgroundColor: bgColor }}
+              className={`w-8 h-8 md:w-10 md:h-10 bg-[${bgColor}] rounded-sm flex items-center justify-center text-2xl`}
+            >
+              <img src={image} alt={item.name} />
+            </div>
+            <h3 className="font-semibold text-base sm:text-lg md:text-xl text-navyteal">
+              {title}
+            </h3>
+          </div>
+          <div className="flex items-center justify-center gap-4 ml-2">
+            {StatusBadge}
+            {ToggleIcon}
+          </div>
         </div>
       </div>
 
@@ -184,36 +222,44 @@ const Card = React.memo(({ item }) => {
           {/* Subscription Info */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-start gap-3 md:gap-4">
             <div className="flex">
-              <Line className="h-12" fill={config.fill} />
-              <div className="flex flex-col gap-2">
-                <InfoRow label="تاريخ الاشتراك: " value={startDate} />
-                <InfoRow label="تاريخ الانتهاء: " value={endDate} />
-              </div>
+              {/* <Line className="h-12" fill={config.fill} /> */}
+              <ul className="list-disc list-inside space-y-2  text-gray-700">
+                <li>
+                  تاريخ الاشتراك :{" "}
+                  <span className="font-bold">{startDate}</span>
+                </li>
+                <li>
+                  تاريخ الانتهاء :{" "}
+                  <span className="font-bold"> {endDate} </span>
+                </li>
+              </ul>
             </div>
             <InfoRow label="المواد:" value={subject} strong />
           </div>
 
           {/* Group Info & Actions */}
           {/* {config.actions.includes("changeGroup") && ( */}
-          {status != "cancelled" && (
-            <GroupInfo
-              group={group}
-              packageId={item.package_id}
-              subscriptionId={item.id}
-            />
-          )}
+          {status !== "cancelled" &&
+            status !== "expired" &&
+            status !== "waiting" && (
+              <GroupInfo
+                group={group}
+                packageId={item.package_id}
+                subscriptionId={item.id}
+              />
+            )}
           {/* )} */}
           {/* Coupon */}
           {/* Actions */}
           <div className="flex flex-col gap-3 mt-6">
             {config.actions.map((action) => {
               switch (action) {
-                case "useCoupon":
-                  return (
-                    <ActionButton key="coupon" outline icon={<Copon />}>
-                      استخدام كوبون لإضافة أيام
-                    </ActionButton>
-                  );
+                // case "useCoupon":
+                //   return (
+                //     <ActionButton key="coupon" outline icon={<Copon />}>
+                //       استخدام كوبون لإضافة أيام
+                //     </ActionButton>
+                //   );
 
                 case "cancel":
                   return (
@@ -236,19 +282,20 @@ const Card = React.memo(({ item }) => {
                       key={action}
                       className="flex flex-col items-center mt-4 gap-2"
                     >
-                      <ActionButton
-                        full
-                        primary
-                        icon={<Renew />}
-                        // onClick={handleRenewClick}
-                      >
-                        {config.buttonText}
-                      </ActionButton>
                       {config.message && (
                         <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
                           {config.message}
                         </div>
                       )}
+                      <ActionButton
+                        full
+                        primary
+                        onClick={handleReactivateClick}
+                        icon={<Renew />}
+                        // onClick={handleRenewClick}
+                      >
+                        {config.buttonText}
+                      </ActionButton>
                     </div>
                   );
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from '@/components/layout/Header'
-import { BalanceActionsButtons, BalanceCard } from '../components'
+import { BalanceCard } from '../components'
 import Divider from "@/components/ui/Divider"
 import TransactionsFilter from '../components/TransactionsFilter'
 import NoTransactions from '../components/NoTransactions'
@@ -13,7 +13,7 @@ const BalanceDetails = () => {
     <div>
         <Header title="تفاصيل الرصيد" balance={0} showBalanceSection={false} onBack={"/profile"} />
         <BalanceCard user={user}/>
-        <BalanceActionsButtons />
+        {/* <BalanceActionsButtons /> */}
         <Divider />
         <TransactionsFilter />
         <NoTransactions />

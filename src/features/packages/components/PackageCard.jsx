@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import { Calender, TelegramCircle, WhatsappCircle } from "@/utils/icons";
 import WeeklySchedulePopup from "./WeeklySchedulePopup";
-import { CardKite,  Star } from "@/utils/Illustrations";
+import { CardKite, Star } from "@/utils/Illustrations";
 import * as Icons from "@/utils/icons";
 
 const PackageCard = React.memo(
@@ -30,7 +30,7 @@ const PackageCard = React.memo(
         <div className="relative w-full transition-transform duration-300 pr-0">
           <div
             style={{ borderColor: color }}
-            className={`relative rounded-xl border bg-foundblue w-full overflow-hidden transform skew-y-[0.1deg] p-1 pb-0 pr-0 skew-x-2 z-10 shadow-sm transition-all`}
+            className={`relative rounded-xl border bg-foundblue w-full overflow-hidden transform p-1 pb-0 pr-0  z-10 shadow-sm transition-all`}
           >
             {/* Decorative Kite */}
             <div className="absolute flex items-start justify-end w-full -left-2 pt-8">
@@ -92,13 +92,17 @@ const PackageCard = React.memo(
               </button>
 
               {/* Social Icons */}
-              <div className="flex items-center justify-between py-1 xs:w-auto px-4 md:px-4 md:py-2 border-[1px] border-[#5C6064]/50 gap-4 rounded-full">
+              {/*  border-[1px] border-[#5C6064]/50  flex items-center justify-between py-1 xs:w-auto px-4 md:px-4 md:py-2 gap-4 rounded-full*/}
+              <div className="  group">
+                {/* <button className="">
+                  <WhatsappCircle className="h-6 sm:h-8" />
+                </button> */}
                 <button className="">
-                  <WhatsappCircle className="h-5 sm:h-8" />
+                  <TelegramCircle className="h-8 sm:h-10" />
                 </button>
-                <button className="">
-                  <TelegramCircle className="h-5 sm:h-8" />
-                </button>
+                {/* <span className="absolute bottom-full mb-2 hidden group-hover:block z-10 bg-gray-800 text-white text-sm px-3 py-1 rounded-md whitespace-nowrap">
+                  أنا التولتيب 🎉
+                </span> */}
               </div>
             </div>
           </div>

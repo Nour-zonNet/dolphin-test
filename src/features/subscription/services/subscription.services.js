@@ -23,6 +23,12 @@ class SubscriptionRepository {
     });
     return data;
   }
+  async reactivate(subscriptionId) {
+    const { data } = await api.post(ENDPOINTS.REACTIVE_SUBSCRIPTION, {
+      subscription_id: subscriptionId,
+  });
+    return data;
+  }
 
   // Renew subscription
   async renew(subscriptionId) {
@@ -51,9 +57,9 @@ class SubscriptionRepository {
 
   // Create trial subscription
   async createTrialSubscription(packageIds) {
-    console.log({
-      packageIds: packageIds,
-    });
+    // console.log({
+    //   packageIds: packageIds,
+    // });
     const { data } = await api.post(ENDPOINTS.CREATE_TRIAL_SUBSCRIPTION, {
       packageIds: packageIds,
     });

@@ -37,6 +37,19 @@ export const STATUS_CONFIG = {
 
     icon: "Finished",
   },
+    waiting: {
+    color: "bg-[#595959] h-9 w-32 text-white font-semibold px-4",
+    label: () => "انتظار",
+    actions: [],
+    message:
+      "انتهت صلاحية باقتك، اضغط على زر (تجديد الباقة) لتجديدها ومتابعة استخدام خدماتنا",
+    lineColor: "stroke-[#B3261E]",
+    fill: "#B3261E",
+    bg: "bg-health",
+    buttonText: "تجديد الاشتراك",
+
+    icon: "Finished",
+  },
   cancelled: {
     color: "bg-[#FFD8E4] text-status md:h-9 md:w-32 px-4 font-semibold",
     label: () => "ملغاة",

@@ -14,9 +14,9 @@ const PlansFooter = ({
         <div className="text-sm text-gray-700">
           {selectedCount > 0 ? (
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-              <span className="font-medium">
+              {/* <span className="font-medium">
                 {selectedCount} باقة(ات) محددة
-              </span>
+              </span> */}
         
               <span className="hidden sm:block">•</span>
               <span className="flex items-center gap-1 text-orange-600 font-bold">

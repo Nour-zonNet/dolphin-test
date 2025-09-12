@@ -124,7 +124,6 @@ export const sendOtpResetPassword = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authRepository.sendOtpResetPassword(credentials);
-      console.log(response);
       return response;
     } catch (error) {
       console.log(error);

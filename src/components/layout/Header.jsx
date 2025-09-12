@@ -6,7 +6,7 @@ import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
 export const Header = ({
   title,
-  balance,
+  // balance,
   onBack,
   showBalanceSection = true,
 }) => {
@@ -34,7 +34,8 @@ export const Header = ({
             <div className="flex items-center gap-2">
               <Balance className="w-4 md:w-6" />
             </div>
-            <span className="font-bold flex items-center gap-1 text-navyteal md:text-2xl text-[16px]">
+            {/* <span className="font-bold flex items-center gap-2 text-navyteal md:text-2xl text-[16px]">
+
               الرصيد:
               <FormatWithCurrency
                 amount={balance}
@@ -42,7 +43,7 @@ export const Header = ({
                 symbolClass="w-5 h-5 md:w-8 md:h-8 xl:w-10 xl:h-10"
                 symbolFill="#08233f"
               />
-            </span>
+            </span> */}
           </div>
         )}
       </div>

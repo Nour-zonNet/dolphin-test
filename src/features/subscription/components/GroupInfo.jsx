@@ -42,7 +42,7 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
       <p className="flex flex-row items-center gap-2">
         <span className="font-semibold text-sm md:text-[18px]">المجموعة:</span>
         <span className="text-status font-semibold text-sm max-w-25 md:max-w-auto md:text-2xl truncate text-ellipsis pl-10 ">
-          {group?.group_name}
+          {group?.group_name || "لا توجد مجموعة"}
         </span>
       </p>
       <ActionButton primary icon={<ChangeGroup />} onClick={handleChangeGroup}>
