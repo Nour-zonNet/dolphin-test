@@ -20,6 +20,18 @@ export const useSubscriptions = () => {
     shallowEqual
   );
 
+  // فلترة الباقات لعرض الفعالة والتجريبية وحالة الانتظار
+  const filteredItems = useMemo(() => {
+    if (!items || !Array.isArray(items)) return [];
+
+    return items.filter((subscription) => {
+      const status = subscription.status?.toLowerCase();
+      // عرض الباقات الفعالة والتجريبية وحالة الانتظار
+      // إخفاء المنتهية (expired) والملغاة (cancelled) فقط
+      return status === 'active' || status === 'trial' || status === 'waiting';
+    });
+  }, [items]);
+
   const dispatch = useDispatch();
 
   // Stable action dispatchers
@@ -53,7 +65,8 @@ export const useSubscriptions = () => {
   // Return a stable reference to reduce child re-renders
   return useMemo(
     () => ({
-      items,
+      items: filteredItems, // استخدام البيانات المفلترة بدلاً من الأصلية
+      allItems: items, // إبقاء البيانات الأصلية في حالة الحاجة إليها
       loading,
       error,
       fetchSubscriptions: dispatchFetch,
@@ -64,6 +77,7 @@ export const useSubscriptions = () => {
       createTrialSubscription: dispatchCreateTrialSub,
     }),
     [
+      filteredItems,
       items,
       loading,
       error,

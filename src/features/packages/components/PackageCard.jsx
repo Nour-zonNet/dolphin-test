@@ -82,15 +82,17 @@ const PackageCard = React.memo(
 
             {/* Schedule & Social */}
             <div className="flex flex-row items-center justify-between md:justify-between gap-4 px-4 py-5 relative z-10">
-              <button
-                type="button"
-                onClick={handleOpenSchedule}
-                className="w-full space-x-1 text-navyteal text-xs xs:text-base flex items-center justify-center text-nowrap gap-1 max-w-60 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full px-4 py-2 sm:py-3 font-medium transition-colors duration-300"
-              >
-                <Calender className="w-4 h-4" />
-                <span>{t("packages.previewWeeklySchedule")}</span>
-              </button>
-
+              {/* إخفاء زر معاينة الجدول للباقات في حالة الانتظار */}
+              {status?.toLowerCase() !== 'waiting' && (
+                <button
+                  type="button"
+                  onClick={handleOpenSchedule}
+                  className="w-full space-x-1 text-navyteal text-xs xs:text-base flex items-center justify-center text-nowrap gap-1 max-w-60 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full px-4 py-2 sm:py-3 font-medium transition-colors duration-300"
+                >
+                  <Calender className="w-4 h-4" />
+                  <span>{t("packages.previewWeeklySchedule")}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

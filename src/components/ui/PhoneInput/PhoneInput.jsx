@@ -1,26 +1,37 @@
 import "react-international-phone/style.css";
+import { useState, useEffect } from "react";
 import {
   PhoneInput,
   defaultCountries,
   parseCountry,
 } from "react-international-phone";
+import { detectUserCountry } from "@/utils/countryDetection";
 
-// Supported countries configuration
-const SUPPORTED_COUNTRIES = ["qa", "eg", "sa"];
-
-/**
- * Get default country based on browser language
- * @returns {string} Country code (eg, sa, qa)
- */
-const getDefaultCountry = () => {
-  const lang = navigator.language.toLowerCase();
-
-  if (lang.includes("eg")) return "eg";
-  if (lang.includes("sa")) return "sa";
-  if (lang.includes("qa")) return "qa";
-
-  return "eg"; // Default fallback
-};
+// Supported countries configuration - جميع الدول العربية
+const SUPPORTED_COUNTRIES = [
+  "sa", // السعودية
+  "ae", // الإمارات
+  "kw", // الكويت
+  "qa", // قطر
+  "bh", // البحرين
+  "om", // عُمان
+  "eg", // مصر
+  "jo", // الأردن
+  "lb", // لبنان
+  "sy", // سوريا
+  "iq", // العراق
+  "ye", // اليمن
+  "ps", // فلسطين
+  "ma", // المغرب
+  "tn", // تونس
+  "dz", // الجزائر
+  "ly", // ليبيا
+  "sd", // السودان
+  "so", // الصومال
+  "dj", // جيبوتي
+  "km", // جزر القمر
+  "mr"  // موريتانيا
+];
 
 // Filter allowed countries
 const allowedCountries = defaultCountries.filter((country) => {
@@ -35,6 +46,17 @@ const allowedCountries = defaultCountries.filter((country) => {
  * @param {Function} props.onChange - Change handler (phone, countryCode)
  */
 export default function MyPhone({ value, onChange }) {
+  const [defaultCountry, setDefaultCountry] = useState("sa");
+
+  useEffect(() => {
+    const detectCountry = async () => {
+      const country = await detectUserCountry();
+      setDefaultCountry(country);
+    };
+
+    detectCountry();
+  }, []);
+
   const handlePhoneChange = (phone, meta) => {
     const countryCode = meta?.country?.iso2?.toUpperCase();
     const dialCode = `+${meta?.country?.dialCode}`;
@@ -56,8 +78,8 @@ export default function MyPhone({ value, onChange }) {
         value={value}
         countries={allowedCountries}
         onChange={handlePhoneChange}
-        defaultCountry={getDefaultCountry()}
-        preferredCountries={SUPPORTED_COUNTRIES}
+        defaultCountry={defaultCountry}
+        preferredCountries={["sa", "ae", "kw", "qa", "bh", "om"]} // دول الخليج أولاً
         disableCountryGuess={false}
         forceDialCode
         inputClassName="border-0! w-full text-base! rounded-none focus:outline-0! focus:ring-0! !focus:outline-orangedeep"
