@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { AddSiblingsModal } from '@/components/profile/modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { addSibling, getBrothers } from '../store/profileSlice';
+import { addSibling } from '../store/profileSlice';
 import { useModal } from '@/components/feedback/modal/useModal';
 
 const AddSiblingButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false); 
+  const [loading] = useState(false); 
   const dispatch = useDispatch();
   const brothers = useSelector((state) => state.profile.brothers || []);
 
