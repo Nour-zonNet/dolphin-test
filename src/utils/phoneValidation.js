@@ -67,6 +67,45 @@ export const getPhoneValidationError = (phone, countryCode = null) => {
       }
       break;
     }
+    case "AE": {
+      if (!cleanPhone.startsWith("+971")) {
+        return "رقم الهاتف الإماراتي يجب أن يبدأ بـ +971";
+      }
+      if (cleanPhone === "+971") {
+        return "رقم الهاتف مطلوب";
+      }
+      const phoneNumber = cleanPhone.replace("+971", "");
+      if (phoneNumber.length < 9 || phoneNumber.length > 9) {
+        return "رقم الهاتف الإماراتي يجب أن يكون 9 أرقام";
+      }
+      break;
+    }
+    case "OM": {
+      if (!cleanPhone.startsWith("+968")) {
+        return "رقم الهاتف العُماني يجب أن يبدأ بـ +968";
+      }
+      if (cleanPhone === "+968") {
+        return "رقم الهاتف مطلوب";
+      }
+      const phoneNumber = cleanPhone.replace("+968", "");
+      if (phoneNumber.length < 8 || phoneNumber.length > 8) {
+        return "رقم الهاتف العُماني يجب أن يكون 8 أرقام";
+      }
+      break;
+    }
+    case "YE": {
+      if (!cleanPhone.startsWith("+967")) {
+        return "رقم الهاتف اليمني يجب أن يبدأ بـ +967";
+      }
+      if (cleanPhone === "+967") {
+        return "رقم الهاتف مطلوب";
+      }
+      const phoneNumber = cleanPhone.replace("+967", "");
+      if (phoneNumber.length < 9 || phoneNumber.length > 9) {
+        return "رقم الهاتف اليمني يجب أن يكون 9 أرقام";
+      }
+      break;
+    }
     default:
       return "دولة غير مدعومة";
   }
