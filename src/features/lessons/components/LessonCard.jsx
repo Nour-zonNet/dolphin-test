@@ -88,6 +88,19 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
   }, [dispatch, item.id, item.session_link, openStatusModal]);
 
   const renderButton = useCallback(() => {
+    // لو الحصة انتهت
+    if (lessonStatus === "ended") {
+      return (
+        <div className="flex justify-center text-center items-center align-middle">
+          <img
+            src={books}
+            alt="ended"
+            className="cursor-pointer w-16 xs:w-auto"
+          />
+        </div>
+      );
+    }
+
     // لو الحصة لسه جاية ولسه فيه وقت متبقي ومينفعش ندخل → يعرض العداد فقط
     if (
       lessonStatus === "upcoming" &&
@@ -109,8 +122,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     // لو وقت الحصة جه (العداد خلص) أو الحصة Live أو ينفع ندخل (قبل 5 دقائق) → يعرض زرار الدخول
     if (
       lessonStatus === "live" ||
-      (lessonStatus === "upcoming" &&
-        (isExpired || !timeRemaining || canEnterLesson))
+      (lessonStatus === "upcoming" && (isExpired || canEnterLesson))
     ) {
       return (
         <>
@@ -128,19 +140,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
             دخول الحصة
           </button>
         </>
-      );
-    }
-
-    // لو الحصة انتهت
-    if (lessonStatus === "ended") {
-      return (
-        <div className="flex justify-center text-center items-center align-middle">
-          <img
-            src={books}
-            alt="ended"
-            className="cursor-pointer w-16 xs:w-auto"
-          />
-        </div>
       );
     }
 
@@ -186,11 +185,17 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
           statusColor: "text-green-600",
           statusIcon: <NotifyIcon className="w-4" />,
         };
-      } else {
+      } else if (isExpired) {
         return {
           statusText: "يمكن الدخول الآن",
           statusColor: "text-green-600",
           statusIcon: <NotifyIcon className="w-4" />,
+        };
+      } else {
+        return {
+          statusText: "قريباً",
+          statusColor: "text-[#ba7c28]",
+          statusIcon: <SandGlass className="w-4" />,
         };
       }
     }
