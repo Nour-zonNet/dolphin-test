@@ -9,11 +9,11 @@ import FormatWithCurrency from "@/utils/FormatWithCurrency";
 import { getFormattedDate } from "../../../../utils/dateHelpers";
 export const Checkout = () => {
   const location = useLocation();
-  const [discountApplied, setDiscountApplied] = useState(false);
+  const [discountApplied] = useState(false);
   const { createTrialSubscription } = useSubscriptions();
   const { openStatusModal } = useModal();
 
-  const { selectedPackages = [], totalPrice = 0 } = location.state || {};
+  const { selectedPackages = [] } = location.state || {};
 
   useEffect(() => {
     // Useful for debugging data coming from selector

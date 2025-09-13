@@ -13,7 +13,7 @@ const AccountInfo = ({ user }) => {
   // const dispatch = useDispatch(); 
   const { handleUpdateProfile } = useProfile();
   const [isSaving, setIsSaving] = useState(false);
-  const [isUpdatingGrade, setIsUpdatingGrade] = useState(false);
+  // const [isUpdatingGrade, setIsUpdatingGrade] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phoneNumber || "");
   const [grade, setGrade] = useState(user?.gradeName || "");
@@ -54,6 +54,7 @@ const AccountInfo = ({ user }) => {
       setName(user.name || "");
       setPhone(user.phoneNumber || "");
       setGrade(user.gradeName || "");
+      setGradeId(user.grade || null);
     }
   }, [user]);
 

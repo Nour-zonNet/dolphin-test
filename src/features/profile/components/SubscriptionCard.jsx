@@ -2,6 +2,7 @@ import React from "react";
 import { Line } from "@/utils/Illustrations";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import defaultImage from "@/assets/packages/default.svg";
+import * as Icons from "@/utils/icons";
 
 const SubscriptionCard = ({
   title,
@@ -13,6 +14,7 @@ const SubscriptionCard = ({
   icon,
 }) => {
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
+  const StatusIcon = Icons[config.icon]; // الحصول على مكون الأيقونة
 
   const imgSrc = icon || defaultImage;            
   const accent = accentColor || "#0077B6"; 
@@ -42,7 +44,7 @@ const SubscriptionCard = ({
 
             {/* Status for mobile */}
             <div className={`flex md:hidden items-center justify-center gap-2 mt-4 lg:mt-0 rounded-3xl px-2 py-1 ${config.color}`}>
-              <config.icon className="w-5" />
+              {StatusIcon && <StatusIcon className="w-5" />}
               <span className="font-semibold text-sm md:text-base">
                 {typeof config.label === "function" ? config.label(daysRemaining) : config.label}
               </span>
@@ -66,7 +68,7 @@ const SubscriptionCard = ({
 
         {/* Status for desktop */}
         <div className={`hidden md:flex items-center justify-center gap-2 mt-4 lg:mt-0 rounded-3xl px-4 md:px-6 py-1 ${config.color}`}>
-          <config.icon className="w-6" />
+          {StatusIcon && <StatusIcon className="w-6" />}
           <span className="font-semibold text-sm md:text-base">
             {typeof config.label === "function" ? config.label(daysRemaining) : config.label}
           </span>

@@ -38,16 +38,18 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
     }
   }, [fetchGroups, groups, packageId]);
   return (
-    <div className="flex flex-row items-center justify-between  sm:items-center gap-3 sm:gap-4">
-      <p className="flex flex-row items-center gap-2">
-        <span className="font-semibold text-sm md:text-[18px]">المجموعة:</span>
-        <span className="text-status font-semibold text-sm max-w-25 md:max-w-auto md:text-2xl truncate text-ellipsis pl-10 ">
+    <div className="flex flex-row items-center justify-between gap-2 sm:gap-4 w-full">
+      <div className="flex flex-row items-center gap-2 flex-1 min-w-0">
+        <span className="font-bold text-sm text-gray-700 whitespace-nowrap">المجموعة:</span>
+        <span className="text-status font-bold text-sm md:text-base break-words overflow-hidden">
           {group?.group_name || "لا توجد مجموعة"}
         </span>
-      </p>
-      <ActionButton primary icon={<ChangeGroup />} onClick={handleChangeGroup}>
-        تغيير المجموعة
-      </ActionButton>
+      </div>
+      <div className="flex-shrink-0">
+        <ActionButton primary icon={<ChangeGroup />} onClick={handleChangeGroup}>
+          <span className="text-xs sm:text-sm font-bold whitespace-nowrap">تغيير المجموعة</span>
+        </ActionButton>
+      </div>
     </div>
   );
 };
