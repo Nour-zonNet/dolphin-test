@@ -32,7 +32,6 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
           cache: 'npm'
           
       - name: Install dependencies
@@ -70,27 +69,6 @@ jobs:
       (github.event_name == 'workflow_dispatch') ||
       (github.event_name == 'push') ||
       (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
-    
-    environment: 
-      name: development
-      url: https://app-dev.learnadolphin.com
-      
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Build for development
-        run: npm run build
-        
       - name: Create deployment info
         run: |
           echo "Branch: ${{ github.ref_name }}" > deployment-info.txt
