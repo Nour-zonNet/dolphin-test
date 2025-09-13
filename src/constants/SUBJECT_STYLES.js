@@ -2,6 +2,7 @@
 import quranImg from "@/assets/packages/quran.svg";
 import english from "@/assets/packages/arabic.svg";
 import math from "@/assets/packages/math.svg";
+import arabic from "@/assets/packages/arabic.svg";
 
 import skratch from "@/assets/packages/skratch.svg";
 export const subjectStyles = {
@@ -10,7 +11,7 @@ export const subjectStyles = {
     bgColor: "#D47C7C",
   },
   "لغة عربية": {
-    image: english,
+    image: arabic,
     bgColor: "#C51162", // amber
   },
   "لغة انجليزية": {
