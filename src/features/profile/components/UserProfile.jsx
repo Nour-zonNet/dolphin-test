@@ -1,23 +1,108 @@
 
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "@/utils/icons";
 import { useBrothers } from "../hooks/useBrothers";
 import { useDispatch, useSelector } from "react-redux";
-import { switchUserAccount, updateUserImage, getBrothers, addSibling, addBrotherLocal } from "../store/profileSlice";
+import { switchUserAccount, updateUserImage, addSibling } from "../store/profileSlice";
 import { Plus } from "@/utils/icons";
 import AddSiblingsModal from "@/components/profile/modal/AddSiblingsModal";
 import { useModal } from "@/components/feedback/modal/useModal";
 
 const UserProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownWrapperRef = useRef(null);
   const user = useSelector((state) => state.profile.user);
   const dispatch = useDispatch();
   const { brothers = [], loadingBrothers } = useBrothers();
   const [open, setOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState({}); 
   const { openStatusModal } = useModal();
+  const DEFAULT_AVATAR = "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png";
+
+  // useEffect(() => {
+  //   if (!open) return; 
+
+  //   const handlePointerDown = (e) => {
+  //     const el = dropdownWrapperRef.current;
+  //     if (el && !el.contains(e.target)) {
+  //       setOpen(false);
+  //     }
+  //   };
+
+  //   const handleKeyDown = (e) => {
+  //     if (e.key === "Escape") setOpen(false);
+  //   };
+
+  //   document.addEventListener("mousedown", handlePointerDown, true);
+  //   document.addEventListener("touchstart", handlePointerDown, true);
+  //   document.addEventListener("keydown", handleKeyDown, true);
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handlePointerDown, true);
+  //     document.removeEventListener("touchstart", handlePointerDown, true);
+  //     document.removeEventListener("keydown", handleKeyDown, true);
+  //   };
+  // }, [open]);
+
+ 
+  const successCheckedRef = useRef(false);
+  const resolveAvatar = (src) => {
+  if (!src) return DEFAULT_AVATAR;
+
+  const invalids = ["null", "undefined", "default.png", "default.jpg", "avatar.png", "avatar.jpg", ""];
+  if (invalids.includes(String(src).trim().toLowerCase())) return DEFAULT_AVATAR;
+
+  if (/^https?:\/\//i.test(src)) return src;
+
+  const base = import.meta.env.VITE_OLD_ASSETS_URL || import.meta.env.VITE_ASSETS_URL || "";
+  if (base) {
+    const b = base.replace(/\/+$/, "");
+    const p = String(src).replace(/^\/+/, "");
+    return `${b}/${p}`;
+  }
+
+  return src;
+};
+
+const handleImgError = (e) => {
+  e.currentTarget.onerror = null;
+  e.currentTarget.src = DEFAULT_AVATAR;
+};
+
+useEffect(() => {
+  if (!successCheckedRef.current) {
+    successCheckedRef.current = true;
+    const flag = sessionStorage.getItem("SIBLING_ADDED");
+    if (flag === "1") {
+      sessionStorage.removeItem("SIBLING_ADDED");
+      openStatusModal("SUCCESS", {
+        title: "تمت الإضافة بنجاح",
+        message: "تمت إضافة الأخ/الأخت بنجاح إلى الحساب.",
+      });
+    }
+  }
+
+  if (!open) return; 
+
+  const el = dropdownWrapperRef.current;
+  const handlePointerDown = (e) => {
+    if (el && !el.contains(e.target)) setOpen(false);
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") setOpen(false);
+  };
+
+  document.addEventListener("mousedown", handlePointerDown, true);
+  document.addEventListener("touchstart", handlePointerDown, true);
+  document.addEventListener("keydown", handleKeyDown, true);
+
+  return () => {
+    document.removeEventListener("mousedown", handlePointerDown, true);
+    document.removeEventListener("touchstart", handlePointerDown, true);
+    document.removeEventListener("keydown", handleKeyDown, true);
+  };
+}, [open, openStatusModal, dropdownWrapperRef]);
 
   if (!user) return null;
 
@@ -45,7 +130,30 @@ const UserProfile = () => {
   //   }
   // };
 
-  const handleAddSibling = async (siblingData) => {
+//  const handleAddSibling = async (siblingData) => {
+//   if (brothers.length >= 3) {
+//     openStatusModal("ERROR", {
+//       title: "لا يمكنك إضافة أكثر من 3 إخوة",
+//       message: "لقد وصلت للحد الأقصى المسموح به.",
+//     });
+//     return;
+//   }
+
+//   try {
+//     await dispatch(addSibling(siblingData)).unwrap();
+//     setIsModalOpen(false);
+//     sessionStorage.setItem("SIBLING_ADDED", "1");
+//     window.location.reload();
+  
+//     } catch {
+//       openStatusModal("ERROR", {
+//         title: "فشل في إضافة الأخ",
+//         message: "حدث خطأ أثناء محاولة الإضافة. حاول مرة أخرى.",
+//       });
+//     }
+//   };
+// UserProfile.jsx
+const handleAddSibling = async (siblingData) => {
   if (brothers.length >= 3) {
     openStatusModal("ERROR", {
       title: "لا يمكنك إضافة أكثر من 3 إخوة",
@@ -55,40 +163,31 @@ const UserProfile = () => {
   }
 
   try {
-    // Send request once
-    const newBrother = await dispatch(addSibling(siblingData)).unwrap();
+    await dispatch(addSibling(siblingData)).unwrap();
 
-    // Add locally
-    dispatch(addBrotherLocal(newBrother));
-
+    // نجاح: اقفل المودال واعرض رسالة نجاح
+    setIsModalOpen(false);
     openStatusModal("SUCCESS", {
       title: "تمت الإضافة بنجاح",
-      message: "تمت إضافة الأخ/الأخت بنجاح إلى الحساب.",
+      message: "سيتم تحديث الصفحة لعرض الأخ/الأخت الجديد.",
     });
 
-    setIsModalOpen(false); 
-  } catch {
+    // اعمل ريلود بعد ما المستخدم يشوف الرسالة
+    setTimeout(() => {
+      if (typeof window !== "undefined") {
+        window.location.reload();            // أو: window.location.replace(window.location.href);
+        // لو بتستخدم React Router v6 ممكن: navigate(0)
+      }
+    }, 1200);
+  } catch (err) {
+    // فشل: اعرض رسالة خطأ (المودال اتقفل بالفعل من المودال نفسه)
     openStatusModal("ERROR", {
       title: "فشل في إضافة الأخ",
-      message: "حدث خطأ أثناء محاولة الإضافة. حاول مرة أخرى.",
+      message: err?.message || "حدث خطأ أثناء محاولة الإضافة. حاول مرة أخرى.",
     });
   }
 };
 
-    // Close dropdown if clicked outside
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-  //       setOpen(false);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
 
     const handleImageChange = (e, userId) => {
     const file = e.target.files[0];
@@ -100,27 +199,42 @@ const UserProfile = () => {
 
     };
 
+  // const handleSwitch = async (bro) => {
+  //   if (bro.id === user.id) return; 
+  //   try {
+  //     await dispatch(switchUserAccount(bro.id)).unwrap();
+  //     await dispatch(getBrothers()).unwrap();
+
+  //     setSelectedImages({});
+
+  //     setOpen(false);
+  //   } catch (err) {
+  //     console.error("Failed to switch account:", err);
+  //   }
+  // };
+
   const handleSwitch = async (bro) => {
-    if (bro.id === user.id) return; 
-    try {
-      await dispatch(switchUserAccount(bro.id)).unwrap();
-      await dispatch(getBrothers()).unwrap();
+  if (bro.id === user.id) return; 
+  try {
+    const res = await dispatch(switchUserAccount(bro.id)).unwrap();
 
-      setSelectedImages({});
-
-      setOpen(false);
-    } catch (err) {
-      console.error("Failed to switch account:", err);
+    if (res?.token) {
+      localStorage.setItem("token", res.token);
     }
-  };
+    setOpen(false);
+    window.location.reload(); 
+  } catch (err) {
+    console.error("Failed to switch account:", err);
+  }
+};
 
   return (
     <div className="flex items-center gap-4 md:gap-[37px] py-4 md:py-8">
       {/* Current user profile */}
       <div className="relative">
-        <img
+        {/* <img
           // key={user?.profilePicture} 
-          key={user.id + (user.profilePicture || "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png")}
+          key={user.id + (user.profilePicture || DEFAULT_AVATAR)}
           className="w-[70px] md:w-[100px] lg:w-[150px] h-[70px] md:h-[100px] lg:h-[150px] rounded-full object-cover"
           alt="Profile"
           src={
@@ -128,6 +242,18 @@ const UserProfile = () => {
               ? URL.createObjectURL(selectedImages[user.id])
               : user?.profilePicture || "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png"
           }
+        /> */}
+
+        <img
+          key={user.id + (user.profilePicture || DEFAULT_AVATAR)}
+          className="w-[70px] md:w-[100px] lg:w-[150px] h-[70px] md:h-[100px] lg:h-[150px] rounded-full object-cover"
+          alt="Profile"
+          src={
+            selectedImages[user.id]
+              ? URL.createObjectURL(selectedImages[user.id])
+              : resolveAvatar(user?.profilePicture)
+          }
+          onError={handleImgError}
         />
 
         <label className="absolute bottom-0 lg:bottom-2.5 left-0 lg:left-2.5 cursor-pointer">
@@ -146,7 +272,7 @@ const UserProfile = () => {
       </div>
 
       {/* Name & Grade */}
-      <div className="flex items-center md:gap-6">
+      <div ref={dropdownWrapperRef} className="flex items-center md:gap-6">
         <div className="flex flex-col gap-2 md:gap-4">
           <h2 className="text-subtext text-base md:text-2xl lg:text-[32px] font-semibold text-nowrap">
             {user?.name || "—"}
@@ -160,7 +286,7 @@ const UserProfile = () => {
           </button>
 
         {/* Brothers dropdown */}
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative">
 
           {open && (
             <div className="absolute top-2 -right-50 lg:-right-10 bg-white border border-[#D9D9D966] rounded-4xl w-64 md:w-96 overflow-y-auto z-50 p-4">
@@ -178,7 +304,7 @@ const UserProfile = () => {
                   onClick={() => handleSwitch(bro)}
                 >
                   <div className="flex items-center gap-4">
-                    <img
+                    {/* <img
                         key={bro.id + (bro.profilePicture || "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png")}
                         className="w-10 h-10 md:w-16 md:h-16 rounded-full object-cover border-[0.5px] border-black/10"
                         src={
@@ -187,6 +313,17 @@ const UserProfile = () => {
                             : bro.profilePicture || "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png"
                         }
                         alt={bro.student_name}
+                      /> */}
+                      <img
+                        key={bro.id + (bro.profilePicture || DEFAULT_AVATAR)}
+                        className="w-10 h-10 md:w-16 md:h-16 rounded-full object-cover border-[0.5px] border-black/10"
+                        src={
+                          selectedImages[bro.id]
+                            ? URL.createObjectURL(selectedImages[bro.id])
+                            : resolveAvatar(bro.profilePicture)
+                        }
+                        alt={bro.student_name}
+                        onError={handleImgError}
                       />
                     <div className="space-y-2">
                       <p className="text-[12px] md:text-xl font-bold text-navyteal text-nowrap">
