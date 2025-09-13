@@ -1,12 +1,12 @@
 // constants/subjectStyles.js
 import quranImg from "@/assets/packages/quran.svg";
-import english from "@/assets/packages/arabic.svg";
+import english from "@/assets/packages/english.svg";
 import math from "@/assets/packages/math.svg";
 import arabic from "@/assets/packages/arabic.svg";
 
 import skratch from "@/assets/packages/skratch.svg";
 export const subjectStyles = {
-  البرمجة: {
+  "البرمجة": {
     image: skratch,
     bgColor: "#D47C7C",
   },
@@ -18,7 +18,7 @@ export const subjectStyles = {
     image: english,
     bgColor: "#F59E0B", // amber
   },
-  القرأن: {
+  "القرأن": {
     image: quranImg,
     bgColor: "#2E7D32", // green
   },
@@ -26,7 +26,7 @@ export const subjectStyles = {
     image: quranImg,
     bgColor: "#2E7D32", // green
   },
-  رياضيات: {
+  "رياضيات": {
     image: math,
     bgColor: "#DFBE37", // blue
   },
