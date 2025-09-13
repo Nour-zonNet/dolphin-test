@@ -1,6 +1,6 @@
 // constants/subjectStyles.js
 import quranImg from "@/assets/packages/quran.svg";
-import english from "@/assets/packages/english.svg";
+import english from "@/assets/packages/arabic.svg";
 import math from "@/assets/packages/math.svg";
 
 import skratch from "@/assets/packages/skratch.svg";
@@ -11,7 +11,7 @@ export const subjectStyles = {
   },
   "لغة عربية": {
     image: english,
-    bgColor: "#F59E0B", // amber
+    bgColor: "#C51162", // amber
   },
   "لغة انجليزية": {
     image: english,
