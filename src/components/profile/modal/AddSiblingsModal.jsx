@@ -47,7 +47,7 @@ const AddSiblingsModal = ({ isOpen, onClose, onSubmit, loading }) => {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  if (!fullName.trim() || !gradeLevel || !profileImage) {
+  if (!fullName.trim() || !gradeLevel) {
     setShowReq(true);
     return;
   }
@@ -55,7 +55,14 @@ const handleSubmit = async (e) => {
   const formData = new FormData();
   formData.append("name", fullName.trim());
   formData.append("grade", gradeLevel);
-  formData.append("image", profileImage);
+
+  // إذا لم يتم اختيار صورة، استخدم الصورة الافتراضية
+  if (profileImage) {
+    formData.append("image", profileImage);
+  } else {
+    // إرسال معرف الصورة الافتراضية أو تركها فارغة حسب متطلبات الباك إند
+    formData.append("use_default_image", "true");
+  }
 
   try {
     // مهم: ما تمسكش النجاح هنا — خلّي الأب يتصرف بعد ما الباك إند يرد
@@ -92,12 +99,11 @@ const handleSubmit = async (e) => {
           <Divider />
 
           <form onSubmit={handleSubmit} className="py-4 md:py-8 space-y-4 lg:space-y-8">
-            {/* Profile Picture (مطلوبة) */}
+            {/* Profile Picture (اختيارية) */}
             <div className="flex flex-col items-center gap-2.5">
-              <label className="relative flex flex-col items-center justify-center cursor-pointer" aria-required="true">
+              <label className="relative flex flex-col items-center justify-center cursor-pointer">
                 <img
-                  className={`w-[50px] h-[50px] md:w-[80px] md:h-[80px] lg:w-[100px] lg:h-[100px] rounded-full object-cover
-                    ${showReq && !profileImage ? "ring-2 ring-red-600" : ""}`}
+                  className="w-[50px] h-[50px] md:w-[80px] md:h-[80px] lg:w-[100px] lg:h-[100px] rounded-full object-cover"
                   alt="Profile preview"
                   src={preview || DEFAULT_AVATAR}
                 />
@@ -114,11 +120,8 @@ const handleSubmit = async (e) => {
                 />
               </label>
               <div className="text-xs md:text-sm text-gray-600">
-                أضف صورة
+                أضف صورة (اختياري)
               </div>
-              {showReq && !profileImage && (
-                <p className="text-red-600 text-xs md:text-sm">يجب اختيار صورة.</p>
-              )}
             </div>
 
             {/* Full Name Field */}
