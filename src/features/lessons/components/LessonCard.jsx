@@ -91,7 +91,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     //   });
     // }
   }, [item.session_link]);
-// }, [dispatch, item.id, item.session_link, openStatusModal]);
+  // }, [dispatch, item.id, item.session_link, openStatusModal]);
 
   const renderButton = useCallback(() => {
     // لو الحصة انتهت
@@ -99,6 +99,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       return (
         <div className="flex justify-center text-center items-center align-middle">
           <img
+            loading="lazy"
             src={books}
             alt="ended"
             className="cursor-pointer w-16 xs:w-auto"
@@ -118,6 +119,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         <div className="flex justify-center text-center items-center align-middle">
           <img
             src={clock}
+            loading="lazy"
             alt="clock"
             className="cursor-pointer w-16 xs:w-auto"
           />
@@ -136,6 +138,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
             <img
               src={sandGlass}
               alt="clock"
+              loading="lazy"
               className="cursor-pointer w-16 xs:w-auto"
             />
           </div>
@@ -243,7 +246,12 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
                 style={{ backgroundColor: color }}
                 className="w-10 h-9 sm:w-12 sm:h-12 rounded-md flex items-center justify-center"
               >
-                <img src={image} alt={item.name} className="w-10 h-9" />
+                <img
+                  src={image}
+                  loading="lazy"
+                  alt={item.name}
+                  className="w-10 h-9"
+                />
               </div>
             )}
             <div>
@@ -262,6 +270,8 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
               <img
                 src={teacherIcon}
                 alt="teacher icon"
+                loading="lazy"
+
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
               <span className="text-status text-xs xs:text-base">
@@ -272,6 +282,8 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
               <img
                 src={groupIcon}
                 alt="group icon"
+                loading="lazy"
+
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
               <span className="text-status text-xs xs:text-base md:text-lg">
@@ -286,6 +298,8 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
               <img
                 src={timeIcon}
                 alt="time icon"
+                loading="lazy"
+
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
               <span className="text-xs xs:text-base">

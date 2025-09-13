@@ -20,7 +20,7 @@ const   StatusModal = ({ type, onClose, title, message }) => {
 
       {/* Image + Head */}
       <div className="flex flex-col items-center mt-6">
-        <img className="w-40 h-auto" alt={type} src={type == MODAL_TYPES.SUCCESS  ? successImg : failImg } />
+        <img className="w-40 h-auto"  loading="lazy" alt={type} src={type == MODAL_TYPES.SUCCESS  ? successImg : failImg } />
         <h2
           className={`mt-4 font-bold ${type == MODAL_TYPES.SUCCESS  ?"text-green-500" : "text-red-500"} text-xl md:text-2xl text-center font-cairo`}
         >

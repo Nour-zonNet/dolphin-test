@@ -88,6 +88,7 @@ const handleSubmit = async (e) => {
               className="absolute right-0 w-[50px] h-[50px] flex items-center justify-center rounded-full cursor-pointer"
             >
               <img className="w-6 md:w-8 lg:w-auto" alt="Close"
+                 loading="lazy"
                    src="https://c.animaapp.com/mf2i8zbdeyVMjf/img/frame.svg" />
             </button>
             <div className="w-full text-center">

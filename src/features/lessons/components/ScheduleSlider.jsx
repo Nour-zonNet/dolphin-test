@@ -29,6 +29,8 @@ const ScheduleSlider = () => {
     >
       <img
         src={notFoundImage}
+        loading="lazy"
+
         alt="No lessons found"
         className="max-h-full w-auto object-contain mt-12"
       />

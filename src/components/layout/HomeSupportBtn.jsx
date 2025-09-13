@@ -174,7 +174,7 @@ const HomeSupportBtn = ({ className }) => {
               {btn.isChat && isChatOpen ? (
                 <X className="w-6 h-6 text-white" />
               ) : (
-                <img src={btn.icon} alt={btn.alt} className="w-6 h-6" />
+                <img src={btn.icon}  loading="lazy" alt={btn.alt} className="w-6 h-6" />
               )}
             </button>
           );
@@ -186,7 +186,7 @@ const HomeSupportBtn = ({ className }) => {
           className="flex items-center justify-center w-15 h-15 md:w-20 md:h-20 bg-orangedeep rounded-full shadow-lg hover:bg-btnClicked focus:bg-[#BA7C28] cursor-pointer transition-transform duration-300 focus:outline-0 hover:scale-110 relative z-10"
           title="الدعم"
         >
-          <img src={dolphinCallCenter} alt="Support" />
+          <img  loading="lazy" src={dolphinCallCenter} alt="Support" />
         </button>
       </div>
     </div>
