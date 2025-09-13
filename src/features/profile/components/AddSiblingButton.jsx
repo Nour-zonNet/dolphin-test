@@ -14,13 +14,6 @@ const AddSiblingButton = () => {
   
   // تحديد ما إذا كان المستخدم الحالي هو الطالب الأساسي
   const isPrimaryStudent = user?.isPrimary === true || user?.canAddSiblings === true || user?.accountType === "primary";
-  
-  console.log("AddSiblingButton - Primary check:", {
-    isPrimary: user?.isPrimary,
-    canAddSiblings: user?.canAddSiblings,
-    accountType: user?.accountType,
-    result: isPrimaryStudent
-  });
 
   const handleAddSibling = async (siblingData) => {
     // التحقق من أن المستخدم الحالي هو الطالب الأساسي
