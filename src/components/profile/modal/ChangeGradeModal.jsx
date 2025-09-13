@@ -1,20 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import Divider from '../../ui/Divider';
-import { ConfirmCheck } from '@/utils/icons';
+import { ConfirmCheck, ChevronDown } from '@/utils/icons';
 import { useClasses } from '@/features/profile/hooks/useClasses';
 
 const ChangeGradeModal = ({ isOpen, onClose, onConfirm, currentGradeId, setCurrentGradeId }) => {
   const { classes, loadingClasses } = useClasses();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
-    if (!loadingClasses && currentGradeId && classes?.length) {
-      const match = classes.find(cls => cls.id === Number(currentGradeId));
-      if (match) {
-        setCurrentGradeId(match.id);
+    if (isOpen && !loadingClasses && classes?.length > 0) {
+      // إذا لم يكن هناك gradeId محدد، أو إذا كان القيمة فارغة، نتأكد من تحديد الصف الحالي
+      if (!currentGradeId || currentGradeId === "") {
+        // البحث عن الصف الحالي للمستخدم من البيانات المرسلة
+        const userCurrentGrade = classes.find(cls => cls.current === true) || classes[0];
+        if (userCurrentGrade) {
+          setCurrentGradeId(userCurrentGrade.id);
+        }
+      } else {
+        // التأكد من أن الصف المحدد موجود في القائمة
+        const match = classes.find(cls => cls.id === Number(currentGradeId));
+        if (match) {
+          setCurrentGradeId(match.id);
+        }
       }
     }
-  }, [loadingClasses, classes, currentGradeId, setCurrentGradeId]);
+  }, [isOpen, loadingClasses, classes, currentGradeId, setCurrentGradeId]);
 
   const handleConfirm = async () => {
     if (!currentGradeId) return;
@@ -28,6 +39,18 @@ const ChangeGradeModal = ({ isOpen, onClose, onConfirm, currentGradeId, setCurre
       setIsLoading(false);
     }
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && !event.target.closest('.relative')) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDropdownOpen]);
 
   if (!isOpen) return null;
 
@@ -61,29 +84,53 @@ const ChangeGradeModal = ({ isOpen, onClose, onConfirm, currentGradeId, setCurre
 
           {/* Grade Level Field */}
           <div className="space-y-4 mt-4">
-            <label className="block font-semibold text-navyteal text-sm md:text-base lg:text-2xl">
+            <label className="block font-bold text-navyteal text-sm md:text-base lg:text-xl">
               الصف الدراسي الجديد
             </label>
             <div className="relative">
-              <select
-                value={String(currentGradeId || "")}
-                onChange={(e) => setCurrentGradeId(Number(e.target.value))}
-                className="w-full h-10 md:h-14 lg:h-16 px-6 rounded-[100px] border-[0.5px] border-solid border-[#3c3c4366] text-[#5d6062] focus:outline-none focus:border-navyteal transition-colors appearance-none bg-white cursor-pointer text-[12px] md:text-base lg:text-lg"
-                required
+              <div
+                onClick={() => !loadingClasses && setIsDropdownOpen(!isDropdownOpen)}
+                className="w-full h-12 md:h-14 lg:h-16 px-4 md:px-6 rounded-[100px] border-2 border-gray-200 hover:border-orangedeep focus:border-navyteal transition-all duration-300 bg-white cursor-pointer flex items-center justify-between shadow-sm hover:shadow-md"
               >
-                <option value="">اختر الصف الدراسي الجديد</option>
-                {loadingClasses && <option disabled>جاري تحميل الصفوف...</option>}
-                {classes?.map((cls) => (
-                  <option key={cls.id} value={cls.id}>
-                    {cls.name}
-                  </option>
-                ))}
-              </select>
-              <img
-                className="absolute left-8 md:left-14 top-1/2 transform -translate-y-1/2 w-3 md:w-4 lg:w-6 pointer-events-none"
-                alt="Dropdown arrow"
-                src="https://c.animaapp.com/mf2i8zbdeyVMjf/img/angle-left-2.svg"
-              />
+                <span className="text-navyteal text-sm md:text-base lg:text-lg font-medium">
+                  {loadingClasses 
+                    ? "جاري تحميل الصفوف..." 
+                    : currentGradeId 
+                      ? classes?.find(cls => cls.id === Number(currentGradeId))?.name || "اختر الصف الدراسي"
+                      : "اختر الصف الدراسي الجديد"
+                  }
+                </span>
+                <ChevronDown 
+                  className={`w-4 md:w-5 lg:w-6 text-navyteal transition-transform duration-300 ${
+                    isDropdownOpen ? 'rotate-180' : 'rotate-0'
+                  }`} 
+                />
+              </div>
+              
+              {/* Custom Dropdown */}
+              {isDropdownOpen && !loadingClasses && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-2xl shadow-xl z-50 max-h-60 overflow-y-auto">
+                  {classes?.map((cls) => (
+                    <div
+                      key={cls.id}
+                      onClick={() => {
+                        setCurrentGradeId(cls.id);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={`px-4 md:px-6 py-3 md:py-4 cursor-pointer transition-all duration-200 ${
+                        Number(currentGradeId) === cls.id
+                          ? 'bg-gradient-to-r from-orangedeep/10 to-navyteal/10 text-navyteal font-bold border-r-4 border-orangedeep'
+                          : 'hover:bg-gray-50 text-gray-700 font-medium'
+                      } first:rounded-t-2xl last:rounded-b-2xl`}
+                    >
+                      <span className="text-sm md:text-base lg:text-lg">{cls.name}</span>
+                      {Number(currentGradeId) === cls.id && (
+                        <span className="mr-2 text-orangedeep text-xs md:text-sm font-bold">(محدد حالياً)</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

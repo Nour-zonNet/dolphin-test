@@ -54,6 +54,7 @@ const AccountInfo = ({ user }) => {
       setName(user.name || "");
       setPhone(user.phoneNumber || "");
       setGrade(user.gradeName || "");
+      setGradeId(user.grade || null);
     }
   }, [user]);
 
