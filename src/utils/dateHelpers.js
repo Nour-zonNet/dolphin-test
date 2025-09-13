@@ -78,3 +78,15 @@ export function getFormattedDate(date = new Date()) {
 
 // الاستخدام
 // console.log(getFormattedDate()); 
+
+  // تحويل الوقت من 24 ساعة إلى 12 ساعة
+ export const formatTime12Hour = (time24) => {
+    if (!time24) return '';
+
+    const [hours, minutes] = time24.split(':');
+    const hour = parseInt(hours, 10);
+    const period = hour >= 12 ? 'م' : 'ص';
+    const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+
+    return `${hour12}:${minutes} ${period}`;
+  };
