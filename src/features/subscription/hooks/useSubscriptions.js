@@ -20,6 +20,7 @@ export const useSubscriptions = () => {
     shallowEqual
   );
 
+
   const dispatch = useDispatch();
 
   // Stable action dispatchers
@@ -53,7 +54,8 @@ export const useSubscriptions = () => {
   // Return a stable reference to reduce child re-renders
   return useMemo(
     () => ({
-      items,
+      items, // عرض جميع البيانات بدون فلترة
+      allItems: items,
       loading,
       error,
       fetchSubscriptions: dispatchFetch,

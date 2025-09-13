@@ -18,6 +18,9 @@ const UserProfile = () => {
   const [open, setOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState({}); 
   const { openStatusModal } = useModal();
+  
+  // تحديد ما إذا كان المستخدم الحالي هو الطالب الأساسي
+  const isPrimaryStudent = user?.isPrimary === true || user?.canAddSiblings === true || user?.accountType === "primary";
   const DEFAULT_AVATAR = "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png";
 
   // useEffect(() => {
@@ -154,6 +157,15 @@ useEffect(() => {
 //   };
 // UserProfile.jsx
 const handleAddSibling = async (siblingData) => {
+  // التحقق من أن المستخدم الحالي هو الطالب الأساسي
+  if (!isPrimaryStudent) {
+    openStatusModal("ERROR", {
+      title: "غير مسموح بإضافة الأخوة",
+      message: "وظيفة إضافة الأخوة متاحة للطالب الأساسي فقط.",
+    });
+    return;
+  }
+
   if (brothers.length >= 3) {
     openStatusModal("ERROR", {
       title: "لا يمكنك إضافة أكثر من 3 إخوة",
@@ -326,9 +338,17 @@ const handleAddSibling = async (siblingData) => {
                         onError={handleImgError}
                       />
                     <div className="space-y-2">
-                      <p className="text-[12px] md:text-xl font-bold text-navyteal text-nowrap">
-                        {bro.student_name}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[12px] md:text-xl font-bold text-navyteal text-nowrap">
+                          {bro.student_name}
+                        </p>
+                        {/* مؤشر الطالب الأساسي */}
+                        {(bro.isPrimary === true || bro.canAddSiblings === true || bro.accountType === "primary") && (
+                          <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full font-bold">
+                            أساسي
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[12px] md:text-base font-regular text-navyteal text-nowrap">
                         {bro.class_name}
                       </p>
@@ -353,14 +373,17 @@ const handleAddSibling = async (siblingData) => {
                   )}
                 </div>
               ))}
-              <button onClick={() => {
-                setIsModalOpen(true);
-                setOpen(false);
-                }}
-                className="focus:outline-0 rounded-[32px] flex items-center gap-2 py-2 md:py-3 px-6 cursor-pointer">
-                  <Plus className="w-3 md:w-4" />
-                  <span className="text-navyteal text-sm md:text-base font-bold">اضافة أخ او أخت</span>
-              </button>
+              {/* زر إضافة أخ - متاح للطالب الأساسي فقط */}
+              {isPrimaryStudent && (
+                <button onClick={() => {
+                  setIsModalOpen(true);
+                  setOpen(false);
+                  }}
+                  className="focus:outline-0 rounded-[32px] flex items-center gap-2 py-2 md:py-3 px-6 cursor-pointer">
+                    <Plus className="w-3 md:w-4" />
+                    <span className="text-navyteal text-sm md:text-base font-bold">اضافة أخ او أخت</span>
+                </button>
+              )}
             </div>
           )}
         </div>

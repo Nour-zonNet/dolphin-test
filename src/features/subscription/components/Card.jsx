@@ -23,14 +23,12 @@ import InfoRow from "./InfoRow";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { packageFactory } from "../../packages/factory/packageFactory";
 
-const Card = React.memo(({ item }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const Card = React.memo(({ item, isOpen, onToggle }) => {
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
   const { cancelSubscription, reactivateSubscription } = useSubscriptions();
   useGroups(item.package_id);
-  const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
   const mappedItem = useMemo(
     () => ({
@@ -93,12 +91,16 @@ const Card = React.memo(({ item }) => {
   // Status Badge
   const StatusBadge = useMemo(
     () => (
-      <span
-        className={`text-sm px-3 py-1 rounded-full flex items-center gap-2 ${config.color}`}
+      <div
+        className={`flex items-center justify-center gap-1 rounded-3xl px-1 py-0.5 sm:gap-2 sm:px-2 sm:py-1 ${config.color}`}
       >
-        {Icon && <Icon className="w-4 md:w-6" />}
-        {config.label(daysLeft)}
-      </span>
+        <Icon className="w-3 sm:w-4 md:w-5" />
+        <span className="font-bold text-xs sm:text-sm md:text-base">
+          {typeof config.label === "function"
+            ? config.label(daysLeft)
+            : config.label}
+        </span>
+      </div>
     ),
     [Icon, config, daysLeft]
   );
@@ -107,9 +109,9 @@ const Card = React.memo(({ item }) => {
   const ToggleIcon = useMemo(
     () =>
       isOpen ? (
-        <ChevronUp className="w-3 h-3 text-gray-600 transition-transform" />
+        <ChevronUp className="w-4 h-4 text-navyteal transition-transform" />
       ) : (
-        <ChevronDown className="w-3 h-3 text-gray-600 transition-transform" />
+        <ChevronDown className="w-4 h-4 text-navyteal transition-transform" />
       ),
     [isOpen]
   );
@@ -187,122 +189,150 @@ const Card = React.memo(({ item }) => {
 
   // Renew flow is currently not wired in the UI
   return (
-    <div className="w-full flex flex-col bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden">
-      {/* Header */}
-      <div
-        className="flex flex-col  sm:flex-row gap-3 sm:gap-0 md:items-center justify-between p-3 sm:p-4 cursor-pointer select-none"
-        onClick={toggleOpen}
-      >
-        <div className="flex items-center justify-between gap-3 w-full sm:gap-4">
-          <div className="flex flex-row gap-2 items-center">
-            <div
-              style={{ backgroundColor: bgColor }}
-              className={`w-8 h-8 md:w-10 md:h-10 bg-[${bgColor}] rounded-sm flex items-center justify-center text-2xl`}
-            >
-              <img src={image} alt={item.name} />
+    <div className="relative w-full mx-auto pl-3 max-w-2xl">
+      <div className="relative w-full transition-transform duration-300 pr-0">
+        <div
+          style={{ borderColor: bgColor }}
+          className="relative rounded-xl border bg-foundblue w-full overflow-hidden transform p-1 pb-0 pr-0 z-10 shadow-sm transition-all"
+        >
+          {/* Header */}
+          <div
+            className="flex flex-row xs:items-center gap-2 relative z-10 text-white px-3 py-4 cursor-pointer"
+            onClick={onToggle}
+          >
+            <div className="overflow-hidden p-1">
+              {image && (
+                <div
+                  style={{ backgroundColor: bgColor }}
+                  className="w-8 h-8 sm:w-12 sm:h-12 rounded flex items-center justify-center"
+                >
+                  <img src={image} alt={item.name} className="w-10 h-10" />
+                </div>
+              )}
             </div>
-            <h3 className="font-semibold text-base sm:text-lg md:text-xl text-navyteal">
-              {title}
-            </h3>
-          </div>
-          <div className="flex items-center justify-center gap-4 ml-2">
-            {StatusBadge}
-            {ToggleIcon}
-          </div>
-        </div>
-      </div>
 
-      {/* Expandable Content */}
-      <div
-        ref={contentRef}
-        style={{ height: contentHeight }}
-        className="transition-all duration-500 ease-in-out overflow-hidden"
-      >
-        <div className="p-3 sm:p-4 border-t border-gray-300 space-y-4 ">
-          {/* Subscription Info */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-start gap-3 md:gap-4">
-            <div className="flex">
-              {/* <Line className="h-12" fill={config.fill} /> */}
-              <ul className="list-disc list-inside space-y-2  text-gray-700">
-                <li>
-                  تاريخ الاشتراك :{" "}
-                  <span className="font-bold">{startDate}</span>
-                </li>
-                <li>
-                  تاريخ الانتهاء :{" "}
-                  <span className="font-bold"> {endDate} </span>
-                </li>
-              </ul>
+            <div className="flex flex-col items-start pl-4 sm:pl-10 justify-center flex-1">
+              <h2 className="text-sm sm:text-base md:text-lg text-navyteal font-bold leading-tight text-right">
+                {title}
+              </h2>
             </div>
-            <InfoRow label="المواد:" value={subject} strong />
+
+            <div className="flex items-center gap-2">
+              {StatusBadge}
+              {ToggleIcon}
+            </div>
           </div>
 
-          {/* Group Info & Actions */}
-          {/* {config.actions.includes("changeGroup") && ( */}
-          {status !== "cancelled" &&
-            status !== "expired" &&
-            status !== "waiting" && (
-              <GroupInfo
-                group={group}
-                packageId={item.package_id}
-                subscriptionId={item.id}
-              />
-            )}
-          {/* )} */}
-          {/* Coupon */}
-          {/* Actions */}
-          <div className="flex flex-col gap-3 mt-6">
-            {config.actions.map((action) => {
-              switch (action) {
-                // case "useCoupon":
-                //   return (
-                //     <ActionButton key="coupon" outline icon={<Copon />}>
-                //       استخدام كوبون لإضافة أيام
-                //     </ActionButton>
-                //   );
+          {/* Status & Group */}
+          <div className="flex flex-col gap-2 px-4 relative z-10 pb-4">
+            <div className="flex items-start gap-2">
+              <span className="text-xs font-bold text-gray-700 whitespace-nowrap">المجموعة:</span>
+              <p className="text-navyteal font-bold text-xs xs:text-sm md:text-base flex-1 break-words">
+                {group.group_name || "المجموعة الأولى"}
+              </p>
+            </div>
+          </div>
 
-                case "cancel":
-                  return (
-                    <ActionButton
-                      key="cancel"
-                      outline
-                      full
-                      danger
-                      icon={<Cancel />}
-                      onClick={handleCancelClick}
-                    >
-                      إلغاء الاشتراك
-                    </ActionButton>
-                  );
+          {/* Expandable Content */}
+          <div
+            ref={contentRef}
+            style={{ height: contentHeight }}
+            className="transition-all duration-300 ease-in-out overflow-hidden"
+          >
+            <div className="px-2 sm:px-4 py-4 border-t border-gray-200 space-y-4 bg-white">
+              {/* Subscription Info */}
+              <div className="space-y-3">
+                <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <div className="flex items-center justify-between border-b border-gray-300 pb-2 mb-2">
+                    <span className="text-sm font-medium text-gray-600">تاريخ الاشتراك:</span>
+                    <span className="font-bold text-navyteal">{startDate}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600">تاريخ الانتهاء:</span>
+                    <span className="font-bold text-navyteal">{endDate}</span>
+                  </div>
+                </div>
+              </div>
 
-                case "renew":
-                case "reactivate":
-                  return (
-                    <div
-                      key={action}
-                      className="flex flex-col items-center mt-4 gap-2"
-                    >
-                      {config.message && (
-                        <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
-                          {config.message}
-                        </div>
-                      )}
-                      <ActionButton
-                        full
-                        primary
-                        onClick={handleReactivateClick}
-                        icon={<Renew />}
-                        // onClick={handleRenewClick}
+              {/* Subjects */}
+              <div className="space-y-3">
+                <span className="text-sm font-bold text-gray-700">المواد:</span>
+                <div className="flex flex-wrap gap-2">
+                  {item.subjects && item.subjects.length > 0 ? (
+                    item.subjects.map((subject, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-gray-100 text-navyteal border border-gray-200"
                       >
-                        {config.buttonText}
-                      </ActionButton>
-                    </div>
-                  );
+                        {subject.name}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-gray-100 text-gray-600 border border-gray-200">
+                      {subject}
+                    </span>
+                  )}
+                </div>
+              </div>
 
-                default:
-                  return null;
-              }
-            })}
+              {/* Group Info & Actions */}
+              {status !== "cancelled" &&
+                status !== "expired" &&
+                status !== "waiting" && (
+                  <GroupInfo
+                    group={group}
+                    packageId={item.package_id}
+                    subscriptionId={item.id}
+                  />
+                )}
+
+              {/* Actions */}
+              <div className="flex flex-col gap-3 mt-4">
+                {config.actions.map((action) => {
+                  switch (action) {
+                    case "cancel":
+                      return (
+                        <ActionButton
+                          key="cancel"
+                          outline
+                          full
+                          danger
+                          icon={<Cancel />}
+                          onClick={handleCancelClick}
+                        >
+                          إلغاء الاشتراك
+                        </ActionButton>
+                      );
+
+                    case "renew":
+                    case "reactivate":
+                      return (
+                        <div
+                          key={action}
+                          className="flex flex-col items-center mt-4 gap-2"
+                        >
+                          {config.message && (
+                            <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
+                              {config.message}
+                            </div>
+                          )}
+                          <ActionButton
+                            full
+                            primary
+                            onClick={handleReactivateClick}
+                            icon={<Renew />}
+                          >
+                            {config.buttonText}
+                          </ActionButton>
+                        </div>
+                      );
+
+                    default:
+                      return null;
+                  }
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </div>

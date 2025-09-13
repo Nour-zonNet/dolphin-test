@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import dolphinCallCenter from "@/assets/images/dolphin-call-center.svg";
 import whatsapp from "@/assets/images/whatsapp.svg";
-import telegram from "@/assets/images/telegram.svg";
 import youtube from "@/assets/images/youtube.svg";
 import snapchat from "@/assets/images/snapchat.svg";
 import LifeChat from "@/assets/images/message.svg";
@@ -140,14 +139,12 @@ const HomeSupportBtn = ({ className }) => {
   const buttons = isAuthenticated
     ? [
         { icon: whatsapp, angle: -90, alt: "WhatsApp", onClick: openWhatsApp },
-        { icon: telegram, angle: -40, alt: "Telegram" },
-        { icon: LifeChat, angle: 10, alt: "LifeChat", onClick: toggleChatwoot, isChat: true },
+        { icon: LifeChat, angle: -40, alt: "LifeChat", onClick: toggleChatwoot, isChat: true },
       ]
     : [
         { icon: whatsapp, angle: -90, alt: "WhatsApp", onClick: openWhatsApp },
-        { icon: telegram, angle: -50, alt: "Telegram" },
-        { icon: youtube, angle: -10, alt: "YouTube" },
-        { icon: snapchat, angle: 30, alt: "Snapchat" },
+        { icon: youtube, angle: -50, alt: "YouTube", onClick: () => window.open("https://www.youtube.com/@Learnatdolphin", "_blank", "noopener,noreferrer") },
+        { icon: snapchat, angle: -10, alt: "Snapchat", onClick: () => window.open("https://snapchat.com/t/CwY0kRTD", "_blank", "noopener,noreferrer") },
       ];
 
   return (
