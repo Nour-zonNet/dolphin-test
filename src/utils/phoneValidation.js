@@ -54,6 +54,19 @@ export const getPhoneValidationError = (phone, countryCode = null) => {
       }
       break;
     }
+    case "KW": {
+      if (!cleanPhone.startsWith("+965")) {
+        return "رقم الهاتف الكويتي يجب أن يبدأ بـ +965";
+      }
+      if (cleanPhone === "+965") {
+        return "رقم الهاتف مطلوب";
+      }
+      const phoneNumber = cleanPhone.replace("+965", "");
+      if (phoneNumber.length < 8 || phoneNumber.length > 8) {
+        return "رقم الهاتف الكويتي يجب أن يكون 8 أرقام";
+      }
+      break;
+    }
     default:
       return "دولة غير مدعومة";
   }
