@@ -2,7 +2,10 @@ import api from "@/services/api";
 
 export const fetchProfile = async () => {
   const response = await api.get("/student/info");
-  return response.data.data; 
+  const userData = response.data.data;
+  
+  // إرجاع البيانات كما هي من الـ API بدون تعديل
+  return userData;
 };
 
 // export const addBrother = async (payload) => {
@@ -26,7 +29,10 @@ export const fetchClasses = async () => {
 
 export const fetchBrothers = async () => {
   const response = await api.get("/student/brothers");
-  return Array.isArray(response.data.data) ? response.data.data : [];
+  const brothers = Array.isArray(response.data.data) ? response.data.data : [];
+  
+  // إرجاع البيانات كما هي من الـ API بدون تعديل
+  return brothers;
 };
 
 export const switchAccount = async (studentId) => {

@@ -8,11 +8,30 @@ const AddSiblingButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading] = useState(false); 
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.profile.user);
   const brothers = useSelector((state) => state.profile.brothers || []);
-
   const { openStatusModal } = useModal();
+  
+  // تحديد ما إذا كان المستخدم الحالي هو الطالب الأساسي
+  const isPrimaryStudent = user?.isPrimary === true || user?.canAddSiblings === true || user?.accountType === "primary";
+  
+  console.log("AddSiblingButton - Primary check:", {
+    isPrimary: user?.isPrimary,
+    canAddSiblings: user?.canAddSiblings,
+    accountType: user?.accountType,
+    result: isPrimaryStudent
+  });
 
   const handleAddSibling = async (siblingData) => {
+    // التحقق من أن المستخدم الحالي هو الطالب الأساسي
+    if (!isPrimaryStudent) {
+      openStatusModal("ERROR", {
+        title: "غير مسموح بإضافة الأخوة",
+        message: "وظيفة إضافة الأخوة متاحة للطالب الأساسي فقط.",
+      });
+      return;
+    }
+
     if (brothers.length >= 3) {
       openStatusModal("ERROR", {
         title: "لا يمكنك إضافة أكثر من 3 إخوة",
@@ -35,6 +54,11 @@ const AddSiblingButton = () => {
       });
     }
   };
+
+  // لا تظهر الزر إذا لم يكن المستخدم هو الطالب الأساسي
+  if (!isPrimaryStudent) {
+    return null; // إخفاء الزر تماماً
+  }
 
   return (
     <div className="flex items-center justify-center py-2">
