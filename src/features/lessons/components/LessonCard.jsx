@@ -52,40 +52,46 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
   }, [start, end]);
 
   const handleEnterLesson = useCallback(async () => {
-    try {
-      const res = await dispatch(
-        getSessionLink({ room_uid: item.session_link, session_id: item.id })
-      ).unwrap();
-      if (res?.status) {
-        // لو فيه لينك شغال → ندخل على الـ URL
-        window.open(res.url, "_blank");
-      } else {
-        // لو مفيش لينك مفتوح
-        openStatusModal("ERROR", {
-          // title: "لا يوجد لقاء مفتوح",
-          message:
-            res?.data?.message || "لا يوجد اجتماع متاح حالياً لهذه الجلسة.",
-        });
-      }
-    } catch (error) {
-      // هندل أي errors جاية من الـ API أو الـ thunk
-      const getErrorMessage = (err) => {
-        if (!err) return "حدث خطأ أثناء الدخول للجلسة. حاول مرة أخرى.";
-        if (typeof err === "string") return err;
-        if (Array.isArray(err)) return err[0] || "حدث خطأ أثناء الدخول للجلسة.";
-        if (err && typeof err === "object") {
-          if (err.data && err.data.error) return err.data.error;
-          if (err.message) return err.message;
-        }
-        return "حدث خطأ أثناء الدخول للجلسة.";
-      };
+    window.open(
+      " https://online.learnatdolphin.com/" + item.session_link,
+      "_blank"
+    );
 
-      openStatusModal("ERROR", {
-        title: "فشل الدخول للجلسة",
-        message: getErrorMessage(error),
-      });
-    }
-  }, [dispatch, item.id, item.session_link, openStatusModal]);
+    // try {
+    //   const res = await dispatch(
+    //     getSessionLink({ room_uid: item.session_link, session_id: item.id })
+    //   ).unwrap();
+    //   if (res?.status) {
+    //     // لو فيه لينك شغال → ندخل على الـ URL
+    //     window.open(res.url, "_blank");
+    //   } else {
+    //     // لو مفيش لينك مفتوح
+    //     openStatusModal("ERROR", {
+    //       // title: "لا يوجد لقاء مفتوح",
+    //       message:
+    //         res?.data?.message || "لا يوجد اجتماع متاح حالياً لهذه الجلسة.",
+    //     });
+    //   }
+    // } catch (error) {
+    //   // هندل أي errors جاية من الـ API أو الـ thunk
+    //   const getErrorMessage = (err) => {
+    //     if (!err) return "حدث خطأ أثناء الدخول للجلسة. حاول مرة أخرى.";
+    //     if (typeof err === "string") return err;
+    //     if (Array.isArray(err)) return err[0] || "حدث خطأ أثناء الدخول للجلسة.";
+    //     if (err && typeof err === "object") {
+    //       if (err.data && err.data.error) return err.data.error;
+    //       if (err.message) return err.message;
+    //     }
+    //     return "حدث خطأ أثناء الدخول للجلسة.";
+    //   };
+
+    //   openStatusModal("ERROR", {
+    //     title: "فشل الدخول للجلسة",
+    //     message: getErrorMessage(error),
+    //   });
+    // }
+  }, [item.session_link]);
+// }, [dispatch, item.id, item.session_link, openStatusModal]);
 
   const renderButton = useCallback(() => {
     // لو الحصة انتهت
