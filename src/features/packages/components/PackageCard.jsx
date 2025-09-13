@@ -99,6 +99,8 @@ const PackageCard = React.memo(
 
         {/* Popup */}
         <WeeklySchedulePopup
+        image={image}
+        color={color}
           open={isScheduleOpen}
           setOpen={handleCloseSchedule}
           groupId={item.group_id}
