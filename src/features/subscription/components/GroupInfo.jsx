@@ -4,18 +4,21 @@ import ActionButton from "./ActionButton";
 import { useModal } from "@/components/feedback/modal/useModal";
 import useGroups from "../../groups/hooks/useGroups";
 import { useSubscriptions } from "../hooks/useSubscriptions";
+import { fetchLessons } from "../../lessons/store/lessonsSlice";
+import { useDispatch } from "react-redux";
 
 const GroupInfo = ({ group, packageId, subscriptionId }) => {
   const { openChangeGroupModal, openStatusModal } = useModal();
   const { groups, fetchGroups } = useGroups(packageId);
   const { changeGroupSubscription } = useSubscriptions();
-
+  const dispatch = useDispatch();
   const handleChangeGroup = async () => {
     openChangeGroupModal(
       { packageId, currentGroupId: group?.group_id, groups: groups },
       async (selectedGroupId) => {
         try {
           await changeGroupSubscription(subscriptionId, selectedGroupId);
+          dispatch(fetchLessons());
           // إظهار مودال النجاح بعد تحديث المجموعة بنجاح
           openStatusModal("SUCCESS", {
             title: "تم التحديث بنجاح",
@@ -40,14 +43,22 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
   return (
     <div className="flex flex-row items-center justify-between gap-2 sm:gap-4 w-full">
       <div className="flex flex-row items-center gap-2 flex-1 min-w-0">
-        <span className="font-bold text-sm text-gray-700 whitespace-nowrap">المجموعة:</span>
+        <span className="font-bold text-sm text-gray-700 whitespace-nowrap">
+          المجموعة:
+        </span>
         <span className="text-status font-bold text-sm md:text-base break-words overflow-hidden">
           {group?.group_name || "لا توجد مجموعة"}
         </span>
       </div>
       <div className="flex-shrink-0">
-        <ActionButton primary icon={<ChangeGroup />} onClick={handleChangeGroup}>
-          <span className="text-xs sm:text-sm font-bold whitespace-nowrap">تغيير المجموعة</span>
+        <ActionButton
+          primary
+          icon={<ChangeGroup />}
+          onClick={handleChangeGroup}
+        >
+          <span className="text-xs sm:text-sm font-bold whitespace-nowrap">
+            تغيير المجموعة
+          </span>
         </ActionButton>
       </div>
     </div>

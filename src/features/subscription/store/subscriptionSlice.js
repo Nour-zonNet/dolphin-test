@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { subscriptionRepository } from "../services/subscription.services";
+import { fetchLessons } from "../../lessons/store/lessonsSlice";
 
 // ===== Helper for error extraction =====
 const handleError = async (error, thunkAPI) => {
@@ -152,6 +153,7 @@ const subscriptionSlice = createSlice({
             s.id === updated.id ? { ...s, status: updated.status } : s
           );
         }
+        fetchLessons();
       })
       .addCase(reactivateSubscription.rejected, handleRejected)
 
