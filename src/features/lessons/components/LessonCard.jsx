@@ -144,7 +144,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
           </div>
           <button
             onClick={handleEnterLesson}
-            className="px-4 py-2 text-nowrap text-navyteal text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked rounded-3xl"
+            className="px-4 py-2 text-nowrap text-navyteal text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked rounded-3xl hover:cursor-pointer"
           >
             دخول الحصة
           </button>
