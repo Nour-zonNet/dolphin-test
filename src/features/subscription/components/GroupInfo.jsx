@@ -1,32 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useCallback } from "react";
 import { ChangeGroup } from "../../../utils/icons";
 import ActionButton from "./ActionButton";
 import { useModal } from "@/components/feedback/modal/useModal";
-import useGroups from "../../groups/hooks/useGroups";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 import { fetchLessons } from "../../lessons/store/lessonsSlice";
 import { useDispatch } from "react-redux";
 
 const GroupInfo = ({ group, packageId, subscriptionId }) => {
   const { openChangeGroupModal, openStatusModal } = useModal();
-  const { groups, fetchGroups } = useGroups(packageId);
-  const { changeGroupSubscription } = useSubscriptions();
+  const { changeGroupSubscription, fetchGroupsByPackageId, groups } =
+    useSubscriptions();
   const dispatch = useDispatch();
-  const handleChangeGroup = async () => {
+
+  // 🟢 memoize modal props
+
+  // 🟢 memoize handler
+  const handleChangeGroup = useCallback(async () => {
+    const packageGroups = groups?.[packageId] || [];
+
+    if (packageGroups.length === 0) {
+      await fetchGroupsByPackageId(packageId);
+    }
+
     openChangeGroupModal(
-      { packageId, currentGroupId: group?.group_id, groups: groups },
+      { packageId, currentGroupId: group?.group_id, groups: packageGroups },
       async (selectedGroupId) => {
         try {
           await changeGroupSubscription(subscriptionId, selectedGroupId);
           dispatch(fetchLessons());
-          // إظهار مودال النجاح بعد تحديث المجموعة بنجاح
+
           openStatusModal("SUCCESS", {
             title: "تم التحديث بنجاح",
             message:
               "تم تحديث بيانات الجدول وستظهر التغييرات عند فتح صفحة الجدول",
           });
         } catch {
-          // إظهار مودال الخطأ في حالة فشل التحديث
           openStatusModal("ERROR", {
             title: "خطأ في التحديث",
             message: "حدث خطأ أثناء تحديث المجموعة. يرجى المحاولة مرة أخرى.",
@@ -34,12 +42,18 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
         }
       }
     );
-  };
-  useEffect(() => {
-    if (!groups || groups.length === 0) {
-      fetchGroups();
-    }
-  }, [fetchGroups, groups, packageId]);
+  }, [
+    groups,
+    packageId,
+    group?.group_id,
+    subscriptionId,
+    changeGroupSubscription,
+    fetchGroupsByPackageId,
+    openChangeGroupModal,
+    openStatusModal,
+    dispatch,
+  ]);
+
   return (
     <div className="flex flex-row items-center justify-between gap-2 sm:gap-4 w-full">
       <div className="flex flex-row items-center gap-2 flex-1 min-w-0">

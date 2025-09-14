@@ -7,6 +7,7 @@ import {
   changeGroupSubscription,
   createTrialSubscription,
   reactivateSubscription,
+  fetchGroupsByPackageId,
 } from "../store/subscriptionSlice";
 
 export const useSubscriptions = () => {
@@ -20,7 +21,6 @@ export const useSubscriptions = () => {
     shallowEqual
   );
 
-
   const dispatch = useDispatch();
 
   // Stable action dispatchers
@@ -28,6 +28,7 @@ export const useSubscriptions = () => {
     () => dispatch(fetchSubscriptions()),
     [dispatch]
   );
+
   const dispatchCancel = useCallback(
     (id) => dispatch(cancelSubscription(id)),
     [dispatch]
@@ -50,11 +51,15 @@ export const useSubscriptions = () => {
     (id, groupId) => dispatch(changeGroupSubscription({ id, groupId })),
     [dispatch]
   );
+  const dispatchFetchGroupsByPackageId = useCallback(
+    (id) => dispatch(fetchGroupsByPackageId(id)),
+    [dispatch]
+  );
 
   // Return a stable reference to reduce child re-renders
   return useMemo(
     () => ({
-      items, // عرض جميع البيانات بدون فلترة
+      items,
       allItems: items,
       loading,
       error,
@@ -64,6 +69,7 @@ export const useSubscriptions = () => {
       renewSubscription: dispatchRenew,
       changeGroupSubscription: dispatchChangeGroup,
       createTrialSubscription: dispatchCreateTrialSub,
+      fetchGroupsByPackageId: dispatchFetchGroupsByPackageId,
     }),
     [
       items,
@@ -75,6 +81,7 @@ export const useSubscriptions = () => {
       dispatchRenew,
       dispatchChangeGroup,
       dispatchCreateTrialSub,
+      dispatchFetchGroupsByPackageId,
     ]
   );
 };

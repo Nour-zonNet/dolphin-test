@@ -2,23 +2,23 @@ import { useState } from "react";
 import { Cross, Check } from "../../../../utils/icons";
 import Button from "../../../ui/Button";
 import { formatArabicTime } from "../../../../utils/dateHelpers";
+import { useSelector } from "react-redux";
 
 const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
   const [selectedGroup, setSelectedGroup] = useState(
     groupData.currentGroupId || 1
   );
-
   const handleConfirm = () => {
     if (onConfirm) {
       onConfirm(selectedGroup);
     }
     onClose();
   };
-
+  const groups = useSelector(
+    (state) => state.subscriptions.groups[groupData.packageId] || []
+  );
   return (
-    <div
-      className="relative   sm:w-auto   max-w-2xl bg-white rounded-2xl shadow-lg max-h-[80vh] flex flex-col"
-    >
+    <div className="relative   sm:w-auto   max-w-2xl bg-white rounded-2xl shadow-lg max-h-[80vh] flex flex-col">
       {/* Close button */}
       <button
         onClick={onClose}
@@ -43,7 +43,7 @@ const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
       {/* Scroll only inside grid */}
       <div className="flex-1 overflow-y-auto px-6">
         <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          {groupData.groups.map((group) => {
+          {groups.map((group) => {
             return (
               <div
                 key={group.id}
