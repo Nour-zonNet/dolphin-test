@@ -5,7 +5,7 @@ import Button from "../../../ui/Button";
 import successImg from "../../../../assets/modal/successModal.svg"
 import failImg from "../../../../assets/modal/warningModal.svg"
 
-const   StatusModal = ({ type, onClose, title, message }) => {
+const   StatusModal = ({ type, onConfirm, onClose, title, message }) => {
   const { t } = useTranslation();
 
   return (
@@ -35,7 +35,7 @@ const   StatusModal = ({ type, onClose, title, message }) => {
 
       {/* Button */}
       <div className="flex justify-center items-center mt-8">
-        <Button onClick={onClose} icon={<CorrectCircle color="#E89B32" fill="black" />} text={t('common.ok')} />
+        <Button onClick={onConfirm || onClose} icon={<CorrectCircle color="#E89B32" fill="black" />} text={t('common.ok')} />
       </div>
     </div>
   );

@@ -11,12 +11,14 @@ import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
 import { getSessionLink } from "../store/lessonsSlice";
 import { useDispatch } from "react-redux";
 import { useModal } from "@/components/feedback/modal/useModal";
+import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 import { useCountdown } from "../hooks/useCountdown";
+import { closeModal } from "../../../store/modalSlice";
 
 const LessonCard = ({ item, color, image, lessonDate }) => {
   const { openStatusModal } = useModal();
-  // const navigate = useNavigate();
   const dispatch = useDispatch();
+  // const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { start, end } = useMemo(() => {
@@ -50,47 +52,68 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     if (now > end) return "ended";
     return "upcoming";
   }, [start, end]);
+  const handleEnterLesson = useCallback(() => {
+    const url = `https://online.learnatdolphin.com/${item.session_link}`;
 
-  const handleEnterLesson = useCallback(async () => {
-    window.open(
-      " https://online.learnatdolphin.com/" + item.session_link,
-      "_blank"
-    );
+    const features = /iPad|iPhone|iPod|Android/i.test(navigator.userAgent)
+      ? "_blank"
+      : "_blank,noopener,noreferrer";
 
-    // try {
-    //   const res = await dispatch(
-    //     getSessionLink({ room_uid: item.session_link, session_id: item.id })
-    //   ).unwrap();
-    //   if (res?.status) {
-    //     // لو فيه لينك شغال → ندخل على الـ URL
-    //     window.open(res.url, "_blank");
-    //   } else {
-    //     // لو مفيش لينك مفتوح
-    //     openStatusModal("ERROR", {
-    //       // title: "لا يوجد لقاء مفتوح",
-    //       message:
-    //         res?.data?.message || "لا يوجد اجتماع متاح حالياً لهذه الجلسة.",
-    //     });
-    //   }
-    // } catch (error) {
-    //   // هندل أي errors جاية من الـ API أو الـ thunk
-    //   const getErrorMessage = (err) => {
-    //     if (!err) return "حدث خطأ أثناء الدخول للجلسة. حاول مرة أخرى.";
-    //     if (typeof err === "string") return err;
-    //     if (Array.isArray(err)) return err[0] || "حدث خطأ أثناء الدخول للجلسة.";
-    //     if (err && typeof err === "object") {
-    //       if (err.data && err.data.error) return err.data.error;
-    //       if (err.message) return err.message;
-    //     }
-    //     return "حدث خطأ أثناء الدخول للجلسة.";
-    //   };
+    const newWindow = window.open(url, features);
 
-    //   openStatusModal("ERROR", {
-    //     title: "فشل الدخول للجلسة",
-    //     message: getErrorMessage(error),
-    //   });
-    // }
-  }, [item.session_link]);
+    if (!newWindow) {
+      openStatusModal(MODAL_TYPES.ERROR, {
+        title: "لم يتم فتح الحصة",
+        message:
+          "المتصفح منع فتح نافذة جديدة. اضغط موافق لفتح الحصة في نفس النافذة.",
+        onConfirm: () => {
+          window.location.href = url;
+        },
+        onClose: () => {},
+      });
+    }
+  }, [item.session_link, openStatusModal]);
+
+  // const handleEnterLesson = useCallback(async () => {
+  //   window.open(
+  //     " https://online.learnatdolphin.com/" + item.session_link,
+  //     "_blank"
+  //   );
+
+  // try {
+  //   const res = await dispatch(
+  //     getSessionLink({ room_uid: item.session_link, session_id: item.id })
+  //   ).unwrap();
+  //   if (res?.status) {
+  //     // لو فيه لينك شغال → ندخل على الـ URL
+  //     window.open(res.url, "_blank");
+  //   } else {
+  //     // لو مفيش لينك مفتوح
+  //     openStatusModal("ERROR", {
+  //       // title: "لا يوجد لقاء مفتوح",
+  //       message:
+  //         res?.data?.message || "لا يوجد اجتماع متاح حالياً لهذه الجلسة.",
+  //     });
+  //   }
+  // } catch (error) {
+  //   // هندل أي errors جاية من الـ API أو الـ thunk
+  //   const getErrorMessage = (err) => {
+  //     if (!err) return "حدث خطأ أثناء الدخول للجلسة. حاول مرة أخرى.";
+  //     if (typeof err === "string") return err;
+  //     if (Array.isArray(err)) return err[0] || "حدث خطأ أثناء الدخول للجلسة.";
+  //     if (err && typeof err === "object") {
+  //       if (err.data && err.data.error) return err.data.error;
+  //       if (err.message) return err.message;
+  //     }
+  //     return "حدث خطأ أثناء الدخول للجلسة.";
+  //   };
+
+  //   openStatusModal("ERROR", {
+  //     title: "فشل الدخول للجلسة",
+  //     message: getErrorMessage(error),
+  //   });
+  // }
+  // }, [item.session_link]);
   // }, [dispatch, item.id, item.session_link, openStatusModal]);
 
   const renderButton = useCallback(() => {
@@ -271,7 +294,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
                 src={teacherIcon}
                 alt="teacher icon"
                 loading="lazy"
-
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
               <span className="text-status text-xs xs:text-base">
@@ -283,7 +305,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
                 src={groupIcon}
                 alt="group icon"
                 loading="lazy"
-
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
               <span className="text-status text-xs xs:text-base md:text-lg">
@@ -299,7 +320,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
                 src={timeIcon}
                 alt="time icon"
                 loading="lazy"
-
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
               <span className="text-xs xs:text-base">

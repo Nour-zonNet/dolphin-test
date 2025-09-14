@@ -9,17 +9,21 @@ export const useModal = () => {
   const dispatch = useDispatch();
 
   const openBuyPackageModal = (packageData = {}) => {
-    dispatch(openModal({
-      type: MODAL_TYPES.BUY_PACKAGE,
-      props: { packageData }
-    }));
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.BUY_PACKAGE,
+        props: { packageData },
+      })
+    );
   };
 
   const openDetailsModal = (packageDetails = {}) => {
-    dispatch(openModal({
-      type: MODAL_TYPES.DETAILS,
-      props: { packageDetails }
-    }));
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.DETAILS,
+        props: { packageDetails },
+      })
+    );
   };
 
   const openConfirmModal = (modalData = {}, onConfirm) => {
@@ -28,14 +32,16 @@ export const useModal = () => {
     if (onConfirm) {
       callbackRegistry.set(callbackId, onConfirm);
     }
-    
-    dispatch(openModal({
-      type: MODAL_TYPES.CONFIRM,
-      props: { 
-        modalData,
-        callbackId: onConfirm ? callbackId : null
-      }
-    }));
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.CONFIRM,
+        props: {
+          modalData,
+          callbackId: onConfirm ? callbackId : null,
+        },
+      })
+    );
   };
 
   const openChangeGroupModal = (groupData = {}, onConfirm) => {
@@ -44,14 +50,16 @@ export const useModal = () => {
     if (onConfirm) {
       callbackRegistry.set(callbackId, onConfirm);
     }
-    
-    dispatch(openModal({
-      type: MODAL_TYPES.CHANGE_GROUP,
-      props: { 
-        groupData,
-        callbackId: onConfirm ? callbackId : null
-      }
-    }));
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.CHANGE_GROUP,
+        props: {
+          groupData,
+          callbackId: onConfirm ? callbackId : null,
+        },
+      })
+    );
   };
 
   const openReactivateModal = (subscriptionData = {}, onConfirm) => {
@@ -60,14 +68,16 @@ export const useModal = () => {
     if (onConfirm) {
       callbackRegistry.set(callbackId, onConfirm);
     }
-    
-    dispatch(openModal({
-      type: MODAL_TYPES.REACTIVATE,
-      props: { 
-        subscriptionData,
-        callbackId: onConfirm ? callbackId : null
-      }
-    }));
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.REACTIVATE,
+        props: {
+          subscriptionData,
+          callbackId: onConfirm ? callbackId : null,
+        },
+      })
+    );
   };
 
   const openExtendPackageModal = (packageData = {}, onConfirm) => {
@@ -76,19 +86,21 @@ export const useModal = () => {
     if (onConfirm) {
       callbackRegistry.set(callbackId, onConfirm);
     }
-    
-    dispatch(openModal({
-      type: MODAL_TYPES.EXTEND_PACKAGE,
-      props: { 
-        packageData,
-        callbackId: onConfirm ? callbackId : null
-      }
-    }));
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.EXTEND_PACKAGE,
+        props: {
+          packageData,
+          callbackId: onConfirm ? callbackId : null,
+        },
+      })
+    );
   };
 
   const openStatusModal = (
     type = MODAL_TYPES.SUCCESS,
-    { title = "", message = "", onClose } = {}
+    { title = "", message = "", onClose, onConfirm } = {}
   ) => {
     // Register onClose callback in registry to keep Redux serializable
     const onCloseId = onClose ? Date.now().toString() : null;
@@ -96,10 +108,18 @@ export const useModal = () => {
       callbackRegistry.set(onCloseId, onClose);
     }
 
-    dispatch(openModal({
-      type,
-      props: { title, message, onCloseId }
-    }));
+    // Register onConfirm callback in registry to keep Redux serializable
+    const onConfirmId = onConfirm ? Date.now().toString() + "_confirm" : null;
+    if (onConfirmId && onConfirm) {
+      callbackRegistry.set(onConfirmId, onConfirm);
+    }
+
+    dispatch(
+      openModal({
+        type,
+        props: { title, message, onCloseId, onConfirmId },
+      })
+    );
   };
 
   const closeCurrentModal = () => {
