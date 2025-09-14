@@ -11,6 +11,7 @@ import {
   ConfirmModal,
   ChangeGroupModal,
   ReactivateModal,
+  WeeklyScheduleModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -122,6 +123,9 @@ const ModalManager = () => {
       ModalContent = (
         <BuyPackageModal {...props} onClose={handleClose} isExtendMode={true} />
       );
+      break;
+    case MODAL_TYPES.WEEKLY_SCHEDULE:
+      ModalContent = <WeeklyScheduleModal {...props} onClose={handleClose} />;
       break;
     default:
       return null;

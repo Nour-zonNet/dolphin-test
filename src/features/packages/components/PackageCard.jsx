@@ -1,22 +1,76 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import { Calender } from "@/utils/icons";
-import WeeklySchedulePopup from "./WeeklySchedulePopup";
+import { useModal } from "@/components/feedback/modal/useModal";
 import { CardKite, Star } from "@/utils/Illustrations";
 import * as Icons from "@/utils/icons";
+import { usePackages } from "../hooks/usePackages";
+import { useSelector } from "react-redux";
 
 const PackageCard = React.memo(
   ({ item, color, image, status, daysRemaining }) => {
-    const [isScheduleOpen, setIsScheduleOpen] = useState(false);
     const { t } = useTranslation();
+    const { openWeeklyScheduleModal, openStatusModal } = useModal();
+    const { getSchedule } = usePackages();
+    const schedules = useSelector((state) => state.packages.schedules);
 
-    const handleOpenSchedule = useCallback(() => setIsScheduleOpen(true), []);
-    const handleCloseSchedule = useCallback(() => setIsScheduleOpen(false), []);
+    const handleOpenSchedule = useCallback(async () => {
+      const existingSchedule = schedules?.[item.group_id];
+
+      if (existingSchedule) {
+        openWeeklyScheduleModal({
+          data: {
+            groupId: item.group_id,
+            packageName: item.package_name,
+            schedule: existingSchedule,
+            image,
+            color,
+          },
+        });
+        return;
+      }
+
+      try {
+        const { groupId, schedule } = await getSchedule(item.group_id).unwrap();
+
+        if (!schedule || Object.keys(schedule).length === 0) {
+          openStatusModal("INFO", {
+            title: "لا يوجد جدول متاح",
+            message: "لا يوجد جدول متاح لهذه الباقة في الوقت الحالي.",
+          });
+          return;
+        }
+
+        openWeeklyScheduleModal({
+          data: {
+            groupId,
+            packageName: item.package_name,
+            schedule: schedule ?? {},
+            image,
+            color,
+          },
+        });
+      } catch {
+        openStatusModal("ERROR", {
+          title: "خطأ في جلب الجدول",
+          message: "حدث خطأ أثناء محاولة جلب الجدول.",
+        });
+      }
+    }, [
+      schedules,
+      getSchedule,
+      item.group_id,
+      item.package_name,
+      openWeeklyScheduleModal,
+      image,
+      color,
+      openStatusModal,
+    ]);
 
     // Get the status configuration
     const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
-    const Icon = Icons[config.icon]; 
+    const Icon = Icons[config.icon];
     return (
       <div className="relative w-full mx-auto pl-3 max-w-2xl">
         {/* Border Illustration */}
@@ -83,7 +137,7 @@ const PackageCard = React.memo(
             {/* Schedule & Social */}
             <div className="flex flex-row items-center justify-between md:justify-between gap-4 px-4 py-5 relative z-10">
               {/* إخفاء زر معاينة الجدول للباقات في حالة الانتظار */}
-              {status?.toLowerCase() !== 'waiting' && (
+              {status?.toLowerCase() !== "waiting" && (
                 <button
                   type="button"
                   onClick={handleOpenSchedule}
@@ -96,16 +150,6 @@ const PackageCard = React.memo(
             </div>
           </div>
         </div>
-
-        {/* Popup */}
-        <WeeklySchedulePopup
-        image={image}
-        color={color}
-          open={isScheduleOpen}
-          setOpen={handleCloseSchedule}
-          groupId={item.group_id}
-          packageName={item.package_name}
-        />
       </div>
     );
   }

@@ -122,6 +122,15 @@ export const useModal = () => {
     );
   };
 
+  const openWeeklyScheduleModal = (scheduleData = {}) => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.WEEKLY_SCHEDULE,
+        props: { ...scheduleData },
+      })
+    );
+  };
+
   const closeCurrentModal = () => {
     dispatch(closeModal());
   };
@@ -143,6 +152,7 @@ export const useModal = () => {
     openReactivateModal,
     openExtendPackageModal,
     openStatusModal,
+    openWeeklyScheduleModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };
