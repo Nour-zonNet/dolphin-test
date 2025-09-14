@@ -72,7 +72,7 @@ const RegisterPage = () => {
   };
 
   const handleBack = () => {
-    navigate("/auth/otp", { state: { phoneNumber } });
+    navigate("/auth/phone", { state: { phoneNumber } });
   };
 
   return (

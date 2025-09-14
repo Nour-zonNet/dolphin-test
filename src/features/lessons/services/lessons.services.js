@@ -4,7 +4,7 @@ import { ENDPOINTS } from "../../../constants/API_ENDPOINTS";
 class LessonsRepository {
   // Get all lessons
   async getAll() {
-    const { data } = await api.get("/student/schedule");
+    const { data } = await api.get(ENDPOINTS.SCHEDULE_OF_ALLPACKAGES);
     return data;
   }
 

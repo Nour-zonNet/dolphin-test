@@ -1,11 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { lessonsRepository } from "../services/lessons.services";
 
-export const fetchLessons = createAsyncThunk("lessons/fetch", async () => {
-  const res = await lessonsRepository.getAll();
-
-  return res.data;
-});
+export const fetchLessons = createAsyncThunk(
+  "lessons/fetch",
+  async (_, { rejectWithValue }) => {
+    const res = await lessonsRepository.getAll();
+    try {
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
 export const getSessionLink = createAsyncThunk(
   "session/getSessionLink",

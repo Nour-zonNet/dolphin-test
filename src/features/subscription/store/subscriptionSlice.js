@@ -172,7 +172,6 @@ const subscriptionSlice = createSlice({
       .addCase(changeGroupSubscription.pending, handlePending)
       .addCase(changeGroupSubscription.fulfilled, (state, action) => {
         state.loading = false;
-
         // Access the nested data
         const updatedSubscription = action.payload;
 
