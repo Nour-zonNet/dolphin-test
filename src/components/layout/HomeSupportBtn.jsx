@@ -9,7 +9,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import api from "../../services/api";
 
 const HomeSupportBtn = ({ className }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [isOpen, setIsOpen] = useState(false);
   const [radius, setRadius] = useState(70);
@@ -62,10 +62,17 @@ const HomeSupportBtn = ({ className }) => {
 
   // === رسالة واتساب
   const defaultWAString = useMemo(() => {
-    const base = "مرحبًا، أحتاج دعمًا من مركز دولفين. (أُرسلت من موقع الويب)";
-    const suffix = subscriptionStatus ? `\nالحالة: ${subscriptionStatus}` : "";
-    return encodeURIComponent(`${base}${suffix ? "\n" + suffix : ""}`);
-  }, [subscriptionStatus]);
+    if (isAuthenticated) {
+      // رسالة للطلاب المسجلين
+      const base = "اهلا فريق دعم منصة الدلفين 💙 ، احتاج الي مساعدة";
+      const phoneNumber = user?.phoneNumber ? `\nو رقم جوالي المسجل علي المنصة هو : ${user.phoneNumber}` : "";
+      const suffix = subscriptionStatus ? `\nالحالة: ${subscriptionStatus}` : "";
+      return encodeURIComponent(`${base}${phoneNumber}${suffix}`);
+    } else {
+      // رسالة للطلاب غير المسجلين
+      return encodeURIComponent("اهلاً دعم منصة الدلفين، محتاج مساعدة 🙏");
+    }
+  }, [isAuthenticated, user?.phoneNumber, subscriptionStatus]);
 
   const whatsappUrl = useMemo(() => {
     if (!supportNumber) return "";

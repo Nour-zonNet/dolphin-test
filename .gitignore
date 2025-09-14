@@ -30,3 +30,6 @@ dist-ssr
 dist/*
 build/*
 
+# Claude Code
+.claude
+
