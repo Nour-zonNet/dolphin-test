@@ -7,7 +7,7 @@ export const getNext7Days = () => {
     const date = new Date();
     date.setDate(date.getDate() + i);
     days.push({
-      label: date.toLocaleDateString("ar-EG", optionsAR), // Arabic day
+      label: date.toLocaleDateString("ar-SA", optionsAR), // Arabic day
       dayEn: date.toLocaleDateString("en-US", optionsEN).toLowerCase(), // "sunday"
       date: date.toISOString().split("T")[0], // YYYY-MM-DD
     });

@@ -7,7 +7,7 @@ const FormatWithCurrency = ({
     symbolClass = "",
     symbolFill = "#E89B32",
     fractionDigits = 0,
-    locale = "en-US",
+    locale = "ar-SA",
     useGrouping = true,
     }) => {
     if (amount == null || isNaN(amount)) return "0";

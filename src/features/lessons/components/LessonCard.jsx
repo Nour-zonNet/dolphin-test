@@ -24,7 +24,9 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
   const { start, end } = useMemo(() => {
     const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
 
-    const baseDate = new Date(lessonDate);
+    const baseDate = new Date(
+      new Date(lessonDate).toLocaleString("en-US", { timeZone: "Asia/Riyadh" })
+    );
 
     const startDate = new Date(
       baseDate.getFullYear(),
@@ -198,6 +200,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
           weekday: "long",
           day: "numeric",
           month: "long",
+          timeZone: "Asia/Riyadh",
         })} - ${formatArabicTime(item.start_time)}`,
         statusColor: "text-[#ba7c28]",
         statusIcon: <SandGlass className="w-4" />,

@@ -34,8 +34,7 @@ const packagesSlice = createSlice({
     all: [],      // كل الباقات
     mine: [], 
     schedules: {},    
-    loadingAll: false,
-    loadingMine: false,
+    loading: false,
     loadingSchedule: false,
     error: null,
   },
@@ -44,26 +43,26 @@ const packagesSlice = createSlice({
     builder
       // all packages
       .addCase(fetchAllPackages.pending, (state) => {
-        state.loadingAll = true;
+        state.loading = true;
       })
       .addCase(fetchAllPackages.fulfilled, (state, action) => {
-        state.loadingAll = false;
+        state.loading = false;
         state.all = action.payload;
       })
       .addCase(fetchAllPackages.rejected, (state, action) => {
-        state.loadingAll = false;
+        state.loading = false;
         state.error = action.error.message;
       })
       // my packages
       .addCase(fetchMyPackages.pending, (state) => {
-        state.loadingMine = true;
+        state.loading = true;
       })
       .addCase(fetchMyPackages.fulfilled, (state, action) => {
-        state.loadingMine = false;
+        state.loading = false;
         state.mine = action.payload;
       })
       .addCase(fetchMyPackages.rejected, (state, action) => {
-        state.loadingMine = false;
+        state.loading = false;
         state.error = action.error.message;
       }).
       addCase(fetchScheduleById.pending, (state) => {
