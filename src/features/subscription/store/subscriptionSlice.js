@@ -84,6 +84,13 @@ export const changeGroupSubscription = createAsyncThunk(
   }
 );
 
+export const fetchGroupsByPackageId = createAsyncThunk(
+  "groups/fetchByPackageId",
+  async (packageId) => {
+    const res = await subscriptionRepository.getByGroupsPackageId(packageId);
+    return { packageId, groups: res.data };
+  }
+);
 export const createTrialSubscription = createAsyncThunk(
   "subscriptions/createTrial",
   async (ids, thunkAPI) => {
@@ -101,7 +108,7 @@ const subscriptionSlice = createSlice({
   name: "subscriptions",
   initialState: {
     items: [],
-    groups: [],
+    groups: {},
     loading: false,
     error: null,
   },
@@ -211,7 +218,21 @@ const subscriptionSlice = createSlice({
         state.loading = false;
         subscriptionSlice.caseReducers.addTrialSubscriptions(state, action);
       })
-      .addCase(createTrialSubscription.rejected, handleRejected);
+      .addCase(createTrialSubscription.rejected, handleRejected)
+      .addCase(fetchGroupsByPackageId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(fetchGroupsByPackageId.fulfilled, (state, action) => {
+        state.loading = false;
+        const { packageId, groups } = action.payload;
+        state.groups[packageId] = groups; // ✅ works now
+      })
+      .addCase(fetchGroupsByPackageId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 

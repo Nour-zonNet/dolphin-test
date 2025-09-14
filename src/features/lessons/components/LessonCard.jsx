@@ -8,16 +8,16 @@ import sandGlass from "@/assets/schedule/sandGlass.svg";
 import books from "@/assets/schedule/books.svg";
 import { formatArabicTime } from "@/utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
-import { getSessionLink } from "../store/lessonsSlice";
-import { useDispatch } from "react-redux";
+// import { getSessionLink } from "../store/lessonsSlice";
+// import { useDispatch } from "react-redux";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 import { useCountdown } from "../hooks/useCountdown";
-import { closeModal } from "../../../store/modalSlice";
+// import { closeModal } from "../../../store/modalSlice";
 
 const LessonCard = ({ item, color, image, lessonDate }) => {
   const { openStatusModal } = useModal();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   // const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -62,6 +62,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       : "_blank,noopener,noreferrer";
 
     const newWindow = window.open(url, features);
+    // const newWindow =null
 
     if (!newWindow) {
       openStatusModal(MODAL_TYPES.ERROR, {
