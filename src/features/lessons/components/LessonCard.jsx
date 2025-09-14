@@ -20,7 +20,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
   const { t } = useTranslation();
 
   const { start, end } = useMemo(() => {
-    const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
+    const [hours, minutes, seconds] = "10:00:00".split(":").map(Number);
 
     const baseDate = new Date(lessonDate);
 
@@ -37,10 +37,10 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
 
     return { start: startDate, end: endDate };
-  }, [item.start_time, item.duration, lessonDate]);
+  }, ["10:00:00", item.duration, lessonDate]);
 
   const { timeRemaining, isExpired, canEnterLesson } = useCountdown(
-    item.start_time,
+    "10:00:00",
     lessonDate
   );
 
@@ -175,7 +175,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
           weekday: "long",
           day: "numeric",
           month: "long",
-        })} - ${formatArabicTime(item.start_time)}`,
+        })} - ${formatArabicTime("10:00:00")}`,
         statusColor: "text-[#ba7c28]",
         statusIcon: <SandGlass className="w-4" />,
       };
@@ -227,7 +227,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     timeRemaining,
     canEnterLesson,
     isExpired,
-    item.start_time,
+    "10:00:00",
     start,
   ]);
 
@@ -303,7 +303,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
               <span className="text-xs xs:text-base">
-                {formatArabicTime(item.start_time)}
+                {formatArabicTime("10:00:00")}
               </span>
             </div>
             <div className="font-semibold flex items-center gap-2">
