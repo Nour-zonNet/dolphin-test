@@ -149,7 +149,7 @@ const HomeSupportBtn = ({ className }) => {
 
   return (
     <div
-      ref={wrapperRef} // 🟢 مهم: نربط الـ ref هنا
+      ref={wrapperRef} 
       className={className ?? "fixed bottom-18 md:bottom-24 lg:bottom-24 right-0 z-50"}
     >
       <div className="relative w-18 h-18 mx-4 sm:mx-6">

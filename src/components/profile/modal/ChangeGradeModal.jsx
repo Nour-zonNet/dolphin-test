@@ -90,7 +90,7 @@ const ChangeGradeModal = ({ isOpen, onClose, onConfirm, currentGradeId, setCurre
             <div className="relative">
               <div
                 onClick={() => !loadingClasses && setIsDropdownOpen(!isDropdownOpen)}
-                className="w-full h-12 md:h-14 lg:h-16 px-4 md:px-6 rounded-[100px] border-2 border-gray-200 hover:border-orangedeep focus:border-navyteal transition-all duration-300 bg-white cursor-pointer flex items-center justify-between shadow-sm hover:shadow-md"
+                className="w-full h-12 md:h-14 lg:h-16 px-4 md:px-6 rounded-[100px] border border-gray-200 hover:border-orangedeep focus:border-navyteal transition-all duration-300 bg-white cursor-pointer flex items-center justify-between hover:shadow-md"
               >
                 <span className="text-navyteal text-sm md:text-base lg:text-lg font-medium">
                   {loadingClasses 

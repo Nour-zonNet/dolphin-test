@@ -7,12 +7,13 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import notFoundImage from "@/assets/images/notFoundLessons.png";
-import { getNext7Days } from "../../../utils/dateHelpers";
+import { getNext7Days } from "@/utils/dateHelpers";
 
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
+// import { PreviewScheduleBtn } from "@/components/ui";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();
@@ -62,6 +63,7 @@ const ScheduleSlider = () => {
 
             return (
               <SwiperSlide key={day.date}>
+                {/* <PreviewScheduleBtn /> */}
                 {lessonsForDay.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
                     {lessonsForDay.map((lesson, i) => {

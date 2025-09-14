@@ -8,7 +8,6 @@ import sandGlass from "@/assets/schedule/sandGlass.svg";
 import books from "@/assets/schedule/books.svg";
 import { formatArabicTime } from "@/utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
-import { getSessionLink } from "../store/lessonsSlice";
 import { useDispatch } from "react-redux";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { useCountdown } from "../hooks/useCountdown";
@@ -57,44 +56,10 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       "_blank"
     );
 
-    // try {
-    //   const res = await dispatch(
-    //     getSessionLink({ room_uid: item.session_link, session_id: item.id })
-    //   ).unwrap();
-    //   if (res?.status) {
-    //     // لو فيه لينك شغال → ندخل على الـ URL
-    //     window.open(res.url, "_blank");
-    //   } else {
-    //     // لو مفيش لينك مفتوح
-    //     openStatusModal("ERROR", {
-    //       // title: "لا يوجد لقاء مفتوح",
-    //       message:
-    //         res?.data?.message || "لا يوجد اجتماع متاح حالياً لهذه الجلسة.",
-    //     });
-    //   }
-    // } catch (error) {
-    //   // هندل أي errors جاية من الـ API أو الـ thunk
-    //   const getErrorMessage = (err) => {
-    //     if (!err) return "حدث خطأ أثناء الدخول للجلسة. حاول مرة أخرى.";
-    //     if (typeof err === "string") return err;
-    //     if (Array.isArray(err)) return err[0] || "حدث خطأ أثناء الدخول للجلسة.";
-    //     if (err && typeof err === "object") {
-    //       if (err.data && err.data.error) return err.data.error;
-    //       if (err.message) return err.message;
-    //     }
-    //     return "حدث خطأ أثناء الدخول للجلسة.";
-    //   };
-
-    //   openStatusModal("ERROR", {
-    //     title: "فشل الدخول للجلسة",
-    //     message: getErrorMessage(error),
-    //   });
-    // }
   }, [item.session_link]);
   // }, [dispatch, item.id, item.session_link, openStatusModal]);
 
   const renderButton = useCallback(() => {
-    // لو الحصة انتهت
     if (lessonStatus === "ended") {
       return (
         <div className="flex justify-center text-center items-center align-middle">
@@ -108,7 +73,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       );
     }
 
-    // لو الحصة لسه جاية ولسه فيه وقت متبقي ومينفعش ندخل → يعرض العداد فقط
     if (
       lessonStatus === "upcoming" &&
       timeRemaining &&
@@ -127,7 +91,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       );
     }
 
-    // لو وقت الحصة جه (العداد خلص) أو الحصة Live أو ينفع ندخل (قبل 5 دقائق) → يعرض زرار الدخول
     if (
       lessonStatus === "live" ||
       (lessonStatus === "upcoming" && (isExpired || canEnterLesson))
