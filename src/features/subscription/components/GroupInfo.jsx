@@ -51,6 +51,7 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
         </span>
       </div>
       <div className="flex-shrink-0">
+
         <ActionButton
           primary
           icon={<ChangeGroup />}
@@ -59,6 +60,7 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
           <span className="text-xs sm:text-sm font-bold whitespace-nowrap">
             تغيير المجموعة
           </span>
+
         </ActionButton>
       </div>
     </div>

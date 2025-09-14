@@ -11,10 +11,9 @@ import {
   ChevronUp,
   Copon,
   Renew,
-} from "../../../utils/icons";
-import { Line } from "../../../utils/Illustrations";
+} from "@/utils/icons";
 import * as Icons from "@/utils/icons";
-import { STATUS_CONFIG } from "../../../constants/STATUS_CONFIG";
+import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 import useGroups from "../../groups/hooks/useGroups";
 import ActionButton from "./ActionButton";
@@ -70,7 +69,7 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
     () => STATUS_CONFIG[statusKey] || STATUS_CONFIG.active,
     [statusKey]
   );
-  const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
+  const Icon = Icons[config.icon]; 
 
   // Handle expand/collapse animation
   useEffect(() => {
@@ -92,10 +91,10 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
   const StatusBadge = useMemo(
     () => (
       <div
-        className={`flex items-center justify-center gap-1 rounded-3xl px-1 py-0.5 sm:gap-2 sm:px-2 sm:py-1 ${config.color}`}
+        className={`flex items-center justify-center gap-1 rounded-3xl mt-4 md:mt-0 ${config.color}`}
       >
-        <Icon className="w-3 sm:w-4 md:w-5" />
-        <span className="font-bold text-xs sm:text-sm md:text-base">
+        <Icon className="w-4 md:w-5" />
+        <span className="text-xs sm:text-sm md:text-base">
           {typeof config.label === "function"
             ? config.label(daysLeft)
             : config.label}
@@ -109,9 +108,9 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
   const ToggleIcon = useMemo(
     () =>
       isOpen ? (
-        <ChevronUp className="w-4 h-4 text-navyteal transition-transform" />
+        <ChevronUp className="w-3 h-3 md:w-4 md:h-4 text-navyteal transition-transform" />
       ) : (
-        <ChevronDown className="w-4 h-4 text-navyteal transition-transform" />
+        <ChevronDown className="w-3 h-3 md:w-4 md:h-4 text-navyteal transition-transform" />
       ),
     [isOpen]
   );
@@ -189,15 +188,15 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
 
   // Renew flow is currently not wired in the UI
   return (
-    <div className="relative w-full mx-auto pl-3 max-w-2xl">
-      <div className="relative w-full transition-transform duration-300 pr-0">
+    <div className="relative w-full mx-auto max-w-3xl h-full">
+      <div className="relative w-full transition-transform duration-300 pr-0 h-full">
         <div
           style={{ borderColor: bgColor }}
-          className="relative rounded-xl border bg-foundblue w-full overflow-hidden transform p-1 pb-0 pr-0 z-10 shadow-sm transition-all"
+          className="relative rounded-xl border bg-foundblue w-full overflow-hidden transform p-1 pb-0 pr-0 z-10 transition-all h-full"
         >
-          {/* Header */}
+          {/* Header Desktop Layout */}
           <div
-            className="flex flex-row xs:items-center gap-2 relative z-10 text-white px-3 py-4 cursor-pointer"
+            className="flex flex-row min-h-[110px] md:min-h-0 xs:items-center gap-2 relative z-10 text-white px-3 py-4 cursor-pointer"
             onClick={onToggle}
           >
             <div className="overflow-hidden p-1">
@@ -211,27 +210,38 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
               )}
             </div>
 
-            <div className="flex flex-col items-start pl-4 sm:pl-10 justify-center flex-1">
-              <h2 className="text-sm sm:text-base md:text-lg text-navyteal font-bold leading-tight text-right">
+            <div className="flex flex-col items-start justify-center flex-1">
+              <h2
+                className={`
+                  text-sm sm:text-base md:text-lg font-semibold leading-tight
+                  ${statusKey === "expired" ? "text-[#B3261E] line-through" : "text-navyteal"}
+                `}
+              >
                 {title}
               </h2>
+              <div className="flex md:hidden items-center gap-2">
+                {StatusBadge}
+              </div>
             </div>
+              <div className="flex md:hidden mt-1">
+                  {ToggleIcon}
+              </div>
 
-            <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-4">
               {StatusBadge}
               {ToggleIcon}
             </div>
           </div>
 
           {/* Status & Group */}
-          <div className="flex flex-col gap-2 px-4 relative z-10 pb-4">
-            <div className="flex items-start gap-2">
+          {/* <div className="flex flex-col gap-2 px-4 relative z-10 pb-4">
+            <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-gray-700 whitespace-nowrap">المجموعة:</span>
               <p className="text-navyteal font-bold text-xs xs:text-sm md:text-base flex-1 break-words">
                 {group.group_name || "المجموعة الأولى"}
               </p>
             </div>
-          </div>
+          </div> */}
 
           {/* Expandable Content */}
           <div
@@ -245,30 +255,30 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
                 <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
                   <div className="flex items-center justify-between border-b border-gray-300 pb-2 mb-2">
                     <span className="text-sm font-medium text-gray-600">تاريخ الاشتراك:</span>
-                    <span className="font-bold text-navyteal">{startDate}</span>
+                    <span className="font-semibold text-navyteal">{startDate}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-600">تاريخ الانتهاء:</span>
-                    <span className="font-bold text-navyteal">{endDate}</span>
+                    <span className="font-semibold text-navyteal">{endDate}</span>
                   </div>
                 </div>
               </div>
 
               {/* Subjects */}
-              <div className="space-y-3">
+              <div className="flex items-center gap-6">
                 <span className="text-sm font-bold text-gray-700">المواد:</span>
                 <div className="flex flex-wrap gap-2">
                   {item.subjects && item.subjects.length > 0 ? (
                     item.subjects.map((subject, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-gray-100 text-navyteal border border-gray-200"
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[#E8F0F4] text-navyteal"
                       >
                         {subject.name}
                       </span>
                     ))
                   ) : (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-gray-100 text-gray-600 border border-gray-200">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[#E8F0F4] text-gray-600">
                       {subject}
                     </span>
                   )}

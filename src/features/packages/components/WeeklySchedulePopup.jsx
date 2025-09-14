@@ -1,10 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback, useMemo, useState} from "react";
 import { Cross } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
-import Tooth from "@/assets/packages/tooth.svg";
 import { Clock, Teacher } from "@/utils/icons";
 import { usePackages } from "@/features/packages/hooks/usePackages";
-import { formatTime12Hour } from "../../../utils/dateHelpers";
+import { formatTime12Hour } from "@/utils/dateHelpers";
 
 const WeeklySchedulePopup = ({
   open,
@@ -16,22 +15,66 @@ const WeeklySchedulePopup = ({
 }) => {
   const { t } = useTranslation();
   const { schedules, loading, error, getSchedule } = usePackages();
-
-  const key = String(groupId);
+  const key = useMemo(() => String(groupId ?? ""), [groupId]);
+  // const key = String(groupId);
   useEffect(() => {
     if (open && groupId && schedules?.[key] === undefined) {
       getSchedule(key);
     }
   }, [open, groupId, getSchedule, schedules, key]);
+  
+  const fetchNow = useCallback(() => {
+    if (!key) return;
+    
+    try {
+      return getSchedule(key, { force: true });
+    } catch {
+      return getSchedule(key);
+    }
+  }, [getSchedule, key]);
 
+  // Polling controller
+  const pollIdRef = useRef(null);
+
+  useEffect(() => {
+    if (!open || !key) return;
+    fetchNow();
+    pollIdRef.current = setInterval(fetchNow, 10000); 
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        fetchNow();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      if (pollIdRef.current) {
+        clearInterval(pollIdRef.current);
+        pollIdRef.current = null;
+      }
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [open, key, fetchNow]);
+  
+  const Spinner = () => (
+    <div className="flex items-center justify-center gap-2 py-6 text-normalblue">
+      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+        <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+        <path className="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+      </svg>
+      <span className="font-medium">جارِ تحميل الجدول...</span>
+    </div>
+  );
   if (!open) return null;
-  const schedule = schedules?.[groupId] || {};
+  // const schedule = schedules?.[groupId] || {};
+  const schedule = schedules?.[key] || {};
   const days = Object.keys(schedule);
   const maxRows = schedule
     ? Math.max(0, ...days.map((d) => (schedule[d] || []).length))
     : 0;
+
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-500 p-4">
+    
+    <div className="fixed inset-0 flex items-center justify-center z-500 p-4">
       <div className="relative w-full max-w-xl lg:max-w-2xl bg-white rounded-3xl shadow-lg overflow-hidden px-4 sm:px-6 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center py-4 sm:py-6 sticky top-0 bg-white z-10">
@@ -160,7 +203,17 @@ const WeeklySchedulePopup = ({
             </div>
           </>
         )}
-
+        {/* Loading state (يظهر قبل no lessons) */}
+        {loading && (
+          <div className="pb-4">
+            <div className="block sm:hidden">
+              <Spinner />
+            </div>
+            <div className="hidden sm:block">
+              <Spinner />
+            </div>
+          </div>
+        )}
         {/* No schedule fallback */}
         {!loading && !error && days.length === 0 && (
           <div className="text-center py-8 text-gray-500">

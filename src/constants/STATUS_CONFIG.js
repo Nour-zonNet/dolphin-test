@@ -2,7 +2,7 @@
 // constants/STATUS_CONFIG.js
 export const STATUS_CONFIG = {
   active: {
-    color: "bg-[#F8E0BF] text-status font-semibold",
+    color: "bg-[#F8E0BF] text-status font-semibold py-1 md:py-2 px-3 md:px-4",
     label: (daysLeft) => `فعالة (${daysLeft} يوم متبقي)`,
     actions: ["changeGroup", "useCoupon", "cancel"],
     message: null,
@@ -13,7 +13,7 @@ export const STATUS_CONFIG = {
     icon: "Checked",
   },
   trial: {
-    color: "border border-[#99A1A7] text-status md:h-9 md:w-32 px-4 font-semibold",
+    color: "border border-[#99A1A7] text-status md:h-9 md:w-32 py-1 md:py-2 px-3 md:px-4 font-semibold",
     label: () => "تجريبي",
     actions: [ "cancel"],
     message: "انتهت الفترة التجريبية الخاصة بك مدد الاشتراك لمتابعة الاستفادة",
@@ -25,7 +25,7 @@ export const STATUS_CONFIG = {
     icon: "Experimental",
   },
   expired: {
-    color: "bg-[#595959] h-9 w-32 text-white font-semibold px-4",
+    color: "bg-[#595959] md:h-9 md:w-32 py-1 md:py-2 px-3 md:px-4 text-white font-semibold px-4",
     label: () => "منتهي",
     actions: ["renew"],
     message:

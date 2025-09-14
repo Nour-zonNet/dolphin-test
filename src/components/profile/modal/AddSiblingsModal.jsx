@@ -24,26 +24,6 @@ const AddSiblingsModal = ({ isOpen, onClose, onSubmit, loading }) => {
     return () => URL.revokeObjectURL(url);
   }, [profileImage]);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!fullName.trim() || !gradeLevel || !profileImage) {
-  //     setShowReq(true);
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append("name", fullName.trim());
-  //   formData.append("grade", gradeLevel);
-  //   formData.append("image", profileImage); 
-
-  //     try {
-  //         await onSubmit(formData); 
-  //       } catch {
-  //         onClose();
-  //       }
-  // };
-  // AddSiblingsModal.jsx
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -55,22 +35,18 @@ const handleSubmit = async (e) => {
   const formData = new FormData();
   formData.append("name", fullName.trim());
   formData.append("grade", gradeLevel);
-
-  // إذا لم يتم اختيار صورة، استخدم الصورة الافتراضية
+  
   if (profileImage) {
     formData.append("image", profileImage);
   } else {
-    // إرسال معرف الصورة الافتراضية أو تركها فارغة حسب متطلبات الباك إند
     formData.append("use_default_image", "true");
   }
 
   try {
-    // مهم: ما تمسكش النجاح هنا — خلّي الأب يتصرف بعد ما الباك إند يرد
     await onSubmit(formData);
   } catch (err) {
-    // في حالة الفشل: اقفل المودال ثم "ارمي" الخطأ للأب
     onClose();
-    throw err;                 // <— ده المهم
+    throw err;               
   }
 };
 

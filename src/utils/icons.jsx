@@ -974,8 +974,9 @@ export const Renew = () => (
   </svg>
 );
 
-export const Finished = () => (
+export const Finished = ({ className="" }) => (
   <svg
+    className={className}
     width="18"
     height="18"
     viewBox="0 0 18 18"

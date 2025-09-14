@@ -14,7 +14,7 @@ const SubscriptionCard = ({
   icon,
 }) => {
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
-  const StatusIcon = Icons[config.icon]; // الحصول على مكون الأيقونة
+  const StatusIcon = Icons[config.icon];
 
   const imgSrc = icon || defaultImage;            
   const accent = accentColor || "#0077B6"; 
@@ -36,7 +36,7 @@ const SubscriptionCard = ({
                 />
               </div>
               <div>
-                <h3 className="font-semibold md:text-base lg:text-xl text-sm text-navyteal text-nowrap">
+                <h3 className="font-semibold md:text-base lg:text-xl text-sm text-navyteal">
                   {title}
                 </h3>
               </div>

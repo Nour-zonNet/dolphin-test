@@ -23,32 +23,6 @@ const UserProfile = () => {
   const isPrimaryStudent = user?.isPrimary === true || user?.canAddSiblings === true || user?.accountType === "primary";
   const DEFAULT_AVATAR = "https://c.animaapp.com/mf29nm7vjLRxgE/img/group-39878.png";
 
-  // useEffect(() => {
-  //   if (!open) return; 
-
-  //   const handlePointerDown = (e) => {
-  //     const el = dropdownWrapperRef.current;
-  //     if (el && !el.contains(e.target)) {
-  //       setOpen(false);
-  //     }
-  //   };
-
-  //   const handleKeyDown = (e) => {
-  //     if (e.key === "Escape") setOpen(false);
-  //   };
-
-  //   document.addEventListener("mousedown", handlePointerDown, true);
-  //   document.addEventListener("touchstart", handlePointerDown, true);
-  //   document.addEventListener("keydown", handleKeyDown, true);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handlePointerDown, true);
-  //     document.removeEventListener("touchstart", handlePointerDown, true);
-  //     document.removeEventListener("keydown", handleKeyDown, true);
-  //   };
-  // }, [open]);
-
- 
   const successCheckedRef = useRef(false);
   const resolveAvatar = (src) => {
   if (!src) return DEFAULT_AVATAR;
@@ -107,55 +81,8 @@ useEffect(() => {
   };
 }, [open, openStatusModal, dropdownWrapperRef]);
 
-  if (!user) return null;
+if (!user) return null;
 
-  // const handleAddSibling = async (siblingData) => {
-  //   if (brothers.length >= 3) {
-  //     openStatusModal("ERROR", {
-  //       title: "لا يمكنك إضافة أكثر من 3 إخوة",
-  //       message: "لقد وصلت للحد الأقصى المسموح به.",
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     await dispatch(addSibling(siblingData)).unwrap();
-  //     openStatusModal("SUCCESS", {
-  //       title: "تمت الإضافة بنجاح",
-  //       message: "تمت إضافة الأخ/الأخت بنجاح إلى الحساب.",
-  //     });
-  //     setIsModalOpen(false); 
-  //   } catch {
-  //     openStatusModal("ERROR", {
-  //       title: "فشل في إضافة الأخ",
-  //       message: "حدث خطأ أثناء محاولة الإضافة. حاول مرة أخرى.",
-  //     });
-  //   }
-  // };
-
-//  const handleAddSibling = async (siblingData) => {
-//   if (brothers.length >= 3) {
-//     openStatusModal("ERROR", {
-//       title: "لا يمكنك إضافة أكثر من 3 إخوة",
-//       message: "لقد وصلت للحد الأقصى المسموح به.",
-//     });
-//     return;
-//   }
-
-//   try {
-//     await dispatch(addSibling(siblingData)).unwrap();
-//     setIsModalOpen(false);
-//     sessionStorage.setItem("SIBLING_ADDED", "1");
-//     window.location.reload();
-  
-//     } catch {
-//       openStatusModal("ERROR", {
-//         title: "فشل في إضافة الأخ",
-//         message: "حدث خطأ أثناء محاولة الإضافة. حاول مرة أخرى.",
-//       });
-//     }
-//   };
-// UserProfile.jsx
 const handleAddSibling = async (siblingData) => {
   // التحقق من أن المستخدم الحالي هو الطالب الأساسي
   if (!isPrimaryStudent) {
@@ -177,22 +104,19 @@ const handleAddSibling = async (siblingData) => {
   try {
     await dispatch(addSibling(siblingData)).unwrap();
 
-    // نجاح: اقفل المودال واعرض رسالة نجاح
     setIsModalOpen(false);
     openStatusModal("SUCCESS", {
       title: "تمت الإضافة بنجاح",
       message: "سيتم تحديث الصفحة لعرض الأخ/الأخت الجديد.",
     });
-
-    // اعمل ريلود بعد ما المستخدم يشوف الرسالة
-    setTimeout(() => {
-      if (typeof window !== "undefined") {
-        window.location.reload();            // أو: window.location.replace(window.location.href);
-        // لو بتستخدم React Router v6 ممكن: navigate(0)
-      }
-    }, 1200);
+    
+    // setTimeout(() => {
+    //   if (typeof window !== "undefined") {
+    //     window.location.reload();            // window.location.replace(window.location.href);
+    //     // لو بتستخدم React Router v6 ممكن: navigate(0)
+    //   }
+    // }, 1200);
   } catch (err) {
-    // فشل: اعرض رسالة خطأ (المودال اتقفل بالفعل من المودال نفسه)
     openStatusModal("ERROR", {
       title: "فشل في إضافة الأخ",
       message: err?.message || "حدث خطأ أثناء محاولة الإضافة. حاول مرة أخرى.",
@@ -210,20 +134,6 @@ const handleAddSibling = async (siblingData) => {
         .unwrap()
 
     };
-
-  // const handleSwitch = async (bro) => {
-  //   if (bro.id === user.id) return; 
-  //   try {
-  //     await dispatch(switchUserAccount(bro.id)).unwrap();
-  //     await dispatch(getBrothers()).unwrap();
-
-  //     setSelectedImages({});
-
-  //     setOpen(false);
-  //   } catch (err) {
-  //     console.error("Failed to switch account:", err);
-  //   }
-  // };
 
   const handleSwitch = async (bro) => {
   if (bro.id === user.id) return; 

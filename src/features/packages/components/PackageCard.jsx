@@ -16,7 +16,7 @@ const PackageCard = React.memo(
 
     // Get the status configuration
     const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
-    const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
+    const Icon = Icons[config.icon]; 
     return (
       <div className="relative w-full mx-auto pl-3 max-w-2xl">
         {/* Border Illustration */}
@@ -63,7 +63,7 @@ const PackageCard = React.memo(
             </div>
 
             {/* Status & Group */}
-            <div className="flex items-center gap-3 px-4 relative z-10">
+            <div className="flex items-center flex-wrap gap-3 px-4 relative z-10">
               <div
                 className={`flex items-center justify-center gap-2 rounded-3xl px-2 py-1 ${config.color}`}
               >

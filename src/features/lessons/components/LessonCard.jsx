@@ -8,7 +8,6 @@ import sandGlass from "@/assets/schedule/sandGlass.svg";
 import books from "@/assets/schedule/books.svg";
 import { formatArabicTime } from "@/utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
-import { getSessionLink } from "../store/lessonsSlice";
 import { useDispatch } from "react-redux";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
@@ -116,10 +115,10 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
   //   });
   // }
   // }, [item.session_link]);
+
   // }, [dispatch, item.id, item.session_link, openStatusModal]);
 
   const renderButton = useCallback(() => {
-    // لو الحصة انتهت
     if (lessonStatus === "ended") {
       return (
         <div className="flex justify-center text-center items-center align-middle">
@@ -133,7 +132,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       );
     }
 
-    // لو الحصة لسه جاية ولسه فيه وقت متبقي ومينفعش ندخل → يعرض العداد فقط
     if (
       lessonStatus === "upcoming" &&
       timeRemaining &&
@@ -152,7 +150,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       );
     }
 
-    // لو وقت الحصة جه (العداد خلص) أو الحصة Live أو ينفع ندخل (قبل 5 دقائق) → يعرض زرار الدخول
     if (
       lessonStatus === "live" ||
       (lessonStatus === "upcoming" && (isExpired || canEnterLesson))

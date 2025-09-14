@@ -12,7 +12,8 @@ export const addSibling = createAsyncThunk(
   async (formData, { dispatch }) => {
     const result = await addBrother(formData);
     // After adding, refresh profile
-    dispatch(getProfile());
+    // dispatch(getProfile());
+    await dispatch(getBrothers());
     return result;
   }
 );
