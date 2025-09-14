@@ -4,22 +4,13 @@ import { useTranslation } from "react-i18next";
 import Tooth from "@/assets/packages/tooth.svg";
 import { Clock, Teacher } from "@/utils/icons";
 import { usePackages } from "@/features/packages/hooks/usePackages";
+import { formatTime12Hour } from '../../../utils/dateHelpers';
 
 const WeeklySchedulePopup = ({ open, setOpen, groupId, packageName }) => {
   const { t } = useTranslation();
   const { schedules, loading, error, getSchedule } = usePackages();
 
-  // تحويل الوقت من 24 ساعة إلى 12 ساعة
-  const formatTime12Hour = (time24) => {
-    if (!time24) return '';
 
-    const [hours, minutes] = time24.split(':');
-    const hour = parseInt(hours, 10);
-    const period = hour >= 12 ? 'م' : 'ص';
-    const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-
-    return `${hour12}:${minutes} ${period}`;
-  };
 const key = String(groupId);
 useEffect(() => {
   if (open && groupId && schedules?.[key] === undefined) {
@@ -34,7 +25,7 @@ const maxRows = schedule
   ? Math.max(0, ...days.map((d) => (schedule[d] || []).length))
   : 0;
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-500 p-4">
       <div className="relative w-full max-w-xl lg:max-w-2xl bg-white rounded-3xl shadow-lg overflow-hidden px-4 sm:px-6 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center py-4 sm:py-6 sticky top-0 bg-white z-10">

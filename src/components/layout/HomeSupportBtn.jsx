@@ -138,8 +138,8 @@ const HomeSupportBtn = ({ className }) => {
 
   const buttons = isAuthenticated
     ? [
-        { icon: whatsapp, angle: -90, alt: "WhatsApp", onClick: openWhatsApp },
-        { icon: LifeChat, angle: -40, alt: "LifeChat", onClick: toggleChatwoot, isChat: true },
+        { icon: whatsapp, angle: -40, alt: "WhatsApp", onClick: openWhatsApp },
+        { icon: LifeChat, angle: 10, alt: "LifeChat", onClick: toggleChatwoot, isChat: true },
       ]
     : [
         { icon: whatsapp, angle: -90, alt: "WhatsApp", onClick: openWhatsApp },
