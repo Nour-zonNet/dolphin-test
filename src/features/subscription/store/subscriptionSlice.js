@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { subscriptionRepository } from "../services/subscription.services";
 
 // ===== Helper for error extraction =====
-const handleError = async (error, thunkAPI) => {
+ const handleError = async (error, thunkAPI) => {
   if (error.response && error.response.data) {
     return thunkAPI.rejectWithValue(
       error.response.data.error || "Server error"

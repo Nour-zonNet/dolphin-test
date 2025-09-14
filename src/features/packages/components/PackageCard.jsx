@@ -16,8 +16,14 @@ const PackageCard = React.memo(
     const schedules = useSelector((state) => state.packages.schedules);
 
     const handleOpenSchedule = useCallback(async () => {
+      if (status == "expired") {
+        openStatusModal("ERROR", {
+          title: "الجدول غير متاح",
+          message:" لا يمكن عرض الجدول للباقات المنتهية.",
+        });
+        return
+      }
       const existingSchedule = schedules?.[item.group_id];
-
       if (existingSchedule) {
         openWeeklyScheduleModal({
           data: {
@@ -46,27 +52,18 @@ const PackageCard = React.memo(
           data: {
             groupId,
             packageName: item.package_name,
-            schedule: schedule ?? {},
+            schedule: schedule,
             image,
             color,
           },
         });
-      } catch {
+      } catch (err) {
         openStatusModal("ERROR", {
-          title: "خطأ في جلب الجدول",
-          message: "حدث خطأ أثناء محاولة جلب الجدول.",
+          title: "الجدول غير متاح",
+          message: err.message || "حدث خطأ أثناء محاولة جلب الجدول.",
         });
       }
-    }, [
-      schedules,
-      getSchedule,
-      item.group_id,
-      item.package_name,
-      openWeeklyScheduleModal,
-      image,
-      color,
-      openStatusModal,
-    ]);
+    }, [status, schedules, item.group_id, item.package_name, openStatusModal, openWeeklyScheduleModal, image, color, getSchedule]);
 
     // Get the status configuration
     const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;

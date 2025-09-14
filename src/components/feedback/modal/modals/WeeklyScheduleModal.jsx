@@ -54,7 +54,7 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
       </div>
 
       {/* Schedule Display */}
-      {!loading && !error && days.length > 0 && (
+      {!loading  && days.length > 0 && (
         <>
           {/* Mobile View */}
           <div className="block sm:hidden pb-4">

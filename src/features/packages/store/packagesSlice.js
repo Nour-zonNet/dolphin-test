@@ -1,6 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { packagesRepository } from "../services/packages.services";
-
+const handleError = async (error, thunkAPI) => {
+  if (error.response && error.response.data) {
+    return thunkAPI.rejectWithValue(
+      error.response.data.error || "Server error"
+    );
+  }
+  return thunkAPI.rejectWithValue(error.message || "Unknown error");
+};
 // 1- الباقات المتاحة للجميع
 export const fetchAllPackages = createAsyncThunk(
   "packages/fetchAll",
@@ -22,9 +29,13 @@ export const fetchMyPackages = createAsyncThunk(
 // 3- جدول الباقة
 export const fetchScheduleById = createAsyncThunk(
   "packages/fetchScheduleById",
-  async (groupId) => {
-    const res = await packagesRepository.getScheduleById(groupId);
-    return { groupId, schedule: res.data };
+  async (groupId, thunkAPI) => {
+    try {
+      const res = await packagesRepository.getScheduleById(groupId);
+      return { groupId, schedule: res.data };
+    } catch (err) {
+      return handleError(err, thunkAPI);
+    }
   }
 );
 
