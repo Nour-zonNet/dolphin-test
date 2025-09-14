@@ -27,7 +27,7 @@ const PhonePage = () => {
 
     if (res?.payload?.success) {
       if (res?.payload?.data?.otp_sent) {
-        navigate("/auth/otp", { state: { phoneNumber } });
+        navigate("/auth/register", { state: { phoneNumber } });
       } else {
         navigate("/auth/password", { state: { phoneNumber } });
       }

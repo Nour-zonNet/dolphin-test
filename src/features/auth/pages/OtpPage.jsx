@@ -58,7 +58,7 @@ const OtpPage = () => {
 
   return (
     <AuthLayout handleBack={handleBack}>
-      <VerificationForm onSubmit={handleOtpSubmit} />
+      <VerificationForm onSubmit={handleOtpSubmit} phoneNumber={phoneNumber} />
     </AuthLayout>
   );
 };
