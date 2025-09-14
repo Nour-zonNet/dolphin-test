@@ -2,6 +2,8 @@ name: Deploy to Production
 
 on:
   workflow_dispatch:
+    branches:
+      - deployment
     inputs:
       environment:
         description: 'Deployment environment'
@@ -26,6 +28,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Validate branch
+        if: ${{ github.ref_name != 'deployment' }}
+        run: |
+          echo "❌ This workflow can only be run from the 'deployment' branch."
+          echo "Current branch: ${{ github.ref_name }}"
+          echo "Required branch: deployment"
+          exit 1
+
       - name: Validate confirmation
         if: ${{ inputs.confirmation != 'DEPLOY_TO_PRODUCTION' }}
         run: |
