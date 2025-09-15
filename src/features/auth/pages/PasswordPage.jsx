@@ -12,7 +12,8 @@ const PasswordPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginUser, loading,  isFullyAuthenticated } = useAuth();
+  // const { loginUser, loading,  isFullyAuthenticated } = useAuth();
+  const { login, loading,  isFullyAuthenticated } = useAuth();
   const { phoneNumber } = location.state || {};
 
   // If we have a token but no user yet, and we're still loading, show loading state
@@ -29,26 +30,48 @@ const PasswordPage = () => {
   //   return null;
   // }
 
-  const handlePasswordSubmit = async (data) => {
-    const res = await dispatch(
-      loginUser({
-        phoneNumber: phoneNumber,
-        pinCode: data.password,
-      })
-    );
+  // const handlePasswordSubmit = async (data) => {
+  //   const res = await dispatch(
+  //     loginUser({
+  //       phoneNumber: phoneNumber,
+  //       pinCode: data.password,
+  //     })
+  //   );
 
-    if (res?.payload?.success) {
-      navigate("/schedule");
-    } else {
-      dispatch(
-        showModal({
+  //   if (res?.payload?.success) {
+  //     navigate("/schedule");
+  //   } else {
+  //     dispatch(
+  //       showModal({
+  //         type: MODAL_TYPES.WARNING,
+  //         props: {
+  //           title: "هنالك خطاء ",
+  //           message: res.payload || res.error.message,
+  //         },
+  //       })
+  //     );
+  //   }
+  // };
+
+  const handlePasswordSubmit = async (data) => {
+    try {
+      const res = await login({ phoneNumber, pinCode: data.password });
+      if (res?.payload?.success) {
+        navigate("/schedule");
+      } else {
+        dispatch(showModal({
           type: MODAL_TYPES.WARNING,
           props: {
-            title: "هنالك خطاء ",
-            message: res.payload || res.error.message,
+            title: "هنالك خطأ",
+            message: res?.payload || res?.error?.message,
           },
-        })
-      );
+        }));
+      }
+    } catch (err) {
+      dispatch(showModal({
+        type: MODAL_TYPES.WARNING,
+        props: { title: "هنالك خطأ", message: err?.message || "حدث خطأ غير متوقع" },
+      }));
     }
   };
 

@@ -13,7 +13,7 @@ import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
-// import { PreviewScheduleBtn } from "@/components/ui";
+import { PreviewScheduleBtn } from "@/components/ui";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();
@@ -63,7 +63,7 @@ const ScheduleSlider = () => {
 
             return (
               <SwiperSlide key={day.date}>
-                {/* <PreviewScheduleBtn /> */}
+                <PreviewScheduleBtn />
                 {lessonsForDay.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
                     {lessonsForDay.map((lesson, i) => {

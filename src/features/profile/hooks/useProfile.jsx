@@ -20,6 +20,11 @@ export const useProfile = () => {
       return { success: false, error: err };
     }
   };
+  const { token } = useSelector(s => s.auth);
+    useEffect(() => {
+      if (token) dispatch(getProfile());
+      else dispatch(clearProfile());
+    }, [token]);
 
   return {
     user,
