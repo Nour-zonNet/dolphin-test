@@ -90,3 +90,17 @@ export function getFormattedDate(date = new Date()) {
 
     return `${hour12}:${minutes} ${period}`;
   };
+
+export function formatArabicDate(dateString) {
+  const d = new Date(dateString);
+  const tz = "Asia/Riyadh";
+
+  const day  = d.toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
+  const year = d.toLocaleDateString("en-US", { year: "numeric", timeZone: tz });
+  let month  = new Intl.DateTimeFormat("ar-EG", { month: "long", timeZone: tz }).format(d);
+
+  // لو عايز تشيل الهَمزة:
+  // month = month.replace("أغسطس", "اغسطس").replace("أكتوبر", "اكتوبر").replace("أبريل", "ابريل");
+
+  return `${day} ${month} ${year}`;
+}

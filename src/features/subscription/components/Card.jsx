@@ -80,14 +80,33 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
     );
   }, [isOpen]);
 
-  function formatDate(dateString) {
-    const d = new Date(dateString);
-    const dayName = d.toLocaleDateString("ar-EG", { weekday: "long" });
-    const datePart = d.toLocaleDateString("ar-EG");
-    return `${dayName} - ${datePart}`;
-  }
+  // function formatDate(dateString) {
+  //   const d = new Date(dateString);
+  //   const dayName = d.toLocaleDateString("ar-EG", { weekday: "long" });
+  //   const datePart = d.toLocaleDateString("ar-EG");
+  //   return `${dayName} - ${datePart}`;
+  // }
 
   // Status Badge
+  // ضعها داخل نفس الملف مكان formatDate الحالية
+function formatDate(dateString) {
+  const d = new Date(dateString);
+  const tz = "Asia/Riyadh";
+
+  // أرقام إنجليزية لليوم والسنة
+  const day   = d.toLocaleDateString("en-US", { day: "numeric",  timeZone: tz });
+  const year  = d.toLocaleDateString("en-US", { year: "numeric", timeZone: tz });
+
+  // اسم الشهر بالعربي
+  let month = new Intl.DateTimeFormat("ar-EG", { month: "long", timeZone: tz }).format(d);
+
+  // (اختياري) توحيد الهَمزة لتوافق المثال المطلوب
+  // لو تحب تكتب الشهور بدون همزات (اغسطس/اكتوبر/ابريل)، فعّل السطر التالي:
+  // month = month.replace("أغسطس", "اغسطس").replace("أكتوبر", "اكتوبر").replace("أبريل", "ابريل");
+
+  return `${day} ${month} ${year}`;
+}
+
   const StatusBadge = useMemo(
     () => (
       <div
