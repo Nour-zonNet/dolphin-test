@@ -1,6 +1,7 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import Toolbar from "./Toolbar";
 import Canvas from "./Canvas";
+import PageCanvas from "./PageCanvas";
 import TextInputOverlay from "./TextInputOverlay";
 import { useBoardHistory, useCanvasDrawing } from "./hooks";
 
@@ -21,8 +22,8 @@ const useResponsive = () => {
     };
 
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   return { isMobile, isTablet, isDesktop };
@@ -40,6 +41,10 @@ const Board = () => {
   const [textInput, setTextInput] = useState("");
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
   const [showTextInput, setShowTextInput] = useState(false);
+  const [backgroundImage, setBackgroundImage] = useState(null);
+  const [backgroundPages, setBackgroundPages] = useState([]);
+  const [pageStates, setPageStates] = useState([]); // {lines, texts, shapes} per page
+  const pageStageRefs = useRef([]);
 
   // Refs
   const stageRef = useRef();
@@ -147,7 +152,7 @@ const Board = () => {
       await exportToPDF();
       return;
     }
-    
+
     const uri = stageRef.current.toDataURL({
       pixelRatio: format === "high" ? 3 : format === "medium" ? 2 : 1,
     });
@@ -157,96 +162,107 @@ const Board = () => {
     link.click();
   };
 
+  // PDF Import functionality
+  const handleImportPDF = async (file) => {
+    try {
+      const pdfjs = await import("pdfjs-dist");
+      // Configure worker source for pdf.js (vite-friendly local path)
+      if (pdfjs?.GlobalWorkerOptions) {
+        pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+          "pdfjs-dist/build/pdf.worker.min.mjs",
+          import.meta.url
+        ).toString();
+      }
+      const arrayBuffer = await file.arrayBuffer();
+      const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+
+      const pages = [];
+      for (let pageIndex = 1; pageIndex <= pdf.numPages; pageIndex += 1) {
+        const page = await pdf.getPage(pageIndex);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        await page.render({ canvasContext: context, viewport }).promise;
+        pages.push({
+          dataUrl: canvas.toDataURL("image/png"),
+          width: viewport.width,
+          height: viewport.height,
+        });
+      }
+
+      if (pages.length > 0) {
+        setBackgroundPages(pages);
+        setBackgroundImage(pages[0].dataUrl);
+        // Initialize per-page drawing state and refs
+        setPageStates(pages.map(() => ({ lines: [], texts: [], shapes: [] })));
+        pageStageRefs.current = pages.map(() => null);
+      }
+    } catch (error) {
+      console.error("Error importing PDF:", error);
+      alert("Failed to import PDF. Please try again.");
+    }
+  };
+
   // PDF Export functionality
   const exportToPDF = async () => {
     try {
-      // Check if canvas has content
-      if (!stageRef.current || (!lines.length && !texts.length && !shapes.length)) {
-        alert('Canvas is empty. Please add some content before exporting to PDF.');
+      const jsPDFModule = await import("jspdf");
+      const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
+
+      // If there are imported PDF pages, export multi-page matching original
+      if (backgroundPages.length > 0 && pageStageRefs.current.length === backgroundPages.length) {
+        const first = backgroundPages[0];
+        const pdf = new jsPDF({
+          orientation: first.width > first.height ? "landscape" : "portrait",
+          unit: "px",
+          format: [first.width, first.height],
+        });
+
+        for (let i = 0; i < backgroundPages.length; i += 1) {
+          const page = backgroundPages[i];
+          const stage = pageStageRefs.current[i];
+          if (!stage) continue;
+          if (i > 0) {
+            pdf.addPage([page.width, page.height], page.width > page.height ? "landscape" : "portrait");
+          }
+          const dataURL = stage.toDataURL({ pixelRatio: 1, mimeType: "image/png" });
+          pdf.addImage(dataURL, "PNG", 0, 0, page.width, page.height);
+        }
+
+        const timestamp = new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/:/g, "-");
+        pdf.save(`drawing-board-exact-${timestamp}.pdf`);
         return;
       }
 
-      // Get the current stage dimensions exactly as shown
+      // Fallback single-page export (no imported PDF)
+      if (!stageRef.current) {
+        alert("Canvas is empty. Please add some content before exporting to PDF.");
+        return;
+      }
       const stage = stageRef.current;
       const stageWidth = stage.width();
       const stageHeight = stage.height();
-
-      // Convert the canvas to an image with exact dimensions (no scaling)
-      const dataURL = stage.toDataURL({
-        pixelRatio: 1, // Use exact pixel ratio to avoid scaling
-        mimeType: 'image/png',
-        quality: 1.0, // Maximum quality
-        width: stageWidth,
-        height: stageHeight
-      });
-
-      // Create a temporary canvas to get dimensions
-      const img = new Image();
-      img.src = dataURL;
-      
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        // Add timeout to prevent hanging
-        setTimeout(() => reject(new Error('Image loading timeout')), 10000);
-      });
-
-      // Try to import jsPDF with error handling
-      let jsPDF;
-      try {
-        // Try different import patterns for better compatibility
-        let module;
-        try {
-          module = await import('jspdf');
-        } catch {
-          // Fallback: try importing with explicit path
-          module = await import('jspdf/dist/jspdf.es.min.js');
-        }
-        
-        jsPDF = module.default || module.jsPDF;
-        
-        // Verify jsPDF is properly loaded
-        if (typeof jsPDF !== 'function') {
-          throw new Error('jsPDF not properly loaded');
-        }
-      } catch (importError) {
-        console.error('Failed to import jsPDF:', importError);
-        alert('PDF library failed to load. Please refresh the page and try again.');
-        return;
-      }
-      
-      // Create PDF with exact dimensions - no orientation change
+      const dataURL = stage.toDataURL({ pixelRatio: 1, mimeType: "image/png" });
       const pdf = new jsPDF({
-        orientation: 'portrait', // Always portrait to maintain exact dimensions
-        unit: 'px', // Use pixels to maintain exact dimensions
-        format: [stageWidth, stageHeight] // Custom format matching canvas dimensions
+        orientation: stageWidth > stageHeight ? "landscape" : "portrait",
+        unit: "px",
+        format: [stageWidth, stageHeight],
       });
-
-      // Add the image at exact position (0,0) with exact dimensions
-      // No scaling, no centering - exactly as shown on screen
-      pdf.addImage(dataURL, 'PNG', 0, 0, stageWidth, stageHeight);
-      
-      // Add metadata to the PDF
-      pdf.setProperties({
-        title: 'Drawing Board Export - Exact View',
-        subject: 'Canvas Drawing - No Scaling',
-        author: 'LearnAtDolphin',
-        creator: 'Drawing Board App'
-      });
-      
-      // Save the PDF with timestamp
-      const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+      pdf.addImage(dataURL, "PNG", 0, 0, stageWidth, stageHeight);
+      const timestamp = new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace(/:/g, "-");
       pdf.save(`drawing-board-exact-${timestamp}.pdf`);
-      
     } catch (error) {
-      console.error('Error exporting to PDF:', error);
-      if (error.message.includes('timeout')) {
-        alert('PDF generation timed out. Please try again.');
-      } else if (error.message.includes('import')) {
-        alert('PDF library failed to load. Please refresh the page and try again.');
-      } else {
-        alert('Failed to export to PDF. Please try again.');
-      }
+      console.error("Error exporting to PDF:", error);
+      alert("Failed to export to PDF. Please try again.");
     }
   };
 
@@ -257,12 +273,14 @@ const Board = () => {
     }
   }, [history.length, saveToHistory]);
 
-  const { isMobile, isTablet, isDesktop } = useResponsive();
+  const { isDesktop } = useResponsive();
 
   return (
-    <div className={`board-container flex gap-5 w-full h-full ${
-      isDesktop ? 'flex-row-reverse' : 'flex-col'
-    }`}>
+    <div
+      className={`board-container flex gap-5 w-full h-full ${
+        isDesktop ? "flex-row-reverse" : "flex-col"
+      }`}
+    >
       <Toolbar
         tool={tool}
         setTool={(tool) => {
@@ -281,21 +299,45 @@ const Board = () => {
         onRedo={redo}
         onClear={clearCanvas}
         onExport={exportImage}
+        onImportPDF={handleImportPDF}
       />
-      
-      <div className={`canvas-wrapper flex-1 min-h-0 ${
-        isMobile ? 'w-full' : isTablet ? 'w-full' : 'w-auto'
-      }`}>
-        <Canvas
-          stageRef={stageRef}
-          lines={lines}
-          texts={texts}
-          shapes={shapes}
-          onMouseDown={handleCanvasMouseDown}
-          onMouseMove={handleCanvasMouseMove}
-          onMouseUp={handleCanvasMouseUp}
-          onTextDblClick={handleTextDblClick}
-        />
+
+      <div className={`canvas-wrapper flex-1 min-h-0 ${isDesktop ? "grid grid-cols-2 gap-4" : "flex flex-col gap-4"}`}>
+        {backgroundPages.length > 0
+          ? backgroundPages.map((p, idx) => (
+              <PageCanvas
+                key={idx}
+                pageIndex={idx}
+                backgroundImage={p.dataUrl}
+                initialWidth={p.width}
+                initialHeight={p.height}
+                tool={tool}
+                currentColor={currentColor}
+                strokeWidth={strokeWidth}
+                fontSize={fontSize}
+                pageState={pageStates[idx] || { lines: [], texts: [], shapes: [] }}
+                onUpdatePageState={(i, next) =>
+                  setPageStates((prev) => prev.map((s, k) => (k === i ? next : s)))
+                }
+                stageRef={(node) => {
+                  if (!node) return;
+                  pageStageRefs.current[idx] = node;
+                }}
+              />)
+            )
+          : (
+              <Canvas
+                stageRef={stageRef}
+                lines={lines}
+                texts={texts}
+                shapes={shapes}
+                backgroundImage={backgroundImage}
+                onMouseDown={handleCanvasMouseDown}
+                onMouseMove={handleCanvasMouseMove}
+                onMouseUp={handleCanvasMouseUp}
+                onTextDblClick={handleTextDblClick}
+              />
+            )}
       </div>
 
       <TextInputOverlay

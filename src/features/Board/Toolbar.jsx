@@ -4,6 +4,7 @@ import {
   ActionButtons,
   ExportButton,
   ToolIndicator,
+  ImportPDFButton,
 } from './components';
 
 const Toolbar = ({
@@ -21,11 +22,12 @@ const Toolbar = ({
   // onRedo,
   // onClear,
   onExport,
+  onImportPDF,
 }) => {
   return (
     <div className=" flex items-center  flex-wrap z-10 gap-2">
-      <ToolSelector 
-        tool={tool} 
+      <ToolSelector
+        tool={tool}
         setTool={setTool}
         currentColor={currentColor}
         setCurrentColor={setCurrentColor}
@@ -35,6 +37,7 @@ const Toolbar = ({
         setFontSize={setFontSize}
         onExport={onExport}
       />
+      <ImportPDFButton onLoadPDF={onImportPDF} />
       
       {/* <ActionButtons
         canUndo={canUndo}

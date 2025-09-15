@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Stage, Layer, Line, Text, Rect, Circle, Arrow } from "react-konva";
-import { STATIC_CONTENT } from "./constants";
-import "./style.css"
+import { Stage, Layer, Line, Text, Rect, Circle, Arrow, Image as KonvaImage } from "react-konva";
+import "./style.css";
 
 const Canvas = ({
   stageRef,
@@ -12,31 +11,34 @@ const Canvas = ({
   onMouseMove,
   onMouseUp,
   onTextDblClick,
+  backgroundImage,
 }) => {
   const containerRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [bgImageEl, setBgImageEl] = useState(null);
 
   // Calculate responsive dimensions based on container and content
   useEffect(() => {
     if (!containerRef.current) return;
 
     const updateSize = () => {
+      // If background image exists, lock canvas size to PDF page image
+      if (bgImageEl) {
+        setDimensions({ width: bgImageEl.width, height: bgImageEl.height });
+        return;
+      }
       const container = containerRef.current;
       const containerWidth = container.offsetWidth;
       const containerHeight = container.offsetHeight;
-      
+
       // Calculate minimum dimensions based on content
       const minWidth = Math.max(800, containerWidth * 0.9); // At least 800px or 90% of container
       const minHeight = Math.max(600, containerHeight * 0.9); // At least 600px or 90% of container
-      
-      // Calculate content-based height
-      const staticContentHeight = STATIC_CONTENT.length * 60 + 40; // Each item takes 60px + padding
-      const contentHeight = Math.max(minHeight, staticContentHeight);
-      
-      // Use container dimensions but ensure minimum sizes
-      const finalWidth = Math.max(minWidth, containerWidth - 40); // Account for padding
-      const finalHeight = Math.max(contentHeight, containerHeight - 40);
-      
+
+      // Use container dimensions but ensure minimum sizes (when no PDF)
+      const finalWidth = Math.max(minWidth, containerWidth - 40);
+      const finalHeight = Math.max(minHeight, containerHeight - 40);
+
       setDimensions({
         width: finalWidth,
         height: finalHeight,
@@ -53,7 +55,7 @@ const Canvas = ({
     };
 
     window.addEventListener("resize", handleResize);
-    
+
     // Also listen for container size changes
     const resizeObserver = new ResizeObserver(updateSize);
     if (containerRef.current) {
@@ -65,18 +67,33 @@ const Canvas = ({
       clearTimeout(resizeTimeout);
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [bgImageEl]);
+
+  // Load background image when provided
+  useEffect(() => {
+    if (!backgroundImage) {
+      setBgImageEl(null);
+      return;
+    }
+    const img = new window.Image();
+    img.onload = () => {
+      setBgImageEl(img);
+      // Lock canvas to image size exactly
+      setDimensions({ width: img.width, height: img.height });
+    };
+    img.src = backgroundImage;
+  }, [backgroundImage]);
 
   return (
     <div className="p-2 pl-0 border border-graycustom/30 rounded-2xl flex-1">
       <div
         ref={containerRef}
         className="relative rounded-2xl custom-scrollbar w-full h-full min-h-[70vh] max-h-[85vh] p-3"
-        style={{ 
-          overflowX: "auto", 
+        style={{
+          overflowX: "auto",
           overflowY: "auto",
           minHeight: "70vh",
-          maxHeight: "85vh"
+          maxHeight: "85vh",
         }}
       >
         <Stage
@@ -89,31 +106,15 @@ const Canvas = ({
           onTouchMove={onMouseMove}
           onTouchEnd={onMouseUp}
           ref={stageRef}
-          className="bg-white  pdf-export-optimized stage-responsive"
-          style={{
-            minWidth: "100%",
-            minHeight: "100%",
-            maxWidth: "100%",
-            maxHeight: "100%"
-          }}
+          className="bg-white pdf-export-optimized"
         >
-          {/* Static layer */}
-          <Layer listening={false}>
-            {STATIC_CONTENT.map((item, i) => (
-              <Text
-                key={i}
-                text={item.text}
-                fontSize={item.fontSize || 18}
-                fill={item.fill || "black"}
-                fontFamily="Arial"
-                align="right"
-                x={20}
-                y={i * 60 + 20}
-                width={dimensions.width - 40}
-                wrap="word"
-              />
-            ))}
-          </Layer>
+          {/* Background image layer */}
+          {bgImageEl && (
+            <Layer listening={false}>
+              <KonvaImage image={bgImageEl} x={0} y={0} width={bgImageEl.width} height={bgImageEl.height} />
+            </Layer>
+          )}
+          {/* Static layer removed as requested: no STATIC_CONTENT */}
 
           {/* User drawings */}
           <Layer>

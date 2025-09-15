@@ -3,6 +3,8 @@ import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
 import Checkout from "../../features/packages/pages/Checkout";
 import LoginSiblings from "../../features/auth/pages/LoginSiblings";
 import AddSiblingsPage from "../../features/auth/pages/AddSiblingsPage";
+import PDFEditor from "../../components/PDFEditor";
+import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
@@ -61,11 +63,11 @@ const ForgotPasswordPage = lazy(() =>
     default: module.ForgotPasswordPage,
   }))
 );
-const ProfilePage = lazy(() => 
-  import("@/features/profile/pages/ProfilePage"));
+const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
 
-const BalanceDetails = lazy(() => 
-  import("@/features/balance/pages/BalanceDetails"));
+const BalanceDetails = lazy(() =>
+  import("@/features/balance/pages/BalanceDetails")
+);
 
 // Route Configuration
 export const routes = [
@@ -81,6 +83,12 @@ export const routes = [
   {
     path: "/login",
     element: LoginPage,
+    public: true,
+    layout: false, // Auth pages don't need AppLayout
+  },
+  {
+    path: "/pdf",
+    element: Board,
     public: true,
     layout: false, // Auth pages don't need AppLayout
   },
@@ -150,7 +158,6 @@ export const routes = [
     protected: true,
   },
 
-
   // Nested Schedule Routes
   {
     path: "/schedule",
@@ -181,7 +188,6 @@ export const routes = [
     protected: true,
     layout: false,
   },
-
 ];
 
 // Helper function to check if route is public
