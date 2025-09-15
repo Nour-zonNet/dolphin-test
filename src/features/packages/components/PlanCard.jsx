@@ -4,7 +4,8 @@ import { Calender1 } from "@/utils/icons";
 import Books from "@/assets/packages/books.svg";
 import { Info } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
-import { ChevronDown, ChevronUp } from "../../../utils/icons";
+import { ChevronDown, ChevronUp } from "@/utils/icons";
+import { formatArabicDate } from "@/utils/dateHelpers";
 const PlanCard = ({ plan, selected, onSelect }) => {
   const [open, setOpen] = React.useState(false);
   const ToggleIcon = useMemo(
@@ -126,9 +127,10 @@ const PlanCard = ({ plan, selected, onSelect }) => {
                   موعد البداية :{" "}
                 </span>
                 <span className="text-gray-800 font-medium text-sm">
-                  {new Date(plan.times[0].start_date).toLocaleDateString(
+                  {/* {new Date(plan.times[0].start_date).toLocaleDateString(
                     "ar-EG"
-                  )}
+                  )} */}
+                  {formatArabicDate(plan.times[0].start_date)}
                 </span>
               </div>
               {/* {plan.times &&

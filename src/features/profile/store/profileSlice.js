@@ -2,6 +2,7 @@
 import api from "@/services/api";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchProfile, addBrother, fetchClasses, fetchBrothers, switchAccount, updateUserGradeApi, updateUserImageApi, logoutApi, updateProfileApi } from "../services/profileService";
+import { loginUser, logoutUser, performLogout } from "@/features/auth/store/authSlice";
 
 export const getProfile = createAsyncThunk("profile/getProfile", async () => {
   return await fetchProfile();
@@ -65,23 +66,23 @@ export const updateUserGrade = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk(
-  "profile/logout",
-  async () => {
-    try {
-      await logoutApi(); 
-    } catch (err) {
-      console.warn("Logout API failed, continuing local logout:", err?.response?.data || err);
-    }
-    if (window.$chatwoot) {
-      window.$chatwoot.reset();
-    }
-    // Always clear locally
-    localStorage.removeItem("token");
-      delete api.defaults.headers.common["Authorization"];
-      return true;
-  }
-);
+// export const logout = createAsyncThunk(
+//   "profile/logout",
+//   async () => {
+//     try {
+//       await logoutApi(); 
+//     } catch (err) {
+//       console.warn("Logout API failed, continuing local logout:", err?.response?.data || err);
+//     }
+//     if (window.$chatwoot) {
+//       window.$chatwoot.reset();
+//     }
+//     // Always clear locally
+//     localStorage.removeItem("token");
+//       delete api.defaults.headers.common["Authorization"];
+//       return true;
+//   }
+// );
 
 export const updateProfile = createAsyncThunk(
   "profile/updateProfile",
@@ -106,6 +107,8 @@ const profileSlice = createSlice({
     clearProfile: (state) => {
       state.user = null;
       state.error = null;
+      state.classes = [];
+      state.brothers = [];
     },
     addBrotherLocal: (state, action) => {
       state.brothers.push(action.payload);
@@ -119,11 +122,15 @@ const profileSlice = createSlice({
       })
       .addCase(getProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        // state.user = action.payload;
+        state.user = action.payload?.data ?? action.payload;
       })
       .addCase(getProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+        state.user = null;
+        state.brothers = [];
+        state.classes = [];
       })
       .addCase(addSibling.rejected, (state, action) => {
         state.error = action.error.message;
@@ -222,21 +229,42 @@ const profileSlice = createSlice({
         state.error = action.payload;
       })
       // Logout
-      .addCase(logout.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.loading = false;
-        state.user = null;
-        state.brothers = [];
-        state.classes = [];
-        state.error = null;
-        localStorage.removeItem("token");
-      })
-      .addCase(logout.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+      // .addCase(logout.pending, (state) => {
+      //   state.loading = true;
+      // })
+      // .addCase(logout.fulfilled, (state) => {
+      //   state.loading = false;
+      //   state.user = null;
+      //   state.brothers = [];
+      //   state.classes = [];
+      //   state.error = null;
+      //   localStorage.removeItem("token");
+      // })
+      // .addCase(logout.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload;
+      // })
+      // 🔻 React to AUTH LOGOUT and PERFORM_LOGOUT
+    .addCase(logoutUser, (state) => {
+      state.user = null;
+      state.brothers = [];
+      state.classes = [];
+      state.error = null;
+    })
+    .addCase(performLogout.fulfilled, (state) => {
+      state.user = null;
+      state.brothers = [];
+      state.classes = [];
+      state.error = null;
+    })
+
+    // 🔸 (optional) On successful login, drop any stale profile to force a clean refetch
+    .addCase(loginUser.fulfilled, (state) => {
+      state.user = null;
+      state.brothers = [];
+      state.classes = [];
+      state.error = null;
+    })
        // update profile
       .addCase(updateProfile.pending, (state) => {
         state.loading = true;

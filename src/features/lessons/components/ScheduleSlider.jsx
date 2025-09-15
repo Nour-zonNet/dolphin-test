@@ -13,7 +13,7 @@ import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
-// import { PreviewScheduleBtn } from "@/components/ui";
+import { PreviewScheduleBtn } from "@/components/ui";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();
@@ -74,7 +74,7 @@ const ScheduleSlider = () => {
                           item={lesson}
                           image={image}
                           color={bgColor}
-                           lessonDate={day.date}  
+                          lessonDate={day.date}  
                         />
                       );
                     })}

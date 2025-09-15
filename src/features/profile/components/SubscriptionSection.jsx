@@ -6,6 +6,7 @@ import { useSubscriptions } from "../../subscription/hooks/useSubscriptions";
 
 import { packageStyles } from "@/constants/PACKAGES_STYLES"; 
 import defaultImage from "@/assets/packages/default.svg";           
+import { formatArabicDate } from "@/utils/dateHelpers";
 
 const getStyleForSub = (sub) => {
   const key = Number(
@@ -60,8 +61,8 @@ const SubscriptionSection = () => {
                 title={sub.package_name}
                 icon={image}            
                 accentColor={bgColor}    
-                subscriptionDate={sub.start_date}
-                expiryDate={sub.end_date}
+                subscriptionDate={formatArabicDate(sub.start_date)}
+                expiryDate={formatArabicDate(sub.end_date)}
                 status={sub.status}
                 daysRemaining={sub.days_remaining}
               />

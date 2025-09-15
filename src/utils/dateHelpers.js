@@ -76,9 +76,6 @@ export function getFormattedDate(date = new Date()) {
   return `${dayName} ${day} - ${month} - ${year}`;
 }
 
-// الاستخدام
-// console.log(getFormattedDate());
-
 // تحويل الوقت من 24 ساعة إلى 12 ساعة
 export const formatTime12Hour = (time24) => {
   if (!time24) return "";
@@ -144,4 +141,17 @@ export function getRemainingDate(packageStartDate) {
   } else {
     return "انتهى";
   }
+
+    return `${hour12}:${minutes} ${period}`;
+  };
+
+export function formatArabicDate(dateString) {
+  const d = new Date(dateString);
+  const tz = "Asia/Riyadh";
+
+  const day  = d.toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
+  const year = d.toLocaleDateString("en-US", { year: "numeric", timeZone: tz });
+  let month  = new Intl.DateTimeFormat("ar-EG", { month: "long", timeZone: tz }).format(d);
+
+  return `${day} ${month} ${year}`;
 }

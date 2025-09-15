@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import teacherIcon from "@/assets/schedule/teacher.svg";
 import groupIcon from "@/assets/schedule/group.svg";
@@ -14,13 +14,34 @@ import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 import { useCountdown } from "../hooks/useCountdown";
+import { FileIcon, SessionIcon } from "@/utils/icons";
+import { useNavigate } from "react-router-dom";
 // import { closeModal } from "../../../store/modalSlice";
 
 const LessonCard = ({ item, color, image, lessonDate }) => {
   const { openStatusModal } = useModal();
+  const [hintMsg, setHintMsg] = useState("");
+  const hintTimerRef = useRef(null);
+  const navigate = useNavigate();
   // const dispatch = useDispatch();
-  // const navigate = useNavigate();
   const { t } = useTranslation();
+  
+  useEffect(() => {
+    return () => {
+      if (hintTimerRef.current) {
+        clearTimeout(hintTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Always-English day number, localized month/weekday
+  const formatDateWithEnglishDay = (d, lang = "ar") => {
+    const tz = "Asia/Riyadh";
+    const dayNum = d.toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
+    const monthName = d.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { month: "long", timeZone: tz });
+    const weekdayName = d.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { weekday: "long", timeZone: tz });
+    return { dayNum, monthName, weekdayName };
+  };
 
   const { start, end } = useMemo(() => {
     const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
@@ -55,6 +76,26 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     if (now > end) return "ended";
     return "upcoming";
   }, [start, end]);
+  
+  const canEnterNow = useMemo(
+    () => lessonStatus === "live" || canEnterLesson || isExpired,
+    [lessonStatus, canEnterLesson, isExpired]
+  );
+
+  const handleCardClick = useCallback(() => {
+    if (lessonStatus === "ended") {
+    if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
+      setHintMsg("");
+      return;
+    }
+    if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
+    setHintMsg(canEnterNow ? "اضغط علي زر دخول الحصة للبدء" : "انتظر موعد بدء الحصة");
+    hintTimerRef.current = setTimeout(() => {
+      setHintMsg("");
+      hintTimerRef.current = null;
+    }, 3500);
+  }, [lessonStatus, canEnterNow]);
+
   const handleEnterLesson = useCallback(() => {
     const url = `https://online.learnatdolphin.com/${item.session_link}`;
 
@@ -78,130 +119,169 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     }
   }, [item.session_link, openStatusModal]);
 
-  // const handleEnterLesson = useCallback(async () => {
-  //   window.open(
-  //     " https://online.learnatdolphin.com/" + item.session_link,
-  //     "_blank"
-  //   );
-
-  // try {
-  //   const res = await dispatch(
-  //     getSessionLink({ room_uid: item.session_link, session_id: item.id })
-  //   ).unwrap();
-  //   if (res?.status) {
-  //     // لو فيه لينك شغال → ندخل على الـ URL
-  //     window.open(res.url, "_blank");
-  //   } else {
-  //     // لو مفيش لينك مفتوح
-  //     openStatusModal("ERROR", {
-  //       // title: "لا يوجد لقاء مفتوح",
-  //       message:
-  //         res?.data?.message || "لا يوجد اجتماع متاح حالياً لهذه الجلسة.",
-  //     });
-  //   }
-  // } catch (error) {
-  //   // هندل أي errors جاية من الـ API أو الـ thunk
-  //   const getErrorMessage = (err) => {
-  //     if (!err) return "حدث خطأ أثناء الدخول للجلسة. حاول مرة أخرى.";
-  //     if (typeof err === "string") return err;
-  //     if (Array.isArray(err)) return err[0] || "حدث خطأ أثناء الدخول للجلسة.";
-  //     if (err && typeof err === "object") {
-  //       if (err.data && err.data.error) return err.data.error;
-  //       if (err.message) return err.message;
-  //     }
-  //     return "حدث خطأ أثناء الدخول للجلسة.";
-  //   };
-
-  //   openStatusModal("ERROR", {
-  //     title: "فشل الدخول للجلسة",
-  //     message: getErrorMessage(error),
-  //   });
-  // }
-  // }, [item.session_link]);
-
-  // }, [dispatch, item.id, item.session_link, openStatusModal]);
-
-  const renderButton = useCallback(() => {
-    if (lessonStatus === "ended") {
-      return (
+  // Open lesson content page
+  const handleOpenContent = useCallback(() => {
+    navigate("/schedule/lessoncontent", {
+      state: {
+        lesson: item,
+        lessonId: item?.id,
+      },
+      replace: false,
+    });
+  }, [navigate, item])
+ const renderButton = useCallback(() => {
+  if (lessonStatus === "ended") {
+    return (
+      <>
         <div className="flex justify-center text-center items-center align-middle">
           <img
             loading="lazy"
             src={books}
             alt="ended"
-            className="cursor-pointer w-16 xs:w-auto"
+            className="w-16 xs:w-auto"
           />
         </div>
-      );
-    }
+        {/* <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOpenContent();
+          }}
+          className="px-4 py-2 text-nowrap text-xs md:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 rounded-3xl bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked text-navyteal cursor-pointer"
+        >
+          <FileIcon />
+          عرض المحتوى
+        </button> */}
+    </>
+    );
+  }
 
-    if (
-      lessonStatus === "upcoming" &&
-      timeRemaining &&
-      !isExpired &&
-      !canEnterLesson
-    ) {
-      return (
-        <div className="flex justify-center text-center items-center align-middle">
-          <img
-            src={clock}
-            loading="lazy"
-            alt="clock"
-            className="cursor-pointer w-16 xs:w-auto"
-          />
-        </div>
-      );
-    }
+  // هل الزر مسموح الآن؟
+  // const isEnabled =
+  //   lessonStatus === "live" || canEnterLesson || isExpired;
+  const isEnabled = canEnterNow;
+  const iconSrc =
+    lessonStatus === "live" || isEnabled ? sandGlass : clock;
+  return (
+    <>
+      <div className="flex justify-center text-center items-center align-middle">
+        <img
+          src={iconSrc}
+          loading="lazy"
+          alt="status"
+          className="w-16 xs:w-auto"
+        />
+      </div>
 
-    if (
-      lessonStatus === "live" ||
-      (lessonStatus === "upcoming" && (isExpired || canEnterLesson))
-    ) {
-      return (
-        <>
-          <div className="flex justify-center text-center items-center align-middle">
-            <img
-              src={sandGlass}
-              alt="clock"
-              loading="lazy"
-              className="cursor-pointer w-16 xs:w-auto"
-            />
-          </div>
-          <button
-            onClick={handleEnterLesson}
-            className="px-4 py-2 text-nowrap text-navyteal text-xs xs:text-[18px] font-semibold flex items-center justify-center gap-2 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked rounded-3xl hover:cursor-pointer"
-          >
-            دخول الحصة
-          </button>
-        </>
-      );
-    }
+      <button
+        // onClick={isEnabled ? handleEnterLesson : undefined}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (isEnabled) handleEnterLesson();
+        }}
+        disabled={!isEnabled}
+        aria-disabled={!isEnabled}
+        title={
+          isEnabled ? "دخول الحصة" : "سيتم تفعيل الزر عند بدء الحصة"
+        }
+        className={[
+          "px-4 py-2 text-nowrap text-xs md:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 rounded-3xl",
+          isEnabled
+            ? "bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked text-navyteal cursor-pointer"
+            : "bg-[#7A8085] text-[#FAFBFC] cursor-not-allowed opacity-70"
+        ].join(" ")}
+      >
+        <SessionIcon className="w-4 lg:w-6" />
+        دخول الحصة
+      </button>
+    </>
+  );
+// }, [lessonStatus, canEnterLesson, isExpired, handleEnterLesson]);
+}, [lessonStatus, canEnterNow, handleEnterLesson]);
 
-    return null;
-  }, [
-    lessonStatus,
-    timeRemaining,
-    isExpired,
-    canEnterLesson,
-    handleEnterLesson,
-  ]);
+  // const { statusText, statusColor, statusIcon } = useMemo(() => {
+  //   const now = new Date();
+
+  //   // نشوف هل يوم الحصة هو نفس يوم النهارده
+  //   const isSameDay =
+  //     start.getDate() === now.getDate() &&
+  //     start.getMonth() === now.getMonth() &&
+  //     start.getFullYear() === now.getFullYear();
+
+  //   if (!isSameDay) {
+  //     return {
+  //       statusText: `الحصة يوم ${start.toLocaleDateString("ar-EG", {
+  //         weekday: "long",
+  //         day: "numeric",
+  //         month: "long",
+  //         timeZone: "Asia/Riyadh",
+  //       })} - ${formatArabicTime(item.start_time)}`,
+  //       statusColor: "text-[#ba7c28]",
+  //       statusIcon: <SandGlass className="w-4" />,
+  //     };
+  //   }
+
+  //   if (lessonStatus === "upcoming") {
+  //     if (timeRemaining && !isExpired && !canEnterLesson) {
+  //       return {
+  //         statusText: timeRemaining, // يعرض العدّاد
+  //         statusColor: "text-[#ba7c28]",
+  //         statusIcon: <SandGlass className="w-4" />,
+  //       };
+  //     } else if (canEnterLesson) {
+  //       return {
+  //         statusText: "يمكن الدخول الآن",
+  //         statusColor: "text-green-600",
+  //         statusIcon: <NotifyIcon className="w-4" />,
+  //       };
+  //     } else if (isExpired) {
+  //       return {
+  //         statusText: "يمكن الدخول الآن",
+  //         statusColor: "text-green-600",
+  //         statusIcon: <NotifyIcon className="w-4" />,
+  //       };
+  //     } else {
+  //       return {
+  //         statusText: "قريباً",
+  //         statusColor: "text-[#ba7c28]",
+  //         statusIcon: <SandGlass className="w-4" />,
+  //       };
+  //     }
+  //   }
+
+  //   if (lessonStatus === "live") {
+  //     return {
+  //       statusText: "الحصة بدأت",
+  //       statusColor: "text-green-600",
+  //       statusIcon: <NotifyIcon className="w-4" />,
+  //     };
+  //   }
+
+  //   return {
+  //     statusText: "انتهت الحصة",
+  //     statusColor: "text-red-500",
+  //     statusIcon: <TimeCheck className="w-4" />,
+  //   };
+  // }, [
+  //   lessonStatus,
+  //   timeRemaining,
+  //   canEnterLesson,
+  //   isExpired,
+  //   item.start_time,
+  //   start,
+  // ]);
   const { statusText, statusColor, statusIcon } = useMemo(() => {
     const now = new Date();
 
-    // نشوف هل يوم الحصة هو نفس يوم النهارده
     const isSameDay =
       start.getDate() === now.getDate() &&
       start.getMonth() === now.getMonth() &&
       start.getFullYear() === now.getFullYear();
 
     if (!isSameDay) {
+      const { dayNum, monthName, weekdayName } = formatDateWithEnglishDay(start, "ar");
       return {
-        statusText: `الحصة يوم ${start.toLocaleDateString("ar-EG", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          timeZone: "Asia/Riyadh",
-        })} - ${formatArabicTime(item.start_time)}`,
+        // Example (Arabic UI): "الحصة يوم الاثنين 15 سبتمبر - 07:30 م"
+        statusText: `الحصة يوم ${weekdayName} ${dayNum} ${monthName} - ${formatArabicTime(item.start_time)}`,
         statusColor: "text-[#ba7c28]",
         statusIcon: <SandGlass className="w-4" />,
       };
@@ -210,29 +290,22 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     if (lessonStatus === "upcoming") {
       if (timeRemaining && !isExpired && !canEnterLesson) {
         return {
-          statusText: timeRemaining, // يعرض العدّاد
+          statusText: timeRemaining,
           statusColor: "text-[#ba7c28]",
           statusIcon: <SandGlass className="w-4" />,
         };
-      } else if (canEnterLesson) {
+      } else if (canEnterLesson || isExpired) {
         return {
           statusText: "يمكن الدخول الآن",
           statusColor: "text-green-600",
           statusIcon: <NotifyIcon className="w-4" />,
-        };
-      } else if (isExpired) {
-        return {
-          statusText: "يمكن الدخول الآن",
-          statusColor: "text-green-600",
-          statusIcon: <NotifyIcon className="w-4" />,
-        };
-      } else {
-        return {
-          statusText: "قريباً",
-          statusColor: "text-[#ba7c28]",
-          statusIcon: <SandGlass className="w-4" />,
         };
       }
+      return {
+        statusText: "قريباً",
+        statusColor: "text-[#ba7c28]",
+        statusIcon: <SandGlass className="w-4" />,
+      };
     }
 
     if (lessonStatus === "live") {
@@ -261,7 +334,14 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     <div className="relative">
       <div
         style={{ borderColor: color }}
-        className={`flex flex-row items-center xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border-[0.5px] !border-l-gray-400 !border-t-gray-400 !border-b-gray-400 border-r-quran border-r-10 sm:border-r-14 w-full py-4 md:py-8 px-4 overflow-hidden`}
+            className={`flex flex-row items-center xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border-[0.5px] !border-l-gray-400 !border-t-gray-400 !border-b-gray-400 border-r-quran border-r-10 sm:border-r-14 w-full py-4 md:py-8 px-4 overflow-hidden`}
+            // onClick={handleCardClick}
+            // role="button"
+            // tabIndex={0}
+              onClick={lessonStatus !== "ended" ? handleCardClick : undefined}
+              role={lessonStatus !== "ended" ? "button" : undefined}
+              tabIndex={lessonStatus !== "ended" ? 0 : -1}
+        // className={`flex flex-row items-center xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border-[0.5px] !border-l-gray-400 !border-t-gray-400 !border-b-gray-400 border-r-quran border-r-10 sm:border-r-14 w-full py-4 md:py-8 px-4 overflow-hidden`}
       >
         {/* Left section */}
         <div className="flex-1 w-full">
@@ -339,12 +419,16 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
             </div>
           </div>
         </div>
-
         {/* Right section */}
         <div className="flex flex-col items-center justify-center mr-auto xs:space-y-3.5 gap-2 xs:gap-0 px-2 relative z-10 space-y-2">
           {renderButton()}
         </div>
       </div>
+          {hintMsg && lessonStatus !== "ended" && (
+            <div className="mt-2 text-green-600 text-sm font-semibold">
+              {hintMsg}
+            </div>
+          )}
     </div>
   );
 };
