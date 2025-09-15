@@ -20,7 +20,7 @@ const PreviewScheduleBtn = ({
         <button
             type="button"
             onClick={handleOpen}
-            className={`flex items-center justify-center gap-2 bg-orangedeep text-darkblue px-4 py-1.5 md:py-2 rounded-full w-full md:w-1/4 mx-auto mb-6 hover:bg-btnClicked focus:bg-btnClicked cursor-pointer ${className}`}
+            className={`flex items-center justify-center gap-2 bg-orangedeep text-darkblue px-4 py-1.5 md:py-2 rounded-full w-full lg:w-1/4 mx-auto mb-6 hover:bg-btnClicked focus:bg-btnClicked cursor-pointer ${className}`}
             aria-haspopup="dialog"
             aria-expanded={isOpen}
         >

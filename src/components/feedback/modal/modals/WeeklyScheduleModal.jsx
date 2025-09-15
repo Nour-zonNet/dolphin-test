@@ -9,7 +9,8 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
   const { packageName, schedule = [], image, color } = data;
   const { t } = useTranslation();
   const { loading, error } = usePackages();
-  // 🟢 Transform array -> object grouped by day_of_week
+
+  // Group by day_of_week
   const groupedSchedule = useMemo(() => {
     if (!Array.isArray(schedule)) return {};
     return schedule.reduce((acc, item) => {
@@ -25,21 +26,21 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
   }, [schedule]);
 
   const days = Object.keys(groupedSchedule);
+
+  // ⬇️ NEW: compute if there’s at least one lesson anywhere
+  const hasAnyLessons = days.some((d) => (groupedSchedule[d] || []).length > 0);
+
   const maxRows = days.length
-    ? Math.max(...days.map((d) => groupedSchedule[d].length))
+    ? Math.max(...days.map((d) => (groupedSchedule[d] || []).length))
     : 0;
 
   return (
-    <div className="relative w-full max-w-xl lg:max-w-2xl bg-white rounded-3xl shadow-lg overflow-hidden px-4 sm:px-6 max-h-[90vh] overflow-y-auto">
+    <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-lg overflow-hidden px-4 sm:px-6 max-h-[90vh] overflow-y-auto no-scrollbar">
       {/* Header */}
       <div className="flex justify-between items-center py-4 sm:py-6 sticky top-0 bg-white z-10">
         <div className="flex items-center gap-4">
           <div style={{ backgroundColor: color }} className="rounded p-1">
-            <img
-              src={image}
-              className="w-7 h-7 md:w-12 md:h-12"
-              alt="package"
-            />
+            <img src={image} className="w-7 h-7 md:w-12 md:h-12" alt="package" />
           </div>
           <h2 className="text-navyteal text-sm md:text-xl font-semibold">
             {packageName || t("packages.healthPackage")}
@@ -53,10 +54,10 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
         </button>
       </div>
 
-      {/* Schedule Display */}
-      {!loading  && days.length > 0 && (
+      {/* Content */}
+      {!loading && days.length > 0 && hasAnyLessons && (
         <>
-          {/* Mobile View */}
+          {/* Mobile View (unchanged) */}
           <div className="block sm:hidden pb-4">
             <div className="space-y-4">
               {days.map((day) => {
@@ -69,30 +70,22 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
                     <div className="space-y-3">
                       {daySchedule.length > 0 ? (
                         daySchedule.map((item, idx) => (
-                          <div
-                            key={idx}
-                            className="bg-white rounded-xl p-3 shadow-sm"
-                          >
+                          <div key={idx} className="bg-white rounded-xl p-3 shadow-sm">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-darkblue">
                                 <Clock width="16" height="16" />
-                                <span className="font-medium">
-                                  {formatTime12Hour(item.time)}
-                                </span>
+                                <span className="font-medium">{formatTime12Hour(item.time)}</span>
                               </div>
                               <div className="flex items-center gap-2 text-normalblue">
                                 <Teacher width="16" height="16" />
-                                <span className="text-sm">
-                                  {item.teacher_name}
-                                </span>
+                                <span className="text-sm">{item.teacher_name}</span>
                               </div>
                             </div>
                           </div>
                         ))
                       ) : (
-                        <div className="text-center py-4 text-gray-500 bg-white rounded-xl">
-                          {t("packages.noLesson")}
-                        </div>
+                        // you can keep per-day empty card or remove entirely; table logic below already handles dashes
+                        <div className="text-center py-4 text-gray-400 bg-white rounded-xl">-</div>
                       )}
                     </div>
                   </div>
@@ -103,7 +96,7 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
 
           {/* Desktop View */}
           <div className="hidden sm:block overflow-x-auto pb-4">
-            <table className="w-full text-center border-collapse">
+            <table className="w-full min-w-[52rem] text-center border-collapse">
               <thead>
                 <tr className="bg-softblue text-navyteal">
                   {days.map((day, idx) => (
@@ -120,33 +113,24 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
               </thead>
               <tbody>
                 {Array.from({ length: maxRows }).map((_, rowIdx) => (
-                  <tr
-                    key={rowIdx}
-                    className="border-t border-dashed border-normalblue/60 first:border-t-0"
-                  >
+                  <tr key={rowIdx} className="border-t border-dashed border-normalblue/60 first:border-t-0">
                     {days.map((day, colIdx) => {
                       const daySchedule = groupedSchedule[day] || [];
                       const item = daySchedule[rowIdx];
                       return (
-                        <td
-                          key={colIdx}
-                          className="p-4 border-l border-normalblue/60 last:border-l-0"
-                        >
+                        <td key={colIdx} className="p-4 border-l border-normalblue/60 last:border-l-0">
                           {item ? (
                             <div className="flex flex-col items-center gap-2">
                               <div className="flex items-center gap-1 text-sm text-darkblue">
-                                <Clock width="16" height="16" />{" "}
-                                {formatTime12Hour(item.time)}
+                                <Clock width="16" height="16" /> {formatTime12Hour(item.time)}
                               </div>
                               <div className="flex items-center gap-2 text-sm font-medium text-normalblue">
-                                <Teacher width="16" height="16" />{" "}
-                                {item.teacher_name}
+                                <Teacher width="16" height="16" /> {item.teacher_name}
                               </div>
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-sm">
-                              {t("packages.noLesson")}
-                            </span>
+                            // ⬇️ dash in empty cell when there ARE lessons in the table
+                            <span className="text-gray-400 text-sm">-</span>
                           )}
                         </td>
                       );
@@ -159,15 +143,15 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
         </>
       )}
 
-      {/* Loading state */}
+      {/* Loading */}
       {loading && (
         <div className="flex justify-center items-center py-8">
           <Spinner />
         </div>
       )}
 
-      {/* No schedule fallback */}
-      {!loading && !error && days.length === 0 && (
+      {/* No schedule at all */}
+      {(!loading && (!days.length || !hasAnyLessons)) && (
         <div className="text-center py-8 text-gray-500">
           {t("packages.noLesson")}
         </div>
