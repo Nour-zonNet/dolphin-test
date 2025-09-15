@@ -77,16 +77,71 @@ export function getFormattedDate(date = new Date()) {
 }
 
 // الاستخدام
-// console.log(getFormattedDate()); 
+// console.log(getFormattedDate());
 
-  // تحويل الوقت من 24 ساعة إلى 12 ساعة
- export const formatTime12Hour = (time24) => {
-    if (!time24) return '';
+// تحويل الوقت من 24 ساعة إلى 12 ساعة
+export const formatTime12Hour = (time24) => {
+  if (!time24) return "";
 
-    const [hours, minutes] = time24.split(':');
-    const hour = parseInt(hours, 10);
-    const period = hour >= 12 ? 'م' : 'ص';
-    const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  const [hours, minutes] = time24.split(":");
+  const hour = parseInt(hours, 10);
+  const period = hour >= 12 ? "م" : "ص";
+  const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
 
-    return `${hour12}:${minutes} ${period}`;
-  };
+  return `${hour12}:${minutes} ${period}`;
+};
+
+export function formatPackageStartDate(dateStr) {
+  if (!dateStr) return "";
+
+  const days = [
+    "الأحد",
+    "الاثنين",
+    "الثلاثاء",
+    "الأربعاء",
+    "الخميس",
+    "الجمعة",
+    "السبت",
+  ];
+
+  const date = new Date(dateStr);
+
+  const dayName = days[date.getDay()];
+  const day = date.getDate();
+  const month = date.getMonth() + 1; // الأشهر تبدأ من 0
+  const year = date.getFullYear();
+
+  return `${dayName} - ${day} - ${month} - ${year}`;
+}
+export function isPackageStarted(packageStartDate) {
+  if (!packageStartDate) return false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // نخلي اليوم يبدأ من 00:00
+
+  const startDate = new Date(packageStartDate);
+  startDate.setHours(0, 0, 0, 0);
+
+  return startDate <= today;
+}
+
+export function getRemainingDate(packageStartDate) {
+  if (!packageStartDate) return "";
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const startDate = new Date(packageStartDate);
+  startDate.setHours(0, 0, 0, 0);
+
+  const diffMs = startDate - today;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 0) {
+    return `متبقي ${diffDays} يوم${diffDays > 1 ? "" : ""}`;
+  } else if (diffDays === 0) {
+    return "اليوم";
+  } else {
+    return "انتهى";
+  }
+}

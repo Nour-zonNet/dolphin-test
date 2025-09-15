@@ -7,6 +7,12 @@ import { CardKite, Star } from "@/utils/Illustrations";
 import * as Icons from "@/utils/icons";
 import { usePackages } from "../hooks/usePackages";
 import { useSelector } from "react-redux";
+import {
+  formatPackageStartDate,
+  getRemainingDate,
+  isPackageStarted,
+} from "../../../utils/dateHelpers";
+import { SandGlass } from "@/utils/icons";
 
 const PackageCard = React.memo(
   ({ item, color, image, status, daysRemaining }) => {
@@ -14,7 +20,7 @@ const PackageCard = React.memo(
     const { openWeeklyScheduleModal, openStatusModal } = useModal();
     const { getSchedule } = usePackages();
     const schedules = useSelector((state) => state.packages.schedules);
-
+    console.log("PackageCard render:", item.package_start_date);
     const { group_id, package_name, group_name, name } = item;
 
     const existingSchedule = useMemo(
@@ -130,25 +136,49 @@ const PackageCard = React.memo(
                     : config.label}
                 </span>
               </div>
-              <p className="text-navyteal font-semibold text-xs xs:text-sm md:text-lg truncate pl-20">
-                {group_name ?? t("packages.firstGroup")}
-              </p>
+              {isPackageStarted(item.package_start_date) && (
+                <p className="text-navyteal font-semibold text-xs xs:text-sm md:text-lg truncate pl-20">
+                  {group_name ?? t("packages.firstGroup")}
+                </p>
+              )}
             </div>
 
             {/* Schedule Button */}
-            <div className="flex flex-row items-center justify-between gap-4 px-4 py-5 relative z-10">
-              {status?.toLowerCase() !== "waiting" && (
-                <button
-                  type="button"
-                  onClick={handleOpenSchedule}
-                  className="w-full space-x-1 text-navyteal text-xs xs:text-base flex items-center justify-center gap-1 max-w-60 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full px-4 py-3 font-medium transition-colors duration-300"
-                  aria-label={t("packages.previewWeeklySchedule")}
-                >
+            {isPackageStarted(item.package_start_date) ? (
+              <div className="flex flex-row items-center justify-between gap-4 px-4 py-5 relative z-10">
+                {status?.toLowerCase() !== "waiting" && (
+                  <button
+                    type="button"
+                    onClick={handleOpenSchedule}
+                    className="w-full space-x-1 text-navyteal text-xs xs:text-base flex items-center justify-center gap-1 max-w-60 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full px-4 py-3 font-medium transition-colors duration-300"
+                    aria-label={t("packages.previewWeeklySchedule")}
+                  >
+                    <Calender className="w-4 h-4" />
+                    <span>{t("packages.previewWeeklySchedule")}</span>
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="px-4  py-5 ">
+                <span className="text-[#ba7c28]  font-semibold">الباقة لم تبداء بعد</span>
+                <div className="flex flex-row items-center   relative z-10">
                   <Calender className="w-4 h-4" />
-                  <span>{t("packages.previewWeeklySchedule")}</span>
-                </button>
-              )}
-            </div>
+
+                  <span className="py-4 text-navyteal px-2">
+                    {" "}
+                    تاريخ بداية الباقة :{" "}
+                    {formatPackageStartDate(item.package_start_date)}
+                  </span>
+                </div>
+                <div className="flex flex-row items-center text-navyteal    relative z-10">
+                  {" "}
+                  <SandGlass className="w-3.5" fill="#08233F" />
+                  <span className=" px-2">
+                    {getRemainingDate(item.package_start_date)}{" "}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

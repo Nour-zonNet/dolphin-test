@@ -50,8 +50,8 @@ const groups = [
     style: { bgColor: "#CD6036", image: special },
   },
   {
-    ids: [197],
-    style: { bgColor: "#FF6F00", image: science },
+    ids: [197,206],
+    style: { bgColor: "#F99E54", image: science },
   },
   {
     ids: [139, 140, 141, 142, 143, 144, 195, 196],

@@ -17,7 +17,9 @@ const PageCanvas = ({
   stageRef,
 }) => {
   const containerRef = useRef(null);
+  const localStageRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: initialWidth, height: initialHeight });
+  const [displayScale, setDisplayScale] = useState(1);
   const [bgImageEl, setBgImageEl] = useState(null);
   const [showTextInput, setShowTextInput] = useState(false);
   const [textInput, setTextInput] = useState("");
@@ -47,19 +49,59 @@ const PageCanvas = ({
     shapes,
     setLines,
     setShapes,
-    saveToHistory
+    saveToHistory,
+    displayScale
   );
 
   useEffect(() => {
     const img = new window.Image();
     img.onload = () => {
       setBgImageEl(img);
-      setDimensions({ width: img.width, height: img.height });
+      // Fit to container while preserving aspect ratio
+      if (!containerRef.current) {
+        setDisplayScale(1);
+        setDimensions({ width: img.width, height: img.height });
+        return;
+      }
+      const containerWidth = containerRef.current.offsetWidth;
+      const containerHeight = containerRef.current.offsetHeight || img.height;
+      const maxWidth = Math.max(320, containerWidth);
+      const maxHeight = Math.max(240, containerHeight);
+      const scale = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+      setDisplayScale(scale);
+      setDimensions({ width: Math.floor(img.width * scale), height: Math.floor(img.height * scale) });
     };
     img.src = backgroundImage;
   }, [backgroundImage]);
 
+  // Resize on container change
+  useEffect(() => {
+    if (!containerRef.current || !bgImageEl) return;
+
+    const update = () => {
+      const containerWidth = containerRef.current.offsetWidth;
+      const containerHeight = containerRef.current.offsetHeight || bgImageEl.height;
+      const maxWidth = Math.max(320, containerWidth);
+      const maxHeight = Math.max(240, containerHeight);
+      const scale = Math.min(maxWidth / bgImageEl.width, maxHeight / bgImageEl.height, 1);
+      setDisplayScale(scale);
+      setDimensions({ width: Math.floor(bgImageEl.width * scale), height: Math.floor(bgImageEl.height * scale) });
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(containerRef.current);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, [bgImageEl]);
+
   const onCanvasMouseDown = (e) => {
+    if (e.evt && e.evt.touches && e.evt.touches.length > 1) {
+      return; // allow native scroll/zoom on multi-touch
+    }
     const result = handleMouseDown(e);
     if (result?.type === "text") {
       setTextPosition(result.position);
@@ -100,7 +142,7 @@ const PageCanvas = ({
       <div
         ref={containerRef}
         className="relative rounded-2xl custom-scrollbar w-full"
-        style={{ overflowX: "auto", overflowY: "auto" }}
+        style={{ overflowX: "auto", overflowY: "auto", touchAction: "pan-x pan-y" }}
       >
         <Stage
           width={dimensions.width}
@@ -109,14 +151,27 @@ const PageCanvas = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onTouchStart={onCanvasMouseDown}
-          onTouchMove={handleMouseMove}
+          onTouchMove={(e) => {
+            if (e.evt && e.evt.touches && e.evt.touches.length > 1) return; // let scroll
+            handleMouseMove(e);
+          }}
           onTouchEnd={handleMouseUp}
-          ref={stageRef}
+          ref={(node) => {
+            localStageRef.current = node;
+            if (node && node.getStage && node.getStage().container()) {
+              node.getStage().container().style.touchAction = "pan-x pan-y";
+            }
+            if (typeof stageRef === "function") {
+              stageRef(node);
+            } else if (stageRef && typeof stageRef === "object") {
+              stageRef.current = node;
+            }
+          }}
           className="bg-white pdf-export-optimized"
         >
           {bgImageEl && (
             <Layer listening={false}>
-              <KonvaImage image={bgImageEl} x={0} y={0} width={bgImageEl.width} height={bgImageEl.height} />
+              <KonvaImage image={bgImageEl} x={0} y={0} width={dimensions.width} height={dimensions.height} />
             </Layer>
           )}
           <Layer>
@@ -125,12 +180,12 @@ const PageCanvas = ({
                 return (
                   <Rect
                     key={i}
-                    x={shape.points[0]}
-                    y={shape.points[1]}
-                    width={shape.points[2] - shape.points[0]}
-                    height={shape.points[3] - shape.points[1]}
+                    x={shape.points[0] * displayScale}
+                    y={shape.points[1] * displayScale}
+                    width={(shape.points[2] - shape.points[0]) * displayScale}
+                    height={(shape.points[3] - shape.points[1]) * displayScale}
                     stroke={shape.color}
-                    strokeWidth={shape.strokeWidth}
+                    strokeWidth={shape.strokeWidth * displayScale}
                     fill={shape.fill}
                   />
                 );
@@ -138,19 +193,25 @@ const PageCanvas = ({
                 return (
                   <Circle
                     key={i}
-                    x={shape.points[0]}
-                    y={shape.points[1]}
+                    x={shape.points[0] * displayScale}
+                    y={shape.points[1] * displayScale}
                     radius={Math.sqrt(
                       Math.pow(shape.points[2] - shape.points[0], 2) + Math.pow(shape.points[3] - shape.points[1], 2)
-                    )}
+                    ) * displayScale}
                     stroke={shape.color}
-                    strokeWidth={shape.strokeWidth}
+                    strokeWidth={shape.strokeWidth * displayScale}
                     fill={shape.fill}
                   />
                 );
               } else if (shape.type === "arrow") {
                 return (
-                  <Arrow key={i} points={shape.points} stroke={shape.color} strokeWidth={shape.strokeWidth} fill={shape.color} />
+                  <Arrow
+                    key={i}
+                    points={shape.points.map((v) => v * displayScale)}
+                    stroke={shape.color}
+                    strokeWidth={shape.strokeWidth * displayScale}
+                    fill={shape.color}
+                  />
                 );
               }
               return null;
@@ -159,9 +220,9 @@ const PageCanvas = ({
             {lines.map((line, i) => (
               <Line
                 key={i}
-                points={line.points}
+                points={line.points.map((v) => v * displayScale)}
                 stroke={line.color}
-                strokeWidth={line.strokeWidth}
+                strokeWidth={line.strokeWidth * displayScale}
                 tension={0.5}
                 lineCap="round"
                 lineJoin="round"
@@ -172,11 +233,11 @@ const PageCanvas = ({
 
             {texts.map((t, i) => (
               <Text
-                key={i}
-                x={t.x}
-                y={t.y}
+                key={t.x + '-' + t.y + '-' + i}
+                x={t.x * displayScale}
+                y={t.y * displayScale}
                 text={t.text}
-                fontSize={t.fontSize}
+                fontSize={t.fontSize * displayScale}
                 fill={t.fill}
                 fontFamily="Arial"
                 fontStyle={t.fontStyle || "normal"}

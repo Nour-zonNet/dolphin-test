@@ -178,9 +178,10 @@ const Board = () => {
       const pdf = await loadingTask.promise;
 
       const pages = [];
+      const deviceScale = Math.max(2, (window.devicePixelRatio || 1) * 2);
       for (let pageIndex = 1; pageIndex <= pdf.numPages; pageIndex += 1) {
         const page = await pdf.getPage(pageIndex);
-        const viewport = page.getViewport({ scale: 2 });
+        const viewport = page.getViewport({ scale: deviceScale });
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
         canvas.width = viewport.width;
@@ -228,7 +229,10 @@ const Board = () => {
           if (i > 0) {
             pdf.addPage([page.width, page.height], page.width > page.height ? "landscape" : "portrait");
           }
-          const dataURL = stage.toDataURL({ pixelRatio: 1, mimeType: "image/png" });
+          const stageWidth = stage.width();
+          const ratio = page.width / Math.max(1, stageWidth);
+          const pixelRatio = Math.max(1, Math.min(4, ratio));
+          const dataURL = stage.toDataURL({ pixelRatio, mimeType: "image/png" });
           pdf.addImage(dataURL, "PNG", 0, 0, page.width, page.height);
         }
 
@@ -248,7 +252,7 @@ const Board = () => {
       const stage = stageRef.current;
       const stageWidth = stage.width();
       const stageHeight = stage.height();
-      const dataURL = stage.toDataURL({ pixelRatio: 1, mimeType: "image/png" });
+      const dataURL = stage.toDataURL({ pixelRatio: 2, mimeType: "image/png" });
       const pdf = new jsPDF({
         orientation: stageWidth > stageHeight ? "landscape" : "portrait",
         unit: "px",

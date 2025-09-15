@@ -22,11 +22,7 @@ const Canvas = ({
     if (!containerRef.current) return;
 
     const updateSize = () => {
-      // If background image exists, lock canvas size to PDF page image
-      if (bgImageEl) {
-        setDimensions({ width: bgImageEl.width, height: bgImageEl.height });
-        return;
-      }
+      if (!containerRef.current) return;
       const container = containerRef.current;
       const containerWidth = container.offsetWidth;
       const containerHeight = container.offsetHeight;
@@ -34,6 +30,15 @@ const Canvas = ({
       // Calculate minimum dimensions based on content
       const minWidth = Math.max(800, containerWidth * 0.9); // At least 800px or 90% of container
       const minHeight = Math.max(600, containerHeight * 0.9); // At least 600px or 90% of container
+
+      // If background image exists, scale it to fit container while preserving aspect ratio
+      if (bgImageEl) {
+        const maxWidth = Math.max(minWidth, containerWidth - 40);
+        const maxHeight = Math.max(minHeight, containerHeight - 40);
+        const scale = Math.min(maxWidth / bgImageEl.width, maxHeight / bgImageEl.height, 1);
+        setDimensions({ width: Math.floor(bgImageEl.width * scale), height: Math.floor(bgImageEl.height * scale) });
+        return;
+      }
 
       // Use container dimensions but ensure minimum sizes (when no PDF)
       const finalWidth = Math.max(minWidth, containerWidth - 40);
@@ -57,7 +62,9 @@ const Canvas = ({
     window.addEventListener("resize", handleResize);
 
     // Also listen for container size changes
-    const resizeObserver = new ResizeObserver(updateSize);
+    const resizeObserver = new ResizeObserver(() => {
+      updateSize();
+    });
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
@@ -78,8 +85,7 @@ const Canvas = ({
     const img = new window.Image();
     img.onload = () => {
       setBgImageEl(img);
-      // Lock canvas to image size exactly
-      setDimensions({ width: img.width, height: img.height });
+      // Size will be computed against container to fit while preserving aspect ratio
     };
     img.src = backgroundImage;
   }, [backgroundImage]);
@@ -111,7 +117,7 @@ const Canvas = ({
           {/* Background image layer */}
           {bgImageEl && (
             <Layer listening={false}>
-              <KonvaImage image={bgImageEl} x={0} y={0} width={bgImageEl.width} height={bgImageEl.height} />
+              <KonvaImage image={bgImageEl} x={0} y={0} width={dimensions.width} height={dimensions.height} />
             </Layer>
           )}
           {/* Static layer removed as requested: no STATIC_CONTENT */}
