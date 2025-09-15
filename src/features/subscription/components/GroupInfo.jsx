@@ -31,11 +31,13 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
             subscriptionId,
             selectedGroupId
           );
-        dispatch(updatePackageGroup({ 
-  id: 5, 
-  group_id: 12, 
-  group_name: "New Group Name" 
-}));
+          dispatch(
+            updatePackageGroup({
+              id: packageId,
+              group_id: selectedGroupId,
+              group_name: res?.payload?.group_name || "",
+            })
+          );
           dispatch(fetchLessons());
 
           openStatusModal("SUCCESS", {

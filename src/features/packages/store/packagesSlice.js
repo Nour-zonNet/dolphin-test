@@ -51,8 +51,7 @@ const packagesSlice = createSlice({
   reducers: {
     updatePackageGroup: (state, action) => {
       const { id, group_id, group_name } = action.payload;
-
-      const pkgIndexMine = state.mine.findIndex((pkg) => pkg.id === id);
+      const pkgIndexMine = state.mine.findIndex((pkg) => pkg.package_id === id);
       if (pkgIndexMine !== -1) {
         state.mine[pkgIndexMine].group_id = group_id;
         state.mine[pkgIndexMine].group_name = group_name;
