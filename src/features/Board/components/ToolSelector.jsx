@@ -80,7 +80,7 @@ const ToolSelector = ({
   const isTextTool = (toolName) => toolName === "text";
 
   return (
-    <div className="flex md:flex-col justify-between items-center w-full  gap-1 bg-white rounded-full border border-dashed py-4 px-4 space-x-4 md:space-x-0 md:space-y-4 ">
+    <div className="flex  lg:flex-col justify-between items-center  gap-1 bg-white rounded-full border border-dashed py-2 px-4 space-x-4 md:space-x-0 lg:space-y-4 ">
       {TOOLS.map((item) => (
         <div key={item.tool} className="relative">
           <button

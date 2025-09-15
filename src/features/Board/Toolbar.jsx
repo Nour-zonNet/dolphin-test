@@ -25,7 +25,7 @@ const Toolbar = ({
   onImportPDF,
 }) => {
   return (
-    <div className=" flex items-center  flex-wrap z-10 gap-2">
+    <div className=" flex items-center flex-col  justify-center flex-wrap z-10 gap-2">
       <ToolSelector
         tool={tool}
         setTool={setTool}
