@@ -5,6 +5,7 @@ import { useModal } from "@/components/feedback/modal/useModal";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 import { fetchLessons } from "../../lessons/store/lessonsSlice";
 import { useDispatch } from "react-redux";
+import { updatePackageGroup } from "../../packages/store/packagesSlice";
 
 const GroupInfo = ({ group, packageId, subscriptionId }) => {
   const { openChangeGroupModal, openStatusModal } = useModal();
@@ -26,7 +27,15 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
       { packageId, currentGroupId: group?.group_id, groups: packageGroups },
       async (selectedGroupId) => {
         try {
-          await changeGroupSubscription(subscriptionId, selectedGroupId);
+          const res = await changeGroupSubscription(
+            subscriptionId,
+            selectedGroupId
+          );
+        dispatch(updatePackageGroup({ 
+  id: 5, 
+  group_id: 12, 
+  group_name: "New Group Name" 
+}));
           dispatch(fetchLessons());
 
           openStatusModal("SUCCESS", {
@@ -65,7 +74,6 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
         </span>
       </div>
       <div className="flex-shrink-0">
-
         <ActionButton
           primary
           icon={<ChangeGroup />}
@@ -74,7 +82,6 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
           <span className="text-xs sm:text-sm font-bold whitespace-nowrap">
             تغيير المجموعة
           </span>
-
         </ActionButton>
       </div>
     </div>

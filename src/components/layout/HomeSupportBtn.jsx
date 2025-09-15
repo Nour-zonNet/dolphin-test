@@ -66,13 +66,13 @@ const HomeSupportBtn = ({ className }) => {
       // رسالة للطلاب المسجلين
       const base = "اهلا فريق دعم منصة الدلفين 💙 ، احتاج الي مساعدة";
       const phoneNumber = user?.phoneNumber ? `\nو رقم جوالي المسجل علي المنصة هو : ${user.phoneNumber}` : "";
-      const suffix = subscriptionStatus ? `\nالحالة: ${subscriptionStatus}` : "";
-      return encodeURIComponent(`${base}${phoneNumber}${suffix}`);
+      // const suffix = subscriptionStatus ? `\nالحالة: ${subscriptionStatus}` : "";
+      return encodeURIComponent(`${base}${phoneNumber}`);
     } else {
       // رسالة للطلاب غير المسجلين
       return encodeURIComponent("اهلاً دعم منصة الدلفين، محتاج مساعدة 🙏");
     }
-  }, [isAuthenticated, user?.phoneNumber, subscriptionStatus]);
+  }, [isAuthenticated, user.phoneNumber]);
 
   const whatsappUrl = useMemo(() => {
     if (!supportNumber) return "";
