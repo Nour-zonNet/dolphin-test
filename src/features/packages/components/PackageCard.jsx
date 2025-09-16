@@ -20,7 +20,6 @@ const PackageCard = React.memo(
     const { openWeeklyScheduleModal, openStatusModal } = useModal();
     const { getSchedule } = usePackages();
     const schedules = useSelector((state) => state.packages.schedules);
-    console.log("PackageCard render:", item.package_start_date);
     const { group_id, package_name, group_name, name } = item;
 
     const existingSchedule = useMemo(
