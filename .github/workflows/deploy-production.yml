@@ -3,7 +3,7 @@ name: Deploy to Production
 on:
   workflow_dispatch:
     branches:
-      - deployment
+      - production
     inputs:
       environment:
         description: 'Deployment environment'

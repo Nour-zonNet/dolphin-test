@@ -1,17 +1,28 @@
 export const getNext7Days = () => {
   const days = [];
-  const optionsAR = { weekday: "long" };
-  const optionsEN = { weekday: "long" };
+  const tz = "Asia/Riyadh";
+  const optionsAR = { weekday: "long", timeZone: tz };
+  const optionsEN = { weekday: "long", timeZone: tz };
 
   for (let i = 0; i < 7; i++) {
-    const date = new Date();
-    date.setDate(date.getDate() + i);
+    const now = new Date();
+    now.setDate(now.getDate() + i);
+
+    // نجيب التاريخ مضبوط من الـ formatter
+    const iso = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(now); // YYYY-MM-DD
+
     days.push({
-      label: date.toLocaleDateString("ar-SA", optionsAR), // Arabic day
-      dayEn: date.toLocaleDateString("en-US", optionsEN).toLowerCase(), // "sunday"
-      date: date.toISOString().split("T")[0], // YYYY-MM-DD
+      label: now.toLocaleDateString("ar-SA", optionsAR),   // اسم اليوم بالعربي
+      dayEn: now.toLocaleDateString("en-US", optionsEN).toLowerCase(), // sunday, monday...
+      date: iso, // تاريخ مضبوط بالرياض YYYY-MM-DD
     });
   }
+
   return days;
 };
 
@@ -142,7 +153,7 @@ export function getRemainingDate(packageStartDate) {
     return "انتهى";
   }
 
-    return `${hour12}:${minutes} ${period}`;
+    // return `${hour12}:${minutes} ${period}`;
   };
 
 export function formatArabicDate(dateString) {
@@ -155,3 +166,43 @@ export function formatArabicDate(dateString) {
 
   return `${day} ${month} ${year}`;
 }
+export const parseDateWithTime = (dateString, timeString, timeZone = "Asia/Riyadh") => {
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+
+  // اعمل Date من الـ lessonDate لكن كـ local
+  const parts = dateString.split("-"); // YYYY-MM-DD
+  const year = Number(parts[0]);
+  const month = Number(parts[1]) - 1; // JS months start at 0
+  const day = Number(parts[2]);
+
+  // هنا بنعمل التاريخ الخام
+  const localDate = new Date(year, month, day, hours, minutes, seconds || 0);
+
+  // نجيب فرق التوقيت الفعلي لـ Riyadh
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+
+  // رجع الـ date مضبوط حسب التوقيت
+  const partsObj = Object.fromEntries(
+    formatter.formatToParts(localDate).map(p => [p.type, p.value])
+  );
+
+  return new Date(
+    `${partsObj.year}-${partsObj.month}-${partsObj.day}T${partsObj.hour}:${partsObj.minute}:${partsObj.second}`
+  );
+};
+  export const formatDateWithEnglishDay = (d, lang = "ar") => {
+    const tz = "Asia/Riyadh";
+    const dayNum = d.toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
+    const monthName = d.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { month: "long", timeZone: tz });
+    const weekdayName = d.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { weekday: "long", timeZone: tz });
+    return { dayNum, monthName, weekdayName };
+  };
