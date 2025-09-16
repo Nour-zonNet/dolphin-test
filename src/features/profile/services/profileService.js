@@ -1,99 +1,34 @@
 import api from "@/services/api";
+import { ENDPOINTS } from "../../../constants/API_ENDPOINTS";
 
-export const fetchProfile = async () => {
-  const response = await api.get("/student/info");
-  const userData = response.data.data;
-  
-  // إرجاع البيانات كما هي من الـ API بدون تعديل
-  return userData;
-};
-
-// export const addBrother = async (payload) => {
-//   const response = await api.post("/student/add-brother", payload);
-//   return response.data.data; 
-// };
-
-export const addBrother = async (formData) => {
-  const response = await api.post("/student/add-brother", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return response.data.data;
-};
-
-export const fetchClasses = async () => {
-  const response = await api.get("/student/classes");
-  return Array.isArray(response.data.data) ? response.data.data : []; 
-};
-
-export const fetchBrothers = async () => {
-  const response = await api.get("/student/brothers");
-  const brothers = Array.isArray(response.data.data) ? response.data.data : [];
-  
-  // إرجاع البيانات كما هي من الـ API بدون تعديل
-  return brothers;
-};
-
-export const switchAccount = async (studentId) => {
-  const response = await api.post("/student/switch-account", {
-    id: studentId, 
-  });
-
-  const { token, userData } = response.data.data;
-
-  if (token) {
-    localStorage.setItem("token", token);
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+class ProfileRepository {
+ 
+  async addBrother(formData) {
+    const response = await api.post(ENDPOINTS.ADD_BROTHER, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data?.data;
   }
 
-  return userData; 
-};
-
-export const updateUserImageApi = async (userId, file) => {
-  const formData = new FormData();
-  formData.append("id", userId);
-  formData.append("image", file);
-  formData.append("_method", "PATCH");
-
-  const response = await api.post("/student/update-image", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-
-  return response.data.data.userData; 
-};
-
-export const updateUserGradeApi = async (userId, gradeId) => {
-  const response = await api.put(`/student/update-grade`, {
-    user_id: userId,
-    grade_id: gradeId,
-  });
-  return response.data.data;
-};
-
-export const logoutApi = async () => {
-  try {
-    await api.post("/student/logout");
-  } catch (err) {
-    console.warn("Logout API failed (ignoring):", err?.response?.data || err);
+  async getClasses() {
+    const response = await api.get(ENDPOINTS.CLASSES);
+    return Array.isArray(response.data?.data) ? response.data.data : [];
   }
 
-  // always clear client-side
-  localStorage.removeItem("token");
-  delete api.defaults.headers.common["Authorization"];
-
-  return true;
-};
-
-// Update Profile
-export const updateProfileApi = async (payload) => {
-  const body = {
-    ...payload,
-    _method: "PATCH",
+  async getBrothers() {
+    const response = await api.get(ENDPOINTS.FETCH_BORTHER);
+    return Array.isArray(response.data?.data) ? response.data.data : [];
   }
-  const { data } = await api.post("student/update-profile", body);
-  return data;
+
+
+  async logout() {
+    await api.post(ENDPOINTS.LOGOUT);
+    return true;
+  }
 }
+
+// ✅ Singleton instance
+export const profileRepository = new ProfileRepository();
+
+// Named helpers used by slices (keeps slices decoupled from repository internals)
 

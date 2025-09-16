@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Divider from '../../ui/Divider';
-import { useClasses } from '@/features/profile/hooks/useClasses';
+import { useClasses } from '@/hooks/useClasses';
 import camera from '@/assets/images/camera.svg';
 
 const AddSiblingsModal = ({ isOpen, onClose, onSubmit, loading }) => {
   const [fullName, setFullName] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
-  const { classes, loadingClasses } = useClasses();
+  const { items, loadingClasses } = useClasses();
 
   const [profileImage, setProfileImage] = useState(null);     
   const [preview, setPreview] = useState("");                  
@@ -137,7 +137,7 @@ const handleSubmit = async (e) => {
                 >
                   <option value="">اختر الصف الدراسي الجديد</option>
                   {loadingClasses && <option disabled>جاري تحميل الصفوف...</option>}
-                  {classes?.map((cls) => (
+                  {items?.map((cls) => (
                     <option key={cls.id} value={cls.id}>{cls.name}</option>
                   ))}
                 </select>
@@ -157,7 +157,7 @@ const handleSubmit = async (e) => {
               type="submit"
               disabled={loading}
               className={`cursor-pointer w-full py-2 md:py-3 lg:py-4 flex items-center justify-center gap-2 px-4 rounded-[60px] transition-colors ${
-                loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#e89b32] hover:bg-[#d18c2d]"
+                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#e89b32] hover:bg-[#d18c2d]"
               }`}
             >
               {loading ? (

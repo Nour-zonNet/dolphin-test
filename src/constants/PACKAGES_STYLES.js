@@ -50,7 +50,7 @@ const groups = [
     style: { bgColor: "#CD6036", image: special },
   },
   {
-    ids: [197,206],
+    ids: [197, 206],
     style: { bgColor: "#F99E54", image: science },
   },
   {
