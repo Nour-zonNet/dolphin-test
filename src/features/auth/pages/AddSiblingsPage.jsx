@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { AuthLayout } from "../components";
-import { useClasses } from "@/features/profile/hooks/useClasses";
-import { LeftArrow} from "../../../utils/icons";
-import { useDispatch } from "react-redux";
-import { addBrotherLocal, addSibling } from "../../profile/store/profileSlice";
+import { useClasses } from "../../../hooks/useClasses";
+import { LeftArrow } from "../../../utils/icons";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useBrothers } from "../../profile/hooks/useBrothers";
 import profileImg from "@/assets/images/profileImage.png";
+import { useAuth } from "../hooks/useAuth";
 
 const AddSiblingsPage = () => {
-
   const [fullName, setFullName] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
   const [hasSiblings, setHasSiblings] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { classes, loadingClasses } = useClasses();
+  const { classes, loading } = useClasses();
+  const { addBrother } = useAuth();
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const { brothers } = useBrothers();
-  const dispatch = useDispatch();
+  const { brothers } = useSelector((state) => state.auth.brothers);
 
   useEffect(() => {
     if (profileImage) {
@@ -31,8 +29,6 @@ const AddSiblingsPage = () => {
       setImagePreview(null);
     }
   }, [profileImage]);
-
-  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -47,51 +43,48 @@ const AddSiblingsPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!fullName.trim()) {
       toast.error("يرجى إدخال الاسم الكامل");
       return;
     }
-    
+
     if (!gradeLevel) {
       toast.error("يرجى اختيار الصف الدراسي");
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const siblingData = {
         name: fullName.trim(),
         grade: Number(gradeLevel),
         profileImage,
       };
-      
+
       // Dispatch to Redux store
-      dispatch(addBrotherLocal(siblingData));
-      
+
       // Try to save to server
       try {
-        await dispatch(addSibling(siblingData)).unwrap();
+        await addBrother(siblingData).unwrap();
         toast.success("تمت إضافة الأخ بنجاح");
       } catch (error) {
         console.warn("Failed to save to server, but stored locally", error);
         toast.success("تمت إضافة الأخ بنجاح (محلياً)");
       }
-      
+
       // Reset form
       setFullName("");
       setGradeLevel("");
       setProfileImage(null);
       setImagePreview(null);
-    } catch  {
+    } catch {
       toast.error("فشل في إضافة الأخ");
     } finally {
       setIsSubmitting(false);
     }
   };
-
-
 
   return (
     <AuthLayout showBackButton={false}>
@@ -128,8 +121,8 @@ const AddSiblingsPage = () => {
           <div className="flex items-stretch gap-3">
             <button
               className={`flex-1 py-3 rounded-xl border transition-colors [font-family:'Cairo',Helvetica] ${
-                hasSiblings === true 
-                  ? "bg-orange-50 border-orange-500 text-orange-700" 
+                hasSiblings === true
+                  ? "bg-orange-50 border-orange-500 text-orange-700"
                   : "border-gray-300 text-gray-700 hover:bg-gray-50"
               }`}
               onClick={() => setHasSiblings(true)}
@@ -138,8 +131,8 @@ const AddSiblingsPage = () => {
             </button>
             <button
               className={`flex-1 py-3 rounded-xl border transition-colors [font-family:'Cairo',Helvetica] ${
-                hasSiblings === false 
-                  ? "bg-gray-100 border-gray-400 text-gray-700" 
+                hasSiblings === false
+                  ? "bg-gray-100 border-gray-400 text-gray-700"
                   : "border-gray-300 text-gray-700 hover:bg-gray-50"
               }`}
               onClick={() => setHasSiblings(false)}
@@ -162,11 +155,25 @@ const AddSiblingsPage = () => {
                       <img
                         className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-gray-200"
                         alt="Add photo"
-                        src={imagePreview || "https://c.animaapp.com/mf2i8zbdeyVMjf/img/group-39988.png"}
+                        src={
+                          imagePreview ||
+                          "https://c.animaapp.com/mf2i8zbdeyVMjf/img/group-39988.png"
+                        }
                       />
                       <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                          />
                         </svg>
                       </div>
                     </div>
@@ -222,7 +229,7 @@ const AddSiblingsPage = () => {
                       required
                     >
                       <option value=""> اختر الصف الدراسي </option>
-                      {loadingClasses && (
+                      {loading && (
                         <option disabled>جاري تحميل الصفوف...</option>
                       )}
                       {classes?.map((cls) => (
@@ -232,8 +239,19 @@ const AddSiblingsPage = () => {
                       ))}
                     </select>
                     <div className="absolute left-4 sm:left-6 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </div>
                   </div>
@@ -292,7 +310,6 @@ const AddSiblingsPage = () => {
         {/* Brothers List */}
         {brothers.length > 0 && (
           <section className="w-full max-w-4xl space-y-4 mb-8 border-t border-gray-300 py-6 px-4 sm:px-6 md:px-8 md:mb-12">
-           
             {brothers.map((bro) => (
               <div
                 key={bro.id}
@@ -311,7 +328,8 @@ const AddSiblingsPage = () => {
                       {bro.name}
                     </div>
                     <div className="font-normal text-sm text-gray-600 text-right [font-family:'Cairo',Helvetica]">
-                      {classes?.find(c => c.id === bro.grade.toString())?.name || `الصف ${bro.grade}`}
+                      {classes?.find((c) => c.id === bro.grade.toString())
+                        ?.name || `الصف ${bro.grade}`}
                     </div>
                   </div>
                 </div>
