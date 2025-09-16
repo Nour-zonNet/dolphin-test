@@ -1,4 +1,3 @@
-import { HomeSupportBtn } from "@/components";
 import { HorizontalLine, VerticalLine } from "@/utils/Illustrations";
 import { LessonHeader, VideoPlayer, AttachmentsSection, QuizSection } from "./components";
 
@@ -19,7 +18,6 @@ const LessonContentPage = () => {
               <QuizSection />
             </div>
           </div>
-          <HomeSupportBtn />
         </div>
       </div>
     </>

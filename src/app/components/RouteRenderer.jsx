@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { AppLayout } from "@/components/layout";
+import { HomeSupportBtn } from "@/components/layout";
 import withAuth from "@/features/auth/hoc/withAuth";
 import { Overlay, Spinner } from "@/components/feedback";
 
@@ -24,14 +25,26 @@ const RouteRenderer = ({ route, children }) => {
   // Use layout flag to determine if AppLayout should be applied
   const shouldUseLayout = route.layout !== false; // Default to true unless explicitly set to false
 
+  // Flags for optional UI elements
+  const showNavbar = route.navbar !== false; // default true
+  const showMobileNav = route.mobileNav !== false; // default true
+  const showHomeSupportBtn = route.homeSupportBtn === true; // default false
+
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
       {shouldUseLayout ? (
-        <AppLayout>
+        <AppLayout
+          showNavbar={showNavbar}
+          showMobileNav={showMobileNav}
+          showHomeSupportBtn={showHomeSupportBtn}
+        >
           <ProtectedComponent />
         </AppLayout>
       ) : (
-        <ProtectedComponent />
+        <>
+          <ProtectedComponent />
+          {showHomeSupportBtn && <HomeSupportBtn />}
+        </>
       )}
     </Suspense>
   );

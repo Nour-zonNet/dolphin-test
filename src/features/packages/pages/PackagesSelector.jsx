@@ -6,7 +6,6 @@ import PlanCard from "../components/PlanCard";
 import PlansFooter from "../components/PlansFooter";
 import { InfoIcon } from "@/utils/icons";
 import { Header } from "@/components/layout";
-import { HomeSupportBtn } from "@/components/layout";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 import notFoundPackages from "@/assets/images/allPackages.png";
 
@@ -180,7 +179,6 @@ const DataPlanSelector = () => {
           selectedCount={selectedPlanIds.length}
         />
       </div>
-      <HomeSupportBtn />
     </>
   );
 };

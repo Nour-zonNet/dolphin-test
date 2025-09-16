@@ -126,11 +126,13 @@ export const routes = [
     path: "/schedule",
     element: LessonsSchedule,
     protected: true,
+     homeSupportBtn: true,
   },
   {
     path: "/subscriptions",
     element: Packages,
     protected: true,
+     homeSupportBtn: true,
   },
   {
     path: "/manage-subscription",
@@ -179,7 +181,9 @@ export const routes = [
     path: "/profile",
     element: ProfilePage,
     protected: true,
-    layout: false,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
   },
   {
     path: "/balance-details",
