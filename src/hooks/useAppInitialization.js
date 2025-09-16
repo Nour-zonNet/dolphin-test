@@ -12,27 +12,24 @@ import { useClasses } from "./useClasses";
 
 export const useAppInitialization = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const initialized = useRef(false);
+  const { user, token } = useSelector((state) => state.auth); // ✅ rely only on Redux state
+  const initialized = useRef(null); // store last initialized token
   const { getBrothers } = useAuth();
   const { getClasses } = useClasses();
 
   useEffect(() => {
     const initializeApp = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token || initialized.current) return;
-      initialized.current = true;
+      if (!token || initialized.current === token) return; // ✅ prevent duplicate runs for same token
+      initialized.current = token;
 
       try {
-        // Always ensure we have user info
+        // Ensure we have user info
         let currentUser = user;
         if (!currentUser) {
-          const result = await dispatch(fetchCurrentUser()).unwrap();
-          currentUser = result;
+          currentUser = await dispatch(fetchCurrentUser()).unwrap();
         }
 
-        // Now fetch related data in parallel
+        // Fetch related data in parallel
         await Promise.all([
           dispatch(fetchAllPackages()),
           dispatch(fetchMyPackages()),
@@ -43,10 +40,10 @@ export const useAppInitialization = () => {
         ]);
       } catch (error) {
         console.error("❌ Failed to initialize app:", error);
-        initialized.current = false; // allow retry
+        initialized.current = null; // allow retry if initialization fails
       }
     };
 
     initializeApp();
-  }, [dispatch, getBrothers, getClasses, user]);
+  }, [dispatch, getBrothers, getClasses, token, user]); // ✅ token triggers re-run
 };

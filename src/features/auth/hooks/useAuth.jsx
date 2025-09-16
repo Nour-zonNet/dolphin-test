@@ -36,11 +36,23 @@ export const useAuth = () => {
     [token, user, loading]
   );
 
+  const dispatchLogin = useCallback(
+    (credentials) => dispatch(loginUser(credentials)),
+    [dispatch]
+  );
+  const dispatchRegisterUser = useCallback(
+    (newUser) => dispatch(registerUser(newUser)),
+    [dispatch]
+  );
+  registerUser;
   const shouldRedirectToLogin = useCallback(
     () => Boolean(!loading && (!token || !user)),
     [token, user, loading]
   );
-
+  const dispatchCheckPhone = useCallback(
+    (bro) => dispatch(checkPhone(bro)),
+    [dispatch]
+  );
   // Dispatch wrappers
   const dispatchSendOtpResetPassword = useCallback(
     (credentials) => dispatch(sendOtpResetPassword(credentials)),
@@ -95,10 +107,11 @@ export const useAuth = () => {
       isFullyAuthenticated,
       shouldRedirectToLogin,
       loginUser,
-      checkPhone,
-      registerUser,
+      checkPhone: dispatchCheckPhone,
+      registerUser: dispatchRegisterUser,
       verifyOtp,
       brothers,
+      login: dispatchLogin,
       logout: dispatchLogout,
       refreshUser: fetchCurrentUser,
       sendOtpResetPassword: dispatchSendOtpResetPassword,
@@ -119,7 +132,10 @@ export const useAuth = () => {
       isAuthLoading,
       isFullyAuthenticated,
       shouldRedirectToLogin,
+      dispatchCheckPhone,
+      dispatchRegisterUser,
       brothers,
+      dispatchLogin,
       dispatchLogout,
       dispatchSendOtpResetPassword,
       dispatchVerifyOtpResetPassword,
