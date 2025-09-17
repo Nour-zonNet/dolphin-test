@@ -75,7 +75,8 @@ export const routes = [
     path: "/",
     element: HomePage,
     public: true,
-    layout: false, // Home page doesn't need AppLayout
+    layout: false,
+    homeSupportBtn: true,
   },
 
   // Auth Routes
@@ -93,13 +94,50 @@ export const routes = [
   // },
   {
     path: "/auth",
+
     children: [
-      { path: "phone", element: PhonePage, public: true, layout: false },
-      { path: "otp", element: OtpPage, public: true, layout: false },
-      { path: "register", element: RegisterPage, public: true, layout: false },
-      { path: "password", element: PasswordPage, public: true, layout: false },
-      { path: "siblings", element: LoginSiblings, public: true, layout: false },
-      { path: "add", element: AddSiblingsPage, public: true, layout: false },
+      {
+        path: "phone",
+        element: PhonePage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "otp",
+        element: OtpPage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "register",
+        element: RegisterPage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "password",
+        element: PasswordPage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "siblings",
+        element: LoginSiblings,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "add",
+        element: AddSiblingsPage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
       {
         path: "forgetpassword",
         element: ForgotPasswordPage,
@@ -126,13 +164,13 @@ export const routes = [
     path: "/schedule",
     element: LessonsSchedule,
     protected: true,
-     homeSupportBtn: true,
+    homeSupportBtn: true,
   },
   {
     path: "/subscriptions",
     element: Packages,
     protected: true,
-     homeSupportBtn: true,
+    homeSupportBtn: true,
   },
   {
     path: "/manage-subscription",

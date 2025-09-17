@@ -7,7 +7,6 @@ const AuthLayout = ({ children, handleBack, showBackButton = true }) => {
       <div className="relative px-5 sm:px-6 mt-25 md:mt-30 lg:mt-35">
         {children}
       </div>
-      <HomeSupportBtn />
     </MainLayout>
   );
 };

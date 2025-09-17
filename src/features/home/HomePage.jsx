@@ -1,5 +1,4 @@
 import { Navigate } from "react-router-dom";
-import { HomeSupportBtn } from "../../components";
 import { RightKite } from "../../utils/Illustrations";
 import { FooterIllustration } from "../auth/components";
 import { useAuth } from "../auth/hooks/useAuth";
@@ -32,7 +31,6 @@ const HomePage = () => {
       </main>
 
       {/* Floating Social Buttons */}
-      <HomeSupportBtn />
 
       {/* Footer Illustration */}
       <FooterIllustration />
