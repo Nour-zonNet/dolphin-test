@@ -81,7 +81,7 @@ const PackageCard = React.memo(
     const Icon = Icons[config.icon];
 
     return (
-      <div className="relative w-full mx-auto pl-3 max-w-2xl">
+      <div className="relative w-full mx-auto pl-3 max-w-3xl">
         {/* Decorative Star */}
         <div className="absolute z-20 -left-6 md:-left-8 -top-12 mt-2">
           <Star className="w-20 md:w-24" fill={color} />

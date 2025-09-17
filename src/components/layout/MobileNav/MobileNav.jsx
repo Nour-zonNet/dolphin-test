@@ -14,7 +14,7 @@ const MobileNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full bg-white shadow-[0_-1px_1px_0_rgba(0,0,0,0.15)] z-50">
-    <div className="flex justify-between px-18  items-stretch py-2 h-16">
+    <div className="flex justify-between px-6 md:px-18 items-stretch py-2 h-16">
 
         {/* Home */}
         <button

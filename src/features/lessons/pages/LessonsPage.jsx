@@ -11,7 +11,7 @@ const SchedulePage = () => {
       overflow-x-hidden
       overflow-y-auto
     ">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto px-4">
         <ScheduleSlider />
       </div>
 

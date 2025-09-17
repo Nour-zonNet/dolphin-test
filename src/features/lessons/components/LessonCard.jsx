@@ -130,7 +130,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     });
   }, [navigate, item])
  const renderButton = useCallback(() => {
-  // عند انتهاء الحصة: لا نعرض زر الدخول
   if (lessonStatus === "ended") {
     return (
       <>
@@ -142,7 +141,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
             className="w-16 xs:w-auto"
           />
         </div>
-        {/* <button
+        <button
           onClick={(e) => {
             e.stopPropagation();
             handleOpenContent();
@@ -151,7 +150,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         >
           <FileIcon />
           عرض المحتوى
-        </button> */}
+        </button>
     </>
     );
   }
@@ -199,77 +198,6 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
 // }, [lessonStatus, canEnterLesson, isExpired, handleEnterLesson]);
 }, [lessonStatus, canEnterNow, handleEnterLesson]);
 
-  // const { statusText, statusColor, statusIcon } = useMemo(() => {
-  //   const now = new Date();
-
-  //   // نشوف هل يوم الحصة هو نفس يوم النهارده
-  //   const isSameDay =
-  //     start.getDate() === now.getDate() &&
-  //     start.getMonth() === now.getMonth() &&
-  //     start.getFullYear() === now.getFullYear();
-
-  //   if (!isSameDay) {
-  //     return {
-  //       statusText: `الحصة يوم ${start.toLocaleDateString("ar-EG", {
-  //         weekday: "long",
-  //         day: "numeric",
-  //         month: "long",
-  //         timeZone: "Asia/Riyadh",
-  //       })} - ${formatArabicTime(item.start_time)}`,
-  //       statusColor: "text-[#ba7c28]",
-  //       statusIcon: <SandGlass className="w-4" />,
-  //     };
-  //   }
-
-  //   if (lessonStatus === "upcoming") {
-  //     if (timeRemaining && !isExpired && !canEnterLesson) {
-  //       return {
-  //         statusText: timeRemaining, // يعرض العدّاد
-  //         statusColor: "text-[#ba7c28]",
-  //         statusIcon: <SandGlass className="w-4" />,
-  //       };
-  //     } else if (canEnterLesson) {
-  //       return {
-  //         statusText: "يمكن الدخول الآن",
-  //         statusColor: "text-green-600",
-  //         statusIcon: <NotifyIcon className="w-4" />,
-  //       };
-  //     } else if (isExpired) {
-  //       return {
-  //         statusText: "يمكن الدخول الآن",
-  //         statusColor: "text-green-600",
-  //         statusIcon: <NotifyIcon className="w-4" />,
-  //       };
-  //     } else {
-  //       return {
-  //         statusText: "قريباً",
-  //         statusColor: "text-[#ba7c28]",
-  //         statusIcon: <SandGlass className="w-4" />,
-  //       };
-  //     }
-  //   }
-
-  //   if (lessonStatus === "live") {
-  //     return {
-  //       statusText: "الحصة بدأت",
-  //       statusColor: "text-green-600",
-  //       statusIcon: <NotifyIcon className="w-4" />,
-  //     };
-  //   }
-
-  //   return {
-  //     statusText: "انتهت الحصة",
-  //     statusColor: "text-red-500",
-  //     statusIcon: <TimeCheck className="w-4" />,
-  //   };
-  // }, [
-  //   lessonStatus,
-  //   timeRemaining,
-  //   canEnterLesson,
-  //   isExpired,
-  //   item.start_time,
-  //   start,
-  // ]);
   const { statusText, statusColor, statusIcon } = useMemo(() => {
     const now = new Date();
 

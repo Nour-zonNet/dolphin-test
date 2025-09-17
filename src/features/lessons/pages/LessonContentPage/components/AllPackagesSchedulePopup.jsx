@@ -1,4 +1,4 @@
-// AllPackagesSchedulePopup.jsx
+
 import { useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Cross, Clock, Teacher } from "@/utils/icons";
@@ -10,33 +10,26 @@ import { Spinner } from "@/components/feedback";
 
 const WEEK_ORDER = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
 
-/** Map day value (Arabic/English/number) → "sunday".."saturday"
- *  Fallback to start_date if provided and day raw is missing/invalid.
- */
 function normalizeDay(dayRaw, startDate) {
   if (dayRaw == null) {
     if (startDate) {
       const d = new Date(startDate);
-      return WEEK_ORDER[d.getDay()] || null; // JS: 0 Sunday..6 Saturday
+      return WEEK_ORDER[d.getDay()] || null; 
     }
     return null;
   }
 
-  // numeric? (string or number)
   const n = Number(dayRaw);
   if (!Number.isNaN(n)) {
-    // Support both 0-6 (JS style) and 1-7 (some backends: 1=Sunday or 1=Monday).
     if (n >= 0 && n <= 6) return WEEK_ORDER[n];
     if (n >= 1 && n <= 7) {
-      // Try 1=Sunday first; if your backend is 1=Monday, flip mapping here.
-      const idxSundayBased = (n - 1) % 7; // 1→0 (Sun), 7→6 (Sat)
+      const idxSundayBased = (n - 1) % 7; 
       return WEEK_ORDER[idxSundayBased];
     }
   }
 
   const s = String(dayRaw).trim().toLowerCase();
 
-  // English
   const EN = {
     sunday: "sunday", sun: "sunday",
     monday: "monday", mon: "monday",
@@ -48,7 +41,6 @@ function normalizeDay(dayRaw, startDate) {
   };
   if (EN[s]) return EN[s];
 
-  // Arabic (with/without hamza/definite article variations)
   const AR = {
     "الأحد": "sunday", "الاحد": "sunday", "احد": "sunday",
     "الاثنين": "monday", "الإثنين": "monday", "الاثنينِ": "monday", "اثنين": "monday", "إثنين": "monday",
@@ -58,7 +50,6 @@ function normalizeDay(dayRaw, startDate) {
     "الجمعة": "friday", "جمعه": "friday", "الجمعةِ": "friday",
     "السبت": "saturday", "سبت": "saturday",
   };
-  // quick normalize hamza/taa marbuta variants
   const sAr = s
     .replace(/أ|إ|آ/g, "ا")
     .replace(/ة/g, "ه")
@@ -78,16 +69,16 @@ function normalizeDay(dayRaw, startDate) {
 
 export default function AllPackagesSchedulePopup({ open, setOpen }) {
   const { t } = useTranslation();
-  const { items, loading, error } = useLessons();
-
+  const { items, loading, error, refetch } = useLessons();
+  const loadingUi = open && (loading || (!items?.length && !error));
   // Lock body scroll while open
   useEffect(() => {
     if (!open) return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = original; };
-  }, [open]);
-
+    if (items?.length) return;  
+    if (typeof refetch === "function") {
+      refetch();
+    }
+  }, [open, items?.length, refetch]);
   // Group and sort lessons by normalized day + time
   const mergedByDay = useMemo(() => {
     if (!open) return {};
@@ -163,14 +154,14 @@ export default function AllPackagesSchedulePopup({ open, setOpen }) {
           <Divider />
 
           {/* Loading */}
-          {loading && (
+          {loadingUi  && (
             <div className="flex justify-center items-center py-8">
               <Spinner />
             </div>
           )}
 
           {/* Content */}
-          {!loading && !error && !isEmpty && (
+          {!loadingUi && !error && !isEmpty && (
             <>
               {/* Mobile */}
               <div className="block sm:hidden pb-4 px-4 sm:px-6">
@@ -264,14 +255,14 @@ export default function AllPackagesSchedulePopup({ open, setOpen }) {
           )}
 
           {/* Empty */}
-          {!loading && !error && isEmpty && (
+          {!loadingUi && !error && isEmpty && (
             <div className="text-center py-8 text-gray-500">
               {t("packages.noLesson")}
             </div>
           )}
 
           {/* Error */}
-          {!loading && error && (
+          {!loadingUi && error && (
             <div className="text-center py-8 text-red-600">
               {t("common.error")} — {String(error?.message || t("common.tryAgain"))}
             </div>
