@@ -614,10 +614,11 @@ export const Clock = ({ width = "24", height = "25", fill = "#0C2D40" }) => (
   </svg>
 );
 
-export const Teacher = ({ width = "21", height = "22", fill = "#165072" }) => (
+export const Teacher = ({ width = "21", height = "22", fill = "#165072",className }) => (
   <svg
     width={width}
     height={height}
+    className={className}
     viewBox="0 0 21 22"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

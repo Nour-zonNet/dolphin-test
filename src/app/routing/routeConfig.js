@@ -7,13 +7,13 @@ import AddSiblingsPage from "../../features/auth/pages/AddSiblingsPage";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
-const LessonsSchedule = lazy(() => import("@/features/lessons"));
+const SchedulePage = lazy(() => import("@/features/lessons"));
 const Packages = lazy(() => import("@/features/packages"));
 const LessonContentPage = lazy(() =>
   import("@/features/lessons/pages/LessonContentPage")
 );
 const ManageSubscription = lazy(() => import("@/features/subscription"));
-const PackageContent = lazy(() =>
+const PackagesContent = lazy(() =>
   import("@/features/packages/pages/PackagesContent")
 );
 const LessonExercise = lazy(() =>
@@ -162,7 +162,7 @@ export const routes = [
   // Protected Routes (require layout)
   {
     path: "/schedule",
-    element: LessonsSchedule,
+    element: SchedulePage,
     protected: true,
     homeSupportBtn: true,
   },
@@ -193,8 +193,11 @@ export const routes = [
   },
   {
     path: "/packages-content",
-    element: PackageContent,
+    element: PackagesContent,
     protected: true,
+   navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
   },
 
   // Nested Schedule Routes

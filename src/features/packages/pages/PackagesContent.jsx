@@ -1,120 +1,112 @@
+import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { Header } from "../../../components/layout";
 import { Book, Group, Teacher } from "../../../utils/icons";
 import { Card } from "../components/Card";
 import SearchFilterBar from "../components/SearchFilterBar";
-import React from "react";
-import { useNavigate } from "react-router-dom";
-
-// Data
-const packageData = [
-  {
-    id: 1,
-    title: "باقة الصحة العامة",
-    backgroundColor: "bg-[#0077b6]",
-    image:
-      "https://c.animaapp.com/mezbipdmunBbmz/img/adobe-express---file-2.png",
-    instructor: "أ. حنان",
-    group: "المجموعة الأولي",
-  },
-  {
-    id: 2,
-    title: "باقة ركن المسلم",
-    backgroundColor: "bg-[#4CAF50]",
-    image:
-      "https://c.animaapp.com/mezbipdmunBbmz/img/adobe-express---file--3--1.png",
-    instructor: "أ. حنان",
-    group: "المجموعة الأولي",
-  },
-  {
-    id: 3,
-    title: "باقة ركن المسلم",
-    backgroundColor: "bg-[#4CAF50]",
-    image:
-      "https://c.animaapp.com/mezbipdmunBbmz/img/adobe-express---file--3--1.png",
-    instructor: "أ. محمود",
-    group: "المجموعة الثانية",
-  },
-];
+import { usePackages } from "../hooks/usePackages";
+import { packageFactory } from "../factory/packageFactory";
 
 const PackageContent = () => {
-  const [filteredPackages, setFilteredPackages] = React.useState(packageData);
+  const [filteredPackages, setFilteredPackages] = useState([]);
+  const { mine } = usePackages();
   const navigate = useNavigate();
-  return (
-    <div className="min-h-screen bg-white flex flex-col  ">
-      {/* Status Bar */}
 
-      {/* Header */}
-      <header className="w-full bg-white shadow-sm py-4 px-2">
-        <h1 className="text-center font-bold text-xl sm:text-2xl">
-          محتوى الباقات
-        </h1>
-      </header>
+  // Sync packages when mine changes
+  useEffect(() => {
+    setFilteredPackages(mine || []);
+  }, [mine]);
 
-      {/* Search Bar */}
-      <SearchFilterBar
-        packages={packageData}
-        onFilterChange={setFilteredPackages}
-        placeholder="ابحث عن باقة..."
-      />
+  // 🔹 Memoize package cards to avoid recalculating every render
+  const packageCards = useMemo(() => {
+    return filteredPackages.map((packageItem, index) => {
+      const pkgFactory = packageFactory(packageItem.id); // memoization helps if heavy
 
-      {/* Package Cards */}
-      <div className="flex flex-col   gap-4 sm:gap-6 mt-4 mb-8 px-4 sm:px-6">
-        {filteredPackages.map((packageItem, index) => (
-          <Card
-            key={packageItem.id}
-            className="w-full rounded-2xl overflow-hidden border border-[#8c8c8c] shadow-md"
-          >
-            <div className="flex flex-row">
-              {/* Image Section */}
-              <div
-                className={`w-40 lg:w-56 h-48 ${packageItem.backgroundColor} flex items-center justify-center p-4`}
-              >
-                <img
-                  className={`max-w-full max-h-32 object-contain ${
-                    index === 0 ? "h-32" : "h-28"
-                  }`}
-                  alt={packageItem.title}
-                  src={packageItem.image}
-                />
-              </div>
+      return (
+        <Card
+          key={packageItem.id || index}
+          className="w-full rounded-2xl overflow-hidden border border-bordercolor/30 "
+        >
+          <div className="flex flex-row">
+            {/* Image Section */}
+            <div
+              style={{ backgroundColor: pkgFactory.bgColor }}
+              className="w-30 md:w-40 lg:w-56 flex items-center justify-center p-4"
+            >
+              <img
+                className={`max-w-full object-contain ${
+                  index === 0 ? "w-20" : "w-20"
+                }`}
+                alt={packageItem.package_name}
+                src={pkgFactory.image}
+              />
+            </div>
 
-              {/* Content Section */}
-              <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between">
-                <h2 className="font-semibold text-black text-lg sm:text-xl mb-3 sm:mb-4 ">
-                  {packageItem.title}
-                </h2>
+            {/* Content Section */}
+            <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between">
+              <h2 className="font-semibold text-black text-sm md:text-lg sm:text-xl mb-3 sm:mb-4">
+                {packageItem.package_name}
+              </h2>
 
-                <div className="flex flex-col gap-3 sm:gap-4">
-                  <div className="flex flex-col sm:flex-row  gap-3 sm:gap-10">
-                    <div className="flex items-center gap-2 sm:gap-4 justify-start sm:justify-start">
-                      <Teacher className="w-5 h-5 sm:w-6 sm:h-6 text-foundation-bluenormal-active flex-shrink-0" />
-                      <div className="font-semibold text-foundation-bluenormal-active text-base sm:text-lg">
+              <div className="flex flex-col gap-3 sm:gap-4">
+                <div className="flex sm:flex-row gap-3 sm:gap-10">
+                  {/* Instructor */}
+                  {packageItem.instructor && (
+                    <div className="flex items-center gap-2 sm:gap-4 justify-start">
+                      <Teacher className="w-4  sm:w-5   " />
+                      <div className="font-semibold text-xs sm:text-base md:text-lg">
                         {packageItem.instructor}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 sm:gap-4 justify-START sm:justify-start">
-                      <Group className="w-5 h-5 sm:w-6 sm:h-6 text-foundation-bluenormal-active flex-shrink-0" />
-                      <div className="font-semibold text-foundation-bluenormal-active text-base sm:text-lg">
-                        {packageItem.group}
-                      </div>
+                  )}
+
+                  {/* Group */}
+                  <div className="flex items-center gap-2 sm:gap-4 justify-start">
+                    <Group className="w-4 h-4 sm:w-6 sm:h-6 text-foundation-bluenormal-active flex-shrink-0" />
+                    <div className="font-semibold text-xs sm:text-base md:text-lg">
+                      {packageItem.group_name}
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => navigate("/show-lessons")}
-                      className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-orangedeep hover:bg-foundationorangenormal-hover rounded-3xl text-deepnavy font-semibold text-sm sm:text-base"
-                    >
-                      <Book className="w-6 h-6 sm:w-8 sm:h-8" />
-                      عرض الدروس
-                    </button>
-                  </div>
+                {/* Actions */}
+                <div className="flex justify-end">
+                  <button
+                    // onClick={() => navigate("/show-lessons")}
+                    aria-label={`عرض الدروس الخاصة بباقة ${packageItem.package_name}`}
+                    className="text-xs  md:text-lg flex items-center gap-2 px-3 sm:px-4 py-2 bg-orangedeep hover:bg-foundationorangenormal-hover rounded-3xl text-deepnavy font-semibold sm:text-base"
+                  >
+                    <Book className="w-4 h-4 sm:w-6 sm:h-6" />
+                    عرض الدروس
+                  </button>
                 </div>
               </div>
             </div>
-          </Card>
-        ))}
+          </div>
+        </Card>
+      );
+    });
+  }, [filteredPackages, navigate]); // recompute only when data changes
+
+  return (
+    <div className="min-h-screen bg-white flex flex-col mb-10">
+      {/* Header */}
+      <Header showArrow={false} title="محتوى الباقات" />
+      <div className="px-4 sm:px-6 md:px-8 ">
+        {/* Search Bar */}
+        <SearchFilterBar
+          packages={mine || []}
+          onFilterChange={setFilteredPackages}
+          placeholder="ابحث عن باقة..."
+        />
+
+        {/* Package Cards */}
+        <div className="flex flex-col   gap-4 sm:gap-6 mt-4 mb-8 ">
+          {packageCards}
+        </div>
       </div>
     </div>
   );
 };
+
 export default PackageContent;
