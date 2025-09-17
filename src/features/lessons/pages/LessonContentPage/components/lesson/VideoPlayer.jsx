@@ -4,6 +4,7 @@ import stopVideo from "@/assets/schedule/stop-video.svg";
 import { Fullscreen, Settings, DatePicker, Clock, Teacher } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
 import lessonVideo from "@/assets/videos/lesson.mp4";
+import { useContent } from "../../../../hooks/useContent";
 
 const formatTime = (sec) => {
   if (!isFinite(sec) || sec < 0) return "0:00";
@@ -505,72 +506,6 @@ useEffect(() => {
           </div>
         </div>
       )}
-
-      {/* SETTINGS — mobile bottom sheet */}
-      {/* {showSettings && (
-        <div
-          className="md:hidden absolute left-0 right-0 bottom-0 rounded-t-2xl p-4 max-h-[70vh] overflow-y-auto bg-black/80 text-white border-t border-white/10 backdrop-blur-sm z-30"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-white/30" />
-          <div className="mb-2 text-sm font-semibold">{t("Playback speed") || "Playback speed"}</div>
-          <div className="grid grid-cols-4 gap-2">
-            {[0.5, 1, 1.25, 1.5].map((r) => (
-              <button
-                key={r}
-                onClick={() => setSpeed(r)}
-                className={`px-2 py-1 rounded-md border text-sm ${
-                  playbackRate === r ? "bg-white text-black" : "border-white/30 hover:bg-white/10"
-                }`}
-              >
-                {r}×
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-3 border-t border-white/10 pt-3 space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span>{t("Mute") || "Mute"}</span>
-              <button onClick={toggleMute} className="px-2 py-1 rounded-md border border-white/30 hover:bg-white/10 text-xs">
-                {muted || volume === 0 ? "🔇" : volume < 0.5 ? "🔉" : "🔊"}
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <span>{t("Volume") || "Volume"}</span>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.01}
-                value={muted ? 0 : volume}
-                onChange={(e) => setVol(parseFloat(e.target.value))}
-                className="w-28 accent-white"
-              />
-            </div>
-
-            {"pictureInPictureEnabled" in document && (
-              <div className="flex items-center justify-between text-sm">
-                <span>{t("Picture-in-Picture") || "Picture-in-Picture"}</span>
-                <button onClick={togglePiP} className="px-2 py-1 rounded-md border border-white/30 hover:bg-white/10 text-xs">
-                  {document.pictureInPictureElement ? (t("Exit") || "Exit") : (t("Enter") || "Enter")}
-                </button>
-              </div>
-            )}
-
-            <div className="flex items-center justify-between text-sm">
-              <span>{t("Loop") || "Loop"}</span>
-              <input
-                type="checkbox"
-                onChange={(e) => {
-                  if (videoRef.current) videoRef.current.loop = e.target.checked;
-                }}
-                className="accent-white"
-              />
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 
