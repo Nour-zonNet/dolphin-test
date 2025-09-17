@@ -6,7 +6,7 @@ import {
 } from "../store/packagesSlice";
 
 export const usePackages = () => {
-  const { all, mine, loading, error } = useSelector(
+  const { all, mine, loading, error, telegram } = useSelector(
     (state) => state.packages || {}
   );
   const dispatch = useDispatch();
@@ -18,6 +18,7 @@ export const usePackages = () => {
     mine,
     loading,
     error,
+    telegram,
     getSchedule: getSchedule,
     fetchAllPackages: fetchAllPackages,
     fetchMyPackages: fetchMyPackages,

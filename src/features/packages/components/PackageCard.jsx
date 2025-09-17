@@ -27,51 +27,52 @@ const PackageCard = React.memo(
       [schedules, group_id]
     );
 
-const handleOpenSchedule = useCallback(async () => {
-  const showError = (title, message) => {
-    openStatusModal("ERROR", { title, message });
-  };
+    const handleOpenSchedule = useCallback(async () => {
+      const showError = (title, message) => {
+        openStatusModal("ERROR", { title, message });
+      };
 
-  if (status === "expired") {
-    showError("الجدول غير متاح", "لا يمكن عرض الجدول للباقات المنتهية.");
-    return;
-  }
+      if (status === "expired") {
+        showError("الجدول غير متاح", "لا يمكن عرض الجدول للباقات المنتهية.");
+        return;
+      }
 
-  if (existingSchedule) {
-    openWeeklyScheduleModal({
-      data: {
-        groupId: group_id,
-        packageName: package_name,
-        schedule: existingSchedule,
-        image,
-        color,
-      },
-    });
-    return;
-  }
+      if (existingSchedule) {
+        openWeeklyScheduleModal({
+          data: {
+            groupId: group_id,
+            packageName: package_name,
+            schedule: existingSchedule,
+            image,
+            color,
+          },
+        });
+        return;
+      }
 
-  try {
-    const { groupId, schedule } = await getSchedule(group_id).unwrap();
+      try {
+        const { groupId, schedule } = await getSchedule(group_id).unwrap();
 
-   
-
-    openWeeklyScheduleModal({
-      data: { groupId, packageName: package_name, schedule, image, color },
-    });
-  } catch (err) {
-    showError("الجدول غير متاح", err?.message ?? "حدث خطأ أثناء محاولة جلب الجدول.");
-  }
-}, [
-  status,
-  existingSchedule,
-  group_id,
-  package_name,
-  openStatusModal,
-  openWeeklyScheduleModal,
-  image,
-  color,
-  getSchedule,
-]);
+        openWeeklyScheduleModal({
+          data: { groupId, packageName: package_name, schedule, image, color },
+        });
+      } catch (err) {
+        showError(
+          "الجدول غير متاح",
+          err?.message ?? "حدث خطأ أثناء محاولة جلب الجدول."
+        );
+      }
+    }, [
+      status,
+      existingSchedule,
+      group_id,
+      package_name,
+      openStatusModal,
+      openWeeklyScheduleModal,
+      image,
+      color,
+      getSchedule,
+    ]);
 
     // Status configuration
     const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
@@ -151,7 +152,9 @@ const handleOpenSchedule = useCallback(async () => {
               </div>
             ) : (
               <div className="px-4  py-5 ">
-                <span className="text-[#ba7c28]  font-semibold">الباقة لم تبداء بعد</span>
+                <span className="text-[#ba7c28]  font-semibold">
+                  الباقة لم تبداء بعد
+                </span>
                 <div className="flex flex-row items-center   relative z-10">
                   <Calender className="w-4 h-4" />
 
