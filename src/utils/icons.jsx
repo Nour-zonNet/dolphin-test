@@ -1808,3 +1808,14 @@ export const FileIcon = ({ className }) => (
   </svg>
 );
 
+export const DashedArrow = ({ className }) => (
+  <svg className={className} viewBox="0 0 44 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M43 5.75C43.4142 5.75 43.75 5.41421 43.75 5C43.75 4.58579 43.4142 4.25 43 4.25L43 5L43 5.75ZM0 5L7.5 9.33012L7.5 0.66987L0 5ZM43 5L43 4.25L39.4167 4.25L39.4167 5L39.4167 5.75L43 5.75L43 5ZM32.25 5L32.25 4.25L25.0833 4.25L25.0833 5L25.0833 5.75L32.25 5.75L32.25 5ZM17.9167 5L17.9167 4.25L10.75 4.25L10.75 5L10.75 5.75L17.9167 5.75L17.9167 5Z" fill="#185A80"/>
+  </svg>
+);
+
+export const Arrow = ({ className }) => (
+  <svg className={className} width="44" height="10" viewBox="0 0 44 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M43 5.75C43.4142 5.75 43.75 5.41421 43.75 5C43.75 4.58579 43.4142 4.25 43 4.25L43 5L43 5.75ZM0 5L7.5 9.33012L7.5 0.66987L0 5ZM43 5L43 4.25L6.75 4.25L6.75 5L6.75 5.75L43 5.75L43 5Z" fill="#185A80"/>
+  </svg>
+);

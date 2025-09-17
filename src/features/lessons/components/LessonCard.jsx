@@ -141,7 +141,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
             className="w-16 xs:w-auto"
           />
         </div>
-        <button
+        {/* <button
           onClick={(e) => {
             e.stopPropagation();
             handleOpenContent();
@@ -150,7 +150,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         >
           <FileIcon />
           عرض المحتوى
-        </button>
+        </button> */}
     </>
     );
   }
