@@ -14,7 +14,6 @@ const Navbar = () => {
           src={dolphinLogo}
           alt="logo"
           loading="lazy"
-
           className="h-12 sm:h-16 md:h-20 w-auto object-contain"
         />
       </div>
@@ -26,8 +25,16 @@ const Navbar = () => {
           <LanguageSwitcher />
         </div> */}
 
-        <button   onClick={() => window.open("https://learnatdolphin.org/", "_blank", "noopener,noreferrer")}
- className="flex items-center gap-1 sm:gap-2 border border-orangedeep hover:bg-orangedeep focus:bg-orangedeep focus:outline-0 transition rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm md:text-base font-medium text-[#0C2D40] cursor-pointer">
+        <button
+          onClick={() =>
+            window.open(
+              "https://learnatdolphin.org/",
+              "_blank",
+              "noopener,noreferrer"
+            )
+          }
+          className="flex items-center gap-1 sm:gap-2 border border-orangedeep hover:bg-orangedeep focus:bg-orangedeep focus:outline-0 transition rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm md:text-base font-medium text-[#0C2D40] cursor-pointer"
+        >
           <Books className="w-4 sm:w-5 md:w-6 h-auto" />
           {t("buttons.subscribe")}
         </button>
