@@ -27,59 +27,51 @@ const PackageCard = React.memo(
       [schedules, group_id]
     );
 
-    const handleOpenSchedule = useCallback(async () => {
-      if (status === "expired") {
-        openStatusModal("ERROR", {
-          title: "الجدول غير متاح",
-          message: "لا يمكن عرض الجدول للباقات المنتهية.",
-        });
-        return;
-      }
+const handleOpenSchedule = useCallback(async () => {
+  const showError = (title, message) => {
+    openStatusModal("ERROR", { title, message });
+  };
 
-      if (existingSchedule) {
-        openWeeklyScheduleModal({
-          data: {
-            groupId: group_id,
-            packageName: package_name,
-            schedule: existingSchedule,
-            image,
-            color,
-          },
-        });
-        return;
-      }
+  if (status === "expired") {
+    showError("الجدول غير متاح", "لا يمكن عرض الجدول للباقات المنتهية.");
+    return;
+  }
 
-      try {
-        const { groupId, schedule } = await getSchedule(group_id).unwrap();
+  if (existingSchedule) {
+    openWeeklyScheduleModal({
+      data: {
+        groupId: group_id,
+        packageName: package_name,
+        schedule: existingSchedule,
+        image,
+        color,
+      },
+    });
+    return;
+  }
 
-        if (!schedule || Object.keys(schedule).length === 0) {
-          openStatusModal("ERROR", {
-            title: "لا يوجد جدول متاح",
-            message: "لا يوجد جدول متاح لهذه الباقة في الوقت الحالي.",
-          });
-          return;
-        }
+  try {
+    const { groupId, schedule } = await getSchedule(group_id).unwrap();
 
-        openWeeklyScheduleModal({
-          data: { groupId, packageName: package_name, schedule, image, color },
-        });
-      } catch (err) {
-        openStatusModal("ERROR", {
-          title: "الجدول غير متاح",
-          message: err?.message ?? "حدث خطأ أثناء محاولة جلب الجدول.",
-        });
-      }
-    }, [
-      status,
-      existingSchedule,
-      group_id,
-      package_name,
-      openStatusModal,
-      openWeeklyScheduleModal,
-      image,
-      color,
-      getSchedule,
-    ]);
+   
+
+    openWeeklyScheduleModal({
+      data: { groupId, packageName: package_name, schedule, image, color },
+    });
+  } catch (err) {
+    showError("الجدول غير متاح", err?.message ?? "حدث خطأ أثناء محاولة جلب الجدول.");
+  }
+}, [
+  status,
+  existingSchedule,
+  group_id,
+  package_name,
+  openStatusModal,
+  openWeeklyScheduleModal,
+  image,
+  color,
+  getSchedule,
+]);
 
     // Status configuration
     const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
