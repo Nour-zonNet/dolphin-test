@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Deploy to Production (app.learnadolphin.com)
 
 on:
   workflow_dispatch:
@@ -29,11 +29,11 @@ jobs:
 
     steps:
       - name: Validate branch
-        if: ${{ github.ref_name != 'deployment' }}
+        if: ${{ github.ref_name != 'production' }}
         run: |
-          echo "❌ This workflow can only be run from the 'deployment' branch."
+          echo "❌ This workflow can only be run from the 'production' branch."
           echo "Current branch: ${{ github.ref_name }}"
-          echo "Required branch: deployment"
+          echo "Required branch: production"
           exit 1
 
       - name: Validate confirmation
@@ -96,7 +96,7 @@ jobs:
 
     environment:
       name: production
-      url: https://learnadolphin.com
+      url: https://app.learnadolphin.com
 
     steps:
       - name: Send deployment start notification
@@ -127,7 +127,7 @@ jobs:
                   },
                   {
                     "title": "Status",
-                    "value": "⏳ Starting deployment to production server...",
+                    "value": "⏳ Starting deployment to app.learnadolphin.com...",
                     "short": false
                   }
                 ],
@@ -204,7 +204,7 @@ jobs:
         run: |
           echo "Verifying production deployment..."
           sleep 15
-          if curl -f -s -o /dev/null https://learnadolphin.com; then
+          if curl -f -s -o /dev/null https://app.learnadolphin.com; then
             echo "verification=success" >> $GITHUB_OUTPUT
             echo "✅ Production site is accessible"
           else
@@ -227,7 +227,7 @@ jobs:
             echo "status=success" >> $GITHUB_OUTPUT
             echo "color=good" >> $GITHUB_OUTPUT
             echo "message=✅ Production deployment completed successfully!" >> $GITHUB_OUTPUT
-            echo "details=✅ Production deployment completed successfully! Site is live at https://learnadolphin.com" >> $GITHUB_OUTPUT
+            echo "details=✅ Production deployment completed successfully! Site is live at https://app.learnadolphin.com" >> $GITHUB_OUTPUT
           elif [[ "${{ needs.deploy.result }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_OUTPUT
             echo "color=danger" >> $GITHUB_OUTPUT
