@@ -1,13 +1,19 @@
 import { HomeSupportBtn } from "@/components";
 import { HorizontalLine, VerticalLine } from "@/utils/Illustrations";
+import { useContent } from "../../hooks/useContent";
 import {
   LessonHeader,
   VideoPlayer,
   AttachmentsSection,
   QuizSection,
 } from "./components";
+import { useParams } from "react-router-dom";
 
 const LessonContentPage = () => {
+  const { id } = useParams();
+  const numericId = Number(id);
+  const lessonId = Number.isFinite(numericId) ? numericId : undefined;
+
   return (
     <>
       <LessonHeader />
@@ -21,7 +27,7 @@ const LessonContentPage = () => {
             <HorizontalLine className="flex xl:hidden w-[100%]" />
             <div className="w-full mb-10">
               <AttachmentsSection />
-              <QuizSection />
+              <QuizSection lessonId={lessonId} />
             </div>
           </div>
           <HomeSupportBtn />
