@@ -14,11 +14,11 @@ const ProfileInfo = ({ isActive = false, onActivate }) => {
       aria-label={t("mobileNavigation.profile")}
       className="flex flex-col items-center justify-end hover:scale-105 transition cursor-pointer"
     >
-      <div className="relative rounded-full border border-bordercolor/40 flex items-center justify-center overflow-hidden bg-white">
+      <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-bordercolor/40 overflow-hidden bg-white">
         <img
           src={user?.profilePicture || profileImg}
           alt={user?.name || "Profile"}
-          className="w-8 h-8 object-contain text-center group-hover:scale-110 transition"
+          className="w-full h-full object-cover transition group-hover:scale-110"
         />
       </div>
 

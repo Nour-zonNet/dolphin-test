@@ -1,13 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef, useEffect, useState } from "react";
 import { packageFactory } from "../factory/packageFactory";
-import { Calender1 } from "@/utils/icons";
+import { Calender1, ChevronDown, ChevronUp } from "@/utils/icons";
 import Books from "@/assets/packages/books.svg";
-import { Info } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
-import { ChevronDown, ChevronUp } from "@/utils/icons";
 import { formatArabicDate } from "@/utils/dateHelpers";
-const PlanCard = ({ plan, selected, onSelect }) => {
-  const [open, setOpen] = React.useState(false);
+
+const PlanCard = ({ plan, selected, onSelect, open, onToggle }) => {
   const ToggleIcon = useMemo(
     () =>
       open ? (
@@ -17,6 +15,7 @@ const PlanCard = ({ plan, selected, onSelect }) => {
       ),
     [open]
   );
+
   const { image, bgColor } = packageFactory(plan.id);
   const colors = [
     "bg-blue-100 text-blue-800",
@@ -27,39 +26,51 @@ const PlanCard = ({ plan, selected, onSelect }) => {
     "bg-red-100 text-red-800",
     "bg-indigo-100 text-indigo-800",
   ];
+
+  // --- For smooth height animation ---
+  const contentRef = useRef(null);
+  const [height, setHeight] = useState("0px");
+
+  useEffect(() => {
+    if (open && contentRef.current) {
+      setHeight(`${contentRef.current.scrollHeight}px`);
+    } else {
+      setHeight("0px");
+    }
+  }, [open]);
+
   return (
     <div
-      className={` rounded-2xl   cursor-pointer border-0   ${
-        open ? "border-1  border-gray-400/60" : "border-gray-200/40 "
+        style={{ borderColor: bgColor }}
+      className={` rounded-t-2xl  cursor-pointer ${
+        open ? "border border-gray-400/60 rounded-2xl" : "border border-gray-200/40"
       }`}
     >
+      {/* Header */}
       <div
         style={{ borderColor: bgColor }}
-        className={`flex justify-between gap-2 md:gap-4 rounded-t-2xl  border-r-10 p-5 bg-[#EAEAEA] items-start `}
+        className="flex justify-between gap-2 md:gap-4 rounded-t-2xl p-5 bg-[#EAEAEA] items-start"
       >
+        {/* Select Plan */}
         <div
           onClick={() => onSelect(plan.id)}
-          className={`w-6 h-6 rounded-sm  border flex items-center justify-center ${
-            selected
-              ? "bg-orangedeep  text-white"
-              : "border-gray-600 border-2  text-gray-400"
+          className={`w-6 h-6 rounded-sm border flex items-center justify-center ${
+            selected ? "bg-orangedeep text-white" : "border-gray-600 text-gray-400"
           }`}
         >
           {selected ? "✓" : ""}
         </div>
-        <div
-          o
-          onClick={() => setOpen(!open)}
-          className="flex items-start gap-3 flex-1"
-        >
+
+        {/* Toggle Expand */}
+        <div onClick={onToggle} className="flex items-start gap-3 flex-1">
           <div className="flex-1">
             <div className="flex flex-row justify-between items-center">
-              <div className="flex  gap-3">
+              <div className="flex gap-3">
                 <div
                   style={{ backgroundColor: bgColor }}
-                  className={`w-8 h-8 md:w-10 md:h-10 bg-[${bgColor}] rounded-sm flex items-center justify-center text-2xl`}
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-sm flex items-center justify-center text-2xl"
                 >
-                  <img src={image} alt={plan.name} />
+                  <img   className="w-6 h-6 md:w-8 md:h-8" src={image} alt={plan.name} />
                 </div>
                 <h3 className="font-semibold text-gray-800 text-sm sm:text-base self-center">
                   {plan.name}
@@ -67,22 +78,20 @@ const PlanCard = ({ plan, selected, onSelect }) => {
               </div>
               {ToggleIcon}
             </div>
-            <div className="flex justify-between flex-nowrap items-center  mt-2">
+
+            <div className="flex justify-between items-center mt-2">
               <div>
                 <span className="text-navyteal text-xs px-1 py-1 rounded-full">
                   {plan.durationText}
                 </span>
                 <span>|</span>
                 {plan.trial_days > 0 && (
-                  <span className=" text-navyteal text-xs px-1 py-1 rounded-full">
+                  <span className="text-navyteal text-xs px-1 py-1 rounded-full">
                     {plan.trial_days} أيام تجريبية
                   </span>
                 )}
               </div>
-              {/* <span>|</span> */}
-
-              <span className="flex items-center gap-2 text-nowrap float-end self-end text-left text-base">
-                {" "}
+              <span className="flex items-center gap-2 text-nowrap text-base">
                 سعر الباقة :
                 <FormatWithCurrency
                   amount={plan.finalPrice}
@@ -96,17 +105,21 @@ const PlanCard = ({ plan, selected, onSelect }) => {
         </div>
       </div>
 
-      {open && (
-        <div className=" pt-4 border-t border-gray-100 p-6 space-y-2 ">
-          {plan.subjects && plan.subjects.length > 0 && (
+      {/* Animated Expanded Content */}
+      <div
+        ref={contentRef}
+        style={{ maxHeight: height }}
+        className="overflow-hidden transition-all duration-300 ease-in-out"
+      >
+        <div className="pt-4 border-t border-gray-100 p-6 space-y-2">
+          {plan.subjects?.length > 0 && (
             <div className="mt-2 flex items-start">
-              <span className="text-navyteal font-semibold text-sm block ml-1 mb-1 text-nowrap">
+              <span className="text-navyteal font-semibold text-sm block ml-1 mb-1">
                 المواد المشمولة :
               </span>
               <div className="flex flex-wrap gap-2">
                 {plan.subjects.map((s, i) => {
-                  const randomColor = colors[i % colors.length]; // stable per index
-
+                  const randomColor = colors[i % colors.length];
                   return (
                     <span
                       key={s.id || i}
@@ -119,74 +132,35 @@ const PlanCard = ({ plan, selected, onSelect }) => {
               </div>
             </div>
           )}
-          {plan.times && plan.times.length > 0 && (
-            <div className="flex flex-row justify-between item items-center">
-              <div className=" flex items-center  space-x-3">
+
+          {plan.times?.length > 0 && (
+            <div className="flex flex-row justify-between items-center">
+              <div className="flex items-center space-x-3">
                 <Calender1 />
-                <span className="text-navyteal text-sm font-semibold text-nowrap">
-                  موعد البداية :{" "}
+                <span className="text-navyteal text-sm font-semibold">
+                  موعد البداية :
                 </span>
                 <span className="text-gray-800 font-medium text-sm">
-                  {/* {new Date(plan.times[0].start_date).toLocaleDateString(
-                    "ar-EG"
-                  )} */}
                   {formatArabicDate(plan.times[0].start_date)}
                 </span>
               </div>
-              {/* {plan.times &&
-                plan.times.length > 0 &&
-                plan.times.some((t) => new Date(t.start_date) < new Date()) && (
-                  <span className="border-dashed py-1 border-orangedeep text-sm border px-4 rounded-full md:text-base text-nowrap">
-                    تم بدء الباقة
-                  </span>
-                )} */}
             </div>
           )}
-          <div className="flex items-center justify-between">
-            {plan.weeklyClasses > 0 && (
-              <span className=" flex items-center gap-2 text-[#BA7C28] text-sm md:text-lg  font-semibold py-1 rounded-full">
-                <img src={Books} alt="" srcSet="" />
+
+          {plan.weeklyClasses > 0 && (
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2 text-[#BA7C28] text-sm md:text-lg font-semibold py-1 rounded-full">
+                <img src={Books} alt="" />
                 <span className="border-l-3 border-[#D9D9D9] pl-2">
                   {plan.weeklyClasses} حصص أسبوعياً
                 </span>
-                <img src={Books} alt="" srcSet="" />
+                <img src={Books} alt="" />
                 <span>{plan.monthlyClasses} حصص شهريا</span>
               </span>
-            )}
-            {/* <span className="text-nowrap flex items-center gap-2 text-sm  text-status">
-              <Info className="span w-5 text-status " />
-              تفاصيل الباقة
-            </span> */}
-          </div>
-
-          {/* <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-gray-500">نوع الباقة: </span>
-              <span className="text-gray-800 font-medium">
-                {plan.type === "paid" ? "مدفوعة" : "مجانية"}
-              </span>
             </div>
-            <div>
-              <span className="text-gray-500">الحصص الشهرية: </span>
-              <span className="text-gray-800 font-medium">
-                {plan.monthlyClasses} حصة
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-500">الحالة: </span>
-              <span className="text-gray-800 font-medium">
-                {plan.status === "active" ? "نشطة" : "غير نشطة"}
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-500">يمكن استخدام المحفظة: </span>
-              <span className="text-gray-800 font-medium">
-                {plan.canUseWallet === "yes" ? "نعم" : "لا"}
-              </span>
-            </div>
-          </div> */}
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
