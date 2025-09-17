@@ -145,7 +145,7 @@ const DataPlanSelector = () => {
 
         {/* Plans */}
         {all.length > 0 ? (
-          <div className="w-full columns-1 md:columns-1 lg:columns-2 gap-6 mt-6 lg:mt-10 mx-auto px-4 mt-6">
+          <div className="w-full columns-1 md:columns-1 lg:columns-2 gap-6 lg:mt-10 mx-auto px-4 mt-6 mb-14">
             {filteredPlans.map((plan) => (
               <div key={plan.id} className="mb-6 break-inside-avoid">
                 <PlanCard
