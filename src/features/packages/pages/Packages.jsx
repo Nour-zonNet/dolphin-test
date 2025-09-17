@@ -28,8 +28,7 @@ const Packages = () => {
 
         {/* Button */}
         <div
-           onClick={() => window.open(telegram, "_blank", "noopener,noreferrer")}
-
+          onClick={() => window.open(telegram, "_blank", "noopener,noreferrer")}
           className="w-full sm:w-auto"
         >
           <button className="border w-full sm:w-auto text-sm px-6 lg:text-base  sm:px-10 py-1 md:ml-7 md:py-2 flex items-center justify-center gap-2 rounded-full border-orangedeep hover:bg-orangedeep/10 transition">
