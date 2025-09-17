@@ -81,7 +81,6 @@ export const updateUserImage = createAsyncThunk(
   "auth/updateUserImage",
   async (file, { rejectWithValue, dispatch }) => {
     try {
-      console.log(file);
       const data = await authRepository.updateUserImage(file);
       await dispatch(fetchCurrentUser());
       return data;
