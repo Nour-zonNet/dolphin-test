@@ -4,31 +4,34 @@ import dots from "@/assets/schedule/dots.svg";
 import { DownloadFile, OpenFile } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
 
-export const AttachmentItem = ({ title, size, hasImportantBadge, hasDownloadIcon, iconSrc }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false); 
+export const AttachmentItem = ({
+  title,
+  size,
+  hasImportantBadge,
+  hasDownloadIcon,
+  iconSrc,
+  // behavior
+  href,                 // ← NEW: link for the card
+  isCardClickable = false,
+  onOpen,
+  onDownload,
+}) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t } = useTranslation();
-
   const menuRef = useRef(null);
   const triggerRef = useRef(null);
 
-  // Close menu on outside click or Esc
   useEffect(() => {
     if (!isMenuOpen) return;
-
     const handleOutside = (e) => {
       if (menuRef.current?.contains(e.target)) return;
       if (triggerRef.current?.contains(e.target)) return;
       setIsMenuOpen(false);
     };
-
-    const handleEsc = (e) => {
-      if (e.key === "Escape") setIsMenuOpen(false);
-    };
-
+    const handleEsc = (e) => { if (e.key === "Escape") setIsMenuOpen(false); };
     document.addEventListener("mousedown", handleOutside);
     document.addEventListener("touchstart", handleOutside, { passive: true });
     document.addEventListener("keydown", handleEsc);
-
     return () => {
       document.removeEventListener("mousedown", handleOutside);
       document.removeEventListener("touchstart", handleOutside);
@@ -36,12 +39,28 @@ export const AttachmentItem = ({ title, size, hasImportantBadge, hasDownloadIcon
     };
   }, [isMenuOpen]);
 
+  const Wrapper = isCardClickable && href ? "a" : "div";
+  const wrapperProps =
+    Wrapper === "a"
+      ? {
+          href,
+          target: "_blank",
+          rel: "noopener noreferrer",
+          // className merged below
+        }
+      : {};
+
   return (
-    <div className="relative w-full bg-[#f2f2f7] rounded-lg p-6 min-h-[106px] flex items-center">
+    <Wrapper
+      {...wrapperProps}
+      className={`relative w-full bg-[#f2f2f7] rounded-lg p-6 min-h-[106px] flex items-center ${
+        isCardClickable && href ? "cursor-pointer hover:bg-[#ececf3]" : ""
+      }`}
+    >
       <div className="flex items-center justify-between">
-        <div className="bg-[#C4D6E1] md:w-[60px] md:h-[60px] w-[40px] h-[40px] rounded-full flex items-center justify-center cursor-pointer">
+        <div className="bg-[#C4D6E1] md:w-[60px] md:h-[60px] w-[40px] h-[40px] rounded-full flex items-center justify-center">
           {hasDownloadIcon && iconSrc && (
-            <img className="w-5 md:w-6" alt="Download" src={iconSrc} />
+            <img className="w-5 md:w-6" alt="Attachment" src={iconSrc} />
           )}
         </div>
 
@@ -52,7 +71,7 @@ export const AttachmentItem = ({ title, size, hasImportantBadge, hasDownloadIcon
         )}
       </div>
 
-      <div className="flex-1 mr-4 cursor-pointer">
+      <div className="flex-1 mr-4">
         <h3 className="font-semibold text-sm md:text-lg text-navyteal mb-2">{title}</h3>
         <p className="font-normal text-black text-sm md:text-base">{size}</p>
       </div>
@@ -61,21 +80,33 @@ export const AttachmentItem = ({ title, size, hasImportantBadge, hasDownloadIcon
         <img
           ref={triggerRef}
           className="cursor-pointer"
-          alt="File"
+          alt="More"
           src={dots}
-          onClick={() => setIsMenuOpen((v) => !v)}
+          onClick={(e) => {
+            // prevent the anchor from navigating when opening menu
+            e.preventDefault();
+            e.stopPropagation();
+            setIsMenuOpen((v) => !v);
+          }}
         />
         {isMenuOpen && (
           <div
             ref={menuRef}
             role="menu"
             className="z-10 flex flex-col justify-center items-center gap-4 bg-white md:w-[220px] w-[200px] h-[160px] shadow rounded-3xl absolute left-0"
+            onClick={(e) => {
+              // keep clicks inside menu from triggering anchor
+              e.preventDefault();
+              e.stopPropagation();
+            }}
           >
             <button
               role="menuitem"
               className="flex items-center gap-4 cursor-pointer"
-              onClick={() => {
-                // do open-file action here
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onOpen?.();
                 setIsMenuOpen(false);
               }}
             >
@@ -90,8 +121,10 @@ export const AttachmentItem = ({ title, size, hasImportantBadge, hasDownloadIcon
             <button
               role="menuitem"
               className="flex items-center gap-4 cursor-pointer"
-              onClick={() => {
-                // do download-file action here
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onDownload?.();
                 setIsMenuOpen(false);
               }}
             >
@@ -103,7 +136,7 @@ export const AttachmentItem = ({ title, size, hasImportantBadge, hasDownloadIcon
           </div>
         )}
       </div>
-    </div>
+    </Wrapper>
   );
 };
 

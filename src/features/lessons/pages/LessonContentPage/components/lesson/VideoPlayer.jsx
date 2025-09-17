@@ -4,8 +4,30 @@ import stopVideo from "@/assets/schedule/stop-video.svg";
 import { Fullscreen, Settings, DatePicker, Clock, Teacher } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
 import lessonVideo from "@/assets/videos/lesson.mp4";
-import { useContent } from "../../../../hooks/useContent";
 
+// ---------------- Fixed lesson data (use these until API wiring is ready) ----------------
+const FIXED = {
+  title: "الدرس الاول",
+  teacher: "أ.سارة محمد",
+  // ISO date → renders as "17 سبتمبر"
+  sessionDate: "2025-09-17",
+};
+
+// Arabic month names
+const AR_MONTHS = [
+  "يناير","فبراير","مارس","أبريل","مايو","يونيو",
+  "يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"
+];
+const formatDayMonthAr = (iso) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  const day = d.getDate();
+  const monthName = AR_MONTHS[d.getMonth()] || "";
+  return `${day} ${monthName}`;
+};
+
+// ---------------- Helpers ----------------
 const formatTime = (sec) => {
   if (!isFinite(sec) || sec < 0) return "0:00";
   const s = Math.floor(sec);
@@ -24,13 +46,20 @@ const isIOS = () =>
   (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
 
+// ---------------- Component ----------------
 const VideoPlayer = ({
+  // You can still override the actual video src/poster via props if needed
   src = lessonVideo,
   poster = "https://c.animaapp.com/mer0eh3xn7npjs/img/shutterstock-331074809-1024x683-1-1.png",
-  title = "الدرس الرابع: الأفعال المساعدة",
 }) => {
   const { t } = useTranslation();
 
+  // Fixed meta values (until you switch back to dynamic)
+  const lessonTitle = FIXED.title;
+  const teacherName = FIXED.teacher;
+  const dateText    = formatDayMonthAr(FIXED.sessionDate);
+
+  // ---------- refs & state ----------
   const stageRef = useRef(null);
   const videoRef = useRef(null);
   const [videoEl, setVideoEl] = useState(null);
@@ -51,7 +80,7 @@ const VideoPlayer = ({
   const [isEmulatedFS, setIsEmulatedFS] = useState(false);
   const [rotateFallback, setRotateFallback] = useState(false);
 
-  const showUI = showSettings || !isPlaying || isHovered;
+  const showUI = showSettings || !isPlaying || (isHovered && !isFullscreen && !isEmulatedFS);
 
   const setVideoRef = (el) => {
     videoRef.current = el;
@@ -79,7 +108,7 @@ const VideoPlayer = ({
       } catch {}
     };
 
-    // Initialize time/duration immediately
+    // Initialize immediately
     if (!isNaN(v.duration)) setDuration(v.duration || 0);
     setCurrent(v.currentTime || 0);
     onProgress();
@@ -101,37 +130,33 @@ const VideoPlayer = ({
     };
   }, [videoEl, src]);
 
-  // Smooth progress updates while playing (works even if timeupdate is throttled)
-useEffect(() => {
-  let rafId = null;
-  const tick = () => {
-    const v = videoRef.current;
-    if (v && !v.paused && !v.ended) {
-      // only set state if the value actually changed a bit to avoid extra renders
-      const t = v.currentTime || 0;
-      setCurrent(prev => (Math.abs(prev - t) > 0.05 ? t : prev));
-      rafId = requestAnimationFrame(tick);
-    }
-  };
+  // Smooth progress updates while playing
+  useEffect(() => {
+    let rafId = null;
+    const tick = () => {
+      const v = videoRef.current;
+      if (v && !v.paused && !v.ended) {
+        const t = v.currentTime || 0;
+        setCurrent((prev) => (Math.abs(prev - t) > 0.05 ? t : prev));
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+    if (isPlaying) rafId = requestAnimationFrame(tick);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isPlaying]);
 
-  if (isPlaying) {
-    rafId = requestAnimationFrame(tick);
-  }
-  return () => {
-    if (rafId) cancelAnimationFrame(rafId);
-  };
-}, [isPlaying]);
-
-useEffect(() => {
-  const v = videoEl;
-  if (!v) return;
-  const onLoadedData = () => {
-    if (!isNaN(v.duration)) setDuration(v.duration || 0);
-    setCurrent(v.currentTime || 0);
-  };
-  v.addEventListener("loadeddata", onLoadedData);
-  return () => v.removeEventListener("loadeddata", onLoadedData);
-}, [videoEl]);
+  useEffect(() => {
+    const v = videoEl;
+    if (!v) return;
+    const onLoadedData = () => {
+      if (!isNaN(v.duration)) setDuration(v.duration || 0);
+      setCurrent(v.currentTime || 0);
+    };
+    v.addEventListener("loadeddata", onLoadedData);
+    return () => v.removeEventListener("loadeddata", onLoadedData);
+  }, [videoEl]);
 
   // Reset times on src change
   useEffect(() => {
@@ -139,6 +164,7 @@ useEffect(() => {
     setDuration(0);
   }, [src]);
 
+  // ---------- fullscreen ----------
   const canRealFullscreen = () =>
     typeof document !== "undefined" &&
     stageRef.current &&
@@ -159,7 +185,24 @@ useEffect(() => {
     } else {
       setIsEmulatedFS((v) => !v);
     }
+    setIsHovered(false);
+    setShowSettings(false);
   };
+
+  useEffect(() => {
+    if (!isFullscreen && !isEmulatedFS) return;
+    let t;
+    const onMove = () => {
+      setIsHovered(true);
+      clearTimeout(t);
+      t = setTimeout(() => setIsHovered(false), 1500);
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      clearTimeout(t);
+    };
+  }, [isFullscreen, isEmulatedFS]);
 
   const lockOrRotateLandscape = async () => {
     if (!isMobileOrTablet()) return;
@@ -190,6 +233,7 @@ useEffect(() => {
     const onFsChange = () => {
       const fs = !!document.fullscreenElement;
       setIsFullscreen(fs);
+      setIsHovered(false);
       if (fs) lockOrRotateLandscape();
       else clearOrientation();
     };
@@ -208,6 +252,7 @@ useEffect(() => {
     };
   }, [isEmulatedFS, rotateFallback]);
 
+  // ---------- settings ----------
   const setSpeed = (r) => {
     setPlaybackRate(r);
     if (videoRef.current) videoRef.current.playbackRate = r;
@@ -230,6 +275,34 @@ useEffect(() => {
     }
   };
 
+  const settingsRef = useRef(null);
+
+  useEffect(() => {
+    if (!showSettings) return;
+
+    const onDown = (e) => {
+      // if click is outside the settings popover, close it
+      if (!settingsRef.current) return;
+      if (settingsRef.current.contains(e.target)) return;
+      setShowSettings(false);
+    };
+
+    const onKey = (e) => {
+      if (e.key === "Escape") setShowSettings(false);
+    };
+
+    // capture-phase so we catch it before other handlers stop propagation
+    document.addEventListener("mousedown", onDown, { capture: true });
+    document.addEventListener("touchstart", onDown, { capture: true, passive: true });
+    document.addEventListener("keydown", onKey);
+
+    return () => {
+      document.removeEventListener("mousedown", onDown, { capture: true });
+      document.removeEventListener("touchstart", onDown, { capture: true });
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [showSettings]);
+
   const togglePiP = async () => {
     if (!videoRef.current) return;
     if (!("pictureInPictureEnabled" in document)) return;
@@ -242,6 +315,7 @@ useEffect(() => {
     } catch {}
   };
 
+  // ---------- keyboard shortcuts ----------
   useEffect(() => {
     const onKey = (e) => {
       switch (e.key.toLowerCase()) {
@@ -277,6 +351,7 @@ useEffect(() => {
     return () => window.removeEventListener("keydown", onKey);
   }, [duration, volume, muted]);
 
+  // ---------- scrubbing ----------
   const [scrubbing, setScrubbing] = useState(false);
 
   const pctFromClientX = (clientX) => {
@@ -326,11 +401,10 @@ useEffect(() => {
   const progressPct = duration ? (current / duration) * 100 : 0;
   const bufferPct = duration ? (Math.min(bufferedEnd, duration) / duration) * 100 : 0;
 
-  // ---------- Stage content (video + overlays) ----------
+  // ---------- stage (video + overlays) ----------
   const StageInner = (
     <div
       className="relative w-full h-full"
-      // Poster fallback behind the <video> (shows even if poster src fails)
       style={{
         backgroundImage: poster ? `url("${poster}")` : undefined,
         backgroundSize: "cover",
@@ -342,15 +416,13 @@ useEffect(() => {
       <video
         ref={setVideoRef}
         className="w-full h-full object-cover block"
-        // Keep poster on the video too; the CSS background above is an extra safety net
         poster={poster}
         preload="metadata"
         playsInline
         crossOrigin="anonymous"
       >
-        {/* Using <source> improves compatibility, especially on Safari/iOS */}
-        <source src={src}  type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-        {/* Add more sources if you have (webm/ogg) */}
+        {/* Using <source> improves compatibility */}
+        <source src={src} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
         متصفحك لا يدعم تشغيل الفيديو.
       </video>
 
@@ -360,11 +432,11 @@ useEffect(() => {
           text-white md:text-base text-sm font-semibold
           transition-opacity ${showUI ? "opacity-100" : "opacity-0"}`}
       >
-        {title}
+        {lessonTitle}
       </div>
 
-      {/* Single center overlay */}
-      {(!isPlaying || isHovered) && (
+      {/* Center overlay (click to toggle) */}
+      {(!isPlaying || (!isFullscreen && !isEmulatedFS && isHovered)) && (
         <div
           onClick={togglePlay}
           className={`absolute inset-0 flex flex-col items-center justify-center bg-black/1 cursor-pointer ${
@@ -379,7 +451,6 @@ useEffect(() => {
             />
           </button>
 
-          {/* always render text; hide via opacity/invisible so layout height stays the same */}
           <p
             className={`lg:mt-6 mt-3 font-semibold text-white text-sm md:text-xl z-10 transition-opacity duration-200 ${
               isPlaying ? "opacity-0 invisible" : "opacity-100 visible"
@@ -422,7 +493,7 @@ useEffect(() => {
           </button>
         </div>
 
-        {/* Show current / duration (YouTube-style) */}
+        {/* current / duration */}
         <span className="bg-black/50 rounded-[64px] px-3 py-1 text-sm select-none">
           {formatTime(duration)} / {formatTime(current)}
         </span>
@@ -442,9 +513,10 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* SETTINGS — desktop popover */}
+      {/* Settings popover */}
       {showSettings && (
         <div
+          ref={settingsRef}
           className="absolute right-18 bottom-0 lg:right-6 lg:bottom-18 w-56 rounded-xl p-3 bg-black/80 text-white border border-white/10 backdrop-blur-sm z-30"
           onClick={(e) => e.stopPropagation()}
         >
@@ -454,7 +526,7 @@ useEffect(() => {
               <button
                 key={r}
                 onClick={() => setSpeed(r)}
-                className={`lg:px-2 py-1 rounded-md border text-[12px] lg:text-base ${
+                className={`lg:px-2 py-1 rounded-md border text-[12px] lg:text-sm ${
                   playbackRate === r ? "bg-white text-black" : "border-white/30 hover:bg-white/10"
                 }`}
               >
@@ -554,16 +626,17 @@ useEffect(() => {
     </div>
   );
 
+  // ---------- Render ----------
   return (
     <div className="w-full lg:h-[630px] mx-auto lg:mt-0 rounded-2xl overflow-hidden border border-[#00000066]">
       {!isEmulatedFS && InlineStage}
       {isEmulatedFS && EmulatedFS}
 
-      {/* Meta block (unchanged) */}
+      {/* Meta block (fixed values) */}
       <div className="md:p-6 p-2">
         <div className="flex justify-between items-start flex-wrap gap-4">
           <div className="flex flex-col gap-2">
-            <h2 className="font-semibold text-sm md:text-xl text-normalblue">{title}</h2>
+            <h2 className="font-semibold text-sm md:text-xl text-normalblue">{lessonTitle}</h2>
             <div className="flex items-center gap-6 text-[#BA7C28] mt-2">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 md:w-5" />
@@ -571,13 +644,13 @@ useEffect(() => {
               </div>
               <div className="flex items-center gap-2">
                 <DatePicker className="w-4 md:w-5" />
-                <span className="font-semibold text-[12px] md:text-lg">17 أغسطس</span>
+                <span className="font-semibold text-[12px] md:text-lg">{dateText || "—"}</span>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2 text-normalblue">
             <Teacher className="w-4 md:w-5" />
-            <span className="font-semibold text-[16px] md:text-lg text-normalblue">أ. حنان</span>
+            <span className="font-semibold text-[16px] md:text-lg text-normalblue">{teacherName}</span>
           </div>
         </div>
       </div>

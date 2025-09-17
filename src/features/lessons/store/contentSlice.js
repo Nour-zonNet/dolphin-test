@@ -11,16 +11,27 @@ const handleError = async (error, thunkAPI) => {
   return thunkAPI.rejectWithValue(error?.message || "Unknown error");
 };
 
+function fixExamLink(linkRaw) {
+  if (!linkRaw) return null;
+  let link = String(linkRaw).trim();
+  // keep the inner absolute url if wrapped like https://hostA/https://hostB/...
+  link = link.replace(/https?:\/\/[^/]+\/(https?:\/\/.*)/i, "$1");
+  if (!/^https?:\/\//i.test(link)) link = `https://${link}`;
+  try { return new URL(link).toString(); } catch { return null; }
+}
+
 const normalizeLesson = (raw) => {
   if (!raw) return null;
-  const attachments = (raw.attachments || []).map((a) => a.link);
+  const exam = (raw.attachments || []).find((a) => a.type === "exam_link");
+
   return {
     id: raw.lesson_id,
     title: raw.lesson_data?.name || "",
     session_date: raw.lesson_data?.session_date || "",
     class_session_id: raw.lesson_data?.class_session_id ?? null,
     video: raw.video ?? null,
-    attachments,
+    attachments: (raw.attachments || []).map((a) => a.link),
+    examLink: fixExamLink(exam?.link),            // 👈 cleaned once here
     training_link: raw.training_link ?? null,
     package: raw.package?.[0] ?? null,
     hasVideo: !!raw.video,
@@ -38,7 +49,7 @@ export const fetchContentByLessonId = createAsyncThunk(
       return {
         lessonId,
         content: normalizeLesson(res.data),
-        raw: res.data, // keep raw for fallback
+        raw: res.data,
       };
     } catch (err) {
       return handleError(err, thunkAPI);
@@ -102,7 +113,7 @@ const contentSlice = createSlice({
 export const { clearContent } = contentSlice.actions;
 export default contentSlice.reducer;
 
-export const selectContent       = (state, lessonId) => state?.content?.byId?.[lessonId];
-export const selectContentRaw    = (state, lessonId) => state?.content?.rawById?.[lessonId];
-export const selectContentLoading= (state, lessonId) => !!state?.content?.loadingById?.[lessonId];
-export const selectContentError  = (state, lessonId) => state?.content?.errorById?.[lessonId] || null;
+export const selectContent        = (s, lessonId) => s?.content?.byId?.[lessonId];
+export const selectContentRaw     = (s, lessonId) => s?.content?.rawById?.[lessonId];
+export const selectContentLoading = (s, lessonId) => !!s?.content?.loadingById?.[lessonId];
+export const selectContentError   = (s, lessonId) => s?.content?.errorById?.[lessonId] || null;
