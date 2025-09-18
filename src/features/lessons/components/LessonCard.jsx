@@ -41,7 +41,11 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
   const lessonStatus = useMemo(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const lessonDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const lessonDay = new Date(
+      start.getFullYear(),
+      start.getMonth(),
+      start.getDate()
+    );
 
     if (lessonDay < today) return "ended";
     if (now >= start && now <= end) return "live";
@@ -57,12 +61,17 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
 
   // Custom hooks
   const { statusText, statusColor, statusIcon } = useLessonStatus(
-    item, start, end, timeRemaining, canEnterLesson, isExpired, lessonStatus
+    item,
+    start,
+    end,
+    timeRemaining,
+    canEnterLesson,
+    isExpired,
+    lessonStatus
   );
 
-  const { handleEnterLesson, handleOpenContent, handleCardClick } = 
+  const { handleEnterLesson, handleOpenContent, handleCardClick } =
     useLessonHandlers(item, lessonStatus, canEnterNow, openStatusModal);
-
 
   return (
     <div className="relative">
@@ -73,7 +82,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         role={lessonStatus !== "ended" ? "button" : undefined}
         tabIndex={lessonStatus !== "ended" ? 0 : -1}
       >
-        <LessonInfo 
+        <LessonInfo
           item={item}
           color={color}
           image={image}
@@ -85,6 +94,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         {/* Right section */}
         <div className="flex flex-col items-center justify-center mr-auto xs:space-y-3.5 gap-2 xs:gap-0 px-2 relative z-10 space-y-2">
           <LessonButton
+            teacherStatus={item.teacher_status}
             lessonStatus={lessonStatus}
             canEnterNow={canEnterNow}
             onEnterLesson={handleEnterLesson}

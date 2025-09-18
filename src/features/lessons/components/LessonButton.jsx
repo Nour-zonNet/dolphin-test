@@ -3,12 +3,23 @@ import books from "@/assets/schedule/books.svg";
 import sandGlass from "@/assets/schedule/sandGlass.svg";
 import clock from "@/assets/schedule/clock.svg";
 
-export const LessonButton = ({ lessonStatus, canEnterNow, onEnterLesson, onOpenContent }) => {
+export const LessonButton = ({
+  teacherStatus,
+  lessonStatus,
+  canEnterNow,
+  onEnterLesson,
+  onOpenContent,
+}) => {
   if (lessonStatus === "ended") {
     return (
       <>
         <div className="flex justify-center items-center">
-          <img loading="lazy" src={books} alt="ended" className="w-16 xs:w-auto" />
+          <img
+            loading="lazy"
+            src={books}
+            alt="ended"
+            className="w-16 xs:w-auto"
+          />
         </div>
         <button
           onClick={onOpenContent}
@@ -27,7 +38,12 @@ export const LessonButton = ({ lessonStatus, canEnterNow, onEnterLesson, onOpenC
   return (
     <>
       <div className="flex justify-center items-center">
-        <img loading="lazy" src={iconSrc} alt="status" className="w-16 xs:w-auto" />
+        <img
+          loading="lazy"
+          src={iconSrc}
+          alt="status"
+          className="w-16 xs:w-auto"
+        />
       </div>
       <button
         onClick={onEnterLesson}
@@ -38,11 +54,11 @@ export const LessonButton = ({ lessonStatus, canEnterNow, onEnterLesson, onOpenC
           "px-4 py-2 text-nowrap text-xs md:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 rounded-3xl",
           isEnabled
             ? "bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked text-navyteal cursor-pointer"
-            : "bg-[#7A8085] text-[#FAFBFC] cursor-not-allowed opacity-70"
+            : "bg-[#7A8085] text-[#FAFBFC] cursor-not-allowed opacity-70",
         ].join(" ")}
       >
-        <SessionIcon className="w-4 lg:w-6" />
-        دخول الحصة
+        {teacherStatus && <SessionIcon className="w-4 lg:w-6" />}
+        {!teacherStatus ? "الحصة مؤجلة " : " دخول الحصة"}
       </button>
     </>
   );
