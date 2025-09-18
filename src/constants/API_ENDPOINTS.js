@@ -25,4 +25,5 @@ export const ENDPOINTS = {
   ADD_BROTHER: "/student/add-brother",
   FETCH_BORTHER: "/student/brothers",
   CLASSES: "/student/classes",
+  LESSONS_OF_PACKAGE: "/student/lessons/package/",
 };

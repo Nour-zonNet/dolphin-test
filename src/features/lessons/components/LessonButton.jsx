@@ -9,6 +9,7 @@ export const LessonButton = ({
   canEnterNow,
   onEnterLesson,
   onOpenContent,
+  lessons,
 }) => {
   if (lessonStatus === "ended") {
     return (
@@ -21,13 +22,15 @@ export const LessonButton = ({
             className="w-16 xs:w-auto"
           />
         </div>
-        <button
-          onClick={onOpenContent}
-          className="px-4 py-2 text-nowrap text-xs md:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 rounded-3xl bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked text-navyteal cursor-pointer"
-        >
-          <FileIcon />
-          عرض المحتوى
-        </button>
+        {lessons && (
+          <button
+            onClick={onOpenContent}
+            className="px-4 py-2 text-nowrap text-xs md:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 rounded-3xl bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked text-navyteal cursor-pointer"
+          >
+            <FileIcon />
+            عرض المحتوى
+          </button>
+        )}
       </>
     );
   }

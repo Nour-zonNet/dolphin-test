@@ -8,7 +8,7 @@ const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = 
   const [activeFilters, setActiveFilters] = React.useState({ instructor: "", group: "" });
 
   const instructors = React.useMemo(
-    () => Array.from(new Set(packages.map((pkg) => pkg.instructor))).filter(Boolean),
+    () => Array.from(new Set(packages?.map((pkg) => pkg.instructor))).filter(Boolean),
     [packages]
   );
 

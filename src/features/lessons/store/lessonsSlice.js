@@ -13,6 +13,18 @@ export const fetchLessons = createAsyncThunk(
   }
 );
 
+export const getPackageLessons = createAsyncThunk(
+  "session/getPackageLessons",
+  async (packageId, { rejectWithValue }) => {
+    try {
+      const { data } = await lessonsRepository.getPackageLessons(packageId);
+      return data; // بيرجع الـ payload
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 export const getSessionLink = createAsyncThunk(
   "session/getSessionLink",
   async (roomUId, { rejectWithValue }) => {
@@ -55,6 +67,18 @@ const lessonsSlice = createSlice({
         state.link = action.payload;
       })
       .addCase(getSessionLink.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getPackageLessons.pending, (state) => {
+        // state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPackageLessons.fulfilled, (state, action) => {
+        state.loading = false;
+        state.lessons = action.payload;
+      })
+      .addCase(getPackageLessons.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

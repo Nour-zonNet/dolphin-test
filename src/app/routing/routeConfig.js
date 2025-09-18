@@ -195,7 +195,7 @@ export const routes = [
     path: "/packages-content",
     element: PackagesContent,
     protected: true,
-   navbar: false,
+    navbar: false,
     mobileNav: true,
     homeSupportBtn: true,
   },
@@ -214,11 +214,11 @@ export const routes = [
     ],
   },
   {
-    path: "/show-lessons",
+    path: "/show-lessons/:packageId",
     element: ShowLessons,
     protected: true,
-            layout: false,
-        homeSupportBtn: true,
+    layout: false,
+    homeSupportBtn: true,
   },
   {
     path: "/profile",

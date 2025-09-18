@@ -99,6 +99,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
             canEnterNow={canEnterNow}
             onEnterLesson={handleEnterLesson}
             onOpenContent={handleOpenContent}
+            lessons={item.lessons}
           />
         </div>
       </div>

@@ -73,12 +73,7 @@ const PackageContent = () => {
                 <div className="flex justify-end">
                   <button
                     onClick={() =>
-                      navigate("/show-lessons", {
-                        state: {
-                          package: packageItem,
-               
-                        },
-                      })
+                      navigate("/show-lessons/"+ packageItem.package_id)
                     }
                     aria-label={`عرض الدروس الخاصة بباقة ${packageItem.package_name}`}
                     className="text-xs  md:text-lg flex items-center gap-2 px-3 sm:px-4 py-2 bg-orangedeep hover:bg-foundationorangenormal-hover rounded-3xl text-deepnavy font-semibold sm:text-base"
