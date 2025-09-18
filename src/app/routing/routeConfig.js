@@ -217,6 +217,8 @@ export const routes = [
     path: "/show-lessons",
     element: ShowLessons,
     protected: true,
+            layout: false,
+        homeSupportBtn: true,
   },
   {
     path: "/profile",

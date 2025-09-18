@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { RightArrow } from '@/utils/icons'
-import { useTranslation } from "react-i18next"
 import SearchFilterBar from '../components/SearchFilterBar'
 import { LessonCard } from '../components'
 import dolphinStudy from "@/assets/schedule/dolphin-study.svg"
@@ -33,7 +32,6 @@ const lessons = [
 
 const ShowLessons = () => {
   const [filteredLessons, setFilteredLessons] = React.useState(lessons);
-  const { t } = useTranslation();
 
   return (
     <>
@@ -51,7 +49,7 @@ const ShowLessons = () => {
           {/* Centered Content */}
           <div className="flex-1 text-center">
             <h1 className="font-bold text-navyteal text-sm md:text-2xl">
-              {t("lesson_content.lesson")}
+      الدروس
             </h1>
             <p className="font-semibold text-[#BA7C28] text-[12px] md:text-xl mt-2">
               الصحة العامة
