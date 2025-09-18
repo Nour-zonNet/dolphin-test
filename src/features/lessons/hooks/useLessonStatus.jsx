@@ -5,6 +5,18 @@ import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
 export const useLessonStatus = (item, start, end, timeRemaining, canEnterLesson, isExpired, lessonStatus) => {
   return useMemo(() => {
     const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const lessonDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+
+    // إذا كانت الحصة في يوم سابق → تعرض "انتهت الحصة"
+    if (lessonDay < today) {
+      return {
+        statusText: "انتهت الحصة",
+        statusColor: "text-red-500",
+        statusIcon: <TimeCheck className="w-4" />,
+      };
+    }
+
     const isSameDay = 
       start.getDate() === now.getDate() &&
       start.getMonth() === now.getMonth() &&

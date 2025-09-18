@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
@@ -46,6 +46,15 @@ export const useLessonHandlers = (item, lessonStatus, canEnterNow, openStatusMod
       hintTimerRef.current = null;
     }, 3500);
   }, [lessonStatus, canEnterNow]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (hintTimerRef.current) {
+        clearTimeout(hintTimerRef.current);
+      }
+    };
+  }, []);
 
   return {
     handleEnterLesson,
