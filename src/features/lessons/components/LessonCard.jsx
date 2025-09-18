@@ -70,12 +70,32 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     lessonDate
   );
 
-  const lessonStatus = useMemo(() => {
-    const now = new Date();
-    if (now >= start && now <= end) return "live";
-    if (now > end) return "ended";
-    return "upcoming";
-  }, [start, end]);
+const lessonStatus = useMemo(() => {
+  const now = new Date();
+
+  // اليوم الحالي (سنة/شهر/يوم بس بدون وقت)
+  const today = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  // تاريخ الحصة (من lessonDate بس بدون وقت)
+  const lessonDay = new Date(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate()
+  );
+
+  // 👇 لو يوم الحصة قبل النهاردة → انتهت
+  if (lessonDay < today) return "ended";
+
+  if (now >= start && now <= end) return "live";
+  if (now > end) return "ended";
+
+  return "upcoming";
+}, [start, end]);
+
   
   const canEnterNow = useMemo(
     () => lessonStatus === "live" || canEnterLesson || isExpired,
@@ -141,7 +161,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
             className="w-16 xs:w-auto"
           />
         </div>
-        {/* <button
+        <button
           onClick={(e) => {
             e.stopPropagation();
             handleOpenContent();
@@ -150,7 +170,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         >
           <FileIcon />
           عرض المحتوى
-        </button> */}
+        </button>
     </>
     );
   }
@@ -196,7 +216,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     </>
   );
 // }, [lessonStatus, canEnterLesson, isExpired, handleEnterLesson]);
-}, [lessonStatus, canEnterNow, handleEnterLesson]);
+}, [lessonStatus, canEnterNow, handleOpenContent, handleEnterLesson]);
 
   // const { statusText, statusColor, statusIcon } = useMemo(() => {
   //   const now = new Date();
@@ -315,7 +335,13 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         statusIcon: <NotifyIcon className="w-4" />,
       };
     }
-
+    if (lessonStatus === "ended") {
+        return {
+      statusText: "انتهت الحصة",
+      statusColor: "text-red-500",
+      statusIcon: <TimeCheck className="w-4" />,
+    };
+    }
     return {
       statusText: "انتهت الحصة",
       statusColor: "text-red-500",

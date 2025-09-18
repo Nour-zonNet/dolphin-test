@@ -7,7 +7,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import notFoundImage from "@/assets/images/notFoundLessons.png";
-import { getNext7Days, getSevenDaysBeforeAndAfter } from "@/utils/dateHelpers";
+import {  getSevenDaysBeforeAndAfter } from "@/utils/dateHelpers";
 
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
@@ -19,17 +19,20 @@ const ScheduleSlider = () => {
   const { items, loading } = useLessons();
   const days = getSevenDaysBeforeAndAfter();
 
-  // نحدد index اليوم الحالي
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    timeZone: "Asia/Riyadh",
-  }).toLowerCase();
+// التاريخ الحالي مضبوط بالتوقيت
+const todayDate = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Riyadh",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(new Date()); // YYYY-MM-DD
 
-  const todayIndex = days.findIndex(
-    (d) => d.dayEn.toLowerCase() === today
-  );
+// نحدد index اليوم الحالي
+const todayIndex = days.findIndex((d) => d.date === todayDate);
 
-  const [activeIndex, setActiveIndex] = useState(todayIndex !== -1 ? todayIndex : 0);
+const [activeIndex, setActiveIndex] = useState(
+  todayIndex !== -1 ? todayIndex : 0
+);
 
   const NAVBAR_HEIGHT = 64;
   const MOBILE_BAR_HEIGHT = 56;
@@ -45,17 +48,17 @@ const ScheduleSlider = () => {
 
       <div className="slider py-6">
         <Swiper
+          key={todayIndex} // 👈 عشان يضمن يبدأ من اليوم الحالي
           modules={[Navigation, Pagination]}
           spaceBetween={30}
           slidesPerView={1}
           navigation={{ nextEl: ".custom-next", prevEl: ".custom-prev" }}
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-          initialSlide={activeIndex} // 👈 دي اللي بتظبط البداية
+          initialSlide={activeIndex}
         >
           {days.map((day) => {
             const lessonsForDay = items.filter(
-              (item) =>
-                day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
+              (item) => day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
             );
 
             return (
