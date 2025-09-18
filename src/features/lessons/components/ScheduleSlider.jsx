@@ -7,7 +7,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import notFoundImage from "@/assets/images/notFoundLessons.png";
-import { getNext7Days } from "@/utils/dateHelpers";
+import { getNext7Days, getSevenDaysBeforeAndAfter } from "@/utils/dateHelpers";
 
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
@@ -17,26 +17,22 @@ import { PreviewScheduleBtn } from "@/components/ui";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();
-  const days = getNext7Days();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const days = getSevenDaysBeforeAndAfter();
+
+  // نحدد index اليوم الحالي
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    timeZone: "Asia/Riyadh",
+  }).toLowerCase();
+
+  const todayIndex = days.findIndex(
+    (d) => d.dayEn.toLowerCase() === today
+  );
+
+  const [activeIndex, setActiveIndex] = useState(todayIndex !== -1 ? todayIndex : 0);
 
   const NAVBAR_HEIGHT = 64;
   const MOBILE_BAR_HEIGHT = 56;
-
-  const renderNoLessons = () => (
-    <div
-      className="flex justify-center items-center"
-      style={{ height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)` }}
-    >
-      <img
-        src={notFoundImage}
-        loading="lazy"
-
-        alt="No lessons found"
-        className="max-h-full w-auto object-contain mt-12"
-      />
-    </div>
-  );
 
   if (loading) return null;
 
@@ -54,6 +50,7 @@ const ScheduleSlider = () => {
           slidesPerView={1}
           navigation={{ nextEl: ".custom-next", prevEl: ".custom-prev" }}
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+          initialSlide={activeIndex} // 👈 دي اللي بتظبط البداية
         >
           {days.map((day) => {
             const lessonsForDay = items.filter(
@@ -63,7 +60,6 @@ const ScheduleSlider = () => {
 
             return (
               <SwiperSlide key={day.date}>
-                {/* <PreviewScheduleBtn /> */}
                 {lessonsForDay.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
                     {lessonsForDay.map((lesson, i) => {
@@ -74,13 +70,25 @@ const ScheduleSlider = () => {
                           item={lesson}
                           image={image}
                           color={bgColor}
-                          lessonDate={day.date}  
+                          lessonDate={day.date}
                         />
                       );
                     })}
                   </div>
                 ) : (
-                  renderNoLessons()
+                  <div
+                    className="flex justify-center items-center"
+                    style={{
+                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                    }}
+                  >
+                    <img
+                      src={notFoundImage}
+                      loading="lazy"
+                      alt="No lessons found"
+                      className="max-h-full w-auto object-contain mt-12"
+                    />
+                  </div>
                 )}
               </SwiperSlide>
             );

@@ -17,9 +17,138 @@ export const getNext7Days = () => {
     }).format(now); // YYYY-MM-DD
 
     days.push({
-      label: now.toLocaleDateString("ar-SA", optionsAR),   // اسم اليوم بالعربي
+      label: now.toLocaleDateString("ar-SA", optionsAR), // اسم اليوم بالعربي
       dayEn: now.toLocaleDateString("en-US", optionsEN).toLowerCase(), // sunday, monday...
       date: iso, // تاريخ مضبوط بالرياض YYYY-MM-DD
+    });
+  }
+
+  return days;
+};
+// ترجع الأيام بس من غير تواريخ
+export const getWeekFromSaturday = (tz = "Asia/Riyadh") => {
+  const days = [];
+  const optionsAR = { weekday: "long", timeZone: tz };
+  const optionsEN = { weekday: "long", timeZone: tz };
+
+  // نجيب التاريخ الحالي
+  const today = new Date();
+
+  // نحسب السبت الأقرب (نخليه بداية الأسبوع)
+  const dayOfWeek = today.getDay(); // 0: Sunday, 6: Saturday
+  const diff = (dayOfWeek === 6 ? 0 : (6 - dayOfWeek + 7) % 7) * -1;
+  const saturday = new Date(today);
+  saturday.setDate(today.getDate() + diff);
+
+  for (let i = 0; i < 7; i++) {
+    const current = new Date(saturday);
+    current.setDate(saturday.getDate() + i);
+
+    const iso = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(current);
+
+    days.push({
+      label: current.toLocaleDateString("ar-SA", optionsAR), // اليوم بالعربي
+      dayEn: current.toLocaleDateString("en-US", optionsEN).toLowerCase(), // بالإنجليزي
+      date: iso, // YYYY-MM-DD مضبوط بالتوقيت
+    });
+  }
+
+  return days;
+};
+
+export const getWeekFromLastSaturday = (tz = "Asia/Riyadh") => {
+  const days = [];
+  const optionsAR = { weekday: "long", timeZone: tz };
+  const optionsEN = { weekday: "long", timeZone: tz };
+
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0: Sunday ... 6: Saturday
+
+  // نحسب السبت اللي فات (أو النهاردة لو هو سبت)
+  const diff = (dayOfWeek - 6 + 7) % 7; 
+  const lastSaturday = new Date(today);
+  lastSaturday.setDate(today.getDate() - diff);
+
+  for (let i = 0; i < 7; i++) {
+    const current = new Date(lastSaturday);
+    current.setDate(lastSaturday.getDate() + i);
+
+    const iso = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(current);
+
+    days.push({
+      label: current.toLocaleDateString("ar-SA", optionsAR),   // اليوم بالعربي
+      dayEn: current.toLocaleDateString("en-US", optionsEN).toLowerCase(), // بالإنجليزي
+      date: iso, // YYYY-MM-DD مضبوط
+    });
+  }
+
+  return days;
+};
+
+export const getThreeDaysBeforeAndAfter = (tz = "Asia/Riyadh") => {
+  const days = [];
+  const optionsAR = { weekday: "long", timeZone: tz };
+  const optionsEN = { weekday: "long", timeZone: tz };
+
+  const today = new Date();
+
+  // نلف من -3 لحد +3 حوالين اليوم الحالي
+  for (let i = -3; i <= 3; i++) {
+    const current = new Date(today);
+    current.setDate(today.getDate() + i);
+
+    const iso = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(current);
+
+    days.push({
+      label: current.toLocaleDateString("ar-SA", optionsAR), // اليوم بالعربي
+      dayEn: current.toLocaleDateString("en-US", optionsEN).toLowerCase(), // اليوم بالإنجليزي
+      date: iso, // YYYY-MM-DD مضبوط بالتوقيت
+      isToday: i === 0, // علشان تعرف مين اليوم الحالي
+    });
+  }
+
+  return days;
+};
+
+export const getSevenDaysBeforeAndAfter = (tz = "Asia/Riyadh") => {
+  const days = [];
+  const optionsAR = { weekday: "long", timeZone: tz };
+  const optionsEN = { weekday: "long", timeZone: tz };
+
+  const today = new Date();
+
+  // من -7 لحد +7
+  for (let i = -7; i <= 7; i++) {
+    const current = new Date(today);
+    current.setDate(today.getDate() + i);
+
+    const iso = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(current);
+
+    days.push({
+      label: current.toLocaleDateString("ar-SA", optionsAR), // اليوم بالعربي
+      dayEn: current.toLocaleDateString("en-US", optionsEN).toLowerCase(), // اليوم بالإنجليزي
+      date: iso, // YYYY-MM-DD مضبوط بالتوقيت
+      isToday: i === 0, // لتحديد اليوم الحالي
     });
   }
 
@@ -153,20 +282,27 @@ export function getRemainingDate(packageStartDate) {
     return "انتهى";
   }
 
-    // return `${hour12}:${minutes} ${period}`;
-  };
+  // return `${hour12}:${minutes} ${period}`;
+}
 
 export function formatArabicDate(dateString) {
   const d = new Date(dateString);
   const tz = "Asia/Riyadh";
 
-  const day  = d.toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
+  const day = d.toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
   const year = d.toLocaleDateString("en-US", { year: "numeric", timeZone: tz });
-  let month  = new Intl.DateTimeFormat("ar-EG", { month: "long", timeZone: tz }).format(d);
+  let month = new Intl.DateTimeFormat("ar-EG", {
+    month: "long",
+    timeZone: tz,
+  }).format(d);
 
   return `${day} ${month} ${year}`;
 }
-export const parseDateWithTime = (dateString, timeString, timeZone = "Asia/Riyadh") => {
+export const parseDateWithTime = (
+  dateString,
+  timeString,
+  timeZone = "Asia/Riyadh"
+) => {
   const [hours, minutes, seconds] = timeString.split(":").map(Number);
 
   // اعمل Date من الـ lessonDate لكن كـ local
@@ -192,17 +328,26 @@ export const parseDateWithTime = (dateString, timeString, timeZone = "Asia/Riyad
 
   // رجع الـ date مضبوط حسب التوقيت
   const partsObj = Object.fromEntries(
-    formatter.formatToParts(localDate).map(p => [p.type, p.value])
+    formatter.formatToParts(localDate).map((p) => [p.type, p.value])
   );
 
   return new Date(
     `${partsObj.year}-${partsObj.month}-${partsObj.day}T${partsObj.hour}:${partsObj.minute}:${partsObj.second}`
   );
 };
-  export const formatDateWithEnglishDay = (d, lang = "ar") => {
-    const tz = "Asia/Riyadh";
-    const dayNum = d.toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
-    const monthName = d.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { month: "long", timeZone: tz });
-    const weekdayName = d.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { weekday: "long", timeZone: tz });
-    return { dayNum, monthName, weekdayName };
-  };
+export const formatDateWithEnglishDay = (d, lang = "ar") => {
+  const tz = "Asia/Riyadh";
+  const dayNum = d.toLocaleDateString("en-US", {
+    day: "numeric",
+    timeZone: tz,
+  });
+  const monthName = d.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", {
+    month: "long",
+    timeZone: tz,
+  });
+  const weekdayName = d.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", {
+    weekday: "long",
+    timeZone: tz,
+  });
+  return { dayNum, monthName, weekdayName };
+};
