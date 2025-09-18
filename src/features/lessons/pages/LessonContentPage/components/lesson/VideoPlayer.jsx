@@ -1,17 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+// components/VideoPlayer.jsx
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import playVideo from "@/assets/schedule/play-video.svg";
 import stopVideo from "@/assets/schedule/stop-video.svg";
 import { Fullscreen, Settings, DatePicker, Clock, Teacher } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
 import lessonVideo from "@/assets/videos/lesson.mp4";
+import { useContent } from "@/features/lessons/hooks/useContent";
+import poster from "@/assets/schedule/poster.svg";
 
-// ---------------- Fixed lesson data (use these until API wiring is ready) ----------------
-const FIXED = {
-  title: "الدرس الاول",
-  teacher: "أ.سارة محمد",
-  // ISO date → renders as "17 سبتمبر"
-  sessionDate: "2025-09-17",
-};
+// ---------- Fallbacks ----------
+const DEFAULT_POSTER =
+  "";
+// Use your test clip as default embed when API has no video
+const DEFAULT_YT_EMBED = "https://www.youtube.com/embed/7sLqMVQaVZg";
 
 // Arabic month names
 const AR_MONTHS = [
@@ -27,7 +28,7 @@ const formatDayMonthAr = (iso) => {
   return `${day} ${monthName}`;
 };
 
-// ---------------- Helpers ----------------
+// Helpers
 const formatTime = (sec) => {
   if (!isFinite(sec) || sec < 0) return "0:00";
   const s = Math.floor(sec);
@@ -35,29 +36,103 @@ const formatTime = (sec) => {
   const r = s % 60;
   return `${m}:${String(r).padStart(2, "0")}`;
 };
-
 const isMobileOrTablet = () =>
   typeof window !== "undefined" &&
   (window.matchMedia("(max-width: 1024px)").matches ||
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
-
 const isIOS = () =>
   typeof navigator !== "undefined" &&
   (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
 
-// ---------------- Component ----------------
-const VideoPlayer = ({
-  // You can still override the actual video src/poster via props if needed
-  src = lessonVideo,
-  poster = "https://c.animaapp.com/mer0eh3xn7npjs/img/shutterstock-331074809-1024x683-1-1.png",
-}) => {
+// Detect what player to use
+const toYouTubeEmbed = (url) => {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("youtu.be")) {
+      // https://youtu.be/VIDEOID?t=...
+      const id = u.pathname.replace("/", "");
+      const t = u.searchParams.get("t");
+      return `https://www.youtube.com/embed/${id}${t ? `?start=${parseInt(t, 10)}` : ""}`;
+    }
+    if (u.hostname.includes("youtube.com")) {
+      const id = u.searchParams.get("v");
+      const t = u.searchParams.get("t");
+      if (id) {
+        return `https://www.youtube.com/embed/${id}${t ? `?start=${parseInt(t, 10)}` : ""}`;
+      }
+      if (u.pathname.startsWith("/embed/")) return url; // already embed
+    }
+  } catch {}
+  return null;
+};
+const toVimeoEmbed = (url) => {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("vimeo.com")) {
+      // vimeo.com/12345 or player.vimeo.com/video/12345
+      const parts = u.pathname.split("/").filter(Boolean);
+      const id = parts.pop();
+      if (id && /^\d+$/.test(id)) return `https://player.vimeo.com/video/${id}`;
+      if (u.hostname.includes("player.vimeo.com")) return url; // already embed
+    }
+  } catch {}
+  return null;
+};
+
+const classifyVideo = (rawUrl) => {
+  if (!rawUrl) {
+    return { kind: "iframe", src: DEFAULT_YT_EMBED }; // fallback
+  }
+  const url = String(rawUrl);
+
+  // Known iframe providers
+  const yt = toYouTubeEmbed(url);
+  if (yt) return { kind: "iframe", src: yt };
+
+  const vm = toVimeoEmbed(url);
+  if (vm) return { kind: "iframe", src: vm };
+
+  if (/iframe\.mediadelivery\.net\/embed/i.test(url)) {
+    return { kind: "iframe", src: url };
+  }
+
+  // HLS
+  if (/\.m3u8(\?|$)/i.test(url)) {
+    return { kind: "video", src: url, type: "application/vnd.apple.mpegurl" };
+  }
+
+  // Direct files
+  if (/\.mp4(\?|$)/i.test(url)) {
+    return { kind: "video", src: url, type: "video/mp4" };
+  }
+  if (/\.webm(\?|$)/i.test(url)) {
+    return { kind: "video", src: url, type: "video/webm" };
+  }
+
+  // Unknown → try native video first; if it fails, user can still open in new tab
+  return { kind: "video", src: url, type: "video/mp4" };
+};
+
+const VideoPlayer = ({ lessonId }) => {
   const { t } = useTranslation();
 
-  // Fixed meta values (until you switch back to dynamic)
-  const lessonTitle = FIXED.title;
-  const teacherName = FIXED.teacher;
-  const dateText    = formatDayMonthAr(FIXED.sessionDate);
+  // Pull content from API
+  const { content, getContent } = useContent(lessonId);
+  useEffect(() => {
+    if (lessonId) getContent(lessonId);
+  }, [lessonId, getContent]);
+
+  // Meta (fallback to sensible defaults)
+  const lessonTitle = content?.title || "الدرس";
+  const teacherName = content?.teacher || "—";
+  const dateText = formatDayMonthAr(content?.session_date) || "—";
+
+  // Video source classification
+  const source = useMemo(() => {
+    const urlFromApi = content?.videoUrl; // normalized in your slice
+    return classifyVideo(urlFromApi || null);
+  }, [content?.videoUrl]);
 
   // ---------- refs & state ----------
   const stageRef = useRef(null);
@@ -80,7 +155,8 @@ const VideoPlayer = ({
   const [isEmulatedFS, setIsEmulatedFS] = useState(false);
   const [rotateFallback, setRotateFallback] = useState(false);
 
-  const showUI = showSettings || !isPlaying || (isHovered && !isFullscreen && !isEmulatedFS);
+  const isIframe = source.kind === "iframe";
+  const showUI = !isIframe && (showSettings || !isPlaying || (isHovered && !isFullscreen && !isEmulatedFS));
 
   const setVideoRef = (el) => {
     videoRef.current = el;
@@ -88,12 +164,15 @@ const VideoPlayer = ({
   };
 
   const togglePlay = () => {
+    if (isIframe) return; // cannot control iframe
     const v = videoRef.current;
     if (!v) return;
     v.paused ? v.play() : v.pause();
   };
 
+  // Attach native video events only when using <video>
   useEffect(() => {
+    if (isIframe) return;
     const v = videoEl;
     if (!v) return;
 
@@ -108,7 +187,6 @@ const VideoPlayer = ({
       } catch {}
     };
 
-    // Initialize immediately
     if (!isNaN(v.duration)) setDuration(v.duration || 0);
     setCurrent(v.currentTime || 0);
     onProgress();
@@ -128,10 +206,11 @@ const VideoPlayer = ({
       v.removeEventListener("durationchange", onDur);
       v.removeEventListener("progress", onProgress);
     };
-  }, [videoEl, src]);
+  }, [videoEl, source.kind, source.src]);
 
-  // Smooth progress updates while playing
+  // Smooth progress updates
   useEffect(() => {
+    if (isIframe) return;
     let rafId = null;
     const tick = () => {
       const v = videoRef.current;
@@ -141,13 +220,14 @@ const VideoPlayer = ({
         rafId = requestAnimationFrame(tick);
       }
     };
-    if (isPlaying) rafId = requestAnimationFrame(tick);
+    if (!isIframe && isPlaying) rafId = requestAnimationFrame(tick);
     return () => {
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [isPlaying]);
+  }, [isPlaying, isIframe]);
 
   useEffect(() => {
+    if (isIframe) return;
     const v = videoEl;
     if (!v) return;
     const onLoadedData = () => {
@@ -156,13 +236,14 @@ const VideoPlayer = ({
     };
     v.addEventListener("loadeddata", onLoadedData);
     return () => v.removeEventListener("loadeddata", onLoadedData);
-  }, [videoEl]);
+  }, [videoEl, isIframe]);
 
-  // Reset times on src change
+  // Reset times on src change (video mode)
   useEffect(() => {
+    if (isIframe) return;
     setCurrent(0);
     setDuration(0);
-  }, [src]);
+  }, [source.src, isIframe]);
 
   // ---------- fullscreen ----------
   const canRealFullscreen = () =>
@@ -254,16 +335,19 @@ const VideoPlayer = ({
 
   // ---------- settings ----------
   const setSpeed = (r) => {
+    if (isIframe) return;
     setPlaybackRate(r);
     if (videoRef.current) videoRef.current.playbackRate = r;
     setShowSettings(false);
   };
   const toggleMute = () => {
+    if (isIframe) return;
     const m = !muted;
     setMuted(m);
     if (videoRef.current) videoRef.current.muted = m;
   };
   const setVol = (v) => {
+    if (isIframe) return;
     const val = Math.min(1, Math.max(0, v));
     setVolume(val);
     if (videoRef.current) {
@@ -281,7 +365,6 @@ const VideoPlayer = ({
     if (!showSettings) return;
 
     const onDown = (e) => {
-      // if click is outside the settings popover, close it
       if (!settingsRef.current) return;
       if (settingsRef.current.contains(e.target)) return;
       setShowSettings(false);
@@ -291,7 +374,6 @@ const VideoPlayer = ({
       if (e.key === "Escape") setShowSettings(false);
     };
 
-    // capture-phase so we catch it before other handlers stop propagation
     document.addEventListener("mousedown", onDown, { capture: true });
     document.addEventListener("touchstart", onDown, { capture: true, passive: true });
     document.addEventListener("keydown", onKey);
@@ -304,6 +386,7 @@ const VideoPlayer = ({
   }, [showSettings]);
 
   const togglePiP = async () => {
+    if (isIframe) return;
     if (!videoRef.current) return;
     if (!("pictureInPictureEnabled" in document)) return;
     try {
@@ -315,8 +398,9 @@ const VideoPlayer = ({
     } catch {}
   };
 
-  // ---------- keyboard shortcuts ----------
+  // ---------- keyboard shortcuts (video only) ----------
   useEffect(() => {
+    if (isIframe) return;
     const onKey = (e) => {
       switch (e.key.toLowerCase()) {
         case " ":
@@ -349,27 +433,25 @@ const VideoPlayer = ({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [duration, volume, muted]);
+  }, [duration, volume, muted, isIframe]);
 
-  // ---------- scrubbing ----------
+  // ---------- scrubbing (video only) ----------
   const [scrubbing, setScrubbing] = useState(false);
-
   const pctFromClientX = (clientX) => {
     const track = progressTrackRef.current;
     if (!track || !duration) return 0;
     const rect = track.getBoundingClientRect();
     const x = Math.min(rect.right, Math.max(rect.left, clientX)) - rect.left;
     return Math.min(1, Math.max(0, x / rect.width));
-  };
-
+    };
   const seekToPct = (pct) => {
     if (!videoRef.current || !duration) return;
     const newTime = pct * duration;
     videoRef.current.currentTime = newTime;
     setCurrent(newTime);
   };
-
   const onPointerDown = (e) => {
+    if (isIframe) return;
     e.preventDefault();
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
     if (clientX == null) return;
@@ -401,42 +483,51 @@ const VideoPlayer = ({
   const progressPct = duration ? (current / duration) * 100 : 0;
   const bufferPct = duration ? (Math.min(bufferedEnd, duration) / duration) * 100 : 0;
 
-  // ---------- stage (video + overlays) ----------
+  // ---------- stage (video or iframe) ----------
   const StageInner = (
     <div
       className="relative w-full h-full"
       style={{
-        backgroundImage: poster ? `url("${poster}")` : undefined,
+        backgroundImage: DEFAULT_POSTER ? `url("${DEFAULT_POSTER}")` : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* VIDEO */}
-      <video
-        ref={setVideoRef}
-        className="w-full h-full object-cover block"
-        poster={poster}
-        preload="metadata"
-        playsInline
-        crossOrigin="anonymous"
-      >
-        {/* Using <source> improves compatibility */}
-        <source src={src} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-        متصفحك لا يدعم تشغيل الفيديو.
-      </video>
+      {isIframe ? (
+        <iframe
+          title="lesson-video"
+          src={source.src}
+          className="w-full h-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      ) : (
+        <video
+          ref={setVideoRef}
+          className="w-full h-full object-cover block"
+          poster={DEFAULT_POSTER}
+          preload="metadata"
+          playsInline
+          crossOrigin="anonymous"
+        >
+          <source src={source.src || lessonVideo} type={source.type || 'video/mp4'} />
+          متصفحك لا يدعم تشغيل الفيديو.
+        </video>
+      )}
 
       {/* Top bar (title) */}
       <div
         className={`absolute top-0 left-0 right-0 px-4 py-2 md:py-4 bg-black/10 to-transparent
           text-white md:text-base text-sm font-semibold
-          transition-opacity ${showUI ? "opacity-100" : "opacity-0"}`}
+          transition-opacity ${isIframe ? "opacity-100" : showUI ? "opacity-100" : "opacity-0"}`}
       >
         {lessonTitle}
       </div>
 
-      {/* Center overlay (click to toggle) */}
-      {(!isPlaying || (!isFullscreen && !isEmulatedFS && isHovered)) && (
+      {/* Center overlay (play/pause) — hide for iframe since we can't control it */}
+      {!isIframe && (!isPlaying || (!isFullscreen && !isEmulatedFS && isHovered)) && (
         <div
           onClick={togglePlay}
           className={`absolute inset-0 flex flex-col items-center justify-center bg-black/1 cursor-pointer ${
@@ -462,121 +553,124 @@ const VideoPlayer = ({
         </div>
       )}
 
-      {/* Bottom controls */}
-      <div
-        className={`absolute left-0 right-0 md:bottom-12 bottom-6 px-6 flex items-center justify-between text-white
-          transition-opacity ${showUI ? "opacity-100" : "opacity-0"}`}
-      >
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleFullscreen();
-            }}
-            title={(isFullscreen || isEmulatedFS) ? (t("Exit fullscreen") || "Exit fullscreen") : (t("Fullscreen") || "Fullscreen")}
+      {/* Bottom controls (video only) */}
+      {!isIframe && (
+        <>
+          <div
+            className={`absolute left-0 right-0 md:bottom-12 bottom-6 px-6 flex items-center justify-between text-white
+              transition-opacity ${showUI ? "opacity-100" : "opacity-0"}`}
           >
-            <Fullscreen className="w-4 md:w-5" />
-          </button>
-
-          <button
-            type="button"
-            className="cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowSettings((v) => !v);
-            }}
-            title={t("Settings") || "Settings"}
-          >
-            <Settings fill="white" className="w-4 md:w-5" />
-          </button>
-        </div>
-
-        {/* current / duration */}
-        <span className="bg-black/50 rounded-[64px] px-3 py-1 text-sm select-none">
-          {formatTime(duration)} / {formatTime(current)}
-        </span>
-      </div>
-
-      {/* Progress bar */}
-      <div className={`absolute left-4 right-4 bottom-2 md:bottom-8 transition-opacity ${showUI ? "opacity-100" : "opacity-0"}`}>
-        <div
-          ref={progressTrackRef}
-          className="relative h-2 bg-white/20 cursor-pointer rounded-full"
-          onPointerDown={onPointerDown}
-          onTouchStart={onPointerDown}
-        >
-          <div className="absolute left-0 top-0 h-full bg-white/35 rounded-full" style={{ width: `${bufferPct}%` }} />
-          <div className="absolute left-0 top-0 h-full rounded-full" style={{ width: `${progressPct}%`, backgroundColor: "#E89B32" }} />
-          <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow" style={{ left: `calc(${progressPct}% - 6px)` }} />
-        </div>
-      </div>
-
-      {/* Settings popover */}
-      {showSettings && (
-        <div
-          ref={settingsRef}
-          className="absolute right-18 bottom-0 lg:right-6 lg:bottom-18 w-56 rounded-xl p-3 bg-black/80 text-white border border-white/10 backdrop-blur-sm z-30"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="md:mb-2 text-sm font-semibold">{t("Playback speed") || "Playback speed"}</div>
-          <div className="grid grid-cols-4 gap-2">
-            {[0.5, 1, 1.25, 1.5].map((r) => (
+            <div className="flex items-center gap-3">
               <button
-                key={r}
-                onClick={() => setSpeed(r)}
-                className={`lg:px-2 py-1 rounded-md border text-[12px] lg:text-sm ${
-                  playbackRate === r ? "bg-white text-black" : "border-white/30 hover:bg-white/10"
-                }`}
-              >
-                {r}×
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-3 border-top border-white/10 pt-3 md:space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span>{t("Mute") || "Mute"}</span>
-              <button onClick={toggleMute} className="px-2 py-1 rounded-md border border-white/30 hover:bg-white/10 text-xs">
-                {muted || volume === 0 ? "🔇" : volume < 0.5 ? "🔉" : "🔊"}
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <span>{t("Volume") || "Volume"}</span>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.01}
-                value={muted ? 0 : volume}
-                onChange={(e) => setVol(parseFloat(e.target.value))}
-                className="w-28 accent-white"
-              />
-            </div>
-
-            {"pictureInPictureEnabled" in document && (
-              <div className="flex items-center justify-between text-sm">
-                <span>{t("Picture-in-Picture") || "Picture-in-Picture"}</span>
-                <button onClick={togglePiP} className="px-2 py-1 rounded-md border border-white/30 hover:bg-white/10 text-xs">
-                  {document.pictureInPictureElement ? (t("Exit") || "Exit") : (t("Toggle") || "Toggle")}
-                </button>
-              </div>
-            )}
-
-            <div className="flex items-center justify-between text-sm">
-              <span>{t("Loop") || "Loop"}</span>
-              <input
-                type="checkbox"
-                onChange={(e) => {
-                  if (videoRef.current) videoRef.current.loop = e.target.checked;
+                type="button"
+                className="cursor-pointer focus:outline-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFullscreen();
                 }}
-                className="accent-white"
-              />
+                title={(isFullscreen || isEmulatedFS) ? (t("Exit fullscreen") || "Exit fullscreen") : (t("Fullscreen") || "Fullscreen")}
+              >
+                <Fullscreen className="w-4 md:w-5" />
+              </button>
+
+              <button
+                type="button"
+                className="cursor-pointer focus:outline-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowSettings((v) => !v);
+                }}
+                title={t("Settings") || "Settings"}
+              >
+                <Settings fill="white" className="w-4 md:w-5" />
+              </button>
+            </div>
+
+            <span className="bg-black/50 rounded-[64px] px-3 py-1 text-sm select-none">
+              {formatTime(duration)} / {formatTime(current)}
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div className={`absolute left-4 right-4 bottom-2 md:bottom-8 transition-opacity ${showUI ? "opacity-100" : "opacity-0"}`}>
+            <div
+              ref={progressTrackRef}
+              className="relative h-2 bg-white/20 cursor-pointer rounded-full"
+              onPointerDown={onPointerDown}
+              onTouchStart={onPointerDown}
+            >
+              <div className="absolute left-0 top-0 h-full bg-white/35 rounded-full" style={{ width: `${bufferPct}%` }} />
+              <div className="absolute left-0 top-0 h-full rounded-full" style={{ width: `${progressPct}%`, backgroundColor: "#E89B32" }} />
+              <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow" style={{ left: `calc(${progressPct}% - 6px)` }} />
             </div>
           </div>
-        </div>
+
+          {/* Settings popover */}
+          {showSettings && (
+            <div
+              ref={settingsRef}
+              className="absolute right-18 bottom-0 lg:right-6 lg:bottom-18 w-56 rounded-xl p-3 bg-black/80 text-white border border-white/10 backdrop-blur-sm z-30"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="md:mb-2 text-sm font-semibold">{t("Playback speed") || "Playback speed"}</div>
+              <div className="grid grid-cols-4 gap-2">
+                {[0.5, 1, 1.25, 1.5].map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => setSpeed(r)}
+                    className={`lg:px-2 py-1 rounded-md border text-[12px] lg:text-sm ${
+                      playbackRate === r ? "bg-white text-black" : "border-white/30 hover:bg-white/10"
+                    }`}
+                  >
+                    {r}×
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-3 border-top border-white/10 pt-3 md:space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span>{t("Mute") || "Mute"}</span>
+                  <button onClick={toggleMute} className="px-2 py-1 rounded-md border border-white/30 hover:bg-white/10 text-xs">
+                    {muted || volume === 0 ? "🔇" : volume < 0.5 ? "🔉" : "🔊"}
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between text-sm">
+                  <span>{t("Volume") || "Volume"}</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    value={muted ? 0 : volume}
+                    onChange={(e) => setVol(parseFloat(e.target.value))}
+                    className="w-28 accent-white"
+                  />
+                </div>
+
+                {"pictureInPictureEnabled" in document && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span>{t("Picture-in-Picture") || "Picture-in-Picture"}</span>
+                    <button onClick={togglePiP} className="px-2 py-1 rounded-md border border-white/30 hover:bg-white/10 text-xs">
+                      {document.pictureInPictureElement ? (t("Exit") || "Exit") : (t("Toggle") || "Toggle")}
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between text-sm">
+                  <span>{t("Loop") || "Loop"}</span>
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      if (videoRef.current) videoRef.current.loop = e.target.checked;
+                    }}
+                    className="accent-white"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -632,7 +726,7 @@ const VideoPlayer = ({
       {!isEmulatedFS && InlineStage}
       {isEmulatedFS && EmulatedFS}
 
-      {/* Meta block (fixed values) */}
+      {/* Meta block */}
       <div className="md:p-6 p-2">
         <div className="flex justify-between items-start flex-wrap gap-4">
           <div className="flex flex-col gap-2">
@@ -644,13 +738,13 @@ const VideoPlayer = ({
               </div>
               <div className="flex items-center gap-2">
                 <DatePicker className="w-4 md:w-5" />
-                <span className="font-semibold text-[12px] md:text-lg">{dateText || "—"}</span>
+                <span className="font-semibold text-[12px] md:text-lg">{dateText}</span>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2 text-normalblue">
             <Teacher className="w-4 md:w-5" />
-            <span className="font-semibold text-[16px] md:text-lg text-normalblue">{teacherName}</span>
+            <span className="font-semibold text-sm md:text-lg text-navyteal">{teacherName}</span>
           </div>
         </div>
       </div>

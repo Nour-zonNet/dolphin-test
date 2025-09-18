@@ -46,7 +46,7 @@ const ScheduleSlider = () => {
         dayDate={days[activeIndex].date}
       />
 
-      <div className="slider py-6">
+      <div className="slider lg:py-6">
         <Swiper
           modules={[Navigation, Pagination]}
           spaceBetween={30}
