@@ -2,6 +2,7 @@ import { FileIcon, SessionIcon } from "@/utils/icons";
 import books from "@/assets/schedule/books.svg";
 import sandGlass from "@/assets/schedule/sandGlass.svg";
 import clock from "@/assets/schedule/clock.svg";
+import delay from "@/assets/schedule/delay.svg";
 import { LESSON_STATUS } from "../../../utils";
 
 export const LessonButton = ({
@@ -41,9 +42,9 @@ export const LessonButton = ({
         <div className="flex justify-center items-center">
           <img
             loading="lazy"
-            src={clock}
+            src={delay}
             alt="delayed"
-            className="w-16 xs:w-auto"
+            className="w-20 "
           />
         </div>
         <button
