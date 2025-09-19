@@ -159,7 +159,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="flex md:items-start items-center w-full flex-col md:flex-row md:justify-between gap-4 md:gap-[37px] py-4 md:py-8">
+    <div className="flex md:items-start items-start w-full flex-col md:flex-row md:justify-between gap-4 md:gap-[37px] py-4 md:py-8">
       {/* Current user profile */}
       <div className="flex gap-4">
         <div className="relative">
@@ -329,7 +329,7 @@ const UserProfile = () => {
             setIsModalOpen(true);
             setOpen(false);
           }}
-          className=" mt-3 flex items-center justify-center gap-2 py-2 md:py-3 px-6 
+          className=" mt-3 mr-auto flex items-center justify-center gap-2 py-2 md:py-3 px-6 
                            bg-orangedeep hover:bg-orange-100 active:bg-orange-200 
                            rounded-[32px] font-bold text-navyteal transition focus:outline-0"
         >
