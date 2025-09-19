@@ -4,23 +4,18 @@ import sandGlass from "@/assets/schedule/sandGlass.svg";
 import clock from "@/assets/schedule/clock.svg";
 
 export const LessonButton = ({
-  teacherStatus,
   lessonStatus,
   canEnterNow,
   onEnterLesson,
   onOpenContent,
   lessons,
 }) => {
+  // 🟥 الحصة انتهت
   if (lessonStatus === "ended") {
     return (
       <>
         <div className="flex justify-center items-center">
-          <img
-            loading="lazy"
-            src={books}
-            alt="ended"
-            className="w-16 xs:w-auto"
-          />
+          <img loading="lazy" src={books} alt="ended" className="w-16 xs:w-auto" />
         </div>
         {lessons && (
           <button
@@ -35,18 +30,32 @@ export const LessonButton = ({
     );
   }
 
+  // 🟦 الحصة مؤجلة
+  if (lessonStatus === "delayed") {
+    return (
+      <>
+        <div className="flex justify-center items-center">
+          <img loading="lazy" src={clock} alt="delayed" className="w-16 xs:w-auto" />
+        </div>
+        <button
+          disabled
+          aria-disabled
+          className="px-4 py-2 text-nowrap text-xs md:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 rounded-3xl bg-blue-200 text-blue-800 cursor-not-allowed"
+        >
+          الحصة مؤجلة
+        </button>
+      </>
+    );
+  }
+
+  // 🟨 الحصص العادية (upcoming/live)
   const isEnabled = canEnterNow;
   const iconSrc = isEnabled ? sandGlass : clock;
 
   return (
     <>
       <div className="flex justify-center items-center">
-        <img
-          loading="lazy"
-          src={iconSrc}
-          alt="status"
-          className="w-16 xs:w-auto"
-        />
+        <img loading="lazy" src={iconSrc} alt="status" className="w-16 xs:w-auto" />
       </div>
       <button
         onClick={onEnterLesson}
@@ -60,8 +69,8 @@ export const LessonButton = ({
             : "bg-[#7A8085] text-[#FAFBFC] cursor-not-allowed opacity-70",
         ].join(" ")}
       >
-        {teacherStatus && <SessionIcon className="w-4 lg:w-6" />}
-        {!teacherStatus ? "الحصة مؤجلة " : " دخول الحصة"}
+        <SessionIcon className="w-4 lg:w-6" />
+        دخول الحصة
       </button>
     </>
   );

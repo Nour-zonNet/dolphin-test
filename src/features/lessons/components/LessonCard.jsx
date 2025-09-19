@@ -47,12 +47,13 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       start.getDate()
     );
 
+    if (!item.teacher_status) return "delayed";
     if (lessonDay < today) return "ended";
     if (now >= start && now <= end) return "live";
     if (now > end) return "ended";
 
     return "upcoming";
-  }, [start, end]);
+  }, [start, item.teacher_status, end]);
 
   const canEnterNow = useMemo(
     () => lessonStatus === "live" || canEnterLesson,
