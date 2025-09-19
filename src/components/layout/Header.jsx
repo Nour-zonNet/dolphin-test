@@ -8,30 +8,36 @@ export const Header = ({
   title,
   // balance,
   onBack,
+  supTitle,
   showBalanceSection = true,
   showArrow = true,
 }) => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
   return (
-    <div className="w-full bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-4 md:py-8">
+    <div className="w-full bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-5 md:py-8">
       <div className="px-4 md:px-10 mx-auto grid grid-cols-3 items-center">
         {/* Back Button */}
-          <div className="flex justify-start">
-        {showArrow && (
+        <div className="flex justify-start">
+          {showArrow && (
             <button
               onClick={() => navigate(onBack)}
               className="outline-0 border border-bordercolor md:w-[60px] md:h-[60px] w-[35px] h-[35px] rounded-full flex items-center justify-center cursor-pointer"
             >
               <RightArrow className="w-[20px] md:w-[40px]" />
             </button>
-        )}
-          </div>
+          )}
+        </div>
 
         {/* Centered Title */}
-        <h1 className="font-bold text-navyteal md:text-2xl text-sm text-center">
-          {title}
-        </h1>
+        <div>
+          <h1 className="font-bold text-navyteal md:text-2xl text-sm text-center">
+            {title}
+          </h1>
+          <h3 className="font-bold text-nowrap text-orangedeep md:text-2xl text-sm text-center">
+            {supTitle}
+          </h3>
+        </div>
 
         {/* Right Section (optional) */}
         <div className="flex justify-end">

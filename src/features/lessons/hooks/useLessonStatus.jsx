@@ -19,7 +19,6 @@ export const useLessonStatus = (
       start.getMonth(),
       start.getDate()
     );
-    console.log(lessonStatus)
 
     // 🟦 أولوية لو الحصة مؤجلة
     if (lessonStatus === "delayed") {
