@@ -7,12 +7,13 @@ import { useTranslation } from "react-i18next";
 export const AttachmentItem = ({
   title,
   size,
-  hasImportantBadge,
+  hasImportantBadge,   
+  important,          
   hasDownloadIcon,
   iconSrc,
   // behavior
-  href,                 // ← NEW: link for the card
-  isCardClickable = false,
+  href,                // (not used directly here; parent handles window.open)
+  isCardClickable = false, // ← ignored now (click bound only to title/image)
   onOpen,
   onDownload,
 }) => {
@@ -20,6 +21,11 @@ export const AttachmentItem = ({
   const { t } = useTranslation();
   const menuRef = useRef(null);
   const triggerRef = useRef(null);
+
+  // Prefer `important` from API; fallback to legacy `hasImportantBadge`
+  const showImportant = Boolean(
+    typeof important === "boolean" ? important : hasImportantBadge
+  );
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -39,43 +45,52 @@ export const AttachmentItem = ({
     };
   }, [isMenuOpen]);
 
-  const Wrapper = isCardClickable && href ? "a" : "div";
-  const wrapperProps =
-    Wrapper === "a"
-      ? {
-          href,
-          target: "_blank",
-          rel: "noopener noreferrer",
-          // className merged below
-        }
-      : {};
-
   return (
-    <Wrapper
-      {...wrapperProps}
-      className={`relative w-full bg-[#f2f2f7] rounded-lg p-6 min-h-[106px] flex items-center ${
-        isCardClickable && href ? "cursor-pointer hover:bg-[#ececf3]" : ""
-      }`}
+    <div
+      className="relative w-full bg-[#f2f2f7] rounded-lg p-6 min-h-[106px] flex items-center"
     >
+      {/* Left: circular thumbnail (clickable) */}
       <div className="flex items-center justify-between">
-        <div className="bg-[#C4D6E1] md:w-[60px] md:h-[60px] w-[40px] h-[40px] rounded-full flex items-center justify-center">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onOpen?.();
+          }}
+          className="bg-[#C4D6E1] md:w-[60px] md:h-[60px] w-[40px] h-[40px] rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#99bcd1] hover:opacity-90 transition cursor-pointer"
+          aria-label={title ? `Open ${title}` : t("lesson_content.open_file")}
+        >
           {hasDownloadIcon && iconSrc && (
             <img className="w-5 md:w-6" alt="Attachment" src={iconSrc} />
           )}
-        </div>
+        </button>
 
-        {hasImportantBadge && (
+        {showImportant && (
           <div className="absolute left-12 md:left-20 top-11">
             <ImportantBadge />
           </div>
         )}
       </div>
 
+      {/* Middle: title (clickable) + size */}
       <div className="flex-1 mr-4">
-        <h3 className="font-semibold text-sm md:text-lg text-navyteal mb-2">{title}</h3>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onOpen?.();
+          }}
+          className="text-left font-semibold text-sm md:text-lg text-navyteal mb-2 hover:opacity-90 cursor-pointer"
+          title={title}
+        >
+          {title}
+        </button>
         <p className="font-normal text-black text-sm md:text-base">{size}</p>
       </div>
 
+      {/* Right: menu (… ) */}
       <div className="relative">
         <img
           ref={triggerRef}
@@ -83,7 +98,6 @@ export const AttachmentItem = ({
           alt="More"
           src={dots}
           onClick={(e) => {
-            // prevent the anchor from navigating when opening menu
             e.preventDefault();
             e.stopPropagation();
             setIsMenuOpen((v) => !v);
@@ -93,9 +107,8 @@ export const AttachmentItem = ({
           <div
             ref={menuRef}
             role="menu"
-            className="z-10 flex flex-col justify-center items-center gap-4 bg-white md:w-[220px] w-[200px] h-[160px] shadow rounded-3xl absolute left-0"
+            className="z-50 flex flex-col justify-center items-center gap-4 bg-white md:w-[220px] w-[200px] h-[160px] shadow rounded-3xl absolute left-0"
             onClick={(e) => {
-              // keep clicks inside menu from triggering anchor
               e.preventDefault();
               e.stopPropagation();
             }}
@@ -136,7 +149,7 @@ export const AttachmentItem = ({
           </div>
         )}
       </div>
-    </Wrapper>
+    </div>
   );
 };
 

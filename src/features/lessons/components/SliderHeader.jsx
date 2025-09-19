@@ -19,7 +19,7 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
   const formattedDate = `${dayNumber} ${monthName}`;
 
   return (
-    <div className="flex items-center flex-col lg:flex-row justify-between lg:gap-10">
+    <div className="flex items-center flex-col lg:flex-row lg:gap-8">
       <div className="flex items-center justify-between gap-4 border-[1px] border-dashed border-oceandeep rounded-full py-2 sm:py-4 md:px-6 px-6 w-full">
         <SliderNavButton
           direction="prev"

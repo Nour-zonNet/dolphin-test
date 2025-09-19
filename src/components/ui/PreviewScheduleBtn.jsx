@@ -3,7 +3,7 @@ import { DatePicker } from "@/utils/icons";
 import AllPackagesSchedulePopup from "@/features/lessons/pages/LessonContentPage/components/AllPackagesSchedulePopup";
 
 const PreviewScheduleBtn = ({
-  groupInfos, // [{ groupId, label?, color? }]
+  groupInfos,
   className = "",
   label = "معاينة الجدول الاسبوعي",
 }) => {
@@ -20,7 +20,7 @@ const PreviewScheduleBtn = ({
       <button
         type="button"
         onClick={handleOpen}
-        className={`flex items-center justify-center gap-2 bg-orangedeep text-darkblue px-4 py-2 lg:py-3 rounded-full w-full lg:w-1/3 mx-auto my-6 lg:my-0 hover:bg-btnClicked focus:bg-btnClicked cursor-pointer ${className}`}
+        className={`flex items-center justify-center gap-2 bg-orangedeep text-darkblue px-4 py-2.5 lg:py-3.5 rounded-full w-[95%] lg:w-1/3 mx-auto my-6 lg:my-0 hover:bg-btnClicked focus:bg-btnClicked cursor-pointer ${className}`}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
       >

@@ -1,16 +1,16 @@
-// services/content.services.js
+
 import api from "@/services/api";
 
 class ContentRepository {
-  async getByLessonId(lessonId) {
-    // dynamic id (no hardcoding)
-    const { data } = await api.get(`/lessons/${lessonId}`);
-    return data; // -> { success, message, data }
+  async getByLessonId(lessonId, axiosConfig = {}) {
+    const { data } = await api.get(`/student/lessons/${lessonId}`, axiosConfig);
+    return data; 
   }
 }
 
 export const contentRepository = new ContentRepository();
 
 export const contentService = {
-  getByLessonId: (lessonId) => contentRepository.getByLessonId(lessonId),
+  getByLessonId: (lessonId, axiosConfig) =>
+    contentRepository.getByLessonId(lessonId, axiosConfig),
 };

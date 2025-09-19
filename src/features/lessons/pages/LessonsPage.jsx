@@ -9,7 +9,7 @@ const SchedulePage = () => {
       pt-28 md:pt-40    
       pb-28             
       overflow-x-hidden
-      overflow-y-auto
+      overflow-y-auto lg:px-4
     ">
       <div className="mx-auto px-4">
         <ScheduleSlider />

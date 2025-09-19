@@ -2,8 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { RightArrow } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
+import { useLessons } from "../../../../hooks/useLessons";
 
 export const LessonHeader = () => {
+  const { items, loading } = useLessons();
   const { t } = useTranslation();
   return (
     <div className="w-full bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-8 flex items-center relative">
