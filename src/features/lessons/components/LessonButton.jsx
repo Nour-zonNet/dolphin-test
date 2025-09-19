@@ -2,6 +2,7 @@ import { FileIcon, SessionIcon } from "@/utils/icons";
 import books from "@/assets/schedule/books.svg";
 import sandGlass from "@/assets/schedule/sandGlass.svg";
 import clock from "@/assets/schedule/clock.svg";
+import { LESSON_STATUS } from "../../../utils";
 
 export const LessonButton = ({
   lessonStatus,
@@ -10,12 +11,16 @@ export const LessonButton = ({
   onOpenContent,
   lessons,
 }) => {
-  // 🟥 الحصة انتهت
-  if (lessonStatus === "ended") {
+  if (lessonStatus === LESSON_STATUS.ENDED) {
     return (
       <>
         <div className="flex justify-center items-center">
-          <img loading="lazy" src={books} alt="ended" className="w-16 xs:w-auto" />
+          <img
+            loading="lazy"
+            src={books}
+            alt="ended"
+            className="w-16 xs:w-auto"
+          />
         </div>
         {lessons && (
           <button
@@ -30,12 +35,16 @@ export const LessonButton = ({
     );
   }
 
-  // 🟦 الحصة مؤجلة
-  if (lessonStatus === "delayed") {
+  if (lessonStatus === LESSON_STATUS.DELAYED) {
     return (
       <>
         <div className="flex justify-center items-center">
-          <img loading="lazy" src={clock} alt="delayed" className="w-16 xs:w-auto" />
+          <img
+            loading="lazy"
+            src={clock}
+            alt="delayed"
+            className="w-16 xs:w-auto"
+          />
         </div>
         <button
           disabled
@@ -55,7 +64,12 @@ export const LessonButton = ({
   return (
     <>
       <div className="flex justify-center items-center">
-        <img loading="lazy" src={iconSrc} alt="status" className="w-16 xs:w-auto" />
+        <img
+          loading="lazy"
+          src={iconSrc}
+          alt="status"
+          className="w-16 xs:w-auto"
+        />
       </div>
       <button
         onClick={onEnterLesson}

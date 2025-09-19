@@ -5,6 +5,7 @@ import { useLessonStatus } from "../hooks/useLessonStatus";
 import { useLessonHandlers } from "../hooks/useLessonHandlers";
 import { LessonButton } from "./LessonButton";
 import { LessonInfo } from "./LessonInfo";
+import { LESSON_STATUS } from "../../../utils";
 
 const LessonCard = ({ item, color, image, lessonDate }) => {
   const { openStatusModal } = useModal();
@@ -47,12 +48,12 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       start.getDate()
     );
 
-    if (!item.teacher_status) return "delayed";
-    if (lessonDay < today) return "ended";
-    if (now >= start && now <= end) return "live";
-    if (now > end) return "ended";
+    if (lessonDay < today) return LESSON_STATUS.ENDED;
+    if (!item.teacher_status) return LESSON_STATUS.DELAYED;
+    if (now >= start && now <= end) return LESSON_STATUS.LIVE;
+    if (now > end) return LESSON_STATUS.ENDED;
 
-    return "upcoming";
+    return LESSON_STATUS.UPCOMING;
   }, [start, item.teacher_status, end]);
 
   const canEnterNow = useMemo(
@@ -79,9 +80,11 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       <div
         style={{ borderColor: color }}
         className={`flex flex-row items-center xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border-[0.5px] !border-l-gray-400 !border-t-gray-400 !border-b-gray-400 border-r-quran border-r-10 sm:border-r-14 w-full py-4 md:py-8 px-4 overflow-hidden`}
-        onClick={() => lessonStatus !== "ended" && handleCardClick(setHintMsg)}
-        role={lessonStatus !== "ended" ? "button" : undefined}
-        tabIndex={lessonStatus !== "ended" ? 0 : -1}
+        onClick={() =>
+          lessonStatus !== LESSON_STATUS.ENDED && handleCardClick(setHintMsg)
+        }
+        role={lessonStatus !== LESSON_STATUS.ENDED ? "button" : undefined}
+        tabIndex={lessonStatus !== LESSON_STATUS.ENDED ? 0 : -1}
       >
         <LessonInfo
           item={item}
@@ -105,7 +108,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         </div>
       </div>
 
-      {hintMsg && lessonStatus !== "ended" && (
+      {hintMsg && lessonStatus !== LESSON_STATUS.ENDED && lessonStatus !== LESSON_STATUS.DELAYED &&(
         <div className="mt-2 text-green-600 text-sm font-semibold">
           {hintMsg}
         </div>
