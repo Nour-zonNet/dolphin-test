@@ -10,7 +10,7 @@ import poster from "@/assets/schedule/poster.svg";
 
 // ---------- Fallbacks ----------
 const DEFAULT_POSTER =
-  "";
+  poster;
 // Use your test clip as default embed when API has no video
 const DEFAULT_YT_EMBED = "https://www.youtube.com/embed/7sLqMVQaVZg";
 
