@@ -159,7 +159,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="flex items-center w-full flex-col md:flex-row md:justify-between gap-4 md:gap-[37px] py-4 md:py-8">
+    <div className="flex md:items-start items-center w-full flex-col md:flex-row md:justify-between gap-4 md:gap-[37px] py-4 md:py-8">
       {/* Current user profile */}
       <div className="flex gap-4">
         <div className="relative">
@@ -305,7 +305,7 @@ const UserProfile = () => {
               ))}
 
               {/* Add sibling button */}
-              {isPrimaryStudent && (
+              {isPrimaryStudent && brothers.length < 3 && (
                 <button
                   onClick={() => {
                     setIsModalOpen(true);
@@ -323,7 +323,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-      {isPrimaryStudent && (
+      {isPrimaryStudent && brothers.length < 3 && (
         <button
           onClick={() => {
             setIsModalOpen(true);
