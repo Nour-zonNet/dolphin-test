@@ -1,10 +1,12 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
+import ImportPDFFromURL from "./ImportPDFFromURL";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ImportPDFButton = ({ onLoadPDF }) => {
   const fileInputRef = useRef();
+  const [showURLModal, setShowURLModal] = useState(false);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -12,14 +14,50 @@ const ImportPDFButton = ({ onLoadPDF }) => {
     onLoadPDF(file);
   };
 
+  const handleURLImport = async (url) => {
+    try {
+      // Try direct fetch first
+      let response;
+      try {
+        response = await fetch(url);
+      } catch {
+        console.log("Direct fetch failed due to CORS, trying with proxy...");
+        // Use CORS proxy as fallback
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        response = await fetch(proxyUrl);
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const arrayBuffer = await response.arrayBuffer();
+      const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+      const file = new File([blob], 'imported.pdf', { type: 'application/pdf' });
+      onLoadPDF(file);
+    } catch (error) {
+      console.error("Error loading PDF from URL:", error);
+      throw error;
+    }
+  };
+
   return (
     <>
-      <button
-        onClick={() => fileInputRef.current.click()}
-        className="p-2 bg-green-500 text-white rounded-md"
-      >
-        Import PDF
-      </button>
+      <div className="flex gap-2 lg:flex-col">
+        <button
+          onClick={() => fileInputRef.current.click()}
+          className="p-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+        >
+          Upload PDF
+        </button>
+        <button
+          onClick={() => setShowURLModal(true)}
+          className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+        >
+          From URL
+        </button>
+      </div>
+      
       <input
         type="file"
         accept="application/pdf"
@@ -27,6 +65,13 @@ const ImportPDFButton = ({ onLoadPDF }) => {
         style={{ display: "none" }}
         onChange={handleFileChange}
       />
+
+      {showURLModal && (
+        <ImportPDFFromURL
+          onLoadPDFFromURL={handleURLImport}
+          onClose={() => setShowURLModal(false)}
+        />
+      )}
     </>
   );
 };

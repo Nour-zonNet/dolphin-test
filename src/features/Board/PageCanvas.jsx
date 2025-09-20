@@ -14,7 +14,9 @@ const PageCanvas = ({
   fontSize,
   pageState,
   onUpdatePageState,
+  saveToHistory,
   stageRef,
+  isDesktop,
 }) => {
   const containerRef = useRef(null);
   const localStageRef = useRef(null);
@@ -30,16 +32,22 @@ const PageCanvas = ({
   const setShapes = (next) => onUpdatePageState(pageIndex, { ...pageState, shapes: next });
   const setTexts = (next) => onUpdatePageState(pageIndex, { ...pageState, texts: next });
 
-  const saveToHistory = useMemo(() => {
-    // For now, just persist state upward; per-page undo can be added later
+  const localSaveToHistory = useMemo(() => {
+    // Use the passed saveToHistory function from parent
     return (newLines, newTexts, newShapes) => {
-      onUpdatePageState(pageIndex, {
-        lines: newLines.length ? newLines : lines,
-        texts: newTexts.length ? newTexts : texts,
-        shapes: newShapes.length ? newShapes : shapes,
-      });
+      if (saveToHistory) {
+        // For multi-page mode, just call saveToHistory - it will handle pageStates
+        saveToHistory(newLines, newTexts, newShapes);
+      } else {
+        // Fallback to local state update
+        onUpdatePageState(pageIndex, {
+          lines: newLines.length ? newLines : lines,
+          texts: newTexts.length ? newTexts : texts,
+          shapes: newShapes.length ? newShapes : shapes,
+        });
+      }
     };
-  }, [onUpdatePageState, pageIndex, lines, texts, shapes]);
+  }, [saveToHistory, onUpdatePageState, pageIndex, lines, texts, shapes]);
 
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCanvasDrawing(
     tool,
@@ -49,7 +57,7 @@ const PageCanvas = ({
     shapes,
     setLines,
     setShapes,
-    saveToHistory,
+    localSaveToHistory,
     displayScale
   );
 
@@ -67,7 +75,8 @@ const PageCanvas = ({
       const containerHeight = containerRef.current.offsetHeight || img.height;
       const maxWidth = Math.max(320, containerWidth);
       const maxHeight = Math.max(240, containerHeight);
-      const scale = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+      // Remove the scale cap of 1 to allow PDF pages to grow larger when container grows
+      const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
       setDisplayScale(scale);
       setDimensions({ width: Math.floor(img.width * scale), height: Math.floor(img.height * scale) });
     };
@@ -79,24 +88,56 @@ const PageCanvas = ({
     if (!containerRef.current || !bgImageEl) return;
 
     const update = () => {
+      if (!containerRef.current || !bgImageEl) return;
+      
       const containerWidth = containerRef.current.offsetWidth;
       const containerHeight = containerRef.current.offsetHeight || bgImageEl.height;
       const maxWidth = Math.max(320, containerWidth);
       const maxHeight = Math.max(240, containerHeight);
-      const scale = Math.min(maxWidth / bgImageEl.width, maxHeight / bgImageEl.height, 1);
+      // Remove the scale cap of 1 to allow PDF pages to grow larger when container grows
+      const scale = Math.min(maxWidth / bgImageEl.width, maxHeight / bgImageEl.height);
       setDisplayScale(scale);
       setDimensions({ width: Math.floor(bgImageEl.width * scale), height: Math.floor(bgImageEl.height * scale) });
     };
 
+    // Debounced update function to handle rapid resize events
+    let timeoutId;
+    const debouncedUpdate = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(update, 100);
+    };
+
     update();
-    const ro = new ResizeObserver(update);
+    const ro = new ResizeObserver(debouncedUpdate);
     ro.observe(containerRef.current);
-    window.addEventListener("resize", update);
+    window.addEventListener("resize", debouncedUpdate);
+    
     return () => {
+      clearTimeout(timeoutId);
       ro.disconnect();
-      window.removeEventListener("resize", update);
+      window.removeEventListener("resize", debouncedUpdate);
     };
   }, [bgImageEl]);
+
+  // Force resize when layout changes (isDesktop changes)
+  useEffect(() => {
+    if (!containerRef.current || !bgImageEl) return;
+    
+    // Small delay to ensure layout has updated
+    const timeoutId = setTimeout(() => {
+      if (!containerRef.current || !bgImageEl) return;
+      
+      const containerWidth = containerRef.current.offsetWidth;
+      const containerHeight = containerRef.current.offsetHeight || bgImageEl.height;
+      const maxWidth = Math.max(320, containerWidth);
+      const maxHeight = Math.max(240, containerHeight);
+      const scale = Math.min(maxWidth / bgImageEl.width, maxHeight / bgImageEl.height);
+      setDisplayScale(scale);
+      setDimensions({ width: Math.floor(bgImageEl.width * scale), height: Math.floor(bgImageEl.height * scale) });
+    }, 150);
+
+    return () => clearTimeout(timeoutId);
+  }, [isDesktop, bgImageEl]);
 
   const onCanvasMouseDown = (e) => {
     if (e.evt && e.evt.touches && e.evt.touches.length > 1) {
@@ -104,6 +145,7 @@ const PageCanvas = ({
     }
     const result = handleMouseDown(e);
     if (result?.type === "text") {
+      // Store the original canvas coordinates for text placement
       setTextPosition(result.position);
       setShowTextInput(true);
     }
@@ -122,7 +164,10 @@ const PageCanvas = ({
         },
       ];
       setTexts(newTexts);
-      saveToHistory(lines, newTexts, shapes);
+      // For multi-page mode, we need to call the parent's saveToHistory with pageStates
+      if (saveToHistory) {
+        saveToHistory(lines, newTexts, shapes);
+      }
     }
     setTextInput("");
     setShowTextInput(false);
@@ -133,7 +178,10 @@ const PageCanvas = ({
     if (newText !== null) {
       const updated = texts.map((t, i) => (i === idx ? { ...t, text: newText } : t));
       setTexts(updated);
-      saveToHistory(lines, updated, shapes);
+      // For multi-page mode, we need to call the parent's saveToHistory with pageStates
+      if (saveToHistory) {
+        saveToHistory(lines, updated, shapes);
+      }
     }
   };
 
@@ -255,6 +303,8 @@ const PageCanvas = ({
         textPosition={textPosition}
         onAddText={addText}
         onClose={() => setShowTextInput(false)}
+        containerRef={containerRef}
+        displayScale={displayScale}
       />
     </div>
   );

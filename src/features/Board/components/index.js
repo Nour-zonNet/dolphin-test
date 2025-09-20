@@ -6,3 +6,4 @@ export { default as ActionButtons } from './ActionButtons';
 export { default as ExportButton } from './ExportButton';
 export { default as ToolIndicator } from './ToolIndicator';
 export { default as ImportPDFButton } from './ImportPDFButton';
+export { default as ImportPDFFromURL } from './ImportPDFFromURL';

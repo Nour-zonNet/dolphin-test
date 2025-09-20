@@ -3,6 +3,7 @@ import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
 import Checkout from "../../features/packages/pages/Checkout";
 import LoginSiblings from "../../features/auth/pages/LoginSiblings";
 import AddSiblingsPage from "../../features/auth/pages/AddSiblingsPage";
+import Board from "../../features/Board/Board";
 // import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
@@ -86,12 +87,12 @@ export const routes = [
     public: true,
     layout: false, // Auth pages don't need AppLayout
   },
-  // {
-  //   path: "/pdf",
-  //   // element: Board,
-  //   public: true,
-  //   layout: false, // Auth pages don't need AppLayout
-  // },
+  {
+    path: "/pdf",
+    element: Board,
+    public: true,
+    layout: false, // Auth pages don't need AppLayout
+  },
   {
     path: "/auth",
 

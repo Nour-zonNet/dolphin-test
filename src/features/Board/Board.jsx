@@ -1,9 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, startTransition } from "react";
 import Toolbar from "./Toolbar";
 import Canvas from "./Canvas";
 import PageCanvas from "./PageCanvas";
 import TextInputOverlay from "./TextInputOverlay";
 import { useBoardHistory, useCanvasDrawing } from "./hooks";
+import { ActionButtons } from "./components";
 
 // Note: jsPDF will be imported dynamically to avoid SSR issues
 
@@ -48,17 +49,17 @@ const Board = () => {
 
   // Refs
   const stageRef = useRef();
+  const canvasContainerRef = useRef();
 
   // Custom hooks
   const {
     history,
-    historyIndex,
     saveToHistory,
     undo: undoHistory,
     redo: redoHistory,
     canUndo,
     canRedo,
-    setHistoryIndex,
+    resetHistory,
   } = useBoardHistory();
 
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCanvasDrawing(
@@ -69,13 +70,16 @@ const Board = () => {
     shapes,
     setLines,
     setShapes,
-    saveToHistory
+    (newLines, newTexts, newShapes) => {
+      saveToHistory(newLines, newTexts, newShapes);
+    }
   );
 
   // Event handlers
   const handleCanvasMouseDown = (e) => {
     const result = handleMouseDown(e);
     if (result?.type === "text") {
+      // Store the original canvas coordinates for text placement
       setTextPosition(result.position);
       setShowTextInput(true);
     }
@@ -118,31 +122,77 @@ const Board = () => {
   // History actions
   const undo = () => {
     const prevState = undoHistory();
+
     if (prevState) {
-      setLines(prevState.lines);
-      setTexts(prevState.texts);
-      setShapes(prevState.shapes);
-      setHistoryIndex(historyIndex - 1);
+      if (backgroundPages.length > 0) {
+        // For multi-page mode, restore page states
+        if (prevState.pageStates) {
+          setPageStates(prevState.pageStates);
+        } else {
+          const emptyPageStates = backgroundPages.map(() => ({
+            lines: [],
+            texts: [],
+            shapes: [],
+          }));
+          setPageStates(emptyPageStates);
+        }
+      } else {
+        // Use startTransition to ensure state updates are processed
+        startTransition(() => {
+          setLines(prevState.lines || []);
+          setTexts(prevState.texts || []);
+          setShapes(prevState.shapes || []);
+        });
+      }
     }
   };
 
   const redo = () => {
     const nextState = redoHistory();
+
     if (nextState) {
-      setLines(nextState.lines);
-      setTexts(nextState.texts);
-      setShapes(nextState.shapes);
-      setHistoryIndex(historyIndex + 1);
+      if (backgroundPages.length > 0) {
+        // For multi-page mode, restore page states
+        if (nextState.pageStates) {
+          setPageStates(nextState.pageStates);
+        } else {
+          const emptyPageStates = backgroundPages.map(() => ({
+            lines: [],
+            texts: [],
+            shapes: [],
+          }));
+          setPageStates(emptyPageStates);
+        }
+      } else {
+        // Use startTransition to ensure state updates are processed
+        startTransition(() => {
+          setLines(nextState.lines || []);
+          setTexts(nextState.texts || []);
+          setShapes(nextState.shapes || []);
+        });
+      }
     }
   };
 
   // Canvas actions
   const clearCanvas = () => {
     if (window.confirm("Are you sure you want to clear the canvas?")) {
-      setLines([]);
-      setTexts([]);
-      setShapes([]);
-      saveToHistory([], [], []);
+      if (backgroundPages.length > 0) {
+        // Clear all pages
+        const emptyPageStates = pageStates.map(() => ({
+          lines: [],
+          texts: [],
+          shapes: [],
+        }));
+        setPageStates(emptyPageStates);
+        saveToHistory([], [], [], emptyPageStates);
+      } else {
+        // Clear single page
+        setLines([]);
+        setTexts([]);
+        setShapes([]);
+        saveToHistory([], [], []);
+      }
     }
   };
 
@@ -198,8 +248,19 @@ const Board = () => {
         setBackgroundPages(pages);
         setBackgroundImage(pages[0].dataUrl);
         // Initialize per-page drawing state and refs
-        setPageStates(pages.map(() => ({ lines: [], texts: [], shapes: [] })));
+        const initialPageStates = pages.map(() => ({
+          lines: [],
+          texts: [],
+          shapes: [],
+        }));
+        setPageStates(initialPageStates);
         pageStageRefs.current = pages.map(() => null);
+
+        // Reset history and initialize with the new page states
+        // Clear existing history completely
+        resetHistory();
+        // Initialize history with the new page states
+        saveToHistory([], [], [], initialPageStates);
       }
     } catch (error) {
       console.error("Error importing PDF:", error);
@@ -214,7 +275,10 @@ const Board = () => {
       const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
       // If there are imported PDF pages, export multi-page matching original
-      if (backgroundPages.length > 0 && pageStageRefs.current.length === backgroundPages.length) {
+      if (
+        backgroundPages.length > 0 &&
+        pageStageRefs.current.length === backgroundPages.length
+      ) {
         const first = backgroundPages[0];
         const pdf = new jsPDF({
           orientation: first.width > first.height ? "landscape" : "portrait",
@@ -227,12 +291,18 @@ const Board = () => {
           const stage = pageStageRefs.current[i];
           if (!stage) continue;
           if (i > 0) {
-            pdf.addPage([page.width, page.height], page.width > page.height ? "landscape" : "portrait");
+            pdf.addPage(
+              [page.width, page.height],
+              page.width > page.height ? "landscape" : "portrait"
+            );
           }
           const stageWidth = stage.width();
           const ratio = page.width / Math.max(1, stageWidth);
           const pixelRatio = Math.max(1, Math.min(4, ratio));
-          const dataURL = stage.toDataURL({ pixelRatio, mimeType: "image/png" });
+          const dataURL = stage.toDataURL({
+            pixelRatio,
+            mimeType: "image/png",
+          });
           pdf.addImage(dataURL, "PNG", 0, 0, page.width, page.height);
         }
 
@@ -246,7 +316,9 @@ const Board = () => {
 
       // Fallback single-page export (no imported PDF)
       if (!stageRef.current) {
-        alert("Canvas is empty. Please add some content before exporting to PDF.");
+        alert(
+          "Canvas is empty. Please add some content before exporting to PDF."
+        );
         return;
       }
       const stage = stageRef.current;
@@ -270,18 +342,19 @@ const Board = () => {
     }
   };
 
-  // Set up initial history
+  // Set up initial history (only for non-PDF mode or when PDF is not yet loaded)
   useEffect(() => {
-    if (history.length === 0) {
+    if (history.length === 0 && backgroundPages.length === 0) {
+      // Only initialize history for single-page mode
       saveToHistory([], [], []);
     }
-  }, [history.length, saveToHistory]);
+  }, [history.length, saveToHistory, backgroundPages.length]);
 
   const { isDesktop } = useResponsive();
 
   return (
     <div
-      className={`board-container flex gap-5 w-full h-full ${
+      className={`flex gap-5 w-full h-full ${
         isDesktop ? "flex-row-reverse" : "flex-col"
       }`}
     >
@@ -305,10 +378,22 @@ const Board = () => {
         onExport={exportImage}
         onImportPDF={handleImportPDF}
       />
+      <div>
+        <ActionButtons
+          canUndo={canUndo}
+          canRedo={canRedo}
+          onUndo={undo}
+          onRedo={redo}
+          onClear={clearCanvas}
+        />
 
-      <div className={`canvas-wrapper flex-1 min-h-0 ${isDesktop ? "grid grid-cols-2 gap-4" : "flex flex-col gap-4"}`}>
-        {backgroundPages.length > 0
-          ? backgroundPages.map((p, idx) => (
+        <div
+          className={`canvas-wrapper flex-1 min-h-0 ${
+            isDesktop ? "grid grid-cols-2 gap-4" : "flex flex-col gap-4"
+          }`}
+        >
+          {backgroundPages.length > 0 ? (
+            backgroundPages.map((p, idx) => (
               <PageCanvas
                 key={idx}
                 pageIndex={idx}
@@ -319,39 +404,66 @@ const Board = () => {
                 currentColor={currentColor}
                 strokeWidth={strokeWidth}
                 fontSize={fontSize}
-                pageState={pageStates[idx] || { lines: [], texts: [], shapes: [] }}
-                onUpdatePageState={(i, next) =>
-                  setPageStates((prev) => prev.map((s, k) => (k === i ? next : s)))
+                pageState={
+                  pageStates[idx] || { lines: [], texts: [], shapes: [] }
                 }
+                isDesktop={isDesktop}
+                onUpdatePageState={(i, next) => {
+                  const newPageStates = pageStates.map((s, k) =>
+                    k === i ? next : s
+                  );
+                  setPageStates(newPageStates);
+                  // Don't save to history here - let saveToHistory callback handle it
+                }}
+                saveToHistory={(newLines, newTexts, newShapes) => {
+                  // This is called by PageCanvas drawing actions
+                  const newPageStates = pageStates.map((s, k) =>
+                    k === idx
+                      ? {
+                          ...s,
+                          lines: newLines,
+                          texts: newTexts,
+                          shapes: newShapes,
+                        }
+                      : s
+                  );
+                  setPageStates(newPageStates);
+                  // Save to history with the updated pageStates
+                  saveToHistory([], [], [], newPageStates);
+                }}
                 stageRef={(node) => {
                   if (!node) return;
                   pageStageRefs.current[idx] = node;
                 }}
-              />)
-            )
-          : (
-              <Canvas
-                stageRef={stageRef}
-                lines={lines}
-                texts={texts}
-                shapes={shapes}
-                backgroundImage={backgroundImage}
-                onMouseDown={handleCanvasMouseDown}
-                onMouseMove={handleCanvasMouseMove}
-                onMouseUp={handleCanvasMouseUp}
-                onTextDblClick={handleTextDblClick}
               />
-            )}
-      </div>
+            ))
+          ) : (
+            <Canvas
+              stageRef={stageRef}
+              lines={lines}
+              texts={texts}
+              shapes={shapes}
+              backgroundImage={backgroundImage}
+              onMouseDown={handleCanvasMouseDown}
+              onMouseMove={handleCanvasMouseMove}
+              onMouseUp={handleCanvasMouseUp}
+              onTextDblClick={handleTextDblClick}
+              containerRef={canvasContainerRef}
+            />
+          )}
+        </div>
 
-      <TextInputOverlay
-        showTextInput={showTextInput}
-        textInput={textInput}
-        setTextInput={setTextInput}
-        textPosition={textPosition}
-        onAddText={addText}
-        onClose={() => setShowTextInput(false)}
-      />
+        <TextInputOverlay
+          showTextInput={showTextInput}
+          textInput={textInput}
+          setTextInput={setTextInput}
+          textPosition={textPosition}
+          onAddText={addText}
+          onClose={() => setShowTextInput(false)}
+          containerRef={canvasContainerRef}
+          displayScale={1}
+        />
+      </div>
     </div>
   );
 };
