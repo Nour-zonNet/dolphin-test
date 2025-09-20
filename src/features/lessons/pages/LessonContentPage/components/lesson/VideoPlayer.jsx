@@ -6,11 +6,10 @@ import { Fullscreen, Settings, DatePicker, Clock, Teacher } from "@/utils/icons"
 import { useTranslation } from "react-i18next";
 import lessonVideo from "@/assets/videos/lesson.mp4";
 import { useContent } from "@/features/lessons/hooks/useContent";
-import poster from "@/assets/schedule/poster.svg";
 
 // ---------- Fallbacks ----------
 const DEFAULT_POSTER =
-  "";
+  "https://c.animaapp.com/mer0eh3xn7npjs/img/shutterstock-331074809-1024x683-1-1.png";
 // Use your test clip as default embed when API has no video
 const DEFAULT_YT_EMBED = "https://www.youtube.com/embed/7sLqMVQaVZg";
 
