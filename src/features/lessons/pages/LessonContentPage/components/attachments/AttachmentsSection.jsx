@@ -18,7 +18,7 @@ const DEFAULT_TITLES = [
 
 const prettyFromFilename = (url) => {
   try {
-    const u = new URL(url);
+    const u = new URL(url, window.location.origin);
     const last = u.pathname.split("/").filter(Boolean).pop() || "file.pdf";
     return last.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
   } catch {
@@ -51,18 +51,19 @@ const formatBytes = (bytes) => {
 // Try HEAD first; if blocked, try Range GET to read Content-Range/Length
 const fetchFileSize = async (url) => {
   try {
-    const h = await fetch(url, { method: "HEAD", credentials: "include" });
+    const h = await fetch(url, { method: "HEAD" });
     if (h.ok) {
       const cl = h.headers.get("Content-Length");
       if (cl && !isNaN(Number(cl))) return Number(cl);
     }
   } catch {}
   try {
-    const r = await fetch(url, {
-      method: "GET",
-      headers: { Range: "bytes=0-0" },
-      credentials: "include",
-    });
+    // const r = await fetch(url, {
+    //   method: "GET",
+    //   headers: { Range: "bytes=0-0" },
+    //   credentials: "include",
+    // });
+    const r = await fetch(url, { method: "GET", headers: { Range: "bytes=0-0" } });
     if (r.ok) {
       const cr = r.headers.get("Content-Range");
       if (cr) {
@@ -94,7 +95,13 @@ const AttachmentsSection = ({ lessonId }) => {
 
   const pdfs = useMemo(() => {
     const atts = content?.attachments || [];
-    return atts.filter((a) => a?.type === "pdf" && !!a?.link);
+    return atts.filter((a) => {
+      const link = (a?.link || "").toString();
+      const type = (a?.type || "").toString();
+      const looksPdfByType = /pdf/i.test(type);
+      const looksPdfByExt  = /\.pdf(\?|#|$)/i.test(link);
+      return !!link && (looksPdfByType || looksPdfByExt);
+    });
   }, [content?.attachments]);
 
   // sizes state
@@ -122,14 +129,16 @@ const AttachmentsSection = ({ lessonId }) => {
   const handleDownload = useCallback(async (url) => {
     if (!url) return;
     try {
-      const res = await fetch(url, { credentials: "include" });
+      const res = await fetch(url);
       const blob = await res.blob();
       const cd = res.headers.get("Content-Disposition") || "";
       const match = cd.match(/filename\*?=(?:UTF-8'')?"?([^\";]+)"?/i);
-      const nameFromHeader = match ? decodeURIComponent(match[1]) : null;
+      // const nameFromHeader = match ? decodeURIComponent(match[1]) : null;
+      let nameFromHeader = null;
+      try { nameFromHeader = match ? decodeURIComponent(match[1]) : null; } catch {}
       const fallbackName = (() => {
         try {
-          const u = new URL(url);
+          const u = new URL(url, window.location.origin);
           return u.pathname.split("/").filter(Boolean).pop() || "file.pdf";
         } catch {
           return "file.pdf";
@@ -189,14 +198,10 @@ const AttachmentsSection = ({ lessonId }) => {
         >
           <div className="space-y-4 md:pl-6 pl-2 w-full" dir="rtl">
             {pdfs.map((a, i) => {
-            const title = (() => {
+            const displayTitle = (() => {
               const raw = (a.name || a.title || "").trim();
               if (raw) return raw.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
-              return (
-                DEFAULT_TITLES[i] ||
-                prettyFromFilename(a.link) ||
-                "ملف PDF"
-              );
+              return DEFAULT_TITLES[i] || prettyFromFilename(a.link) || "ملف PDF";
             })();
 
             const key = String(a.id ?? a.link);
@@ -209,19 +214,21 @@ const AttachmentsSection = ({ lessonId }) => {
             return (
               <AttachmentItem
                 key={`pdf-${key}`}
-                title={title}
+                title={displayTitle}      // ← used by component
+                name={displayTitle}       // ← safety for any old prop usage
                 size={sizeStr}
-                important={a.important}
+                important={Boolean(a.important)}
                 hasDownloadIcon
                 iconSrc={filePdf || summary}
                 href={a.link}
                 isCardClickable={!!a.link}
                 onOpen={() => handleOpen(a.link)}
                 onDownload={() => handleDownload(a.link)}
-              />
+              >
+                {displayTitle}            {/* ← if component renders children */}
+              </AttachmentItem>
             );
           })}
-
           </div>
         </div>
       )}

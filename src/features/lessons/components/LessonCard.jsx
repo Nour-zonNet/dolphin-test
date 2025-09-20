@@ -45,6 +45,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
 
   const { start, end } = useMemo(() => {
     const [hours, minutes, seconds] = item.start_time.split(":").map(Number);
+    // const [hours, minutes, seconds] = "10:00:00".split(":").map(Number);
 
     const baseDate = new Date(
       new Date(lessonDate).toLocaleString("en-US", { timeZone: "Asia/Riyadh" })
@@ -128,6 +129,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       },
       replace: false,
     });
+      navigate(`/schedule/lessoncontent/${item?.id}`);
   }, [navigate, item])
  const renderButton = useCallback(() => {
   if (lessonStatus === "ended") {

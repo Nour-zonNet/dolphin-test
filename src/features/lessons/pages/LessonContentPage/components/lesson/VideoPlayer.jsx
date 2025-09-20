@@ -6,7 +6,7 @@ import { Fullscreen, Settings, DatePicker, Clock, Teacher } from "@/utils/icons"
 import { useTranslation } from "react-i18next";
 import lessonVideo from "@/assets/videos/lesson.mp4";
 import { useContent } from "@/features/lessons/hooks/useContent";
-
+import poster from "@/assets/schedule/poster.svg";
 // ---------- Fallbacks ----------
 const DEFAULT_POSTER =
   poster;
@@ -149,7 +149,8 @@ const VideoPlayer = ({ lessonId }) => {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
-
+  const [revealed, setRevealed] = useState(false);  
+  const [showIframe, setShowIframe] = useState(false); 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isEmulatedFS, setIsEmulatedFS] = useState(false);
   const [rotateFallback, setRotateFallback] = useState(false);
@@ -498,7 +499,7 @@ const VideoPlayer = ({ lessonId }) => {
           title="lesson-video"
           src={source.src}
           className="w-full h-full"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allow="aclipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
@@ -741,9 +742,9 @@ const VideoPlayer = ({ lessonId }) => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-normalblue">
+          <div className="flex items-center gap-2 text-navyteal">
             <Teacher className="w-4 md:w-5" />
-            <span className="font-semibold text-sm md:text-lg text-navyteal">{teacherName}</span>
+            <span className="font-semibold text-sm md:text-lg">{teacherName}</span>
           </div>
         </div>
       </div>

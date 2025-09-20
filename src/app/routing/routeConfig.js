@@ -156,7 +156,7 @@ export const routes = [
     path: "/schedule",
     children: [
       {
-        path: "lessoncontent",
+        path: "lessoncontent/:id",
         element: LessonContentPage,
         protected: true,
         layout: false,

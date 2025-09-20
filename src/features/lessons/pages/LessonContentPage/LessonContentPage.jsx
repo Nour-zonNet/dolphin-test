@@ -13,7 +13,7 @@ const LessonContentPage = () => {
     <>
       <LessonHeader lessonId={lessonId} />
       <div>
-        <div className="w-[90%] mx-auto flex items-center flex-col xl:flex-row gap-14 mt-10 md:mt-14 bg-white overflow-hidden">
+        <div className="w-[95%] mx-auto flex items-center flex-col xl:flex-row gap-14 mt-10 md:mt-14 bg-white overflow-hidden">
           <div className="xl:w-1/2 w-full">
             <VideoPlayer lessonId={lessonId}/>
           </div>

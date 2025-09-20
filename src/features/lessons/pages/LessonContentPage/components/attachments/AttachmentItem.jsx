@@ -7,15 +7,14 @@ import { useTranslation } from "react-i18next";
 export const AttachmentItem = ({
   title,
   size,
+  name,
   hasImportantBadge,   
   important,          
   hasDownloadIcon,
   iconSrc,
-  // behavior
-  href,                // (not used directly here; parent handles window.open)
-  isCardClickable = false, // ← ignored now (click bound only to title/image)
   onOpen,
   onDownload,
+  children,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t } = useTranslation();
@@ -44,6 +43,10 @@ export const AttachmentItem = ({
       document.removeEventListener("keydown", handleEsc);
     };
   }, [isMenuOpen]);
+
+    const displayTitle =
+    (typeof children === "string" && children.trim()) ? children :
+    (title && String(title).trim()) || (name && String(name).trim()) || "ملف PDF";
 
   return (
     <div
@@ -83,9 +86,9 @@ export const AttachmentItem = ({
             onOpen?.();
           }}
           className="text-left font-semibold text-sm md:text-lg text-navyteal mb-2 hover:opacity-90 cursor-pointer"
-          title={title}
+          title={displayTitle}
         >
-          {title}
+          {displayTitle}
         </button>
         <p className="font-normal text-black text-sm md:text-base">{size}</p>
       </div>

@@ -70,7 +70,6 @@ body {
   --color-normalblue: #165072;
   --color-foundblue: #fafbfc;
   --color-searchborder: #D9D9D9;
-  --breakpoint-xs: 30rem;
 }
 
 @layer utilities {
@@ -226,4 +225,3 @@ div[id^="woot-widget-"] .woot--widget-bubble {
     scrollbar-width: none;         /* Firefox */
   }
 }
-

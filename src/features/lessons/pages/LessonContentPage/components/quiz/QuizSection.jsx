@@ -1,11 +1,12 @@
 // components/QuizSection.jsx
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import brain from "@/assets/schedule/brain.svg";
 import { ArrowNext } from "@/utils/icons";
 import { Draw } from "@/utils/Illustrations";
 import { useContent } from "@/features/lessons/hooks/useContent";
 
-const QuizSection = ({ lessonId }) => {
+const QuizSection = ({ lessonId, hideWhenMissing = true }) => {
+  // HOOKS (always run, same order)
   const { content, loading, error, getContent } = useContent(lessonId);
 
   useEffect(() => {
@@ -14,12 +15,21 @@ const QuizSection = ({ lessonId }) => {
 
   const examUrl = content?.examLink || null;
 
+  // define callbacks BEFORE any conditional return
   const handleClick = useCallback(() => {
     if (!examUrl) return;
     window.open(examUrl, "_blank", "noopener,noreferrer");
   }, [examUrl]);
 
   const disabled = loading || !!error || !examUrl;
+
+  // compute hide flag but DO NOT use hooks below this point
+  const shouldHide = useMemo(
+    () => hideWhenMissing && !loading && (!examUrl || error),
+    [hideWhenMissing, loading, examUrl, error]
+  );
+
+  if (shouldHide) return null;
 
   return (
     <div className="relative w-full mx-auto mt-10 lg:mt-6 md:p-8 p-4 h-[200px] lg:h-[230px] rounded-2xl border-[0.5px] border-black bg-status shadow-md transition-all">
@@ -31,7 +41,6 @@ const QuizSection = ({ lessonId }) => {
             </div>
             <div>
               <h2 className="font-bold text-white md:text-lg xl:text-xl text-sm">الاختبار</h2>
-              {/* <p className="font-medium text-white text-sm md:text-base xl:text-xl mt-1">10 أسئلة | 20 دقيقة</p> */}
             </div>
           </div>
 
@@ -47,10 +56,10 @@ const QuizSection = ({ lessonId }) => {
               <span>{disabled ? "غير متاح" : "ابدأ الاختبار"}</span>
             </button>
 
-            {!loading && !error && !examUrl && (
+            {!loading && !error && !examUrl && !hideWhenMissing && (
               <span className="text-white/80 text-xs">لا يوجد رابط اختبار بعد</span>
             )}
-            {!loading && error && (
+            {!loading && error && !hideWhenMissing && (
               <span className="text-red-200 text-xs">خطأ في تحميل الاختبار</span>
             )}
           </div>
