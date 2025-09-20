@@ -5,8 +5,8 @@ import PageCanvas from "./PageCanvas";
 import TextInputOverlay from "./TextInputOverlay";
 import { useBoardHistory, useCanvasDrawing } from "./hooks";
 import { ActionButtons } from "./components";
-import * as pdfjs from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import * as pdfjs from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 // Note: jsPDF will be imported dynamically to avoid SSR issues
 
 // Custom hook for responsive behavior
@@ -216,19 +216,22 @@ const Board = () => {
   // PDF Import functionality
   const handleImportPDF = async (file) => {
     try {
-  
-      
       // Configure worker for the dynamically imported pdfjs instance
-      if (typeof window !== 'undefined' && pdfjs?.GlobalWorkerOptions) {
+      if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
         try {
-          pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+          if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
+            pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+          }
         } catch (error) {
-          console.warn('Failed to configure PDF.js worker with Vite path, falling back to CDN:', error);
+          console.warn(
+            "Failed to configure PDF.js worker with Vite path, falling back to CDN:",
+            error
+          );
           // Use a stable version number instead of accessing pdfjs.version
-          pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.js`;
+          // pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.js`;
         }
       }
-      
+
       const arrayBuffer = await file.arrayBuffer();
       const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
       const pdf = await loadingTask.promise;

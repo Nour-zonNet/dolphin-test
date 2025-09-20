@@ -2,7 +2,7 @@
 import { pdfjs } from "react-pdf";
 
 const configurePDFWorker = () => {
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
     pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
   }
 };
