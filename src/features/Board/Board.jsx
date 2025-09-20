@@ -5,7 +5,8 @@ import PageCanvas from "./PageCanvas";
 import TextInputOverlay from "./TextInputOverlay";
 import { useBoardHistory, useCanvasDrawing } from "./hooks";
 import { ActionButtons } from "./components";
-
+import * as pdfjs from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 // Note: jsPDF will be imported dynamically to avoid SSR issues
 
 // Custom hook for responsive behavior
@@ -215,15 +216,12 @@ const Board = () => {
   // PDF Import functionality
   const handleImportPDF = async (file) => {
     try {
-      const pdfjs = await import("pdfjs-dist");
+  
       
       // Configure worker for the dynamically imported pdfjs instance
       if (typeof window !== 'undefined' && pdfjs?.GlobalWorkerOptions) {
         try {
-          pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-            "pdfjs-dist/build/pdf.worker.min.mjs",
-            import.meta.url
-          ).toString();
+          pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
         } catch (error) {
           console.warn('Failed to configure PDF.js worker with Vite path, falling back to CDN:', error);
           // Use a stable version number instead of accessing pdfjs.version
