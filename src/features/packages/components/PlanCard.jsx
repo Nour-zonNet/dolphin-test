@@ -7,6 +7,7 @@ import Books from "@/assets/packages/books.svg";
 import { ChevronDown, ChevronUp } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 import { formatArabicDate } from "@/utils/dateHelpers";
+import { STATUS_CONFIG } from "../../../constants/STATUS_CONFIG";
 
 const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
   const { image, bgColor } = packageFactory(plan.id);
@@ -54,13 +55,13 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
   return (
     <div
       className={`rounded-2xl cursor-pointer border ${
-        isOpen ? "border-gray-300" : "border-0"
+        isOpen ? "border-0" : "border-0"
       }`}
     >
       {/* Header */}
       <div
         style={{ borderColor: bgColor }}
-        className="flex justify-between gap-2 md:gap-4 rounded-t-2xl p-5 bg-[#EAEAEA] items-start"
+        className="flex justify-between gap-2 md:gap-4 rounded-t-2xl p-5 bg-[#EAEAEA] items-start border-r-12"
       >
         <div
           onClick={() => onSelect(plan.id)}
@@ -122,7 +123,7 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
 
       {/* Collapsible content */}
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden border-t border-gray-100`}
+        className={`transition-all rounded-bl-2xl rounded-br-2xl duration-300 ease-in-out overflow-hidden border border-gray-100`}
         style={{ maxHeight: isOpen ? maxH : 0 }}
       >
         <div ref={contentRef} className="p-6 pt-4 space-y-2">

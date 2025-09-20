@@ -9,7 +9,7 @@ import { useContent } from "@/features/lessons/hooks/useContent";
 
 // ---------- Fallbacks ----------
 const DEFAULT_POSTER =
-  "https://c.animaapp.com/mer0eh3xn7npjs/img/shutterstock-331074809-1024x683-1-1.png";
+  poster;
 // Use your test clip as default embed when API has no video
 const DEFAULT_YT_EMBED = "https://www.youtube.com/embed/7sLqMVQaVZg";
 
