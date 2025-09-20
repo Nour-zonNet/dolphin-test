@@ -13,8 +13,8 @@ const configurePDFWorker = () => {
       ).toString();
     } catch (error) {
       console.warn('Failed to configure PDF.js worker with Vite path, falling back to CDN:', error);
-      // Fallback to CDN if Vite path fails
-      pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+      // Fallback to CDN if Vite path fails - use stable version number
+      pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.js`;
     }
   }
 };

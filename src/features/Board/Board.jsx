@@ -226,7 +226,8 @@ const Board = () => {
           ).toString();
         } catch (error) {
           console.warn('Failed to configure PDF.js worker with Vite path, falling back to CDN:', error);
-          pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+          // Use a stable version number instead of accessing pdfjs.version
+          pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.js`;
         }
       }
       
