@@ -93,7 +93,9 @@ const ToolSelector = ({
             }`}
             title={item.title}
           >
-            <span className="text-lg">{item.icon}</span>
+            <span className="text-lg">
+              {React.createElement(item.icon)}
+            </span>
           </button>
 
           {/* Dropdown for drawing tools */}
