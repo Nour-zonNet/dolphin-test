@@ -220,6 +220,7 @@ const Board = () => {
       if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
         try {
           if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
+            const pdfjs = await import("pdfjs-dist");
             pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
           }
         } catch (error) {
