@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { formatArabicTime } from "@/utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
+import { getArabicDay } from "../../../utils/dateHelpers";
 
 export const useLessonStatus = (
   item,
@@ -20,16 +21,16 @@ export const useLessonStatus = (
       start.getDate()
     );
 
-    // 🟦 أولوية لو الحصة مؤجلة
     if (lessonStatus === "delayed") {
       return {
-        statusText: "تم تأجيل الحصة",
-        statusColor: "text-blue-600",
-        statusIcon: <TimeCheck className="w-4" />,
+        statusText: `تم تأجيل الحصة ليوم ${getArabicDay(
+          item.delay.day_of_week
+        )}`,
+        statusColor: "text-gray-600",
+        statusIcon: <TimeCheck fill={"#111"} className="w-4" />,
       };
     }
 
-    // 🟥 إذا كانت الحصة في يوم سابق
     if (lessonDay < today) {
       return {
         statusText: "انتهت الحصة",

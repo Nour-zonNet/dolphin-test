@@ -57,11 +57,15 @@ const ScheduleSlider = () => {
           initialSlide={activeIndex}
         >
           {days.map((day) => {
-            const lessonsForDay = items.filter(
-              (item) =>
-                day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
-            );
-
+            const lessonsForDay = items.filter((item) => {
+              if (item.session_date) {
+                return item.session_date === day.date;
+              } else {
+                return (
+                  day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
+                );
+              }
+            });
             return (
               <SwiperSlide key={day.date}>
                 {lessonsForDay.length > 0 ? (

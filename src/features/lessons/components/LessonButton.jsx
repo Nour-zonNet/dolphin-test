@@ -47,13 +47,13 @@ export const LessonButton = ({
             className="w-20 "
           />
         </div>
-        <button
+        {/* <button
           disabled
           aria-disabled
           className="px-4 py-2 text-nowrap text-xs md:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 rounded-3xl bg-blue-200 text-blue-800 cursor-not-allowed"
         >
           الحصة مؤجلة
-        </button>
+        </button> */}
       </>
     );
   }

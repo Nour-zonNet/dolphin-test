@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { lessonsRepository } from "../services/lessons.services";
-
+import { getNextDateForDay } from "@/utils/dateHelpers";
 export const fetchLessons = createAsyncThunk(
   "lessons/fetch",
   async (_, { rejectWithValue }) => {
@@ -52,7 +52,29 @@ const lessonsSlice = createSlice({
       })
       .addCase(fetchLessons.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+
+        // نبدأ بالـ sessions اللي جاية من الـ API
+        let sessions = action.payload;
+
+        // array لتجميع الـ sessions الجديدة اللي هتتولد من delays
+        const delayedSessions = [];
+
+        sessions.forEach((session) => {
+          if (session.delay) {
+            // نعمل نسخة جديدة من الـ session
+            const delayedSession = {
+              ...session,
+              day_of_week: session.delay.day_of_week,
+              start_time: session.delay.start_time,
+              session_date: getNextDateForDay(session.delay.day_of_week),
+              delay: null, // علشان الجلسة الجديدة مايبقاش ليها delay تاني
+            };
+            delayedSessions.push(delayedSession);
+          }
+        });
+
+        // نجمع الـ sessions القديمة + الجديدة
+        state.items = [...sessions, ...delayedSessions];
       })
       .addCase(fetchLessons.rejected, (state, action) => {
         state.loading = false;

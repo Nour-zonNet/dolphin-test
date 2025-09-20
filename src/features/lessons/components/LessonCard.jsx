@@ -49,12 +49,12 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     );
 
     if (lessonDay < today) return LESSON_STATUS.ENDED;
-    if (!item.teacher_status) return LESSON_STATUS.DELAYED;
+    if (item.delay) return LESSON_STATUS.DELAYED;
     if (now >= start && now <= end) return LESSON_STATUS.LIVE;
     if (now > end) return LESSON_STATUS.ENDED;
 
     return LESSON_STATUS.UPCOMING;
-  }, [start, item.teacher_status, end]);
+  }, [start, item.delay, end]);
 
   const canEnterNow = useMemo(
     () => lessonStatus === "live" || canEnterLesson,
@@ -98,7 +98,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         {/* Right section */}
         <div className="flex flex-col items-center justify-center mr-auto xs:space-y-3.5 gap-2 xs:gap-0 px-2 relative z-10 space-y-2">
           <LessonButton
-            teacherStatus={item.teacher_status}
+            delay={item.delay}
             lessonStatus={lessonStatus}
             canEnterNow={canEnterNow}
             onEnterLesson={handleEnterLesson}

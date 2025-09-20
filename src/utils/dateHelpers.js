@@ -94,7 +94,33 @@ export const getWeekFromLastSaturday = (tz = "Asia/Riyadh") => {
 
   return days;
 };
+export const getNextDateForDay = (dayOfWeek) => {
+  const daysMap = {
+    sunday: 0,
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
+  };
 
+  const today = new Date();
+  const targetDay = daysMap[dayOfWeek.toLowerCase()];
+
+  if (targetDay === undefined) return null;
+
+  let result = new Date(today);
+  const currentDay = today.getDay();
+
+  // how many days ahead until targetDay
+  let diff = targetDay - currentDay;
+  if (diff <= 0) diff += 7;
+
+  result.setDate(today.getDate() + diff);
+
+  return result.toISOString().split("T")[0]; // format: YYYY-MM-DD
+};
 export const getThreeDaysBeforeAndAfter = (tz = "Asia/Riyadh") => {
   const days = [];
   const optionsAR = { weekday: "long", timeZone: tz };
@@ -215,7 +241,19 @@ export function getFormattedDate(date = new Date()) {
 
   return `${dayName} ${day} - ${month} - ${year}`;
 }
+export const getArabicDay = (enDay) => {
+  const daysMap = {
+    sunday: "الأحد",
+    monday: "الاثنين",
+    tuesday: "الثلاثاء",
+    wednesday: "الأربعاء",
+    thursday: "الخميس",
+    friday: "الجمعة",
+    saturday: "السبت",
+  };
 
+  return daysMap[enDay.toLowerCase()] || enDay;
+};
 // تحويل الوقت من 24 ساعة إلى 12 ساعة
 export const formatTime12Hour = (time24) => {
   if (!time24) return "";
