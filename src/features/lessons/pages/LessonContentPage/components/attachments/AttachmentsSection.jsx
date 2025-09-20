@@ -186,7 +186,7 @@ const AttachmentsSection = ({ lessonId }) => {
 
       {!loading && !error && pdfs.length === 0 && (
         <div className="p-4 rounded-lg bg-gray-50 text-gray-600">
-          لا توجد ملفات PDF لهذا الدرس.
+          لا توجد ملفات لهذا الدرس.
         </div>
       )}
 
