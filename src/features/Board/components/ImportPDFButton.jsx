@@ -1,8 +1,7 @@
 import React, { useRef, useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { Document, Page } from "react-pdf";
 import ImportPDFFromURL from "./ImportPDFFromURL";
-
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+import "../../../utils/pdfConfig"; // Import centralized PDF configuration
 
 const ImportPDFButton = ({ onLoadPDF }) => {
   const fileInputRef = useRef();

@@ -216,13 +216,20 @@ const Board = () => {
   const handleImportPDF = async (file) => {
     try {
       const pdfjs = await import("pdfjs-dist");
-      // Configure worker source for pdf.js (vite-friendly local path)
-      if (pdfjs?.GlobalWorkerOptions) {
-        pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-          "pdfjs-dist/build/pdf.worker.min.mjs",
-          import.meta.url
-        ).toString();
+      
+      // Configure worker for the dynamically imported pdfjs instance
+      if (typeof window !== 'undefined' && pdfjs?.GlobalWorkerOptions) {
+        try {
+          pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+            "pdfjs-dist/build/pdf.worker.min.mjs",
+            import.meta.url
+          ).toString();
+        } catch (error) {
+          console.warn('Failed to configure PDF.js worker with Vite path, falling back to CDN:', error);
+          pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+        }
       }
+      
       const arrayBuffer = await file.arrayBuffer();
       const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
       const pdf = await loadingTask.promise;
