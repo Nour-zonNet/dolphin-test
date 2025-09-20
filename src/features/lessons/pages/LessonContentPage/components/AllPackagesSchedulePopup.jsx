@@ -246,6 +246,13 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
             </button>
           </div>
           <Divider />
+
+          {/* Empty-state: no sessions this week */}
+          {!loading && !error && (days.length === 0 || !hasAnyLessons) && (
+            <div className="px-4 sm:px-6 py-12 text-center text-gray-600">
+              لا يوجد حصص لهذا الأسبوع
+            </div>
+          )}
           {/* content */}
           {!loading && !error && days.length > 0 && hasAnyLessons && (
             <div className="px-4 sm:px-6 pb-6">

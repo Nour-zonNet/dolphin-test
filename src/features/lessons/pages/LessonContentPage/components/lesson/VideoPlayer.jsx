@@ -141,7 +141,7 @@ const VideoPlayer = ({ lessonId }) => {
 
   const [isHovered, setIsHovered] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-
+  const [armed, setArmed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [current, setCurrent] = useState(0);
@@ -167,7 +167,11 @@ const VideoPlayer = ({ lessonId }) => {
     if (isIframe) return; // cannot control iframe
     const v = videoRef.current;
     if (!v) return;
-    v.paused ? v.play() : v.pause();
+
+    if (!armed) setArmed(true);
+    if (v.paused) v.play();
+    else v.pause();
+    // v.paused ? v.play() : v.pause();
   };
 
   // Attach native video events only when using <video>
@@ -508,7 +512,7 @@ const VideoPlayer = ({ lessonId }) => {
           ref={setVideoRef}
           className="w-full h-full object-cover block"
           poster={DEFAULT_POSTER}
-          preload="metadata"
+          preload="none"
           playsInline
           crossOrigin="anonymous"
         >
