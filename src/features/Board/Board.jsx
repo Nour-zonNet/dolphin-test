@@ -221,7 +221,7 @@ const Board = () => {
       // Configure worker for the dynamically imported pdfjs instance
       if (typeof window !== 'undefined' && pdfjs?.GlobalWorkerOptions) {
         try {
-          pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
+          pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
         } catch (error) {
           console.warn('Failed to configure PDF.js worker with Vite path, falling back to CDN:', error);
           // Use a stable version number instead of accessing pdfjs.version
