@@ -1,7 +1,7 @@
 export const TOOLS = [
   {
     tool: "pen",
-    icon: (
+    icon: ()=> (
       <svg
         width="24"
         height="24"
@@ -26,7 +26,7 @@ export const TOOLS = [
   },
   {
     tool: "eraser",
-    icon: (
+    icon: ()=>(
       <svg
         width="24"
         height="24"
@@ -51,7 +51,7 @@ export const TOOLS = [
   },
   {
     tool: "highlighter",
-    icon: (
+    icon: ()=>(
       <svg
         width="24"
         height="24"
@@ -69,7 +69,7 @@ export const TOOLS = [
   },
   {
     tool: "text",
-    icon: (
+    icon:()=> (
       <svg
         width="24"
         height="20"
