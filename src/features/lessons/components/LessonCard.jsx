@@ -80,11 +80,25 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       <div
         style={{ borderColor: color }}
         className={`flex flex-row items-center xs:items-stretch justify-between rounded-tr-4xl rounded-bl-4xl border-[0.5px] !border-l-gray-400 !border-t-gray-400 !border-b-gray-400 border-r-quran border-r-10 sm:border-r-14 w-full py-4 md:py-8 px-4 overflow-hidden`}
-        onClick={() =>
-          lessonStatus !== LESSON_STATUS.ENDED && handleCardClick(setHintMsg)
-        }
-        role={lessonStatus !== LESSON_STATUS.ENDED ? "button" : undefined}
-        tabIndex={lessonStatus !== LESSON_STATUS.ENDED ? 0 : -1}
+        // onClick={() =>
+        //   lessonStatus !== LESSON_STATUS.ENDED && handleCardClick(setHintMsg)
+        // }
+        // role={lessonStatus !== LESSON_STATUS.ENDED ? "button" : undefined}
+        // tabIndex={lessonStatus !== LESSON_STATUS.ENDED ? 0 : -1}
+          onClick={() => {
+            if (lessonStatus === LESSON_STATUS.ENDED) {
+              if (!item?.lessons || item?.lessons?.length === 0) {
+                setHintMsg("الحصة انتهت ولم يتم رفع المحتوي بعد");
+              } else {
+                setHintMsg("اضغط علي زر عرض المحتوي");
+              }
+              return;
+            }
+            // default behavior for non-ended states
+            handleCardClick(setHintMsg);
+          }}
+          role="button"
+          tabIndex={0}
       >
         <LessonInfo
           item={item}
@@ -108,11 +122,23 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         </div>
       </div>
 
-      {hintMsg && lessonStatus !== LESSON_STATUS.ENDED && lessonStatus !== LESSON_STATUS.DELAYED &&(
+      {/* {hintMsg && lessonStatus !== LESSON_STATUS.ENDED && lessonStatus !== LESSON_STATUS.DELAYED &&(
         <div className="mt-2 text-green-600 text-sm font-semibold">
           {hintMsg}
         </div>
-      )}
+      )} */}
+        {hintMsg && (
+          <div
+            className={[
+              "mt-2 text-sm font-semibold",
+              lessonStatus === LESSON_STATUS.ENDED
+                ? (!item?.lessons || item?.lessons?.length === 0 ? "text-red-600" : "text-[#ba7c28]")
+                : (lessonStatus === LESSON_STATUS.DELAYED ? "text-gray-600" : "text-green-600"),
+            ].join(" ")}
+          >
+            {hintMsg}
+          </div>
+        )}
     </div>
   );
 };
