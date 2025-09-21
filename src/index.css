@@ -177,3 +177,11 @@ div[id^="woot-widget-"] .woot--widget-bubble {
     scrollbar-width: none;         /* Firefox */
   }
 }
+
+/* Hide iOS Safari's native "start playback" overlay button */
+video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+  opacity: 0 !important;
+}
+
