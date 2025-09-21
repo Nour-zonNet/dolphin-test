@@ -29,7 +29,7 @@ export const LessonHeader = ({ lessonId: lessonIdProp }) => {
   }, [content?.package]);
 
   return (
-    <div className="w-full bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-8 flex items-center relative">
+    <div className="w-full bg-white shadow-[0px_2px_4px_0px_rgba(192,192,192,0.25)] py-4 lg:py-8 flex items-center relative">
       <div className="w-[95%] mx-auto flex items-center md:items-center justify-between">
         <Link
           to="/schedule"

@@ -611,18 +611,12 @@ export const Clock = ({ className = "", ...props }) => (
   </svg>
 );
 
-export const Teacher = ({
-  width = "21",
-  height = "22",
-  fill = "#165072",
-  className,
-}) => (
+export const Teacher = ({ className="", ...props }) => (
   <svg
-    width={width}
-    height={height}
-    className={className}
+    className={`fill-current ${className}`}  
+    {...props}
     viewBox="0 0 21 22"
-    fill={fill}
+    fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path

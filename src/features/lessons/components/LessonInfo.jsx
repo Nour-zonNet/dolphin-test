@@ -25,10 +25,10 @@ export const LessonInfo = ({ item, color, image, statusIcon, statusText, statusC
           </div>
         )}
         <div>
-          <h2 className="text-sm text-navyteal xs:text-[1.25rem] font-semibold leading-snug">
+          <h2 className="text-sm text-navyteal md:text-[1.25rem] font-semibold leading-snug">
             {item.subject}
           </h2>
-          <h2 className="text-sm text-navyteal xs:text-[1.25rem] font-semibold leading-snug">
+          <h2 className="text-sm text-navyteal md:text-[1.25rem] font-semibold leading-snug">
             {item.description}
           </h2>
         </div>
