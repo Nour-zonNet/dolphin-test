@@ -125,7 +125,7 @@ const VideoPlayer = ({ lessonId }) => {
 
   // Source (supports iframe or native video)
   const source = useMemo(() => {
-    const urlFromApi = content?.videoUrl || lessonVideo; // default to local video
+    const urlFromApi = content?.videoUrl || DEFAULT_YT_EMBED; // default to local video
     return classifyVideo(urlFromApi);
   }, [content?.videoUrl]);
 
