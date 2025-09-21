@@ -3,10 +3,9 @@ import Toolbar from "./Toolbar";
 import Canvas from "./Canvas";
 import PageCanvas from "./PageCanvas";
 import TextInputOverlay from "./TextInputOverlay";
-import { useBoardHistory, useCanvasDrawing } from "./hooks";
-import { ActionButtons } from "./components";
+import { useBoardHistory, useCanvasDrawing, useKeyboardShortcuts, useErrorHandler, useMemoryManager } from "./hooks";
+import { ActionButtons, ErrorNotification, KeyboardShortcutsHelp, PerformanceMonitor, MobileCanvasWrapper } from "./components";
 import * as pdfjs from "pdfjs-dist";
-import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 // Note: jsPDF will be imported dynamically to avoid SSR issues
 
 // Custom hook for responsive behavior
@@ -32,25 +31,33 @@ const useResponsive = () => {
 };
 
 const Board = () => {
-  // State management
-  const [tool, setTool] = useState("pen");
-  const [lines, setLines] = useState([]);
-  const [texts, setTexts] = useState([]);
-  const [shapes, setShapes] = useState([]);
+  // Drawing state
+  const [selectedTool, setSelectedTool] = useState("pen");
+  const [drawingLines, setDrawingLines] = useState([]);
+  const [drawingTexts, setDrawingTexts] = useState([]);
+  const [drawingShapes, setDrawingShapes] = useState([]);
   const [currentColor, setCurrentColor] = useState("#3B82F6");
   const [strokeWidth, setStrokeWidth] = useState(5);
   const [fontSize, setFontSize] = useState(20);
+  
+  // Text input state
   const [textInput, setTextInput] = useState("");
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
-  const [showTextInput, setShowTextInput] = useState(false);
+  const [isTextInputVisible, setIsTextInputVisible] = useState(false);
+  
+  // PDF state
   const [backgroundImage, setBackgroundImage] = useState(null);
-  const [backgroundPages, setBackgroundPages] = useState([]);
+  const [pdfPages, setPdfPages] = useState([]);
   const [pageStates, setPageStates] = useState([]); // {lines, texts, shapes} per page
-  const pageStageRefs = useRef([]);
-
+  
+  // UI state
+  const [isShortcutsHelpVisible, setIsShortcutsHelpVisible] = useState(false);
+  const [isPerformanceMonitorVisible, setIsPerformanceMonitorVisible] = useState(false);
+  
   // Refs
   const stageRef = useRef();
   const canvasContainerRef = useRef();
+  const pageStageRefs = useRef([]);
 
   // Custom hooks
   const {
@@ -63,37 +70,39 @@ const Board = () => {
     resetHistory,
   } = useBoardHistory();
 
+  const { errors, addError, removeError, clearAllErrors } = useErrorHandler();
+  const { cleanupAllCanvases, manageImageCache, getCachedImage } = useMemoryManager();
+
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCanvasDrawing(
-    tool,
+    selectedTool,
     currentColor,
     strokeWidth,
-    lines,
-    shapes,
-    setLines,
-    setShapes,
+    drawingLines,
+    drawingShapes,
+    setDrawingLines,
+    setDrawingShapes,
     (newLines, newTexts, newShapes) => {
       saveToHistory(newLines, newTexts, newShapes);
     }
   );
 
-  // Event handlers
+  // Canvas event handlers
   const handleCanvasMouseDown = (e) => {
     const result = handleMouseDown(e);
     if (result?.type === "text") {
-      // Store the original canvas coordinates for text placement
       setTextPosition(result.position);
-      setShowTextInput(true);
+      setIsTextInputVisible(true);
     }
   };
 
   const handleCanvasMouseMove = handleMouseMove;
   const handleCanvasMouseUp = handleMouseUp;
 
-  // Text handling
+  // Text handling functions
   const addText = () => {
     if (textInput.trim() !== "") {
       const newTexts = [
-        ...texts,
+        ...drawingTexts,
         {
           x: textPosition.x,
           y: textPosition.y,
@@ -102,21 +111,21 @@ const Board = () => {
           fill: currentColor,
         },
       ];
-      setTexts(newTexts);
-      saveToHistory(lines, newTexts, shapes);
+      setDrawingTexts(newTexts);
+      saveToHistory(drawingLines, newTexts, drawingShapes);
     }
     setTextInput("");
-    setShowTextInput(false);
+    setIsTextInputVisible(false);
   };
 
   const handleTextDblClick = (idx) => {
-    const newText = prompt("Edit text:", texts[idx].text);
+    const newText = prompt("Edit text:", drawingTexts[idx].text);
     if (newText !== null) {
-      const updated = texts.map((t, i) =>
+      const updated = drawingTexts.map((t, i) =>
         i === idx ? { ...t, text: newText } : t
       );
-      setTexts(updated);
-      saveToHistory(lines, updated, shapes);
+      setDrawingTexts(updated);
+      saveToHistory(drawingLines, updated, drawingShapes);
     }
   };
 
@@ -125,12 +134,12 @@ const Board = () => {
     const prevState = undoHistory();
 
     if (prevState) {
-      if (backgroundPages.length > 0) {
+      if (pdfPages.length > 0) {
         // For multi-page mode, restore page states
         if (prevState.pageStates) {
           setPageStates(prevState.pageStates);
         } else {
-          const emptyPageStates = backgroundPages.map(() => ({
+          const emptyPageStates = pdfPages.map(() => ({
             lines: [],
             texts: [],
             shapes: [],
@@ -138,11 +147,11 @@ const Board = () => {
           setPageStates(emptyPageStates);
         }
       } else {
-        // Use startTransition to ensure state updates are processed
+        // Single page mode
         startTransition(() => {
-          setLines(prevState.lines || []);
-          setTexts(prevState.texts || []);
-          setShapes(prevState.shapes || []);
+          setDrawingLines(prevState.lines || []);
+          setDrawingTexts(prevState.texts || []);
+          setDrawingShapes(prevState.shapes || []);
         });
       }
     }
@@ -152,12 +161,12 @@ const Board = () => {
     const nextState = redoHistory();
 
     if (nextState) {
-      if (backgroundPages.length > 0) {
+      if (pdfPages.length > 0) {
         // For multi-page mode, restore page states
         if (nextState.pageStates) {
           setPageStates(nextState.pageStates);
         } else {
-          const emptyPageStates = backgroundPages.map(() => ({
+          const emptyPageStates = pdfPages.map(() => ({
             lines: [],
             texts: [],
             shapes: [],
@@ -165,11 +174,11 @@ const Board = () => {
           setPageStates(emptyPageStates);
         }
       } else {
-        // Use startTransition to ensure state updates are processed
+        // Single page mode
         startTransition(() => {
-          setLines(nextState.lines || []);
-          setTexts(nextState.texts || []);
-          setShapes(nextState.shapes || []);
+          setDrawingLines(nextState.lines || []);
+          setDrawingTexts(nextState.texts || []);
+          setDrawingShapes(nextState.shapes || []);
         });
       }
     }
@@ -178,7 +187,7 @@ const Board = () => {
   // Canvas actions
   const clearCanvas = () => {
     if (window.confirm("Are you sure you want to clear the canvas?")) {
-      if (backgroundPages.length > 0) {
+      if (pdfPages.length > 0) {
         // Clear all pages
         const emptyPageStates = pageStates.map(() => ({
           lines: [],
@@ -189,9 +198,9 @@ const Board = () => {
         saveToHistory([], [], [], emptyPageStates);
       } else {
         // Clear single page
-        setLines([]);
-        setTexts([]);
-        setShapes([]);
+        setDrawingLines([]);
+        setDrawingTexts([]);
+        setDrawingShapes([]);
         saveToHistory([], [], []);
       }
     }
@@ -216,20 +225,13 @@ const Board = () => {
   // PDF Import functionality
   const handleImportPDF = async (file) => {
     try {
-      // Configure worker for the dynamically imported pdfjs instance
+      // Configure PDF.js worker
       if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
         try {
-          if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
-            const pdfjs = await import("pdfjs-dist");
-            pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
-          }
+          const pdfjs = await import("pdfjs-dist");
+          pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
         } catch (error) {
-          console.warn(
-            "Failed to configure PDF.js worker with Vite path, falling back to CDN:",
-            error
-          );
-          // Use a stable version number instead of accessing pdfjs.version
-          // pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.js`;
+          console.warn("Failed to configure PDF.js worker:", error);
         }
       }
 
@@ -239,6 +241,27 @@ const Board = () => {
 
       const pages = [];
       const deviceScale = Math.max(2, (window.devicePixelRatio || 1) * 2);
+      
+      // Check cache first
+      const cacheKey = `pdf_${file.name}_${file.size}`;
+      const cachedPages = getCachedImage(cacheKey);
+      
+      if (cachedPages) {
+        setPdfPages(cachedPages);
+        setBackgroundImage(cachedPages[0].dataUrl);
+        const initialPageStates = cachedPages.map(() => ({
+          lines: [],
+          texts: [],
+          shapes: [],
+        }));
+        setPageStates(initialPageStates);
+        pageStageRefs.current = cachedPages.map(() => null);
+        resetHistory();
+        saveToHistory([], [], [], initialPageStates);
+        return;
+      }
+
+      // Render pages
       for (let pageIndex = 1; pageIndex <= pdf.numPages; pageIndex += 1) {
         const page = await pdf.getPage(pageIndex);
         const viewport = page.getViewport({ scale: deviceScale });
@@ -255,9 +278,11 @@ const Board = () => {
       }
 
       if (pages.length > 0) {
-        setBackgroundPages(pages);
+        // Cache and set pages
+        manageImageCache(cacheKey, pages);
+        setPdfPages(pages);
         setBackgroundImage(pages[0].dataUrl);
-        // Initialize per-page drawing state and refs
+        
         const initialPageStates = pages.map(() => ({
           lines: [],
           texts: [],
@@ -265,16 +290,12 @@ const Board = () => {
         }));
         setPageStates(initialPageStates);
         pageStageRefs.current = pages.map(() => null);
-
-        // Reset history and initialize with the new page states
-        // Clear existing history completely
         resetHistory();
-        // Initialize history with the new page states
         saveToHistory([], [], [], initialPageStates);
       }
     } catch (error) {
       console.error("Error importing PDF:", error);
-      alert("Failed to import PDF. Please try again.");
+      addError(error, 'PDF Import');
     }
   };
 
@@ -284,28 +305,27 @@ const Board = () => {
       const jsPDFModule = await import("jspdf");
       const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
-      // If there are imported PDF pages, export multi-page matching original
-      if (
-        backgroundPages.length > 0 &&
-        pageStageRefs.current.length === backgroundPages.length
-      ) {
-        const first = backgroundPages[0];
+      // Multi-page PDF export
+      if (pdfPages.length > 0 && pageStageRefs.current.length === pdfPages.length) {
+        const firstPage = pdfPages[0];
         const pdf = new jsPDF({
-          orientation: first.width > first.height ? "landscape" : "portrait",
+          orientation: firstPage.width > firstPage.height ? "landscape" : "portrait",
           unit: "px",
-          format: [first.width, first.height],
+          format: [firstPage.width, firstPage.height],
         });
 
-        for (let i = 0; i < backgroundPages.length; i += 1) {
-          const page = backgroundPages[i];
+        for (let i = 0; i < pdfPages.length; i += 1) {
+          const page = pdfPages[i];
           const stage = pageStageRefs.current[i];
           if (!stage) continue;
+          
           if (i > 0) {
             pdf.addPage(
               [page.width, page.height],
               page.width > page.height ? "landscape" : "portrait"
             );
           }
+          
           const stageWidth = stage.width();
           const ratio = page.width / Math.max(1, stageWidth);
           const pixelRatio = Math.max(1, Math.min(4, ratio));
@@ -316,21 +336,17 @@ const Board = () => {
           pdf.addImage(dataURL, "PNG", 0, 0, page.width, page.height);
         }
 
-        const timestamp = new Date()
-          .toISOString()
-          .slice(0, 19)
-          .replace(/:/g, "-");
-        pdf.save(`drawing-board-exact-${timestamp}.pdf`);
+        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
+        pdf.save(`drawing-board-${timestamp}.pdf`);
         return;
       }
 
-      // Fallback single-page export (no imported PDF)
+      // Single-page export
       if (!stageRef.current) {
-        alert(
-          "Canvas is empty. Please add some content before exporting to PDF."
-        );
+        alert("Canvas is empty. Please add some content before exporting to PDF.");
         return;
       }
+      
       const stage = stageRef.current;
       const stageWidth = stage.width();
       const stageHeight = stage.height();
@@ -341,38 +357,78 @@ const Board = () => {
         format: [stageWidth, stageHeight],
       });
       pdf.addImage(dataURL, "PNG", 0, 0, stageWidth, stageHeight);
-      const timestamp = new Date()
-        .toISOString()
-        .slice(0, 19)
-        .replace(/:/g, "-");
-      pdf.save(`drawing-board-exact-${timestamp}.pdf`);
+      
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
+      pdf.save(`drawing-board-${timestamp}.pdf`);
     } catch (error) {
       console.error("Error exporting to PDF:", error);
-      alert("Failed to export to PDF. Please try again.");
+      addError(error, 'PDF Export');
     }
   };
 
-  // Set up initial history (only for non-PDF mode or when PDF is not yet loaded)
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    setTool: (newTool) => {
+      setIsTextInputVisible(false);
+      setSelectedTool(newTool);
+    },
+    onUndo: undo,
+    onRedo: redo,
+    onClear: clearCanvas,
+    canUndo,
+    canRedo,
+    onExport: exportImage,
+    setShowTextInput: setIsTextInputVisible,
+    setFontSize,
+    onToggleHelp: () => setIsShortcutsHelpVisible(!isShortcutsHelpVisible),
+    setShowPerformanceMonitor: setIsPerformanceMonitorVisible,
+  });
+
+  // Initialize history for single-page mode
   useEffect(() => {
-    if (history.length === 0 && backgroundPages.length === 0) {
-      // Only initialize history for single-page mode
+    if (history.length === 0 && pdfPages.length === 0) {
       saveToHistory([], [], []);
     }
-  }, [history.length, saveToHistory, backgroundPages.length]);
+  }, [history.length, saveToHistory, pdfPages.length]);
 
-  const { isDesktop } = useResponsive();
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      cleanupAllCanvases();
+    };
+  }, [cleanupAllCanvases]);
+
+  const { isDesktop, isMobile, isTablet } = useResponsive();
 
   return (
     <div
-      className={`flex gap-5 w-full h-full ${
-        isDesktop ? "flex-row-reverse" : "flex-col"
+      className={`flex w-full h-full ${
+        isMobile 
+          ? "flex-col" 
+          : isTablet 
+            ? "flex-col"
+            : "flex-row-reverse"
+      } ${
+        isMobile ? "gap-2" : isTablet ? "gap-3" : "gap-5"
       }`}
+      style={{
+        padding: isMobile ? '8px' : isTablet ? '12px' : '16px',
+        boxSizing: 'border-box'
+      }}
     >
+      {/* Error Notifications */}
+      <ErrorNotification
+        errors={errors}
+        onRemoveError={removeError}
+        onClearAll={clearAllErrors}
+      />
+
       <Toolbar
-        tool={tool}
+        tool={selectedTool}
         setTool={(tool) => {
-          setShowTextInput(false);
-          setTool(tool);
+          setIsTextInputVisible(false);
+          setSelectedTool(tool);
         }}
         currentColor={currentColor}
         setCurrentColor={setCurrentColor}
@@ -395,85 +451,121 @@ const Board = () => {
           onUndo={undo}
           onRedo={redo}
           onClear={clearCanvas}
+          isMobile={isMobile}
         />
 
-        <div
-          className={`canvas-wrapper flex-1 min-h-0 ${
-            isDesktop ? "grid grid-cols-2 gap-4" : "flex flex-col gap-4"
-          }`}
+
+        <div 
+          className="flex-1 min-h-0 overflow-hidden"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'relative',
+            minHeight: isMobile ? '200px' : isTablet ? '300px' : '400px'
+          }}
         >
-          {backgroundPages.length > 0 ? (
-            backgroundPages.map((p, idx) => (
+          <MobileCanvasWrapper
+            className={`canvas-wrapper ${
+              isMobile 
+                ? "flex flex-col gap-2" 
+                : isTablet 
+                  ? "flex flex-col gap-3"
+                  : "grid grid-cols-2 gap-4"
+            }`}
+            style={{
+              width: 'fit-content',
+              height: 'fit-content',
+              minWidth: isMobile ? '280px' : isTablet ? '400px' : '600px'
+            }}
+            onMouseDown={handleCanvasMouseDown}
+            onMouseMove={handleCanvasMouseMove}
+            onMouseUp={handleCanvasMouseUp}
+            isMobile={isMobile}
+          >
+          {pdfPages.length > 0 ? (
+            pdfPages.map((page, idx) => (
               <PageCanvas
                 key={idx}
                 pageIndex={idx}
-                backgroundImage={p.dataUrl}
-                initialWidth={p.width}
-                initialHeight={p.height}
-                tool={tool}
-                currentColor={currentColor}
-                strokeWidth={strokeWidth}
-                fontSize={fontSize}
-                pageState={
-                  pageStates[idx] || { lines: [], texts: [], shapes: [] }
-                }
-                isDesktop={isDesktop}
-                onUpdatePageState={(i, next) => {
-                  const newPageStates = pageStates.map((s, k) =>
-                    k === i ? next : s
-                  );
-                  setPageStates(newPageStates);
-                  // Don't save to history here - let saveToHistory callback handle it
-                }}
-                saveToHistory={(newLines, newTexts, newShapes) => {
-                  // This is called by PageCanvas drawing actions
-                  const newPageStates = pageStates.map((s, k) =>
-                    k === idx
-                      ? {
-                          ...s,
-                          lines: newLines,
-                          texts: newTexts,
-                          shapes: newShapes,
-                        }
-                      : s
-                  );
-                  setPageStates(newPageStates);
-                  // Save to history with the updated pageStates
-                  saveToHistory([], [], [], newPageStates);
-                }}
-                stageRef={(node) => {
-                  if (!node) return;
-                  pageStageRefs.current[idx] = node;
-                }}
-              />
+                backgroundImage={page.dataUrl}
+                  initialWidth={page.width}
+                  initialHeight={page.height}
+                  tool={selectedTool}
+                  currentColor={currentColor}
+                  strokeWidth={strokeWidth}
+                  fontSize={fontSize}
+                  pageState={
+                    pageStates[idx] || { lines: [], texts: [], shapes: [] }
+                  }
+                  isDesktop={isDesktop}
+                  onUpdatePageState={(i, next) => {
+                    const newPageStates = pageStates.map((s, k) =>
+                      k === i ? next : s
+                    );
+                    setPageStates(newPageStates);
+                  }}
+                  saveToHistory={(newLines, newTexts, newShapes) => {
+                    const newPageStates = pageStates.map((s, k) =>
+                      k === idx
+                        ? {
+                            ...s,
+                            lines: newLines,
+                            texts: newTexts,
+                            shapes: newShapes,
+                          }
+                        : s
+                    );
+                    setPageStates(newPageStates);
+                    saveToHistory([], [], [], newPageStates);
+                  }}
+                  stageRef={(node) => {
+                    if (!node) return;
+                    pageStageRefs.current[idx] = node;
+                  }}
+                />
             ))
           ) : (
             <Canvas
               stageRef={stageRef}
-              lines={lines}
-              texts={texts}
-              shapes={shapes}
+              lines={drawingLines}
+              texts={drawingTexts}
+              shapes={drawingShapes}
               backgroundImage={backgroundImage}
-              onMouseDown={handleCanvasMouseDown}
-              onMouseMove={handleCanvasMouseMove}
-              onMouseUp={handleCanvasMouseUp}
+              onMouseDown={undefined} // Handled by MobileCanvasWrapper
+              onMouseMove={undefined} // Handled by MobileCanvasWrapper
+              onMouseUp={undefined} // Handled by MobileCanvasWrapper
               onTextDblClick={handleTextDblClick}
               containerRef={canvasContainerRef}
             />
           )}
+          </MobileCanvasWrapper>
         </div>
 
         <TextInputOverlay
-          showTextInput={showTextInput}
+          showTextInput={isTextInputVisible}
           textInput={textInput}
           setTextInput={setTextInput}
           textPosition={textPosition}
           onAddText={addText}
-          onClose={() => setShowTextInput(false)}
+          onClose={() => setIsTextInputVisible(false)}
           containerRef={canvasContainerRef}
-          displayScale={1}
         />
       </div>
+
+      {/* Keyboard Shortcuts Help Modal */}
+      <KeyboardShortcutsHelp
+        isOpen={isShortcutsHelpVisible}
+        onClose={() => setIsShortcutsHelpVisible(false)}
+      />
+
+      {/* Performance Monitor */}
+      <PerformanceMonitor
+        isVisible={isPerformanceMonitorVisible}
+        pageCount={pdfPages.length}
+        canvasCount={pageStageRefs.current.filter(Boolean).length}
+      />
+
     </div>
   );
 };
