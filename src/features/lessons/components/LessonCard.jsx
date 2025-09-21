@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { useCountdown } from "../hooks/useCountdown";
 import { useLessonStatus } from "../hooks/useLessonStatus";
@@ -10,6 +10,13 @@ import { LESSON_STATUS } from "../../../utils";
 const LessonCard = ({ item, color, image, lessonDate }) => {
   const { openStatusModal } = useModal();
   const [hintMsg, setHintMsg] = useState("");
+  const  HINT_TIMEOUT_MS = 4000;
+
+  useEffect(() => {
+    if (!hintMsg) return;
+    const t = setTimeout(() => setHintMsg(""), HINT_TIMEOUT_MS);
+    return () => clearTimeout(t); // reset timer on rapid clicks / unmount
+  }, [hintMsg]);
 
   // Date calculations
   const { start, end } = useMemo(() => {
@@ -130,7 +137,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         {hintMsg && (
           <div
             className={[
-              "mt-2 text-sm font-semibold",
+              "mt-2 text-sm font-semibold transition-opacity duration-300",
               lessonStatus === LESSON_STATUS.ENDED
                 ? (!item?.lessons || item?.lessons?.length === 0 ? "text-red-600" : "text-[#ba7c28]")
                 : (lessonStatus === LESSON_STATUS.DELAYED ? "text-gray-600" : "text-green-600"),
