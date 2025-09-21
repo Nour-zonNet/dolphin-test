@@ -20,12 +20,12 @@ const PreviewScheduleBtn = ({
       <button
         type="button"
         onClick={handleOpen}
-        className={`flex items-center justify-center gap-2 bg-orangedeep text-darkblue px-4 py-2.5 lg:py-3.5 rounded-full w-full mx-auto my-6 lg:my-0 hover:bg-btnClicked focus:bg-btnClicked cursor-pointer ${className}`}
+        className={`flex items-center justify-center gap-2 bg-orangedeep text-darkblue px-4 lg:px-6 py-2.5 lg:py-3 rounded-full w-full mx-auto my-6 lg:my-0 hover:bg-btnClicked focus:bg-btnClicked cursor-pointer ${className}`}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
       >
         <DatePicker className="w-4 md:w-6" />
-        <span className="text-nowrap text-sm md:text-base lg:text-lg font-semibold">{label}</span>
+        <span className="text-nowrap text-sm md:text-base font-semibold lg:font-medium">{label}</span>
       </button>
 
       <AllPackagesSchedulePopup
