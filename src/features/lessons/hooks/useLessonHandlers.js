@@ -14,20 +14,46 @@ export const useLessonHandlers = (
   const hintTimerRef = useRef(null);
   const dispatch = useDispatch();
   const handleEnterLesson = useCallback(async () => {
-    const url = `https://online.learnatdolphin.com/${item.session_link}`;
-    const isMobile = /iPad|iPhone|iPod|Android/i.test(navigator.userAgent);
-    const features = isMobile ? "_blank" : "_blank,noopener,noreferrer";
-    const res = await dispatch(getSessionLink(item.id));
-    const newWindow = window.open(res.payload, features);
+    try {
+      // اطلب رابط الجلسة من الـ API
+      const res = await dispatch(getSessionLink(item.id));
 
-    if (!newWindow) {
+      if (res.error || !res.payload) {
+        // لو في خطأ من الـ API
+        openStatusModal(MODAL_TYPES.ERROR, {
+          title: "خطأ في فتح الحصة",
+          message: "حدث خطأ أثناء محاولة فتح الحصة. حاول مرة أخرى.",
+          onConfirm: () => {},
+          onClose: () => {},
+        });
+        return;
+      }
+
+      const sessionUrl =
+        res.payload || `https://online.learnatdolphin.com/${item.session_link}`;
+
+      const isMobile = /iPad|iPhone|iPod|Android/i.test(navigator.userAgent);
+      const features = isMobile ? "_blank" : "_blank,noopener,noreferrer";
+
+      const newWindow = window.open(sessionUrl, features);
+
+      if (!newWindow) {
+        openStatusModal(MODAL_TYPES.ERROR, {
+          title: "لم يتم فتح الحصة",
+          message:
+            "المتصفح منع فتح نافذة جديدة. اضغط موافق لفتح الحصة في نفس النافذة.",
+          onConfirm: () => (window.location.href = sessionUrl),
+          onClose: () => {},
+        });
+      }
+    } catch (error) {
       openStatusModal(MODAL_TYPES.ERROR, {
-        title: "لم يتم فتح الحصة",
-        message:
-          "المتصفح منع فتح نافذة جديدة. اضغط موافق لفتح الحصة في نفس النافذة.",
-        onConfirm: () => (window.location.href = url),
+        title: "خطأ غير متوقع",
+        message: "حدث خطأ غير متوقع أثناء محاولة فتح الحصة.",
+        onConfirm: () => {},
         onClose: () => {},
       });
+      console.error("handleEnterLesson error:", error);
     }
   }, [dispatch, item.id, item.session_link, openStatusModal]);
 
