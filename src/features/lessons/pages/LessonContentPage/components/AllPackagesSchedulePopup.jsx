@@ -228,7 +228,7 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
   return (
     <div className="fixed inset-0 z-[9999]">
       {/* overlay */}
-      <div className="absolute inset-0 bg-black/50" onClick={close} />
+      <div className="absolute inset-0 h-screen bg-black/50" onClick={close} />
       {/* center */}
       <div className="relative min-h-screen flex items-center justify-center p-4">
         <div className="relative w-[90%] max-w-5xl bg-white rounded-3xl shadow-lg overflow-hidden max-h-[90vh] overflow-y-auto no-scrollbar">

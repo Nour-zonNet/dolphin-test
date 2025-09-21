@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavTab, SubscribeBtn, SupportBtn } from "./components";
 import { TABS } from "@/constants/TABS";
+import PreviewScheduleBtn from "../../ui/PreviewScheduleBtn";
 
 function Navbar() {
   const [activeTab, setActiveTab] = useState("schedule");
@@ -40,6 +41,9 @@ function Navbar() {
       {/* Buttons Section */}
       <div className="flex gap-2 sm:gap-4 w-full justify-end md:w-auto  ">
         {/* <LanguageSwitcher /> */}
+        <div className="lg:block hidden w-full">
+          <PreviewScheduleBtn />
+        </div>
         <SubscribeBtn />
         {/* <SupportBtn /> */}
       </div>
