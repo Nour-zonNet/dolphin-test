@@ -1,17 +1,27 @@
 
-const ActionButtons = ({ canUndo, canRedo, onUndo, onRedo, onClear }) => {
+const ActionButtons = ({ canUndo, canRedo, onUndo, onRedo, onClear, isMobile = false }) => {
   return (
-    <div className="flex rounded-lg justify-between flex-row-reverse p-1 gap-1">
-      <div className="space-x-4">
+    <div 
+      className={`flex rounded-lg justify-between flex-row-reverse gap-1 ${
+        isMobile ? "p-2" : "p-1"
+      }`}
+      role="toolbar"
+      aria-label="Drawing actions"
+    >
+      <div className={`${isMobile ? "space-x-2" : "space-x-4"}`}>
         <button
           onClick={onUndo}
           disabled={!canUndo}
-          className={`p-2 rounded-md transition-colors ${
+          className={`rounded-md transition-colors ${
+            isMobile ? "p-1" : "p-2"
+          } ${
             !canUndo
               ? " text-orange-400 cursor-not-allowed"
               : "bg-orange-300 text-white hover:"
           }`}
-          title="Undo"
+          title="Undo (Ctrl+Z or Z)"
+          aria-label="Undo last action"
+          aria-disabled={!canUndo}
         >
           <span className="text-lg">
             <svg
@@ -31,12 +41,16 @@ const ActionButtons = ({ canUndo, canRedo, onUndo, onRedo, onClear }) => {
         <button
           onClick={onRedo}
           disabled={!canRedo}
-          className={`p-2 rounded-md transition-colors ${
+          className={`rounded-md transition-colors ${
+            isMobile ? "p-1" : "p-2"
+          } ${
             !canRedo
               ? " text-orange-400 cursor-not-allowed"
               : "bg-orange-300 text-white hover:"
           }`}
-          title="Redo"
+          title="Redo (Ctrl+Y or Y)"
+          aria-label="Redo last undone action"
+          aria-disabled={!canRedo}
         >
           <span className="text-lg">
             <svg
@@ -56,8 +70,13 @@ const ActionButtons = ({ canUndo, canRedo, onUndo, onRedo, onClear }) => {
       </div>
       <button
         onClick={onClear}
-        className="py-1 px-4 border-orangedeep rounded-full border text-navyteal  text-sm  hover:bg-red-600 transition-colors"
-        title="Clear Canvas"
+        className={`border-orangedeep rounded-full border text-navyteal hover:bg-red-600 transition-colors ${
+          isMobile 
+            ? "py-1 px-2 text-xs" 
+            : "py-1 px-4 text-sm"
+        }`}
+        title="Clear Canvas (Ctrl+N or Delete)"
+        aria-label="Clear all drawings from canvas"
       >
         <span className="text-md text-navyteal"></span>
         مسح الكل
