@@ -3,9 +3,21 @@ import Toolbar from "./Toolbar";
 import Canvas from "./Canvas";
 import PageCanvas from "./PageCanvas";
 import TextInputOverlay from "./TextInputOverlay";
-import { useBoardHistory, useCanvasDrawing, useKeyboardShortcuts, useErrorHandler, useMemoryManager } from "./hooks";
-import { ActionButtons, ErrorNotification, KeyboardShortcutsHelp, PerformanceMonitor, MobileCanvasWrapper } from "./components";
-import * as pdfjs from "pdfjs-dist";
+import {
+  useBoardHistory,
+  useCanvasDrawing,
+  useKeyboardShortcuts,
+  useErrorHandler,
+  useMemoryManager,
+} from "./hooks";
+import {
+  ActionButtons,
+  ErrorNotification,
+  KeyboardShortcutsHelp,
+  PerformanceMonitor,
+  MobileCanvasWrapper,
+} from "./components";
+// import * as pdfjs from "pdfjs-dist";
 // Note: jsPDF will be imported dynamically to avoid SSR issues
 
 // Custom hook for responsive behavior
@@ -39,21 +51,22 @@ const Board = () => {
   const [currentColor, setCurrentColor] = useState("#3B82F6");
   const [strokeWidth, setStrokeWidth] = useState(5);
   const [fontSize, setFontSize] = useState(20);
-  
+
   // Text input state
   const [textInput, setTextInput] = useState("");
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
   const [isTextInputVisible, setIsTextInputVisible] = useState(false);
-  
+
   // PDF state
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const [pageStates, setPageStates] = useState([]); // {lines, texts, shapes} per page
-  
+
   // UI state
   const [isShortcutsHelpVisible, setIsShortcutsHelpVisible] = useState(false);
-  const [isPerformanceMonitorVisible, setIsPerformanceMonitorVisible] = useState(false);
-  
+  const [isPerformanceMonitorVisible, setIsPerformanceMonitorVisible] =
+    useState(false);
+
   // Refs
   const stageRef = useRef();
   const canvasContainerRef = useRef();
@@ -71,7 +84,8 @@ const Board = () => {
   } = useBoardHistory();
 
   const { errors, addError, removeError, clearAllErrors } = useErrorHandler();
-  const { cleanupAllCanvases, manageImageCache, getCachedImage } = useMemoryManager();
+  const { cleanupAllCanvases, manageImageCache, getCachedImage } =
+    useMemoryManager();
 
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCanvasDrawing(
     selectedTool,
@@ -226,9 +240,9 @@ const Board = () => {
   const handleImportPDF = async (file) => {
     try {
       // Configure PDF.js worker
+      const pdfjs = await import("pdfjs-dist");
       if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
         try {
-          const pdfjs = await import("pdfjs-dist");
           pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
         } catch (error) {
           console.warn("Failed to configure PDF.js worker:", error);
@@ -241,11 +255,11 @@ const Board = () => {
 
       const pages = [];
       const deviceScale = Math.max(2, (window.devicePixelRatio || 1) * 2);
-      
+
       // Check cache first
       const cacheKey = `pdf_${file.name}_${file.size}`;
       const cachedPages = getCachedImage(cacheKey);
-      
+
       if (cachedPages) {
         setPdfPages(cachedPages);
         setBackgroundImage(cachedPages[0].dataUrl);
@@ -282,7 +296,7 @@ const Board = () => {
         manageImageCache(cacheKey, pages);
         setPdfPages(pages);
         setBackgroundImage(pages[0].dataUrl);
-        
+
         const initialPageStates = pages.map(() => ({
           lines: [],
           texts: [],
@@ -295,7 +309,7 @@ const Board = () => {
       }
     } catch (error) {
       console.error("Error importing PDF:", error);
-      addError(error, 'PDF Import');
+      addError(error, "PDF Import");
     }
   };
 
@@ -306,10 +320,14 @@ const Board = () => {
       const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
       // Multi-page PDF export
-      if (pdfPages.length > 0 && pageStageRefs.current.length === pdfPages.length) {
+      if (
+        pdfPages.length > 0 &&
+        pageStageRefs.current.length === pdfPages.length
+      ) {
         const firstPage = pdfPages[0];
         const pdf = new jsPDF({
-          orientation: firstPage.width > firstPage.height ? "landscape" : "portrait",
+          orientation:
+            firstPage.width > firstPage.height ? "landscape" : "portrait",
           unit: "px",
           format: [firstPage.width, firstPage.height],
         });
@@ -318,14 +336,14 @@ const Board = () => {
           const page = pdfPages[i];
           const stage = pageStageRefs.current[i];
           if (!stage) continue;
-          
+
           if (i > 0) {
             pdf.addPage(
               [page.width, page.height],
               page.width > page.height ? "landscape" : "portrait"
             );
           }
-          
+
           const stageWidth = stage.width();
           const ratio = page.width / Math.max(1, stageWidth);
           const pixelRatio = Math.max(1, Math.min(4, ratio));
@@ -336,17 +354,22 @@ const Board = () => {
           pdf.addImage(dataURL, "PNG", 0, 0, page.width, page.height);
         }
 
-        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
+        const timestamp = new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/:/g, "-");
         pdf.save(`drawing-board-${timestamp}.pdf`);
         return;
       }
 
       // Single-page export
       if (!stageRef.current) {
-        alert("Canvas is empty. Please add some content before exporting to PDF.");
+        alert(
+          "Canvas is empty. Please add some content before exporting to PDF."
+        );
         return;
       }
-      
+
       const stage = stageRef.current;
       const stageWidth = stage.width();
       const stageHeight = stage.height();
@@ -357,15 +380,17 @@ const Board = () => {
         format: [stageWidth, stageHeight],
       });
       pdf.addImage(dataURL, "PNG", 0, 0, stageWidth, stageHeight);
-      
-      const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
+
+      const timestamp = new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace(/:/g, "-");
       pdf.save(`drawing-board-${timestamp}.pdf`);
     } catch (error) {
       console.error("Error exporting to PDF:", error);
-      addError(error, 'PDF Export');
+      addError(error, "PDF Export");
     }
   };
-
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
@@ -404,17 +429,11 @@ const Board = () => {
   return (
     <div
       className={`flex w-full h-full ${
-        isMobile 
-          ? "flex-col" 
-          : isTablet 
-            ? "flex-col"
-            : "flex-row-reverse"
-      } ${
-        isMobile ? "gap-2" : isTablet ? "gap-3" : "gap-5"
-      }`}
+        isMobile ? "flex-col" : isTablet ? "flex-col" : "flex-row-reverse"
+      } ${isMobile ? "gap-2" : isTablet ? "gap-3" : "gap-5"}`}
       style={{
-        padding: isMobile ? '8px' : isTablet ? '12px' : '16px',
-        boxSizing: 'border-box'
+        padding: isMobile ? "8px" : isTablet ? "12px" : "16px",
+        boxSizing: "border-box",
       }}
     >
       {/* Error Notifications */}
@@ -454,41 +473,40 @@ const Board = () => {
           isMobile={isMobile}
         />
 
-
-        <div 
+        <div
           className="flex-1 min-h-0 overflow-hidden"
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'relative',
-            minHeight: isMobile ? '200px' : isTablet ? '300px' : '400px'
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative",
+            minHeight: isMobile ? "200px" : isTablet ? "300px" : "400px",
           }}
         >
           <MobileCanvasWrapper
             className={`canvas-wrapper ${
-              isMobile 
-                ? "flex flex-col gap-2" 
-                : isTablet 
-                  ? "flex flex-col gap-3"
-                  : "grid grid-cols-2 gap-4"
+              isMobile
+                ? "flex flex-col gap-2"
+                : isTablet
+                ? "flex flex-col gap-3"
+                : "grid grid-cols-2 gap-4"
             }`}
             style={{
-              width: 'fit-content',
-              height: 'fit-content',
-              minWidth: isMobile ? '280px' : isTablet ? '400px' : '600px'
+              width: "fit-content",
+              height: "fit-content",
+              minWidth: isMobile ? "280px" : isTablet ? "400px" : "600px",
             }}
             onMouseDown={handleCanvasMouseDown}
             onMouseMove={handleCanvasMouseMove}
             onMouseUp={handleCanvasMouseUp}
             isMobile={isMobile}
           >
-          {pdfPages.length > 0 ? (
-            pdfPages.map((page, idx) => (
-              <PageCanvas
-                key={idx}
-                pageIndex={idx}
-                backgroundImage={page.dataUrl}
+            {pdfPages.length > 0 ? (
+              pdfPages.map((page, idx) => (
+                <PageCanvas
+                  key={idx}
+                  pageIndex={idx}
+                  backgroundImage={page.dataUrl}
                   initialWidth={page.width}
                   initialHeight={page.height}
                   tool={selectedTool}
@@ -524,21 +542,21 @@ const Board = () => {
                     pageStageRefs.current[idx] = node;
                   }}
                 />
-            ))
-          ) : (
-            <Canvas
-              stageRef={stageRef}
-              lines={drawingLines}
-              texts={drawingTexts}
-              shapes={drawingShapes}
-              backgroundImage={backgroundImage}
-              onMouseDown={undefined} // Handled by MobileCanvasWrapper
-              onMouseMove={undefined} // Handled by MobileCanvasWrapper
-              onMouseUp={undefined} // Handled by MobileCanvasWrapper
-              onTextDblClick={handleTextDblClick}
-              containerRef={canvasContainerRef}
-            />
-          )}
+              ))
+            ) : (
+              <Canvas
+                stageRef={stageRef}
+                lines={drawingLines}
+                texts={drawingTexts}
+                shapes={drawingShapes}
+                backgroundImage={backgroundImage}
+                onMouseDown={undefined} // Handled by MobileCanvasWrapper
+                onMouseMove={undefined} // Handled by MobileCanvasWrapper
+                onMouseUp={undefined} // Handled by MobileCanvasWrapper
+                onTextDblClick={handleTextDblClick}
+                containerRef={canvasContainerRef}
+              />
+            )}
           </MobileCanvasWrapper>
         </div>
 
@@ -565,7 +583,6 @@ const Board = () => {
         pageCount={pdfPages.length}
         canvasCount={pageStageRefs.current.filter(Boolean).length}
       />
-
     </div>
   );
 };

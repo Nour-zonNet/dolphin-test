@@ -1,9 +1,8 @@
 // Centralized PDF.js configuration to avoid conflicts and SSR issues
-import { pdfjs } from "react-pdf";
 
-const configurePDFWorker = async() => {
+const configurePDFWorker = async () => {
+  const pdfjs = await import("pdfjs-dist");
   if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
-    const pdfjs = await import("pdfjs-dist");
     pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
   }
 };
