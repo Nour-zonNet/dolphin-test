@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { usePackages } from "../hooks/usePackages";
 import PlansSearchBar from "../components/PlansSearchBar";
@@ -6,20 +6,22 @@ import PlanCard from "../components/PlanCard";
 import PlansFooter from "../components/PlansFooter";
 import { InfoIcon } from "@/utils/icons";
 import { Header } from "@/components/layout";
+import { HomeSupportBtn } from "@/components/layout";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 import notFoundPackages from "@/assets/images/allPackages.png";
 
 const DataPlanSelector = () => {
   const navigate = useNavigate();
   const { all } = usePackages();
-  const [openId, setOpenId] = useState(null);
 
   const [selectedPlanIds, setSelectedPlanIds] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  const handleToggle = (id) => {
-    setOpenId((prev) => (prev === id ? null : id));
-  };
+  const [openPlanId, setOpenPlanId] = React.useState(null);
+  const toggleOpen = React.useCallback((id) => {
+    setOpenPlanId((prev) => (prev === id ? null : id));
+  }, []);
+
   const formatPrice = React.useCallback((plan) => {
     if (plan.discountPercentage > 0) {
       return (
@@ -145,19 +147,17 @@ const DataPlanSelector = () => {
 
         {/* Plans */}
         {all.length > 0 ? (
-          <div className="w-full columns-1 md:columns-1 lg:columns-2 gap-6 lg:mt-10 mx-auto px-4 mt-6 mb-14">
+          <div className="mx-auto px-6 md:px-18 mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid gap-4 pb-28">
             {filteredPlans.map((plan) => (
-              <div key={plan.id} className="mb-6 break-inside-avoid">
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  selected={selectedPlanIds.includes(plan.id)}
-                  onSelect={handlePlanSelect}
-                  formatPrice={formatPrice}
-                  open={openId === plan.id}
-                  onToggle={() => handleToggle(plan.id)}
-                />
-              </div>
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                selected={selectedPlanIds.includes(plan.id)}
+                onSelect={handlePlanSelect}
+                formatPrice={formatPrice}
+                isOpen={openPlanId === plan.id}
+                onToggle={() => toggleOpen(plan.id)}
+              />
             ))}
           </div>
         ) : (
@@ -187,6 +187,7 @@ const DataPlanSelector = () => {
           selectedCount={selectedPlanIds.length}
         />
       </div>
+      <HomeSupportBtn />
     </>
   );
 };

@@ -142,7 +142,7 @@ const PackageCard = React.memo(
                   <button
                     type="button"
                     onClick={handleOpenSchedule}
-                    className="w-full space-x-1 text-navyteal text-xs xs:text-base flex items-center justify-center gap-1 max-w-60 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full px-4 py-3 font-medium transition-colors duration-300"
+                    className="w-full space-x-1 text-navyteal text-xs md:text-base flex items-center justify-center gap-1 max-w-60 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full px-4 py-3 font-medium transition-colors duration-300"
                     aria-label={t("packages.previewWeeklySchedule")}
                   >
                     <Calender className="w-4 h-4" />
