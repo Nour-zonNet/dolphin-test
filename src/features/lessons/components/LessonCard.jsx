@@ -310,7 +310,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
                 loading="lazy"
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
-              <span className="text-status text-xs xs:text-base">
+              <span className="text-status text-xs md:text-base">
                 {item.teacher_name ?? t("lessons.defaultTeacher")}
               </span>
             </div>
@@ -336,14 +336,14 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
                 loading="lazy"
                 className="w-4 h-4 xs:w-6 xs:h-6"
               />
-              <span className="text-xs xs:text-base">
+              <span className="text-xs md:text-base">
                 {formatArabicTime(item.start_time)}
               </span>
             </div>
             <div className="font-semibold flex items-center gap-2">
               {statusIcon}
               <span
-                className={`text-xs xs:text-base font-semibold ${statusColor}`}
+                className={`text-xs md:text-base font-semibold ${statusColor}`}
               >
                 {statusText}
               </span>
