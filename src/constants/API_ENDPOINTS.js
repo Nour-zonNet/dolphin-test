@@ -18,7 +18,7 @@ export const ENDPOINTS = {
   SEND_OTP_CODE: "/student/send-code-for-forget-password",
   VERIFY_OTP_RESET_PASSWORD: "/student/verfiy-code-for-forget-password",
   RESET_PASSWORD: "/student/change-password",
-  GET_SESSION_LINK: "/student/get-session-link",
+  GET_SESSION: "/student/session/",
   UPDATE_PROFILE: "student/update-profile",
   UPDATE_IMAGE: "/student/update-image",
   SWITCH_ACCOUNT: "/student/switch-account",

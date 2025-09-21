@@ -1,7 +1,8 @@
 import { useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useModal } from "@/components/feedback/modal/useModal";
 import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
+import { useDispatch } from "react-redux";
+import { getSessionLink } from "../store/lessonsSlice";
 
 export const useLessonHandlers = (
   item,
@@ -11,13 +12,13 @@ export const useLessonHandlers = (
 ) => {
   const navigate = useNavigate();
   const hintTimerRef = useRef(null);
-
-  const handleEnterLesson = useCallback(() => {
+  const dispatch = useDispatch();
+  const handleEnterLesson = useCallback(async () => {
     const url = `https://online.learnatdolphin.com/${item.session_link}`;
     const isMobile = /iPad|iPhone|iPod|Android/i.test(navigator.userAgent);
     const features = isMobile ? "_blank" : "_blank,noopener,noreferrer";
-
-    const newWindow = window.open(url, features);
+    const res = await dispatch(getSessionLink(item.id));
+    const newWindow = window.open(res.payload, features);
 
     if (!newWindow) {
       openStatusModal(MODAL_TYPES.ERROR, {
@@ -28,7 +29,7 @@ export const useLessonHandlers = (
         onClose: () => {},
       });
     }
-  }, [item.session_link, openStatusModal]);
+  }, [dispatch, item.id, item.session_link, openStatusModal]);
 
   // const handleOpenContent = useCallback(() => {
   //   navigate("/schedule/lessoncontent", {

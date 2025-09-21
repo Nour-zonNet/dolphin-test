@@ -1,5 +1,9 @@
 import { useSelector } from "react-redux";
-import { fetchLessons, getPackageLessons } from "../store/lessonsSlice";
+import {
+  fetchLessons,
+  getPackageLessons,
+  getSessionLink,
+} from "../store/lessonsSlice";
 
 export const useLessons = () => {
   const { items, loading, error } = useSelector((state) => state.lessons);
@@ -9,5 +13,6 @@ export const useLessons = () => {
     error,
     fetchLessons: fetchLessons,
     getPackageLessons: getPackageLessons,
+    getSessionLink: getSessionLink,
   };
 };

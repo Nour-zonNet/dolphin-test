@@ -29,9 +29,9 @@ export const getPackageLessons = createAsyncThunk(
 
 export const getSessionLink = createAsyncThunk(
   "lessons/getSessionLink",
-  async (roomUId, { rejectWithValue }) => {
+  async (sessionId, { rejectWithValue }) => {
     try {
-      const { data } = await lessonsRepository.getSessionLink(roomUId);
+      const { data } = await lessonsRepository.getSessionLink(sessionId);
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

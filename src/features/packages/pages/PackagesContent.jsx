@@ -70,7 +70,7 @@ const PackageContent = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex justify-end">
+                {/* <div className="flex justify-end">
                   <button
                     onClick={() =>
                       navigate("/show-lessons/"+ packageItem.package_id)
@@ -81,7 +81,7 @@ const PackageContent = () => {
                     <Book className="w-4 h-4 sm:w-6 sm:h-6" />
                     عرض الدروس
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
