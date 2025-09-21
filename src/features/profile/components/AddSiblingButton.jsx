@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
-import { AddSiblingsModal } from '@/components/profile/modal';
-import { useDispatch, useSelector } from 'react-redux';
-import { addSibling } from '../store/profileSlice';
-import { useModal } from '@/components/feedback/modal/useModal';
+import React, { useState } from "react";
+import { AddSiblingsModal } from "@/components/profile/modal";
+import { useSelector } from "react-redux";
+import { useModal } from "@/components/feedback/modal/useModal";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 const AddSiblingButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading] = useState(false); 
-  const dispatch = useDispatch();
+  const [loading] = useState(false);
+  const { addBrother } = useAuth();
   const user = useSelector((state) => state.profile.user);
   const brothers = useSelector((state) => state.profile.brothers || []);
   const { openStatusModal } = useModal();
-  
+
   // تحديد ما إذا كان المستخدم الحالي هو الطالب الأساسي
-  const isPrimaryStudent = user?.isPrimary === true || user?.canAddSiblings === true || user?.accountType === "primary";
+  const isPrimaryStudent =
+    user?.isPrimary === true ||
+    user?.canAddSiblings === true ||
+    user?.accountType === "primary";
 
   const handleAddSibling = async (siblingData) => {
     // التحقق من أن المستخدم الحالي هو الطالب الأساسي
@@ -34,12 +37,12 @@ const AddSiblingButton = () => {
     }
 
     try {
-      await dispatch(addSibling(siblingData)).unwrap();
+      await addBrother(siblingData);
       openStatusModal("SUCCESS", {
         title: "تمت الإضافة بنجاح",
         message: "تمت إضافة الأخ/الأخت بنجاح إلى الحساب.",
       });
-      setIsModalOpen(false); 
+      setIsModalOpen(false);
     } catch {
       openStatusModal("ERROR", {
         title: "فشل في إضافة الأخ",
@@ -73,7 +76,7 @@ const AddSiblingButton = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleAddSibling}
-        loading={loading} 
+        loading={loading}
       />
     </div>
   );

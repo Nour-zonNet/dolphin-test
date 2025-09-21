@@ -9,7 +9,7 @@ export const ENDPOINTS = {
   GRADE_PACKAGES: "/student/packages",
   SCHEDULE_OF_PACKAGE: "/student/get-group-schedule/",
   SCHEDULE_OF_ALLPACKAGES: "/student/schedule",
-  
+
   GET_MY_SUBSCRIPTIONS: "/student/packages/subscription-packages",
   GROUPS_BY_BACKAGEID: "/student/package-groups",
   CREATE_TRIAL_SUBSCRIPTION: "/student/create-trial-subscription",
@@ -18,5 +18,12 @@ export const ENDPOINTS = {
   SEND_OTP_CODE: "/student/send-code-for-forget-password",
   VERIFY_OTP_RESET_PASSWORD: "/student/verfiy-code-for-forget-password",
   RESET_PASSWORD: "/student/change-password",
-  GET_SESSION_LINK:"/student/get-session-link"
+  GET_SESSION_LINK: "/student/get-session-link",
+  UPDATE_PROFILE: "student/update-profile",
+  UPDATE_IMAGE: "/student/update-image",
+  SWITCH_ACCOUNT: "/student/switch-account",
+  ADD_BROTHER: "/student/add-brother",
+  FETCH_BORTHER: "/student/brothers",
+  CLASSES: "/student/classes",
+  LESSONS_OF_PACKAGE: "/student/lessons/package/",
 };

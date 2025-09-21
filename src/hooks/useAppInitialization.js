@@ -7,37 +7,43 @@ import {
 } from "@/features/packages/store/packagesSlice";
 import { fetchSubscriptions } from "@/features/subscription/store/subscriptionSlice";
 import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
+import { useAuth } from "../features/auth/hooks/useAuth";
+import { useClasses } from "./useClasses";
 
 export const useAppInitialization = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const initialized = useRef(false);
+  const { user, token } = useSelector((state) => state.auth); // ✅ rely only on Redux state
+  const initialized = useRef(null); // store last initialized token
+  const { getBrothers } = useAuth();
+  const { getClasses } = useClasses();
 
   useEffect(() => {
     const initializeApp = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token || initialized.current) return;
+      if (!token || initialized.current === token) return; // ✅ prevent duplicate runs for same token
+      initialized.current = token;
 
       try {
-        initialized.current = true;
-
-        if (!user) {
-          await dispatch(fetchCurrentUser());
-
-          await Promise.all([
-            dispatch(fetchAllPackages()),
-            dispatch(fetchMyPackages()),
-            dispatch(fetchLessons()),
-            dispatch(fetchSubscriptions()),
-          ]);
+        // Ensure we have user info
+        let currentUser = user;
+        if (!currentUser) {
+          currentUser = await dispatch(fetchCurrentUser()).unwrap();
         }
+
+        // Fetch related data in parallel
+        await Promise.all([
+          dispatch(fetchAllPackages()),
+          dispatch(fetchMyPackages()),
+          dispatch(fetchLessons()),
+          dispatch(fetchSubscriptions()),
+          getBrothers(),
+          getClasses(),
+        ]);
       } catch (error) {
-        console.error("Failed to initialize app:", error);
-        initialized.current = false; // Reset on error to allow retry
+        console.error("❌ Failed to initialize app:", error);
+        initialized.current = null; // allow retry if initialization fails
       }
     };
 
     initializeApp();
-  }, [dispatch, user]);
+  }, [dispatch, getBrothers, getClasses, token, user]); // ✅ token triggers re-run
 };

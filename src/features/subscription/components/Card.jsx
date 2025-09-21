@@ -5,13 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import {
-  Cancel,
-  ChevronDown,
-  ChevronUp,
-  Copon,
-  Renew,
-} from "@/utils/icons";
+import { Cancel, ChevronDown, ChevronUp, Copon, Renew } from "@/utils/icons";
 import * as Icons from "@/utils/icons";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import { useSubscriptions } from "../hooks/useSubscriptions";
@@ -20,6 +14,12 @@ import ActionButton from "./ActionButton";
 import GroupInfo from "./GroupInfo";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { packageFactory } from "../../packages/factory/packageFactory";
+import {
+  formatPackageStartDate,
+  getRemainingDate,
+  isPackageStarted,
+} from "../../../utils/dateHelpers";
+import { Calender, SandGlass } from "../../../utils/icons";
 
 const Card = React.memo(({ item, isOpen, onToggle }) => {
   const [contentHeight, setContentHeight] = useState("0px");
@@ -68,7 +68,7 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
     () => STATUS_CONFIG[statusKey] || STATUS_CONFIG.active,
     [statusKey]
   );
-  const Icon = Icons[config.icon]; 
+  const Icon = Icons[config.icon];
 
   // Handle expand/collapse animation
   useEffect(() => {
@@ -232,7 +232,11 @@ function formatDate(dateString) {
               <h2
                 className={`
                   text-sm sm:text-base md:text-lg font-semibold leading-tight
-                  ${statusKey === "expired" ? "text-[#B3261E] line-through" : "text-navyteal"}
+                  ${
+                    statusKey === "expired"
+                      ? "text-[#B3261E] line-through"
+                      : "text-navyteal"
+                  }
                 `}
               >
                 {title}
@@ -241,9 +245,7 @@ function formatDate(dateString) {
                 {StatusBadge}
               </div>
             </div>
-              <div className="flex md:hidden mt-1">
-                  {ToggleIcon}
-              </div>
+            <div className="flex md:hidden mt-1">{ToggleIcon}</div>
 
             <div className="hidden md:flex items-center gap-4">
               {StatusBadge}
@@ -267,100 +269,134 @@ function formatDate(dateString) {
             style={{ height: contentHeight }}
             className="transition-all duration-300 ease-in-out overflow-hidden"
           >
-            <div className="px-2 sm:px-4 py-4 border-t border-gray-200 space-y-4 bg-white">
-              {/* Subscription Info */}
-              <div className="space-y-3">
-                <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
-                  <div className="flex items-center justify-between border-b border-gray-300 pb-2 mb-2">
-                    <span className="text-sm font-medium text-gray-600">تاريخ الاشتراك:</span>
-                    <span className="font-semibold text-navyteal">{startDate}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-600">تاريخ الانتهاء:</span>
-                    <span className="font-semibold text-navyteal">{endDate}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Subjects */}
-              <div className="flex items-center gap-6">
-                <span className="text-sm font-bold text-gray-700">المواد:</span>
-                <div className="flex flex-wrap gap-2">
-                  {item.subjects && item.subjects.length > 0 ? (
-                    item.subjects.map((subject, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[#E8F0F4] text-navyteal"
-                      >
-                        {subject.name}
+            {isPackageStarted(item.package_start_date) ? (
+              <div className="px-2 sm:px-4 py-4 border-t border-gray-200 space-y-4 bg-white">
+                {/* Subscription Info */}
+                <div className="space-y-3">
+                  <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                    <div className="flex items-center justify-between border-b border-gray-300 pb-2 mb-2">
+                      <span className="text-sm font-medium text-gray-600">
+                        تاريخ الاشتراك:
                       </span>
-                    ))
-                  ) : (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[#E8F0F4] text-gray-600">
-                      {subject}
-                    </span>
+                      <span className="font-semibold text-navyteal">
+                        {startDate}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-600">
+                        تاريخ الانتهاء:
+                      </span>
+                      <span className="font-semibold text-navyteal">
+                        {endDate}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Subjects */}
+                <div className="flex items-center gap-6">
+                  <span className="text-sm font-bold text-gray-700">
+                    المواد:
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {item.subjects && item.subjects.length > 0 ? (
+                      item.subjects.map((subject, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[#E8F0F4] text-navyteal"
+                        >
+                          {subject.name}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[#E8F0F4] text-gray-600">
+                        {subject}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Group Info & Actions */}
+                {status !== "cancelled" &&
+                  status !== "expired" &&
+                  status !== "waiting" && (
+                    <GroupInfo
+                      group={group}
+                      packageId={item.package_id}
+                      subscriptionId={item.id}
+                    />
                   )}
+
+                {/* Actions */}
+                <div className="flex flex-col gap-3 mt-4">
+                  {config.actions.map((action) => {
+                    switch (action) {
+                      case "cancel":
+                        return (
+                          <ActionButton
+                            key="cancel"
+                            outline
+                            full
+                            danger
+                            icon={<Cancel />}
+                            onClick={handleCancelClick}
+                          >
+                            إلغاء الاشتراك
+                          </ActionButton>
+                        );
+
+                      case "renew":
+                      case "reactivate":
+                        return (
+                          <div
+                            key={action}
+                            className="flex flex-col items-center mt-4 gap-2"
+                          >
+                            {config.message && (
+                              <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
+                                {config.message}
+                              </div>
+                            )}
+                            <ActionButton
+                              full
+                              primary
+                              onClick={handleReactivateClick}
+                              icon={<Renew />}
+                            >
+                              {config.buttonText}
+                            </ActionButton>
+                          </div>
+                        );
+
+                      default:
+                        return null;
+                    }
+                  })}
                 </div>
               </div>
+            ) : (
+              <div className="px-4  py-5 ">
+                <span className="text-[#ba7c28]  font-semibold">
+                  الباقة لم تبداء بعد
+                </span>
+                <div className="flex flex-row items-center   relative z-10">
+                  <Calender className="w-4 h-4" />
 
-              {/* Group Info & Actions */}
-              {status !== "cancelled" &&
-                status !== "expired" &&
-                status !== "waiting" && (
-                  <GroupInfo
-                    group={group}
-                    packageId={item.package_id}
-                    subscriptionId={item.id}
-                  />
-                )}
-
-              {/* Actions */}
-              <div className="flex flex-col gap-3 mt-4">
-                {config.actions.map((action) => {
-                  switch (action) {
-                    case "cancel":
-                      return (
-                        <ActionButton
-                          key="cancel"
-                          outline
-                          full
-                          danger
-                          icon={<Cancel />}
-                          onClick={handleCancelClick}
-                        >
-                          إلغاء الاشتراك
-                        </ActionButton>
-                      );
-
-                    case "renew":
-                    case "reactivate":
-                      return (
-                        <div
-                          key={action}
-                          className="flex flex-col items-center mt-4 gap-2"
-                        >
-                          {config.message && (
-                            <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
-                              {config.message}
-                            </div>
-                          )}
-                          <ActionButton
-                            full
-                            primary
-                            onClick={handleReactivateClick}
-                            icon={<Renew />}
-                          >
-                            {config.buttonText}
-                          </ActionButton>
-                        </div>
-                      );
-
-                    default:
-                      return null;
-                  }
-                })}
+                  <span className="py-4 text-navyteal px-2">
+                    {" "}
+                    تاريخ بداية الباقة :{" "}
+                    {formatPackageStartDate(item.package_start_date)}
+                  </span>
+                </div>
+                <div className="flex flex-row items-center text-navyteal    relative z-10">
+                  {" "}
+                  <SandGlass className="w-3.5" fill="#08233F" />
+                  <span className=" px-2">
+                    {getRemainingDate(item.package_start_date)}{" "}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

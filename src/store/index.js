@@ -7,6 +7,7 @@ import contentReducer from "@/features/lessons/store/contentSlice";
 import groupsReducer from "@/features/groups/store/groupSlice";
 import modalSlice from "./modalSlice";
 import profileReducer from "@/features/profile/store/profileSlice";
+import classesReducer from "./classesSlice";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     content: contentReducer,
     groups: groupsReducer,
     profile: profileReducer,
+    classes: classesReducer   ,
   },
 });
 export default store;

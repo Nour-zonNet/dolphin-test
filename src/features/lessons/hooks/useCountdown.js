@@ -18,7 +18,7 @@ export const useCountdown = (targetTime, lessonDate) => {
       const diffMs = target - now;
 
       // Check if we can enter lesson (5 minutes before start time)
-      const fiveMinutesBeforeMs = diffMs - (7 * 60 * 1000);
+      const fiveMinutesBeforeMs = diffMs - (5 * 60 * 1000);
       const shouldAllowEntry = fiveMinutesBeforeMs <= 0;
       
       setCanEnterLesson(shouldAllowEntry);
@@ -75,14 +75,6 @@ export const useCountdown = (targetTime, lessonDate) => {
     };
   }, [calculateTimeRemaining]);
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
 
   return { timeRemaining, isExpired, canEnterLesson };
 };

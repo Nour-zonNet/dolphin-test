@@ -5,11 +5,11 @@ import { Lock } from "../../../utils/icons";
 import OTPInput from "../../../components/ui/InputOtp";
 import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
-import { useClasses } from "@/features/profile/hooks/useClasses";
+import { useClasses } from "../../../hooks/useClasses";
 
 import "./style.css";
 const RegisterForm = ({ onSubmit, loading, error }) => {
-  const { classes } = useClasses();
+  const { items } = useClasses();
   const { t } = useTranslation();
   const {
     control,
@@ -99,7 +99,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   <option className="!text-xs" value="">
                     {t("auth.selectGrade")}
                   </option>
-                  {classes?.map((cls) => (
+                  {items?.map((cls) => (
                     <option key={cls.id} value={String(cls.id)}>
                       {cls.name}
                     </option>

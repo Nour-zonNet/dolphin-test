@@ -1,4 +1,3 @@
-import React from "react";
 import { Divider, ProfileHeader } from "@/components";
 import UserProfile from "../components/UserProfile";
 import AddSiblingButton from "../components/AddSiblingButton";
@@ -8,7 +7,6 @@ import SubscriptionSection from "../components/SubscriptionSection";
 import { ProfileActions } from "../components";
 import { MobileNav } from "@/components";
 import { useProfile } from "@/features/profile/hooks/useProfile";
-import { HomeSupportBtn } from '@/components'
 
 const ProfilePage = () => {
   const { user } = useProfile();
@@ -31,8 +29,6 @@ const ProfilePage = () => {
 
         <ProfileActions />
       </main>
-      <MobileNav />
-      <HomeSupportBtn />
     </div>
   );
 };

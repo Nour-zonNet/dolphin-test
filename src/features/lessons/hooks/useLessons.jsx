@@ -1,19 +1,13 @@
-
-import { useSelector, useDispatch } from "react-redux";
-import { fetchLessons, getSessionLink, clearLessonsError, clearSessionLink } from "../store/lessonsSlice";
+import { useSelector } from "react-redux";
+import { fetchLessons, getPackageLessons } from "../store/lessonsSlice";
 
 export const useLessons = () => {
-  const dispatch = useDispatch();
-  const { items, link, loading, error } = useSelector((s) => s.lessons); 
-
+  const { items, loading, error } = useSelector((state) => state.lessons);
   return {
-    items,
-    link,
+    items: items,
     loading,
     error,
-    fetchAll: () => dispatch(fetchLessons()),
-    getLink: (roomUId) => dispatch(getSessionLink(roomUId)),
-    clearError: () => dispatch(clearLessonsError()),
-    clearLink: () => dispatch(clearSessionLink()),
+    fetchLessons: fetchLessons,
+    getPackageLessons: getPackageLessons,
   };
 };
