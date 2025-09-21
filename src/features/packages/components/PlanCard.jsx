@@ -8,12 +8,12 @@ import { formatArabicDate } from "@/utils/dateHelpers";
 const PlanCard = ({ plan, selected, onSelect, open, onToggle }) => {
   const ToggleIcon = useMemo(
     () =>
-      isOpen ? (
+      open ? (
         <ChevronUp className="w-3 h-3 text-gray-600 transition-transform" />
       ) : (
         <ChevronDown className="w-3 h-3 text-gray-600 transition-transform" />
       ),
-    [isOpen]
+    [open]
   );
 
   const { image, bgColor } = packageFactory(plan.id);
@@ -41,9 +41,11 @@ const PlanCard = ({ plan, selected, onSelect, open, onToggle }) => {
 
   return (
     <div
-        style={{ borderColor: bgColor }}
+      style={{ borderColor: bgColor }}
       className={` rounded-t-2xl  cursor-pointer ${
-        open ? "border border-gray-400/60 rounded-2xl" : "border border-gray-200/40"
+        open
+          ? "border border-gray-400/60 rounded-2xl"
+          : "border border-gray-200/40"
       }`}
     >
       {/* Header */}
@@ -55,7 +57,9 @@ const PlanCard = ({ plan, selected, onSelect, open, onToggle }) => {
         <div
           onClick={() => onSelect(plan.id)}
           className={`w-6 h-6 rounded-sm border flex items-center justify-center ${
-            selected ? "bg-orangedeep text-white" : "border-gray-600 text-gray-400"
+            selected
+              ? "bg-orangedeep text-white"
+              : "border-gray-600 text-gray-400"
           }`}
         >
           {selected ? "✓" : ""}
@@ -70,7 +74,11 @@ const PlanCard = ({ plan, selected, onSelect, open, onToggle }) => {
                   style={{ backgroundColor: bgColor }}
                   className="w-8 h-8 md:w-10 md:h-10 rounded-sm flex items-center justify-center text-2xl"
                 >
-                  <img   className="w-6 h-6 md:w-8 md:h-8" src={image} alt={plan.name} />
+                  <img
+                    className="w-6 h-6 md:w-8 md:h-8"
+                    src={image}
+                    alt={plan.name}
+                  />
                 </div>
                 <h3 className="font-semibold text-gray-800 text-sm sm:text-base self-center">
                   {plan.name}
@@ -84,7 +92,7 @@ const PlanCard = ({ plan, selected, onSelect, open, onToggle }) => {
                 <span className="text-navyteal text-xs px-1 py-1 rounded-full">
                   {plan.durationText}
                 </span>
-                <span className="px-1">|</span>
+                <span>|</span>
                 {plan.trial_days > 0 && (
                   <span className="text-navyteal text-xs px-1 py-1 rounded-full">
                     {plan.trial_days} أيام تجريبية
