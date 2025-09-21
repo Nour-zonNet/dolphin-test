@@ -1,47 +1,23 @@
-// PlanCard.jsx
-
-import React, { useMemo, useRef, useLayoutEffect, useState } from "react";
+import React, { useMemo, useRef, useEffect, useState } from "react";
 import { packageFactory } from "../factory/packageFactory";
-import { Calender1 } from "@/utils/icons";
+import { Calender1, ChevronDown, ChevronUp } from "@/utils/icons";
 import Books from "@/assets/packages/books.svg";
-import { ChevronDown, ChevronUp } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 import { formatArabicDate } from "@/utils/dateHelpers";
 import { STATUS_CONFIG } from "../../../constants/STATUS_CONFIG";
 
-const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
-  const { image, bgColor } = packageFactory(plan.id);
-  const contentRef = useRef(null);
-  const [maxH, setMaxH] = useState(0);
-
-  // measure height whenever open state or content changes
-  useLayoutEffect(() => {
-    if (!contentRef.current) return;
-    if (isOpen) {
-      // set to scrollHeight for smooth open
-      setMaxH(contentRef.current.scrollHeight);
-      // re-measure on images/icons load if needed
-      const r = new ResizeObserver(() => {
-        if (isOpen && contentRef.current)
-          setMaxH(contentRef.current.scrollHeight);
-      });
-      r.observe(contentRef.current);
-      return () => r.disconnect();
-    } else {
-      setMaxH(0);
-    }
-  }, [isOpen, plan]);
-
+const PlanCard = ({ plan, selected, onSelect, open, onToggle }) => {
   const ToggleIcon = useMemo(
     () =>
-      isOpen ? (
+      open ? (
         <ChevronUp className="w-3 h-3 text-gray-600 transition-transform" />
       ) : (
         <ChevronDown className="w-3 h-3 text-gray-600 transition-transform" />
       ),
-    [isOpen]
+    [open]
   );
 
+  const { image, bgColor } = packageFactory(plan.id);
   const colors = [
     "bg-blue-100 text-blue-800",
     "bg-green-100 text-green-800",
@@ -52,10 +28,26 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
     "bg-indigo-100 text-indigo-800",
   ];
 
+  // --- For smooth height animation ---
+  const contentRef = useRef(null);
+  const [height, setHeight] = useState("0px");
+
+  useEffect(() => {
+    if (open && contentRef.current) {
+      setHeight(`${contentRef.current.scrollHeight}px`);
+    } else {
+      setHeight("0px");
+    }
+  }, [open]);
+
   return (
     <div
-      className={`rounded-2xl cursor-pointer border ${
-        isOpen ? "border-0" : "border-0"
+      style={{ borderColor: bgColor }}
+      className={` rounded-t-2xl  cursor-pointer ${
+        open
+          ? "border border-gray-400/60 rounded-2xl"
+          : "border border-gray-200/40"
+
       }`}
     >
       {/* Header */}
@@ -63,21 +55,20 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
         style={{ borderColor: bgColor }}
         className="flex justify-between gap-2 md:gap-4 rounded-t-2xl p-5 bg-[#EAEAEA] items-start border-r-12"
       >
+        {/* Select Plan */}
         <div
           onClick={() => onSelect(plan.id)}
           className={`w-6 h-6 rounded-sm border flex items-center justify-center ${
             selected
               ? "bg-orangedeep text-white"
-              : "border-gray-600 border-2 text-gray-400"
+              : "border-gray-600 text-gray-400"
           }`}
         >
           {selected ? "✓" : ""}
         </div>
 
-        <div
-          onClick={onToggle}
-          className="flex items-start gap-3 flex-1 select-none"
-        >
+        {/* Toggle Expand */}
+        <div onClick={onToggle} className="flex items-start gap-3 flex-1">
           <div className="flex-1">
             <div className="flex flex-row justify-between items-center">
               <div className="flex gap-3">
@@ -85,7 +76,11 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
                   style={{ backgroundColor: bgColor }}
                   className="w-8 h-8 md:w-10 md:h-10 rounded-sm flex items-center justify-center text-2xl"
                 >
-                  <img src={image} alt={plan.name} />
+                  <img
+                    className="w-6 h-6 md:w-8 md:h-8"
+                    src={image}
+                    alt={plan.name}
+                  />
                 </div>
                 <h3 className="font-semibold text-gray-800 text-sm sm:text-base self-center">
                   {plan.name}
@@ -95,18 +90,17 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
             </div>
 
             <div className="flex justify-between items-center mt-2">
-              <div className="text-xs">
-                <span className="text-navyteal px-1 py-1 rounded-full">
+              <div>
+                <span className="text-navyteal text-xs px-1 py-1 rounded-full">
                   {plan.durationText}
                 </span>
-                <span className="px-1">|</span>
+                <span>|</span>
                 {plan.trial_days > 0 && (
-                  <span className="text-navyteal px-1 py-1 rounded-full">
+                  <span className="text-navyteal text-xs px-1 py-1 rounded-full">
                     {plan.trial_days} أيام تجريبية
                   </span>
                 )}
               </div>
-
               <span className="flex items-center gap-2 text-nowrap text-base">
                 سعر الباقة :
                 <FormatWithCurrency
@@ -121,15 +115,15 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
         </div>
       </div>
 
-      {/* Collapsible content */}
+      {/* Animated Expanded Content */}
       <div
         className={`transition-all rounded-bl-2xl rounded-br-2xl duration-300 ease-in-out overflow-hidden border border-gray-100`}
         style={{ maxHeight: isOpen ? maxH : 0 }}
       >
-        <div ref={contentRef} className="p-6 pt-4 space-y-2">
+        <div className="pt-4 border-t border-gray-100 p-6 space-y-2">
           {plan.subjects?.length > 0 && (
-            <div className="mt-2 flex items-start gap-2">
-              <span className="text-navyteal font-semibold text-sm ml-1 mb-1 text-nowrap">
+            <div className="mt-2 flex items-start">
+              <span className="text-navyteal font-semibold text-sm block ml-1 mb-1">
                 المواد المشمولة :
               </span>
               <div className="flex flex-wrap gap-2">
@@ -150,9 +144,9 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
 
           {plan.times?.length > 0 && (
             <div className="flex flex-row justify-between items-center">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center space-x-3">
                 <Calender1 />
-                <span className="text-navyteal text-sm font-semibold text-nowrap">
+                <span className="text-navyteal text-sm font-semibold">
                   موعد البداية :
                 </span>
                 <span className="text-gray-800 font-medium text-sm">
@@ -162,18 +156,18 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
             </div>
           )}
 
-          <div className="flex items-center justify-between">
-            {plan.weeklyClasses > 0 && (
+          {plan.weeklyClasses > 0 && (
+            <div className="flex items-center justify-between">
               <span className="flex items-center gap-2 text-[#BA7C28] text-sm md:text-lg font-semibold py-1 rounded-full">
                 <img src={Books} alt="" />
-                <span className="border-l border-[#D9D9D9] pl-2">
+                <span className="border-l-3 border-[#D9D9D9] pl-2">
                   {plan.weeklyClasses} حصص أسبوعياً
                 </span>
                 <img src={Books} alt="" />
                 <span>{plan.monthlyClasses} حصص شهريا</span>
               </span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,10 +1,16 @@
-import { Navbar, MobileNav } from "./index";
+import { Navbar, MobileNav, HomeSupportBtn } from "./index";
 
-const AppLayout = ({ children }) => (
+const AppLayout = ({
+  children,
+  showNavbar = true,
+  showMobileNav = true,
+  showHomeSupportBtn = false,
+}) => (
   <>
-    <Navbar />
+    {showNavbar && <Navbar />}
     {children}
-    <MobileNav />
+    {showMobileNav && <MobileNav />}
+    {showHomeSupportBtn && <HomeSupportBtn />}
   </>
 );
 

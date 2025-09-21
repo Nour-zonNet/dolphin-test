@@ -7,6 +7,10 @@ class LessonsRepository {
     const { data } = await api.get(ENDPOINTS.SCHEDULE_OF_ALLPACKAGES);
     return data;
   }
+  async getPackageLessons(packageId) {
+    const { data } = await api.get(ENDPOINTS.LESSONS_OF_PACKAGE + packageId);
+    return data;
+  }
 
   // Get single lesson
   async getById(lessonId) {

@@ -2,7 +2,6 @@ import {
   FooterIllustration,
   HeaderIllustration,
 } from "../../features/auth/components";
-import HomeSupportBtn from "./HomeSupportBtn";
 
 const MainLayout = ({ children, handleBack }) => {
   return (
@@ -10,7 +9,6 @@ const MainLayout = ({ children, handleBack }) => {
       <HeaderIllustration handleBack={handleBack} />
 
      {children}
-      <HomeSupportBtn />
       <FooterIllustration />
     </div>
   );

@@ -1,4 +1,4 @@
-import { Header, HomeSupportBtn } from "@/components";
+import { Header } from "@/components";
 import { ActionButtons, Cards, EmptySubscriptions } from "../components";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 
@@ -13,7 +13,6 @@ import { useSubscriptions } from "../hooks/useSubscriptions";
 
         {items.length === 0 ? <EmptySubscriptions /> : <Cards subscriptions={items} />}
 
-        <HomeSupportBtn />
       </main>
     </>
   );

@@ -4,6 +4,7 @@ import {
   ActionButtons,
   ExportButton,
   ToolIndicator,
+  ImportPDFButton,
 } from './components';
 
 const Toolbar = ({
@@ -15,17 +16,14 @@ const Toolbar = ({
   setStrokeWidth,
   fontSize,
   setFontSize,
-  // canUndo,
-  // canRedo,
-  // onUndo,
-  // onRedo,
-  // onClear,
+
   onExport,
+  onImportPDF,
 }) => {
   return (
-    <div className=" flex items-center  flex-wrap z-10 gap-2">
-      <ToolSelector 
-        tool={tool} 
+    <div className=" flex items-center lg:justify-start flex-col  justify-center flex-wrap z-10 gap-2">
+      <ToolSelector
+        tool={tool}
         setTool={setTool}
         currentColor={currentColor}
         setCurrentColor={setCurrentColor}
@@ -35,14 +33,9 @@ const Toolbar = ({
         setFontSize={setFontSize}
         onExport={onExport}
       />
+      <ImportPDFButton onLoadPDF={onImportPDF} />
       
-      {/* <ActionButtons
-        canUndo={canUndo}
-        canRedo={canRedo}
-        onUndo={onUndo}
-        onRedo={onRedo}
-        onClear={onClear}
-      /> */}
+  
       
       {/* <ToolIndicator tool={tool} /> */}
     </div>

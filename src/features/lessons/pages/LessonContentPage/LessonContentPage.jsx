@@ -1,5 +1,4 @@
-// LessonContentPage.jsx
-import { HomeSupportBtn } from "@/components";
+
 import { HorizontalLine, VerticalLine } from "@/utils/Illustrations";
 import { LessonHeader, VideoPlayer, AttachmentsSection, QuizSection } from "./components";
 import { useParams } from "react-router-dom";
@@ -25,7 +24,6 @@ const LessonContentPage = () => {
               <QuizSection lessonId={lessonId} />
             </div>
           </div>
-          <HomeSupportBtn />
         </div>
       </div>
     </>

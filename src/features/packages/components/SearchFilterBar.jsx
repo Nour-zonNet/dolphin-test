@@ -8,12 +8,12 @@ const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = 
   const [activeFilters, setActiveFilters] = React.useState({ instructor: "", group: "" });
 
   const instructors = React.useMemo(
-    () => Array.from(new Set(packages.map((pkg) => pkg.instructor))).filter(Boolean),
+    () => Array.from(new Set(packages?.map((pkg) => pkg.instructor))).filter(Boolean),
     [packages]
   );
 
   const groups = React.useMemo(
-    () => Array.from(new Set(packages.map((pkg) => pkg.group))).filter(Boolean),
+    () => Array.from(new Set(packages.map((pkg) => pkg.group_name))).filter(Boolean),
     [packages]
   );
 
@@ -24,9 +24,9 @@ const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = 
 
       if (normalizedQuery) {
         filtered = filtered.filter((pkg) => {
-          const title = (pkg.title || "").toLowerCase();
+          const title = (pkg.package_name || "").toLowerCase();
           const instructor = (pkg.instructor || "").toLowerCase();
-          const group = (pkg.group || "").toLowerCase();
+          const group = (pkg.group_name || "").toLowerCase();
           return (
             title.includes(normalizedQuery) ||
             instructor.includes(normalizedQuery) ||
@@ -40,7 +40,7 @@ const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = 
       }
 
       if (filtersValue.group) {
-        filtered = filtered.filter((pkg) => pkg.group === filtersValue.group);
+        filtered = filtered.filter((pkg) => pkg.group_name === filtersValue.group);
       }
 
       onFilterChange(filtered);
@@ -75,8 +75,8 @@ const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = 
   }, [applyFilters]);
 
   return (
-    <div className="relative px-4">
-      <div className="flex w-full mx-auto h-14 sm:h-16 items-center justify-between px-4 py-2 my-4 sm:my-6 rounded-full border border-[#d9d9d9] bg-white">
+    <div className="relative ">
+      <div className="flex w-full mx-auto h-14 sm:h-16 items-center justify-between px-8 py-2 my-4 sm:my-6 rounded-full border border-[#d9d9d9] bg-white">
         <div className="flex items-center gap-2  flex-1">
           <Search className="w-5 h-5 sm:w-6 sm:h-6" />
           <input

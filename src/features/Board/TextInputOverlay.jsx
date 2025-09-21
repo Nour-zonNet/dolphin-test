@@ -7,13 +7,29 @@ const TextInputOverlay = ({
   textPosition,
   onAddText,
   onClose,
+  containerRef,
+  displayScale = 1,
 }) => {
   if (!showTextInput) return null;
+
+  // Transform canvas coordinates to viewport coordinates for overlay positioning
+  const getViewportPosition = () => {
+    if (containerRef?.current) {
+      const canvasRect = containerRef.current.getBoundingClientRect();
+      return {
+        x: canvasRect.left + (textPosition.x * displayScale),
+        y: canvasRect.top + (textPosition.y * displayScale)
+      };
+    }
+    return textPosition;
+  };
+
+  const viewportPosition = getViewportPosition();
 
   return (
     <div
       className="absolute bg-white p-3 rounded-md shadow-lg z-50 border border-gray-300"
-      style={{ top: textPosition.y, left: textPosition.x }}
+      style={{ top: viewportPosition.y, left: viewportPosition.x }}
     >
       <input
         type="text"
