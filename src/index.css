@@ -167,3 +167,15 @@ div[id^="woot-widget-"] .woot-widget--expanded,
 div[id^="woot-widget-"] .woot--widget-bubble {
   bottom: 120px !important;
 }
+
+/* src/index.css */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { /* Chrome/Safari/Edge */
+    display: none;
+  }
+  .no-scrollbar {                  /* Firefox / IE */
+    -ms-overflow-style: none;      /* IE and Edge */
+    scrollbar-width: none;         /* Firefox */
+  }
+}
+

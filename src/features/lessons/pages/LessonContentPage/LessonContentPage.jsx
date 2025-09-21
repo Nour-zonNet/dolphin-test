@@ -1,5 +1,10 @@
 import { HorizontalLine, VerticalLine } from "@/utils/Illustrations";
-import { LessonHeader, VideoPlayer, AttachmentsSection, QuizSection } from "./components";
+import {
+  LessonHeader,
+  VideoPlayer,
+  AttachmentsSection,
+  QuizSection,
+} from "./components";
 
 const LessonContentPage = () => {
   return (
@@ -25,5 +30,3 @@ const LessonContentPage = () => {
 };
 
 export default LessonContentPage;
-
-

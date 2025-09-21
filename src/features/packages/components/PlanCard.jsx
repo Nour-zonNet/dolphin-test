@@ -8,12 +8,12 @@ import { formatArabicDate } from "@/utils/dateHelpers";
 const PlanCard = ({ plan, selected, onSelect, open, onToggle }) => {
   const ToggleIcon = useMemo(
     () =>
-      open ? (
+      isOpen ? (
         <ChevronUp className="w-3 h-3 text-gray-600 transition-transform" />
       ) : (
         <ChevronDown className="w-3 h-3 text-gray-600 transition-transform" />
       ),
-    [open]
+    [isOpen]
   );
 
   const { image, bgColor } = packageFactory(plan.id);
@@ -84,7 +84,7 @@ const PlanCard = ({ plan, selected, onSelect, open, onToggle }) => {
                 <span className="text-navyteal text-xs px-1 py-1 rounded-full">
                   {plan.durationText}
                 </span>
-                <span>|</span>
+                <span className="px-1">|</span>
                 {plan.trial_days > 0 && (
                   <span className="text-navyteal text-xs px-1 py-1 rounded-full">
                     {plan.trial_days} أيام تجريبية

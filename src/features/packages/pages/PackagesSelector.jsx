@@ -98,7 +98,7 @@ const DataPlanSelector = () => {
 
   return (
     <>
-      <div className="min-h-svh  space-y-4">
+      <div className="min-h-svh space-y-4">
         {/* Header */}
         <Header
           balance={"0"}
@@ -114,8 +114,8 @@ const DataPlanSelector = () => {
         />
 
         {/* Warning */}
-        <div className=" mx-auto px-4 mt-4">
-          <div className="flex items-center gap-1 p-3 rounded-lg  ">
+        <div className="px-6 md:px-18 mt-4">
+          <div className="flex items-center gap-1 py-3 rounded-lg  ">
             <div className="w-6 h-6 rounded-full flex items-center justify-center mt-1 flex-shrink-0">
               <InfoIcon />
             </div>

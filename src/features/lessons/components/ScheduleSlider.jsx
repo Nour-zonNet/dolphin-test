@@ -13,7 +13,6 @@ import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
-import { PreviewScheduleBtn } from "@/components/ui";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();

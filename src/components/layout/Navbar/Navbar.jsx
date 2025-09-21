@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavTab, SubscribeBtn, SupportBtn } from "./components";
-import { TABS } from "../../../constants/TABS";
-import LanguageSwitcher from "../../ui/LanguageSwitcher";
+import { TABS } from "@/constants/TABS";
 
 function Navbar() {
   const [activeTab, setActiveTab] = useState("schedule");

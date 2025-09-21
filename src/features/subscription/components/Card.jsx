@@ -12,7 +12,6 @@ import { useSubscriptions } from "../hooks/useSubscriptions";
 import useGroups from "../../groups/hooks/useGroups";
 import ActionButton from "./ActionButton";
 import GroupInfo from "./GroupInfo";
-import InfoRow from "./InfoRow";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { packageFactory } from "../../packages/factory/packageFactory";
 import {
