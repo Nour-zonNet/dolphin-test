@@ -42,9 +42,9 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
           <LeftArrow size={22} className="w-4 sm:w-5" />
         </SliderNavButton>
       </div>
-      {/* <div className="lg:hidden block w-full">
+      <div className="lg:hidden block w-full">
         <PreviewScheduleBtn />
-      </div> */}
+      </div>
     </div>
   );
 };
