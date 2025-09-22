@@ -215,10 +215,10 @@ const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
         </div>
       </div>
       <div className="flex  gap-2">
-        <p className="font-cairo font-semibold text-normalblue  text-md flex">
+        {/* <p className="font-cairo font-semibold text-normalblue  text-md flex">
           <span className="ml-2"> سعر الباقة: </span>{" "}
           <span className="text-md">{price}</span>
-        </p>
+        </p> */}
       </div>
     </div>
     <div className="w-full lg:w-auto">
