@@ -10,7 +10,7 @@ export const fetchLessons = createAsyncThunk(
       const res = await lessonsRepository.getAll();
       return res.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error?.response?.data || error?.message || "Fetch lessons failed");
     }
   }
 );
@@ -22,7 +22,7 @@ export const getPackageLessons = createAsyncThunk(
       const { data } = await lessonsRepository.getPackageLessons(packageId);
       return data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error?.response?.data || error?.message || "Fetch package lessons failed");
     }
   }
 );
@@ -34,7 +34,7 @@ export const getSessionLink = createAsyncThunk(
       const { data } = await lessonsRepository.getSessionLink(sessionId);
       return data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error?.response?.data || error?.message || "Fetch session link failed");
     }
   }
 );
@@ -45,37 +45,35 @@ const lessonsSlice = createSlice({
   initialState: {
     items: [],
     link: null,
-    loading: false,
-    error: null,
+
+    lessonsLoading: false,
+    packageLoading: false,
+    sessionLinkLoading: false,
+
+    lessonsError: null,
+    packageError: null,
+    sessionLinkError: null,
   },
   reducers: {
-    clearLessonsError: (state) => {
-      state.error = null;
-    },
-    clearSessionLink: (state) => {
-      state.link = null;
-    },
+    clearLessonsError: (state) => { state.lessonsError = null; },
+    clearPackageError: (state) => { state.packageError = null; },
+    clearSessionLinkError: (state) => { state.sessionLinkError = null; },
+    clearSessionLink: (state) => { state.link = null; },
   },
   extraReducers: (builder) => {
-    const handlePending = (state) => {
-      state.loading = true;
-      state.error = null;
-    };
-
-    const handleRejected = (state, action) => {
-      state.loading = false;
-      state.error = action.payload || action.error?.message || "Unknown error";
-    };
-
+    // ---- fetchLessons ----
     builder
-      // fetch lessons
-      .addCase(fetchLessons.pending, handlePending)
+      .addCase(fetchLessons.pending, (state) => {
+        state.lessonsLoading = true;
+        state.lessonsError = null;
+      })
       .addCase(fetchLessons.fulfilled, (state, action) => {
-        state.loading = false;
-        let sessions = action.payload;
+        state.lessonsLoading = false;
+        let sessions = Array.isArray(action.payload) ? action.payload : [];
 
+        // Expand delayed sessions into dated instances (keep originals if you intend to show both)
         const delayedSessions = sessions
-          .filter((s) => s.delay)
+          .filter((s) => !!s?.delay)
           .map((s) => ({
             ...s,
             day_of_week: s.delay.day_of_week,
@@ -86,25 +84,48 @@ const lessonsSlice = createSlice({
 
         state.items = [...sessions, ...delayedSessions];
       })
-      .addCase(fetchLessons.rejected, handleRejected)
+      .addCase(fetchLessons.rejected, (state, action) => {
+        state.lessonsLoading = false;
+        state.lessonsError = action.payload || action.error?.message || "Unknown error";
+      });
 
-      // get session link
-      .addCase(getSessionLink.pending, handlePending)
+    // ---- getSessionLink ----
+    builder
+      .addCase(getSessionLink.pending, (state) => {
+        state.sessionLinkLoading = true;
+        state.sessionLinkError = null;
+      })
       .addCase(getSessionLink.fulfilled, (state, action) => {
-        state.loading = false;
-        state.link = action.payload;
+        state.sessionLinkLoading = false;
+        state.link = action.payload ?? null;
       })
-      .addCase(getSessionLink.rejected, handleRejected)
+      .addCase(getSessionLink.rejected, (state, action) => {
+        state.sessionLinkLoading = false;
+        state.sessionLinkError = action.payload || action.error?.message || "Unknown error";
+      });
 
-      // get package lessons
-      .addCase(getPackageLessons.pending, handlePending)
-      .addCase(getPackageLessons.fulfilled, (state) => {
-        state.loading = false;
-        // state.items = action.payload; // use `items` for consistency
+    // ---- getPackageLessons ----
+    builder
+      .addCase(getPackageLessons.pending, (state) => {
+        state.packageLoading = true;
+        state.packageError = null;
       })
-      .addCase(getPackageLessons.rejected, handleRejected);
+      .addCase(getPackageLessons.fulfilled, (state /*, action*/) => {
+        state.packageLoading = false;
+        // If you need to store package lessons separately, add a field (e.g., state.packageItems)
+      })
+      .addCase(getPackageLessons.rejected, (state, action) => {
+        state.packageLoading = false;
+        state.packageError = action.payload || action.error?.message || "Unknown error";
+      });
   },
 });
 
-export const { clearLessonsError, clearSessionLink } = lessonsSlice.actions;
+export const {
+  clearLessonsError,
+  clearPackageError,
+  clearSessionLinkError,
+  clearSessionLink,
+} = lessonsSlice.actions;
+
 export default lessonsSlice.reducer;
