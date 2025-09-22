@@ -35,12 +35,16 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
     : 0;
 
   return (
-    <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-lg overflow-hidden px-4 sm:px-6 max-h-[90vh] overflow-y-auto no-scrollbar">
+    <div className="relative max-w-2xl lg:max-w-3xl bg-white rounded-3xl shadow-lg overflow-hidden px-4 sm:px-6 max-h-[90vh] overflow-y-auto no-scrollbar">
       {/* Header */}
       <div className="flex justify-between items-center py-4 sm:py-6 sticky top-0 bg-white z-10">
         <div className="flex items-center gap-4">
           <div style={{ backgroundColor: color }} className="rounded p-1">
-            <img src={image} className="w-7 h-7 md:w-12 md:h-12" alt="package" />
+            <img
+              src={image}
+              className="w-7 h-7 md:w-12 md:h-12"
+              alt="package"
+            />
           </div>
           <h2 className="text-navyteal text-sm md:text-xl font-semibold">
             {packageName || t("packages.healthPackage")}
@@ -58,7 +62,7 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
       {!loading && days.length > 0 && hasAnyLessons && (
         <>
           {/* Mobile View (unchanged) */}
-          <div className="block sm:hidden pb-4">
+          <div className="block md:hidden pb-4">
             <div className="space-y-4">
               {days.map((day) => {
                 const daySchedule = groupedSchedule[day] || [];
@@ -70,22 +74,31 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
                     <div className="space-y-3">
                       {daySchedule.length > 0 ? (
                         daySchedule.map((item, idx) => (
-                          <div key={idx} className="bg-white rounded-xl p-3 shadow-sm">
+                          <div
+                            key={idx}
+                            className="bg-white rounded-xl p-3 shadow-sm"
+                          >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-darkblue">
                                 <Clock width="16" height="16" />
-                                <span className="font-medium">{formatTime12Hour(item.time)}</span>
+                                <span className="font-medium">
+                                  {formatTime12Hour(item.time)}
+                                </span>
                               </div>
                               <div className="flex items-center gap-2 text-normalblue">
                                 <Teacher width="16" height="16" />
-                                <span className="text-sm">{item.teacher_name}</span>
+                                <span className="text-sm">
+                                  {item.teacher_name}
+                                </span>
                               </div>
                             </div>
                           </div>
                         ))
                       ) : (
                         // you can keep per-day empty card or remove entirely; table logic below already handles dashes
-                        <div className="text-center py-4 text-gray-400 bg-white rounded-xl">-</div>
+                        <div className="text-center py-4 text-gray-400 bg-white rounded-xl">
+                          -
+                        </div>
                       )}
                     </div>
                   </div>
@@ -113,19 +126,27 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
               </thead>
               <tbody>
                 {Array.from({ length: maxRows }).map((_, rowIdx) => (
-                  <tr key={rowIdx} className="border-t border-dashed border-normalblue/60 first:border-t-0">
+                  <tr
+                    key={rowIdx}
+                    className="border-t border-dashed border-normalblue/60 first:border-t-0"
+                  >
                     {days.map((day, colIdx) => {
                       const daySchedule = groupedSchedule[day] || [];
                       const item = daySchedule[rowIdx];
                       return (
-                        <td key={colIdx} className="p-4 border-l border-normalblue/60 last:border-l-0">
+                        <td
+                          key={colIdx}
+                          className="p-4 border-l border-normalblue/60 last:border-l-0"
+                        >
                           {item ? (
                             <div className="flex flex-col items-center gap-2">
                               <div className="flex items-center gap-1 text-sm text-darkblue">
-                                <Clock width="16" height="16" /> {formatTime12Hour(item.time)}
+                                <Clock width="16" height="16" />{" "}
+                                {formatTime12Hour(item.time)}
                               </div>
                               <div className="flex items-center gap-2 text-sm font-medium text-normalblue">
-                                <Teacher width="16" height="16" /> {item.teacher_name}
+                                <Teacher width="16" height="16" />{" "}
+                                {item.teacher_name}
                               </div>
                             </div>
                           ) : (
@@ -151,7 +172,7 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
       )}
 
       {/* No schedule at all */}
-      {(!loading && (!days.length || !hasAnyLessons)) && (
+      {!loading && (!days.length || !hasAnyLessons) && (
         <div className="text-center py-8 text-gray-500">
           {t("packages.noLesson")}
         </div>

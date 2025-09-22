@@ -4,36 +4,29 @@ import { DatePicker } from "@/utils/icons";
 import AllPackagesSchedulePopup from "@/features/lessons/pages/LessonContentPage/components/AllPackagesSchedulePopup";
 import { useLessons } from "@/features/lessons/hooks/useLessons";
 
-// Session keys (reset on page refresh/tab close)
-const PRELOAD_DONE_KEY = "schedule_preloaded_this_session";
-const LAST_FETCH_TS_KEY = "schedule_last_fetch_ts";
-
+/**
+ * Props:
+ * - groupInfos: optional filter
+ * - preloadTTLms: if > 0, show spinner + refetch again when last fetch is older than TTL
+ *   e.g. preloadTTLms={300000} for 5 minutes. Default 0 = only first open after page load.
+ * - className, label: UI props
+ */
 const PreviewScheduleBtn = ({
   groupInfos,
-  preloadTTLms = 0, // set to e.g. 300000 to force refresh every 5 minutes within session
+  preloadTTLms = 0,
   className = "",
   label = "معاينة الجدول الاسبوعي",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [preloading, setPreloading] = useState(false);
-  const { refetch, items = [], loading } = useLessons();
+  const { refetch, items = [] } = useLessons();
 
-  // cache session flags in refs for quick reads
-  const sessionPreloadedRef = useRef(false);
+  // These refs reset on each page load (module init / React mount), so they
+  // naturally give you "first time after refresh" behavior.
+  const preloadDoneThisPageRef = useRef(false);
   const lastFetchRef = useRef(0);
 
-  useEffect(() => {
-    try {
-      sessionPreloadedRef.current = sessionStorage.getItem(PRELOAD_DONE_KEY) === "1";
-      const ts = Number(sessionStorage.getItem(LAST_FETCH_TS_KEY));
-      lastFetchRef.current = Number.isFinite(ts) ? ts : 0;
-    } catch {
-      sessionPreloadedRef.current = false;
-      lastFetchRef.current = 0;
-    }
-  }, []);
-
-  // Lock scroll while preloading overlay is shown (iOS-safe)
+  // Lock scroll while the full-screen spinner shows (iOS-safe)
   useEffect(() => {
     if (!preloading) return;
     const prevBody = document.body.style.overflow;
@@ -46,11 +39,11 @@ const PreviewScheduleBtn = ({
     };
   }, [preloading]);
 
-  const shouldDoInitialPreload = () => {
-    // 1) First time in this tab session?
-    if (!sessionPreloadedRef.current) return true;
+  const shouldPreloadNow = () => {
+    // 1) First open after this page load?
+    if (!preloadDoneThisPageRef.current) return true;
 
-    // 2) TTL expired (optional)
+    // 2) TTL expired within this page session?
     if (preloadTTLms && preloadTTLms > 0) {
       const now = Date.now();
       if (!lastFetchRef.current || now - lastFetchRef.current > preloadTTLms) {
@@ -58,7 +51,7 @@ const PreviewScheduleBtn = ({
       }
     }
 
-    // 3) If store is empty for some reason, fetch before opening
+    // 3) Safety: if store is empty for any reason, fetch before opening
     if (!Array.isArray(items) || items.length === 0) return true;
 
     return false;
@@ -67,8 +60,7 @@ const PreviewScheduleBtn = ({
   const handleOpen = useCallback(async (e) => {
     e?.stopPropagation?.();
 
-    const needPreload = shouldDoInitialPreload();
-
+    const needPreload = shouldPreloadNow();
     if (!needPreload) {
       setIsOpen(true);
       return;
@@ -76,14 +68,9 @@ const PreviewScheduleBtn = ({
 
     try {
       setPreloading(true);
-      await refetch();
-      // mark session-preloaded and timestamp
-      sessionPreloadedRef.current = true;
+      await refetch(); // this should populate items in your store/hook
+      preloadDoneThisPageRef.current = true;
       lastFetchRef.current = Date.now();
-      try {
-        sessionStorage.setItem(PRELOAD_DONE_KEY, "1");
-        sessionStorage.setItem(LAST_FETCH_TS_KEY, String(lastFetchRef.current));
-      } catch {}
       setIsOpen(true);
     } catch (err) {
       console.error("Failed to preload schedule:", err);
@@ -96,7 +83,7 @@ const PreviewScheduleBtn = ({
 
   const handleClose = useCallback(() => setIsOpen(false), []);
 
-  // Full-page spinner overlay (portal to body)
+  // Full-page spinner overlay (portal so it covers the whole page)
   const overlay = preloading
     ? createPortal(
         <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/40">
