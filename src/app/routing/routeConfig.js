@@ -3,10 +3,9 @@ import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
 import Checkout from "../../features/packages/pages/Checkout";
 import LoginSiblings from "../../features/auth/pages/LoginSiblings";
 import AddSiblingsPage from "../../features/auth/pages/AddSiblingsPage";
-
-// Heavy components - lazy load for better performance
-const Board = lazy(() => import("../../features/Board/Board"));
-const PDFViewerPage = lazy(() => import("../../features/PDFViewer/PDFViewerPage"));
+import Board from "../../features/Board/Board";
+import PDFViewerPage from "../../features/PDFViewer/PDFViewerPage";
+// import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
