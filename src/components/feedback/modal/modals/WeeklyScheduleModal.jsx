@@ -8,7 +8,7 @@ import { Spinner } from "@/components/feedback";
 const WeeklyScheduleModal = ({ onClose, data }) => {
   const { packageName, schedule = [], image, color } = data;
   const { t } = useTranslation();
-  const { loading, error } = usePackages();
+  const { loading } = usePackages();
 
   // Group by day_of_week
   const groupedSchedule = useMemo(() => {

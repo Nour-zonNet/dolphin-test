@@ -14,7 +14,7 @@ const HomeSupportBtn = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [radius, setRadius] = useState(70);
   const [supportNumber, setSupportNumber] = useState("");
-  const [subscriptionStatus, setSubscriptionStatus] = useState("");
+  const [setSubscriptionStatus] = useState("");
   const [supportNote, setSupportNote] = useState("");
   const [loadingSupport, setLoadingSupport] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
