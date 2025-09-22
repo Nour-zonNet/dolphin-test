@@ -1,7 +1,7 @@
 // PlanCard.jsx
 
 import React, { useMemo, useRef, useLayoutEffect, useState } from "react";
-import { packageFactory } from "../factory/packageFactory";
+import { packageFactoryWithTitle } from "../factory/packageFactory";
 import { Calender1 } from "@/utils/icons";
 import Books from "@/assets/packages/books.svg";
 import { ChevronDown, ChevronUp } from "@/utils/icons";
@@ -10,7 +10,7 @@ import { formatArabicDate } from "@/utils/dateHelpers";
 import { STATUS_CONFIG } from "../../../constants/STATUS_CONFIG";
 
 const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
-  const { image, bgColor } = packageFactory(plan.id);
+  const { image, bgColor } = packageFactoryWithTitle(plan.name);
   const contentRef = useRef(null);
   const [maxH, setMaxH] = useState(0);
 

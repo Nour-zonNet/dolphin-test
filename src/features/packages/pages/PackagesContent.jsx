@@ -5,7 +5,7 @@ import { Book, Group, Teacher } from "../../../utils/icons";
 import { Card } from "../components/Card";
 import SearchFilterBar from "../components/SearchFilterBar";
 import { usePackages } from "../hooks/usePackages";
-import { packageFactory } from "../factory/packageFactory";
+import { packageFactoryWithTitle } from "../factory/packageFactory";
 
 const PackageContent = () => {
   const [filteredPackages, setFilteredPackages] = useState([]);
@@ -20,7 +20,7 @@ const PackageContent = () => {
   // 🔹 Memoize package cards to avoid recalculating every render
   const packageCards = useMemo(() => {
     return filteredPackages.map((packageItem, index) => {
-      const pkgFactory = packageFactory(packageItem.id); // memoization helps if heavy
+      const pkgFactory = packageFactoryWithTitle(packageItem.package_name); // now works with package titles
 
       return (
         <Card

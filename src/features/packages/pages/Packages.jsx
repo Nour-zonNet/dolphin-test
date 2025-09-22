@@ -4,7 +4,9 @@ import { usePackages } from "../hooks/usePackages";
 import notFoundPackages from "@/assets/images/notFoundPackages.png";
 import { InfoIcon } from "@/utils/icons";
 
-import { packageFactory } from "../factory/packageFactory.js";
+import {
+  packageFactoryWithTitle,
+} from "../factory/packageFactory.js";
 import { TelegramCircle } from "../../../utils/icons.jsx";
 
 const Packages = () => {
@@ -41,7 +43,9 @@ const Packages = () => {
       {mine.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 py-8">
           {mine.map((pkg) => {
-            const { image, bgColor } = packageFactory(pkg.package_id);
+            const { image, bgColor } = packageFactoryWithTitle(
+              pkg.package_name
+            );
             return (
               <PackageCard
                 key={pkg.id}
