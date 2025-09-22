@@ -312,8 +312,7 @@ const UserProfile = () => {
                     setOpen(false);
                   }}
                   className="w-full mt-3 flex items-center justify-center gap-2 py-2 md:py-3 px-6 
-                           bg-orange-50 hover:bg-orange-100 active:bg-orange-200 
-                           rounded-[32px] font-bold text-navyteal transition focus:outline-0"
+                          rounded-[32px] font-bold text-navyteal transition focus:outline-0 cursor-pointer"
                 >
                   <Plus className="w-3 md:w-4" />
                   <span className="text-sm md:text-base">إضافة أخ أو أخت</span>
@@ -330,8 +329,8 @@ const UserProfile = () => {
             setOpen(false);
           }}
           className=" mt-3 mr-auto flex items-center justify-center gap-2 py-2 md:py-3 px-6 
-                           bg-orangedeep hover:bg-orange-100 active:bg-orange-200 
-                           rounded-[32px] font-bold text-navyteal transition focus:outline-0"
+                          bg-orangedeep hover:bg-btnClicked active:bg-btnClicked 
+                          rounded-[32px] font-bold text-navyteal transition focus:outline-0 cursor-pointer"
         >
           <Plus className="w-3 md:w-4" />
           <span className="text-sm md:text-base">إضافة أخ أو أخت</span>

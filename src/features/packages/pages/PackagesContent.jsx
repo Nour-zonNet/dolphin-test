@@ -52,8 +52,8 @@ const PackageContent = () => {
                 <div className="flex sm:flex-row gap-3 sm:gap-10">
                   {/* Instructor */}
                   {packageItem.instructor && (
-                    <div className="flex items-center gap-2 sm:gap-4 justify-start">
-                      <Teacher className="w-4  sm:w-5   " />
+                    <div className="flex items-center gap-2 text-nowrap sm:gap-4 justify-start">
+                      <Teacher className="w-4 sm:w-5" />
                       <div className="font-semibold text-xs sm:text-base md:text-lg">
                         {packageItem.instructor}
                       </div>
@@ -63,7 +63,7 @@ const PackageContent = () => {
                   {/* Group */}
                   <div className="flex items-center gap-2 sm:gap-4 justify-start">
                     <Group className="w-4 h-4 sm:w-6 sm:h-6 text-foundation-bluenormal-active flex-shrink-0" />
-                    <div className="font-semibold text-xs sm:text-base md:text-lg">
+                    <div className="font-semibold text-nowrap text-xs sm:text-base md:text-lg">
                       {packageItem.group_name}
                     </div>
                   </div>
@@ -103,7 +103,7 @@ const PackageContent = () => {
         />
 
         {/* Package Cards */}
-        <div className="flex flex-col   gap-4 sm:gap-6 mt-4 mb-8 ">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-4 mb-8 ">
           {packageCards}
         </div>
       </div>
