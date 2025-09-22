@@ -10,7 +10,7 @@ import { LESSON_STATUS } from "../../../utils";
 const LessonCard = ({ item, color, image, lessonDate }) => {
   const { openStatusModal } = useModal();
   const [hintMsg, setHintMsg] = useState("");
-  const  HINT_TIMEOUT_MS = 4000;
+  const HINT_TIMEOUT_MS = 4000;
 
   useEffect(() => {
     if (!hintMsg) return;
@@ -92,20 +92,20 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         // }
         // role={lessonStatus !== LESSON_STATUS.ENDED ? "button" : undefined}
         // tabIndex={lessonStatus !== LESSON_STATUS.ENDED ? 0 : -1}
-          onClick={() => {
-            if (lessonStatus === LESSON_STATUS.ENDED) {
-              if (!item?.lessons || item?.lessons?.length === 0) {
-                setHintMsg("الحصة انتهت ولم يتم رفع المحتوي بعد");
-              } else {
-                setHintMsg("اضغط علي زر عرض المحتوي");
-              }
-              return;
+        onClick={() => {
+          if (lessonStatus === LESSON_STATUS.ENDED) {
+            if (!item?.lessons || item?.lessons?.length === 0) {
+              setHintMsg("الحصة انتهت ولم يتم رفع المحتوي بعد");
+            } else {
+              setHintMsg("اضغط علي زر عرض المحتوي");
             }
-            // default behavior for non-ended states
-            handleCardClick(setHintMsg);
-          }}
-          role="button"
-          tabIndex={0}
+            return;
+          }
+          // default behavior for non-ended states
+          handleCardClick(setHintMsg);
+        }}
+        role="button"
+        tabIndex={0}
       >
         <LessonInfo
           item={item}
@@ -134,18 +134,22 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
           {hintMsg}
         </div>
       )} */}
-        {hintMsg && (
-          <div
-            className={[
-              "mt-2 text-sm font-semibold transition-opacity duration-300",
-              lessonStatus === LESSON_STATUS.ENDED
-                ? (!item?.lessons || item?.lessons?.length === 0 ? "text-red-600" : "text-[#ba7c28]")
-                : (lessonStatus === LESSON_STATUS.DELAYED ? "text-gray-600" : "text-green-600"),
-            ].join(" ")}
-          >
-            {hintMsg}
-          </div>
-        )}
+      {hintMsg && (
+        <div
+          className={[
+            "mt-2 text-sm font-semibold transition-opacity duration-300",
+            lessonStatus === LESSON_STATUS.ENDED
+              ? !item?.lessons || item?.lessons?.length === 0
+                ? "text-red-600"
+                : "text-[#ba7c28]"
+              : lessonStatus === LESSON_STATUS.DELAYED
+              ? "text-gray-600"
+              : "text-green-600",
+          ].join(" ")}
+        >
+          {hintMsg}
+        </div>
+      )}
     </div>
   );
 };
