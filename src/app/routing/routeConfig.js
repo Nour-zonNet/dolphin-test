@@ -5,6 +5,7 @@ import LoginSiblings from "../../features/auth/pages/LoginSiblings";
 import AddSiblingsPage from "../../features/auth/pages/AddSiblingsPage";
 import Board from "../../features/Board/Board";
 import PDFViewerPage from "../../features/PDFViewer/PDFViewerPage";
+import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
 // import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
@@ -91,6 +92,12 @@ export const routes = [
   {
     path: "/pdf",
     element: Board,
+    public: true,
+    layout: false, // Auth pages don't need AppLayout
+  },
+  {
+    path: "/privacy-policy",
+    element: PrivacyPolicyPage,
     public: true,
     layout: false, // Auth pages don't need AppLayout
   },
