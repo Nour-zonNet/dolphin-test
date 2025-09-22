@@ -35,7 +35,7 @@ const PlansFooter = ({
         </div>
         <button
           onClick={onSubscribe}
-          className={`font-semibold flex flex-row items-center gap-2 flex-nowrap py-2 px-6 rounded-full transition-colors w-auto sm:w-auto text-nowrap ${
+          className={`font-semibold flex flex-row items-center gap-2 flex-nowrap py-2 px-6 rounded-full transition-colors w-auto sm:w-auto text-nowrap cursor-pointer ${
             disabled
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-btnClicked hover:bg-orangedeep text-white"

@@ -86,7 +86,7 @@ const PreviewScheduleBtn = ({
   // Full-page spinner overlay (portal so it covers the whole page)
   const overlay = preloading
     ? createPortal(
-        <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/40">
+        <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/20">
           <div
             className="h-12 w-12 rounded-full border-4 border-orangedeep border-t-transparent animate-spin"
             role="status"
