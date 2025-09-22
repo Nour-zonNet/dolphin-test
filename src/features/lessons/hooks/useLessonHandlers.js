@@ -64,7 +64,21 @@ export const useLessonHandlers = (
   //   });
   // }, [navigate, item]);
   const handleOpenContent = useCallback(() => {
-    navigate("/schedule/lessoncontent/" + item.lessons[0].id, {
+    if (!item.lessons?.length) return;
+
+    // فلترة العناصر اللي ليها date
+    const validLessons = item.lessons.filter((lesson) => lesson && lesson.date);
+
+    if (!validLessons.length) return;
+
+    // نرتب الدروس حسب التاريخ تنازليًا
+    const sortedLessons = [...validLessons].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
+
+    const latestLesson = sortedLessons[0];
+
+    navigate("/schedule/lessoncontent/" + latestLesson.id, {
       state: { lesson: item, lessonId: item?.id },
       replace: false,
     });

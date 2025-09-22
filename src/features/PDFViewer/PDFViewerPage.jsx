@@ -7,7 +7,7 @@ const PDFViewerPage = () => {
   const location = useLocation();
   // const navigate = useNavigate();
 
-  const { pdfUrl = "", title = "" } = location.state;
+  const { pdfUrl, title, lessonId } = location.state;
 
   // If someone hits /pdfviewer without params, go back to schedule
   // if (!pdfUrl) {
@@ -21,7 +21,7 @@ const PDFViewerPage = () => {
   return (
     <div className="w-full h-screen bg-gray-100">
       <div className="h-full flex flex-col">
-        <Header onBack={"/schedule"} title={title} />
+        <Header onBack={"/schedule/lessoncontent/" + lessonId} title={title} />
         <div className="flex-1 min-h-0 py-6 px-2">
           <PDFViewer
             pdfUrl={pdfUrl}

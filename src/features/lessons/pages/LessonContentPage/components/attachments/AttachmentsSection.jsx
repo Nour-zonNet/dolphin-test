@@ -150,10 +150,11 @@ const AttachmentsSection = ({ lessonId }) => {
         state: {
           pdfUrl: url,
           title,
+          lessonId,
         },
       });
     },
-    [navigate]
+    [lessonId, navigate]
   );
 
   const handleDownload = useCallback(async (url) => {
