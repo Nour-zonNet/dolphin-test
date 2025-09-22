@@ -7,18 +7,20 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import notFoundImage from "@/assets/images/notFoundLessons.png";
+import nationalDayBanner from "@/assets/images/national-day.svg"; 
 import { getSevenDaysBeforeAndAfter } from "@/utils/dateHelpers";
 
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
+import NationalDayCard from "./NationalDayCard";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();
   const days = getSevenDaysBeforeAndAfter();
 
-  // التاريخ الحالي مضبوط بالتوقيت
+  // Today in Riyadh (YYYY-MM-DD)
   const todayDate = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Riyadh",
     year: "numeric",
@@ -26,12 +28,17 @@ const ScheduleSlider = () => {
     day: "2-digit",
   }).format(new Date());
 
-  // نحدد index اليوم الحالي
-  const todayIndex = days.findIndex((d) => d.date === todayDate);
+  // Tomorrow in Riyadh (YYYY-MM-DD)
+  const tomorrowRiyadh = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Riyadh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date(Date.now() + 24 * 60 * 60 * 1000));
 
-  const [activeIndex, setActiveIndex] = useState(
-    todayIndex !== -1 ? todayIndex : 0
-  );
+  // Index of today
+  const todayIndex = days.findIndex((d) => d.date === todayDate);
+  const [activeIndex, setActiveIndex] = useState(todayIndex !== -1 ? todayIndex : 0);
 
   const NAVBAR_HEIGHT = 64;
   const MOBILE_BAR_HEIGHT = 56;
@@ -47,7 +54,7 @@ const ScheduleSlider = () => {
 
       <div className="slider py-6">
         <Swiper
-          key={todayIndex} // 👈 عشان يضمن يبدأ من اليوم الحالي
+          key={todayIndex} // ensure starting at today
           modules={[Navigation, Pagination]}
           spaceBetween={30}
           slidesPerView={1}
@@ -60,14 +67,30 @@ const ScheduleSlider = () => {
               if (item.session_date) {
                 return item.session_date === day.date;
               } else {
-                return (
-                  day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
-                );
+                return day.dayEn.toLowerCase() === item.day_of_week.toLowerCase();
               }
             });
+
+            // ✅ DEFINE IT HERE
+            // Option A: show banner tomorrow only (Riyadh time)
+            const showSpecialDesign = day.date === tomorrowRiyadh;
+
+            // Option B: show banner every Sept 23
+            // const showSpecialDesign = day.date.slice(5) === "09-23";
+
             return (
               <SwiperSlide key={day.date}>
-                {lessonsForDay.length > 0 ? (
+                {showSpecialDesign ? (
+                  <div
+                    className="flex items-center justify-center"
+                    style={{
+                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                    }}
+                  >
+                    <NationalDayCard src={nationalDayBanner} />
+                    {/* Or just: <img src={nationalDayBanner} alt="Saudi National Day" className="w-full max-w-4xl h-auto rounded-2xl shadow" /> */}
+                  </div>
+                ) : lessonsForDay.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
                     {lessonsForDay.map((lesson, i) => {
                       const { image, bgColor } = subjectFactory(lesson.subject);
@@ -86,9 +109,7 @@ const ScheduleSlider = () => {
                   <div
                     className="flex justify-center items-center"
                     style={{
-                      height: `calc(70svh - ${
-                        NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT
-                      }px)`,
+                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
                     }}
                   >
                     <img

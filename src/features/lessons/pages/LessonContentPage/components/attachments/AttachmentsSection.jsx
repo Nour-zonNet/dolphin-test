@@ -27,16 +27,16 @@ const prettyFromFilename = (url) => {
   }
 };
 
-const openViaAnchor = (url) => {
-  if (!url) return;
-  const a = document.createElement("a");
-  a.href = url;
-  a.target = "_blank";
-  a.rel = "noopener noreferrer";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-};
+// const openViaAnchor = (url) => {
+//   if (!url) return;
+//   const a = document.createElement("a");
+//   a.href = url;
+//   a.target = "_blank";
+//   a.rel = "noopener noreferrer";
+//   document.body.appendChild(a);
+//   a.click();
+//   a.remove();
+// };
 
 const formatBytes = (bytes) => {
   if (typeof bytes !== "number" || !isFinite(bytes) || bytes < 0) return "—";
