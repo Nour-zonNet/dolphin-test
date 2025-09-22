@@ -45,7 +45,7 @@ const ScheduleSlider = () => {
         dayDate={days[activeIndex].date}
       />
 
-      <div className="slider lg:py-6">
+      <div className="slider py-6">
         <Swiper
           key={todayIndex} // 👈 عشان يضمن يبدأ من اليوم الحالي
           modules={[Navigation, Pagination]}

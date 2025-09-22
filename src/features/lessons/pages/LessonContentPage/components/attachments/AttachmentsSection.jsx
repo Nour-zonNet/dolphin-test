@@ -64,7 +64,10 @@ const fetchFileSize = async (url) => {
     //   headers: { Range: "bytes=0-0" },
     //   credentials: "include",
     // });
-    const r = await fetch(url, { method: "GET", headers: { Range: "bytes=0-0" } });
+    const r = await fetch(url, {
+      method: "GET",
+      headers: { Range: "bytes=0-0" },
+    });
     if (r.ok) {
       const cr = r.headers.get("Content-Range");
       if (cr) {
@@ -83,7 +86,7 @@ const fetchFileSize = async (url) => {
 const AttachmentsSection = ({ lessonId }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-    const openViaAnchor = (url) => {
+  const openViaAnchor = (url) => {
     const a = document.createElement("a");
     a.href = url;
     a.target = "_blank";
@@ -109,7 +112,7 @@ const AttachmentsSection = ({ lessonId }) => {
       const link = (a?.link || "").toString();
       const type = (a?.type || "").toString();
       const looksPdfByType = /pdf/i.test(type);
-      const looksPdfByExt  = /\.pdf(\?|#|$)/i.test(link);
+      const looksPdfByExt = /\.pdf(\?|#|$)/i.test(link);
       return !!link && (looksPdfByType || looksPdfByExt);
     });
   }, [content?.attachments]);
@@ -131,19 +134,27 @@ const AttachmentsSection = ({ lessonId }) => {
         setSizes((prev) => ({ ...prev, ...updates }));
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pdfs]);
 
   // const handleOpen = useCallback((url) => openViaAnchor(url), []);
 
-  const handleOpen = useCallback((url, title) => {
-    if (!url) return;
-    // Prefer state (cleaner URLs), but also support query so you can copy/paste links
-    navigate(`/pdfviewer?src=${encodeURIComponent(url)}&title=${encodeURIComponent(title || "")}`, {
-      state: { src: url, title: title || undefined },
-    });
-  }, [navigate]);
+  const handleOpen = useCallback(
+    (url, title) => {
+      if (!url) return;
+
+      navigate("/pdfviewer", {
+        state: {
+          pdfUrl: url,
+          title,
+        },
+      });
+    },
+    [navigate]
+  );
 
   const handleDownload = useCallback(async (url) => {
     if (!url) return;
@@ -154,7 +165,9 @@ const AttachmentsSection = ({ lessonId }) => {
       const match = cd.match(/filename\*?=(?:UTF-8'')?"?([^\";]+)"?/i);
       // const nameFromHeader = match ? decodeURIComponent(match[1]) : null;
       let nameFromHeader = null;
-      try { nameFromHeader = match ? decodeURIComponent(match[1]) : null; } catch {}
+      try {
+        nameFromHeader = match ? decodeURIComponent(match[1]) : null;
+      } catch {}
       const fallbackName = (() => {
         try {
           const u = new URL(url, window.location.origin);
@@ -212,42 +225,47 @@ const AttachmentsSection = ({ lessonId }) => {
       {!loading && !error && pdfs.length > 0 && (
         <div
           className={`flex gap-4 ${
-            scrollable ? "max-h-[calc(6*60px)] overflow-y-auto scrollbar-custom" : ""
+            scrollable
+              ? "max-h-[calc(6*60px)] overflow-y-auto scrollbar-custom"
+              : ""
           }`}
         >
           <div className="space-y-4 md:pl-6 pl-2 w-full" dir="rtl">
             {pdfs.map((a, i) => {
-            const displayTitle = (() => {
-              const raw = (a.name || a.title || "").trim();
-              if (raw) return raw.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
-              return DEFAULT_TITLES[i] || prettyFromFilename(a.link) || "ملف PDF";
-            })();
+              const displayTitle = (() => {
+                const raw = (a.name || a.title || "").trim();
+                if (raw)
+                  return raw.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
+                return (
+                  DEFAULT_TITLES[i] || prettyFromFilename(a.link) || "ملف PDF"
+                );
+              })();
 
-            const key = String(a.id ?? a.link);
-            const bytes = sizes[key];
-            const sizeStr =
-              typeof bytes === "number" && isFinite(bytes) && bytes >= 0
-                ? formatBytes(bytes)
-                : "2.5 MB";
+              const key = String(a.id ?? a.link);
+              const bytes = sizes[key];
+              const sizeStr =
+                typeof bytes === "number" && isFinite(bytes) && bytes >= 0
+                  ? formatBytes(bytes)
+                  : "2.5 MB";
 
-            return (
-              <AttachmentItem
-                key={`pdf-${key}`}
-                title={displayTitle}      // ← used by component
-                name={displayTitle}       // ← safety for any old prop usage
-                size={sizeStr}
-                important={Boolean(a.important)}
-                hasDownloadIcon
-                iconSrc={filePdf || summary}
-                href={a.link}
-                isCardClickable={!!a.link}
-                onOpen={() => handleOpen(a.link, displayTitle)}
-                onDownload={() => handleDownload(a.link)}
-              >
-                {displayTitle}            {/* ← if component renders children */}
-              </AttachmentItem>
-            );
-          })}
+              return (
+                <AttachmentItem
+                  key={`pdf-${key}`}
+                  title={displayTitle} // ← used by component
+                  name={displayTitle} // ← safety for any old prop usage
+                  size={sizeStr}
+                  important={Boolean(a.important)}
+                  hasDownloadIcon
+                  iconSrc={filePdf || summary}
+                  href={a.link}
+                  isCardClickable={!!a.link}
+                  onOpen={() => handleOpen(a.link, displayTitle)}
+                  onDownload={() => handleDownload(a.link)}
+                >
+                  {displayTitle} {/* ← if component renders children */}
+                </AttachmentItem>
+              );
+            })}
           </div>
         </div>
       )}

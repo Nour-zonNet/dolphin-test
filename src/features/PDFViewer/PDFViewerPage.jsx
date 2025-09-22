@@ -1,27 +1,22 @@
 // features/pdf/PDFViewerPage.jsx
-import React, { useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import PDFViewer from "./components/PDFViewer";
 import { Header } from "../../components/layout";
 
 const PDFViewerPage = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const { pdfUrl, title } = useMemo(() => {
-    const sp = new URLSearchParams(location.search);
-    const src = sp.get("src") || location.state?.src;
-    const ttl = sp.get("title") || location.state?.title || "ملف PDF";
-    return { pdfUrl: src, title: ttl };
-  }, [location]);
+  const { pdfUrl = "", title = "" } = location.state;
 
   // If someone hits /pdfviewer without params, go back to schedule
-  if (!pdfUrl) {
-    navigate("/schedule", { replace: true });
-    return null;
-  }
+  // if (!pdfUrl) {
+  //   navigate("/schedule", { replace: true });
+  //   return null;
+  // }
 
-  const isMobile = typeof window !== "undefined" ? window.innerWidth < 768 : false;
+  const isMobile =
+    typeof window !== "undefined" ? window.innerWidth < 768 : false;
 
   return (
     <div className="w-full h-screen bg-gray-100">
