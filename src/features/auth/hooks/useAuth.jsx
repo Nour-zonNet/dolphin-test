@@ -14,6 +14,7 @@ import {
   switchUserAccount,
   addBrother,
   getBrothers,
+  disActiveAccount,
 } from "../store/authSlice";
 import { useCallback, useMemo } from "react";
 
@@ -94,6 +95,10 @@ export const useAuth = () => {
     (bro) => dispatch(addBrother(bro)),
     [dispatch]
   );
+  const dispatchDisActiveAccount = useCallback(
+    (bro) => dispatch(disActiveAccount(bro)),
+    [dispatch]
+  );
   switchUserAccount;
   updateUser;
   return useMemo(
@@ -122,6 +127,7 @@ export const useAuth = () => {
       switchUserAccount: dispatchSwitchUserAccount,
       addBrother: dispatchAddBrother,
       getBrothers: dispatchGetBrothers,
+      disActiveAccount: dispatchDisActiveAccount,
     }),
     [
       user,
@@ -145,6 +151,7 @@ export const useAuth = () => {
       dispatchSwitchUserAccount,
       dispatchAddBrother,
       dispatchGetBrothers,
+      dispatchDisActiveAccount,
     ]
   );
 };

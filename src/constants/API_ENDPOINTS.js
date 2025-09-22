@@ -9,7 +9,6 @@ export const ENDPOINTS = {
   GRADE_PACKAGES: "/student/packages",
   SCHEDULE_OF_PACKAGE: "/student/get-group-schedule/",
   SCHEDULE_OF_ALLPACKAGES: "/student/schedule",
-
   GET_MY_SUBSCRIPTIONS: "/student/packages/subscription-packages",
   GROUPS_BY_BACKAGEID: "/student/package-groups",
   CREATE_TRIAL_SUBSCRIPTION: "/student/create-trial-subscription",
@@ -24,6 +23,7 @@ export const ENDPOINTS = {
   SWITCH_ACCOUNT: "/student/switch-account",
   ADD_BROTHER: "/student/add-brother",
   FETCH_BORTHER: "/student/brothers",
+  DIS_ACTIVE_ACCOUNT: "/student/delete/account",
   CLASSES: "/student/classes",
   LESSONS_OF_PACKAGE: "/student/lessons/package/",
 };

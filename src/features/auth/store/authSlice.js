@@ -188,6 +188,18 @@ export const addBrother = createAsyncThunk(
   }
 );
 
+export const disActiveAccount = createAsyncThunk(
+  "profile/disActiveAccount",
+  async (_, { rejectWithValue }) => {
+    try {
+      const result = await authRepository.disActiveAccount();
+      return result;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error.response.data.error || "Server error");
+    }
+  }
+);
 export const getBrothers = createAsyncThunk("profile/getBrothers", async () => {
   return await authRepository.getBrothers();
 });
@@ -347,7 +359,13 @@ const authSlice = createSlice({
         state.loading = false;
         state.brothers.push(action.payload.brother);
       })
-      .addCase(addBrother.rejected, handleRejected);
+      .addCase(addBrother.rejected, handleRejected)
+
+      .addCase(disActiveAccount.pending, handlePending)
+      .addCase(disActiveAccount.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(disActiveAccount.rejected, handleRejected);
   },
 });
 

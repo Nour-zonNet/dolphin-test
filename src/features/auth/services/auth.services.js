@@ -83,7 +83,10 @@ class AuthRepository {
     const response = await api.get(ENDPOINTS.FETCH_BORTHER);
     return Array.isArray(response.data?.data) ? response.data.data : [];
   }
-  
+  async disActiveAccount() {
+    const response = await api.delete(ENDPOINTS.DIS_ACTIVE_ACCOUNT);
+    return response.data?.data;
+  }
 }
 
 // Singleton instance

@@ -2,16 +2,31 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { performLogout } from "@/features/auth/store/authSlice";
 import { ProfileButtons } from "@/components";
-import { DeleteAccountModal, LogoutModal } from "@/components/profile/modal";
+import { DeleteAccountModal } from "@/components/profile/modal";
+import { LogoutModal } from "@/components/profile/modal";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 const ProfileActions = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const dispatch = useDispatch();
+  const { disActiveAccount } = useAuth();
   // Logout modal handlers
   const handleCloseLogoutModal = () => setIsLogoutModalOpen(false);
   const handleConfirmLogout = () => {
     dispatch(performLogout());
     setIsLogoutModalOpen(false);
+  };
+  const handleConfirmDelete = async () => {
+    try {
+      const result = await disActiveAccount(); 
+      console.log(result);
+
+      dispatch(performLogout());
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      console.error("Error while deleting account:", error);
+    }
   };
 
   return (
@@ -34,11 +49,11 @@ const ProfileActions = () => {
       </ProfileButtons>
 
       {/* Delete Account Button */}
-      {/* <ProfileButtons
+      <ProfileButtons
         variant="danger"
         size=""
         className="w-full cursor-pointer py-3 lg:py-4 border border-[#B3261E]"
-        // onClick={() => setIsDeleteModalOpen(true)}
+        onClick={() => setIsDeleteModalOpen(true)}
       >
         <img
           className="w-4 md:w-5 lg:w-6"
@@ -48,14 +63,14 @@ const ProfileActions = () => {
         <span className="text-navyteal font-semibold text-base md:text-xl">
           تعطيل الحساب
         </span>
-      </ProfileButtons> */}
+      </ProfileButtons>
 
       {/* Delete Account Modal */}
-      {/* <DeleteAccountModal
+      <DeleteAccountModal
         isOpen={isDeleteModalOpen}
-        onClose={handleCloseDeleteModal}
+        onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-      /> */}
+      />
 
       {/* Logout Modal */}
       <LogoutModal
