@@ -13,8 +13,8 @@ export default defineConfig({
         target: 'https://torage-learnatdolphin.b-cdn.net',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/pdf-proxy/, ''),
-        configure: (proxy, options) => {
-          proxy.on('proxyReq', (proxyReq, req, res) => {
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
             // Add CORS headers
             proxyReq.setHeader('Access-Control-Allow-Origin', '*');
             proxyReq.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
