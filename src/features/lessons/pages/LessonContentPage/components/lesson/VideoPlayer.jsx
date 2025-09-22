@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import stopVideo from "@/assets/schedule/stop-video.svg";
 import { DatePicker, Teacher } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
-// import lessonVideo from "@/assets/videos/lesson.mp4";
 import { useContent } from "@/features/lessons/hooks/useContent";
 import poster from "@/assets/schedule/poster.svg";
 // ---------- Fallbacks ----------
@@ -625,7 +624,8 @@ const VideoPlayer = ({ lessonId }) => {
           playsInline
           crossOrigin="anonymous"
         >
-          <source src={source.src } type={source.type || "video/mp4"} />
+          <source src={source.src || DEFAULT_YT_EMBED} type={source.type || "video/mp4"} />
+
           متصفحك لا يدعم تشغيل الفيديو.
         </video>
       )}
