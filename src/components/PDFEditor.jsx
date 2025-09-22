@@ -5,7 +5,7 @@ import "../utils/pdfConfig"; // Import centralized PDF configuration
 
 export default function PDFEditor() {
   const [pdfBytes, setPdfBytes] = useState(null);
-  const [numPages, setNumPages] = useState(0);
+  const [setNumPages] = useState(0);
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [stack, setStack] = useState([]); // لحفظ كل رسم أو نص
