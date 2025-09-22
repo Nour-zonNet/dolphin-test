@@ -18,8 +18,8 @@ const PlansFooter = ({
                 {selectedCount} باقة(ات) محددة
               </span> */}
         
-              <span className="hidden sm:block">•</span>
-              <span className="flex items-center gap-1 text-orange-600 font-bold">
+              {/* <span className="hidden sm:block">•</span> */}
+              {/* <span className="flex items-center gap-1 text-orange-600 font-bold">
                 الإجمالي: 
                 <FormatWithCurrency
                     amount={totalPrice} 
@@ -27,7 +27,7 @@ const PlansFooter = ({
                     symbolClass="w-4 h-4 md:w-5 md:h-5"
                     symbolFill="#ea580c"
                   />
-              </span>
+              </span> */}
             </div>
           ) : (
             "لم تقم باختيار أي باقة"
@@ -43,7 +43,7 @@ const PlansFooter = ({
           disabled={disabled}
         >
           <LeftArrowFilled className="w-5" />
-          اشترك الآن
+          جرب المنصة الان
           {selectedCount > 0 && (
             <span
               className="

@@ -107,7 +107,7 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
                 )}
               </div>
 
-              <span className="flex items-center gap-2 text-nowrap text-base">
+              {/* <span className="flex items-center gap-2 text-nowrap text-base">
                 سعر الباقة :
                 <FormatWithCurrency
                   amount={plan.finalPrice}
@@ -115,7 +115,7 @@ const PlanCard = ({ plan, selected, onSelect, isOpen, onToggle }) => {
                   symbolClass="w-5 h-5 text-[#BA7C28]"
                   symbolFill="#BA7C28"
                 />
-              </span>
+              </span> */}
             </div>
           </div>
         </div>
