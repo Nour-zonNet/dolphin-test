@@ -6,6 +6,7 @@ import summary from "@/assets/schedule/summary.svg";
 import filePdf from "@/assets/schedule/file.svg";
 import { Attachments } from "@/utils/icons";
 import { useContent } from "@/features/lessons/hooks/useContent";
+import { useNavigate } from "react-router-dom";
 
 /* ----------------------------- helpers ----------------------------- */
 
@@ -81,7 +82,16 @@ const fetchFileSize = async (url) => {
 
 const AttachmentsSection = ({ lessonId }) => {
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
+    const openViaAnchor = (url) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
   const safeLessonId = useMemo(() => {
     const n = Number(lessonId);
     return Number.isFinite(n) && n > 0 ? n : 1;
@@ -125,7 +135,16 @@ const AttachmentsSection = ({ lessonId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pdfs]);
 
-  const handleOpen = useCallback((url) => openViaAnchor(url), []);
+  // const handleOpen = useCallback((url) => openViaAnchor(url), []);
+
+  const handleOpen = useCallback((url, title) => {
+    if (!url) return;
+    // Prefer state (cleaner URLs), but also support query so you can copy/paste links
+    navigate(`/pdfviewer?src=${encodeURIComponent(url)}&title=${encodeURIComponent(title || "")}`, {
+      state: { src: url, title: title || undefined },
+    });
+  }, [navigate]);
+
   const handleDownload = useCallback(async (url) => {
     if (!url) return;
     try {
@@ -222,7 +241,7 @@ const AttachmentsSection = ({ lessonId }) => {
                 iconSrc={filePdf || summary}
                 href={a.link}
                 isCardClickable={!!a.link}
-                onOpen={() => handleOpen(a.link)}
+                onOpen={() => handleOpen(a.link, displayTitle)}
                 onDownload={() => handleDownload(a.link)}
               >
                 {displayTitle}            {/* ← if component renders children */}
