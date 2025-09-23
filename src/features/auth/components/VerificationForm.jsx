@@ -12,7 +12,6 @@ const VerificationForm = ({ onSubmit, phoneNumber }) => {
   const [timer, setTimer] = useState(60);
   const dispatch = useDispatch();
   const { openStatusModal } = useModal();
-  // ⏱ العد التنازلي
   useEffect(() => {
     if (timer > 0) {
       const countdown = setInterval(() => setTimer((prev) => prev - 1), 1000);
@@ -20,7 +19,6 @@ const VerificationForm = ({ onSubmit, phoneNumber }) => {
     }
   }, [timer]);
 
-  // ✅ Submit OTP
   const handleSubmit = (e) => {
     e.preventDefault();
     if (otp.length === 6) {
@@ -29,30 +27,17 @@ const VerificationForm = ({ onSubmit, phoneNumber }) => {
   };
 
   const handlePhoneSubmit = async () => {
-    const res = await dispatch(checkPhone({ phone_number: phoneNumber }));
+    const res = await dispatch(
+      checkPhone({ phone_number: phoneNumber }).unwrap()
+    );
 
-    if (res?.payload?.success) {
-      if (res?.payload?.data?.otp_sent) {
-        openStatusModal(MODAL_TYPES.SUCCESS, {
-          title: "تم إرسال الرمز",
-          message: "تم إرسال رمز التحقق إلى رقم هاتفك مرة اخرى .",
-        });
-      } else {
+    if (res?.success) {
+      if (res?.data?.otp_sent) {
         openStatusModal(MODAL_TYPES.SUCCESS, {
           title: "تم إرسال الرمز",
           message: "تم إرسال رمز التحقق إلى رقم هاتفك مرة اخرى .",
         });
       }
-    } else {
-      dispatch(
-        openStatusModal({
-          type: MODAL_TYPES.WARNING,
-          props: {
-            title: "هنالك خطاء ",
-            message: res.payload || res.error.message,
-          },
-        })
-      );
     }
   };
   return (

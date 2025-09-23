@@ -7,22 +7,24 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import notFoundImage from "@/assets/images/notFoundLessons.png";
-import nationalDayBanner from "@/assets/images/national-day.svg"; 
-import { getSevenDaysBeforeAndAfter } from "@/utils/dateHelpers";
+import nationalDayBanner from "@/assets/images/national-day.svg";
+import { getSevenDaysBeforeAndAfter, todayDate } from "@/utils/dateHelpers";
 
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
 import NationalDayCard from "./NationalDayCard";
-import { todayDate } from "../../../utils/dateHelpers";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();
   const days = getSevenDaysBeforeAndAfter();
 
+  // Index of today
   const todayIndex = days.findIndex((d) => d.date === todayDate);
-  const [activeIndex, setActiveIndex] = useState(todayIndex !== -1 ? todayIndex : 0);
+  const [activeIndex, setActiveIndex] = useState(
+    todayIndex !== -1 ? todayIndex : 0
+  );
 
   const NAVBAR_HEIGHT = 64;
   const MOBILE_BAR_HEIGHT = 56;
@@ -51,19 +53,21 @@ const ScheduleSlider = () => {
               if (item.session_date) {
                 return item.session_date === day.date;
               } else {
-                return day.dayEn.toLowerCase() === item.day_of_week.toLowerCase();
+                return (
+                  day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
+                );
               }
             });
-            const isSept23 = day.date.slice(5) === "09-23";
-            const showSpecialDesign = day.date === todayDate && isSept23;
 
             return (
               <SwiperSlide key={day.date}>
-                {showSpecialDesign ? (
+                {"2025-09-23" === day.date ? (
                   <div
                     className="flex items-center justify-center"
                     style={{
-                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                      height: `calc(70svh - ${
+                        NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT
+                      }px)`,
                     }}
                   >
                     <NationalDayCard src={nationalDayBanner} />
@@ -87,7 +91,9 @@ const ScheduleSlider = () => {
                   <div
                     className="flex justify-center items-center"
                     style={{
-                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                      height: `calc(70svh - ${
+                        NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT
+                      }px)`,
                     }}
                   >
                     <img

@@ -227,7 +227,7 @@ const subscriptionSlice = createSlice({
       .addCase(fetchGroupsByPackageId.fulfilled, (state, action) => {
         state.loading = false;
         const { packageId, groups } = action.payload;
-        state.groups[packageId] = groups; // ✅ works now
+        state.groups[packageId] = groups;
       })
       .addCase(fetchGroupsByPackageId.rejected, (state, action) => {
         state.loading = false;
