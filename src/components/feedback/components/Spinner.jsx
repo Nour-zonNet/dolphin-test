@@ -1,5 +1,5 @@
 import React from "react";
-import spinner from "@/assets/images/spinner.svg";
+// import spinner from "@/assets/images/spinner.svg";
 import spinnerLoading from "@/assets/images/spinner-loading.svg";
 import dolphinFace from "@/assets/images/dolphin-face.svg";
 
@@ -18,7 +18,7 @@ const Spinner = ({
       aria-label={label}
     >
       {/* Rotating arc */}
-      <img
+      {/* <img
         src={spinner}
         alt=""
         style={{
@@ -30,7 +30,7 @@ const Spinner = ({
         }}
         className="absolute inset-0 z-[2] block pointer-events-none"
         draggable={false}
-      />
+      /> */}
 
       {/* Rotating overlay */}
       <img
