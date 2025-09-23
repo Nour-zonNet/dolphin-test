@@ -3,6 +3,7 @@ import { Cross, ConfirmCheck, DashedArrow, Arrow } from "@/utils/icons";
 import Button from "../../../ui/Button";
 import { formatArabicTime } from "../../../../utils/dateHelpers";
 import { useSelector } from "react-redux";
+import { createSelector } from "@reduxjs/toolkit";
 
 const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
   const [selectedGroup, setSelectedGroup] = useState(
@@ -15,8 +16,14 @@ const ChangeGroupModal = ({ onClose, onConfirm, groupData = {} }) => {
     }
     onClose();
   };
-  const groups = useSelector(
-    (state) => state.subscriptions.groups[groupData.packageId] || []
+  // Memoized selector to prevent unnecessary rerenders
+  const selectGroupsForPackage = createSelector(
+    [(state) => state.subscriptions.groups, (_, packageId) => packageId],
+    (groups, packageId) => groups[packageId] || []
+  );
+
+  const groups = useSelector((state) => 
+    selectGroupsForPackage(state, groupData.packageId)
   );
 
   return (

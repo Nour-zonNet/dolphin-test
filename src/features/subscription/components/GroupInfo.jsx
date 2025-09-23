@@ -3,66 +3,55 @@ import { ChangeGroup } from "../../../utils/icons";
 import ActionButton from "./ActionButton";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { useSubscriptions } from "../hooks/useSubscriptions";
-import { fetchLessons } from "../../lessons/store/lessonsSlice";
-import { useDispatch } from "react-redux";
-import { updatePackageGroup } from "../../packages/store/packagesSlice";
+import { useLessons } from "../../lessons/hooks/useLessons";
+import { usePackages } from "../../packages/hooks/usePackages";
 
 const GroupInfo = ({ group, packageId, subscriptionId }) => {
   const { openChangeGroupModal, openStatusModal } = useModal();
   const { changeGroupSubscription, fetchGroupsByPackageId, groups } =
     useSubscriptions();
-  const dispatch = useDispatch();
+  const { fetchLessons } = useLessons();
+  const { updatePackageGroup } = usePackages();
 
-  // 🟢 memoize modal props
-
-  // 🟢 memoize handler
   const handleChangeGroup = useCallback(async () => {
     const packageGroups = groups?.[packageId] || [];
 
     if (packageGroups.length === 0) {
-      await fetchGroupsByPackageId(packageId);
+      await fetchGroupsByPackageId(packageId).unwrap();
     }
 
     openChangeGroupModal(
       { packageId, currentGroupId: group?.group_id, groups: packageGroups },
       async (selectedGroupId) => {
-        try {
-          const res = await changeGroupSubscription(
-            subscriptionId,
-            selectedGroupId
-          );
-          dispatch(
-            updatePackageGroup({
-              id: packageId,
-              group_id: selectedGroupId,
-              group_name: res?.payload?.group_name || "",
-            })
-          );
-          dispatch(fetchLessons());
+        const res = await changeGroupSubscription(
+          subscriptionId,
+          selectedGroupId
+        );
+        updatePackageGroup(
+          packageId,
+          selectedGroupId,
+          res?.payload?.group_name || ""
+        );
+        await fetchLessons().unwrap();
 
-          openStatusModal("SUCCESS", {
-            title: "تم التحديث بنجاح",
-            message:
-              "تم تحديث بيانات الجدول وستظهر التغييرات عند فتح صفحة الجدول",
-          });
-        } catch {
-          openStatusModal("ERROR", {
-            title: "خطأ في التحديث",
-            message: "حدث خطأ أثناء تحديث المجموعة. يرجى المحاولة مرة أخرى.",
-          });
-        }
+        openStatusModal("SUCCESS", {
+          title: "تم التحديث بنجاح",
+          message:
+            "تم تحديث بيانات الجدول وستظهر التغييرات عند فتح صفحة الجدول",
+        });
       }
     );
   }, [
     groups,
     packageId,
-    group?.group_id,
-    subscriptionId,
-    changeGroupSubscription,
-    fetchGroupsByPackageId,
     openChangeGroupModal,
+    group?.group_id,
+    fetchGroupsByPackageId,
+    changeGroupSubscription,
+    subscriptionId,
+    updatePackageGroup,
     openStatusModal,
-    dispatch,
+    fetchLessons,
   ]);
 
   return (

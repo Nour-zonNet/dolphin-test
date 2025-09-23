@@ -22,7 +22,7 @@ const ProfileActions = () => {
   };
   const handleConfirmDelete = async () => {
     try {
-      await disActiveAccount();
+      await disActiveAccount().unwrap();
 
       openStatusModal(MODAL_TYPES.SUCCESS, {
         title: "تم التعطيل",

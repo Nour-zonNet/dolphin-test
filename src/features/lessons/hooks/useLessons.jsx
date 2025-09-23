@@ -1,6 +1,6 @@
 // features/lessons/hooks/useLessons.js
 import { useDispatch, useSelector } from "react-redux";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {
   fetchLessons,
   getPackageLessons,
@@ -13,32 +13,54 @@ export const useLessons = () => {
   const dispatch = useDispatch();
   const { items, loading, error, link } = useSelector((s) => s.lessons);
 
-  // Always return a promise (the thunk result) so callers can await/finally
-  const refetch = useCallback(() => dispatch(fetchLessons()), [dispatch]);
-  const fetchPkgLessons = useCallback(
+  // Dispatch wrappers following useAuth pattern
+  const dispatchFetchLessons = useCallback(
+    () => dispatch(fetchLessons()),
+    [dispatch]
+  );
+  
+  const dispatchGetPackageLessons = useCallback(
     (packageId) => dispatch(getPackageLessons(packageId)),
     [dispatch]
   );
-  const fetchSessLink = useCallback(
+  
+  const dispatchGetSessionLink = useCallback(
     (sessionId) => dispatch(getSessionLink(sessionId)),
     [dispatch]
   );
 
-  const clearError = useCallback(
+  const dispatchClearLessonsError = useCallback(
     () => dispatch(clearLessonsError()),
     [dispatch]
   );
-  const clearLink = useCallback(() => dispatch(clearSessionLink()), [dispatch]);
+  
+  const dispatchClearSessionLink = useCallback(
+    () => dispatch(clearSessionLink()),
+    [dispatch]
+  );
 
-  return {
-    items,
-    loading,
-    error,
-    link,
-    refetch,                 
-    fetchPackageLessons: fetchPkgLessons,
-    fetchSessionLink: fetchSessLink,
-    clearError,
-    clearLink,
-  };
+  return useMemo(
+    () => ({
+      items,
+      loading,
+      error,
+      link,
+      fetchLessons: dispatchFetchLessons,
+      getPackageLessons: dispatchGetPackageLessons,
+      getSessionLink: dispatchGetSessionLink,
+      clearLessonsError: dispatchClearLessonsError,
+      clearSessionLink: dispatchClearSessionLink,
+    }),
+    [
+      items,
+      loading,
+      error,
+      link,
+      dispatchFetchLessons,
+      dispatchGetPackageLessons,
+      dispatchGetSessionLink,
+      dispatchClearLessonsError,
+      dispatchClearSessionLink,
+    ]
+  );
 };
