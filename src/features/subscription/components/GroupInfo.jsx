@@ -12,46 +12,55 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
     useSubscriptions();
   const { fetchLessons } = useLessons();
   const { updatePackageGroup } = usePackages();
+  const confirmChangeGroup = useCallback(
+    async (selectedGroupId) => {
+      const res = await changeGroupSubscription(
+        subscriptionId,
+        selectedGroupId
+      ).unwrap();
+      updatePackageGroup(
+        packageId,
+        selectedGroupId,
+        res?.payload?.group_name || ""
+      );
+      await fetchLessons().unwrap();
 
+      openStatusModal("SUCCESS", {
+        title: "تم التحديث بنجاح",
+        message: "تم تحديث بيانات الجدول وستظهر التغييرات عند فتح صفحة الجدول",
+      });
+    },
+    [
+      changeGroupSubscription,
+      subscriptionId,
+      updatePackageGroup,
+      packageId,
+      fetchLessons,
+      openStatusModal,
+    ]
+  );
   const handleChangeGroup = useCallback(async () => {
-    const packageGroups = groups?.[packageId] || [];
+    try {
+      const packageGroups = groups?.[packageId] || [];
 
-    if (packageGroups.length === 0) {
-      await fetchGroupsByPackageId(packageId).unwrap();
-    }
-
-    openChangeGroupModal(
-      { packageId, currentGroupId: group?.group_id, groups: packageGroups },
-      async (selectedGroupId) => {
-        const res = await changeGroupSubscription(
-          subscriptionId,
-          selectedGroupId
-        );
-        updatePackageGroup(
-          packageId,
-          selectedGroupId,
-          res?.payload?.group_name || ""
-        );
-        await fetchLessons().unwrap();
-
-        openStatusModal("SUCCESS", {
-          title: "تم التحديث بنجاح",
-          message:
-            "تم تحديث بيانات الجدول وستظهر التغييرات عند فتح صفحة الجدول",
-        });
+      if (packageGroups.length === 0) {
+        await fetchGroupsByPackageId(packageId).unwrap();
       }
-    );
+
+      openChangeGroupModal(
+        { packageId, currentGroupId: group?.group_id, groups: packageGroups },
+        confirmChangeGroup
+      );
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
   }, [
     groups,
     packageId,
     openChangeGroupModal,
     group?.group_id,
     fetchGroupsByPackageId,
-    changeGroupSubscription,
-    subscriptionId,
-    updatePackageGroup,
-    openStatusModal,
-    fetchLessons,
+    confirmChangeGroup,
   ]);
 
   return (

@@ -18,7 +18,7 @@ const PackageCard = React.memo(
   ({ item, color, image, status, daysRemaining }) => {
     const { t } = useTranslation();
     const { openWeeklyScheduleModal, openStatusModal } = useModal();
-    const { getSchedule } = usePackages();
+    const { fetchScheduleById } = usePackages();
     const schedules = useSelector((state) => state.packages.schedules);
     const { group_id, package_name, group_name, name } = item;
 
@@ -50,18 +50,11 @@ const PackageCard = React.memo(
         return;
       }
 
-      try {
-        const { groupId, schedule } = await getSchedule(group_id).unwrap();
+      const { groupId, schedule } = await fetchScheduleById(group_id).unwrap();
 
-        openWeeklyScheduleModal({
-          data: { groupId, packageName: package_name, schedule, image, color },
-        });
-      } catch (err) {
-        showError(
-          "الجدول غير متاح",
-          err?.message ?? "حدث خطأ أثناء محاولة جلب الجدول."
-        );
-      }
+      openWeeklyScheduleModal({
+        data: { groupId, packageName: package_name, schedule, image, color },
+      });
     }, [
       status,
       existingSchedule,
@@ -71,7 +64,7 @@ const PackageCard = React.memo(
       openWeeklyScheduleModal,
       image,
       color,
-      getSchedule,
+      fetchScheduleById,
     ]);
 
     // Status configuration
