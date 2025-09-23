@@ -7,8 +7,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import notFoundImage from "@/assets/images/notFoundLessons.png";
-import nationalDayBanner from "@/assets/images/national-day.svg"; 
-import { getSevenDaysBeforeAndAfter } from "@/utils/dateHelpers";
+import nationalDayBanner from "@/assets/images/national-day.svg";
+import { getSevenDaysBeforeAndAfter, todayDate } from "@/utils/dateHelpers";
 
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
@@ -20,25 +20,11 @@ const ScheduleSlider = () => {
   const { items, loading } = useLessons();
   const days = getSevenDaysBeforeAndAfter();
 
-  // Today in Riyadh (YYYY-MM-DD)
-  const todayDate = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Riyadh",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-
-  // Tomorrow in Riyadh (YYYY-MM-DD)
-  const tomorrowRiyadh = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Riyadh",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date(Date.now() + 24 * 60 * 60 * 1000));
-
   // Index of today
   const todayIndex = days.findIndex((d) => d.date === todayDate);
-  const [activeIndex, setActiveIndex] = useState(todayIndex !== -1 ? todayIndex : 0);
+  const [activeIndex, setActiveIndex] = useState(
+    todayIndex !== -1 ? todayIndex : 0
+  );
 
   const NAVBAR_HEIGHT = 64;
   const MOBILE_BAR_HEIGHT = 56;
@@ -67,24 +53,21 @@ const ScheduleSlider = () => {
               if (item.session_date) {
                 return item.session_date === day.date;
               } else {
-                return day.dayEn.toLowerCase() === item.day_of_week.toLowerCase();
+                return (
+                  day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
+                );
               }
             });
 
-            // ✅ DEFINE IT HERE
-            // Option A: show banner tomorrow only (Riyadh time)
-            const showSpecialDesign = day.date === tomorrowRiyadh;
-
-            // Option B: show banner every Sept 23
-            // const showSpecialDesign = day.date.slice(5) === "09-23";
-
             return (
               <SwiperSlide key={day.date}>
-                {showSpecialDesign ? (
+                {"2025-09-23" === day.date ? (
                   <div
                     className="flex items-center justify-center"
                     style={{
-                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                      height: `calc(70svh - ${
+                        NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT
+                      }px)`,
                     }}
                   >
                     <NationalDayCard src={nationalDayBanner} />
@@ -109,7 +92,9 @@ const ScheduleSlider = () => {
                   <div
                     className="flex justify-center items-center"
                     style={{
-                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                      height: `calc(70svh - ${
+                        NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT
+                      }px)`,
                     }}
                   >
                     <img
