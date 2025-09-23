@@ -71,7 +71,6 @@ const ScheduleSlider = () => {
                     }}
                   >
                     <NationalDayCard src={nationalDayBanner} />
-                    {/* Or just: <img src={nationalDayBanner} alt="Saudi National Day" className="w-full max-w-4xl h-auto rounded-2xl shadow" /> */}
                   </div>
                 ) : lessonsForDay.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">

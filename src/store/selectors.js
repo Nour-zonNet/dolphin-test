@@ -7,6 +7,12 @@ export const selectGroupsLoading = (state) => state.groups.loading;
 export const selectProfileLoading = (state) => state.profile.loading;
 export const selectSubscriptionsLoading = (state) =>
   state.subscriptions.loading;
+export const selectAuthError = (state) => state.auth.error;
+export const selectPackagesError = (state) => state.packages.error;
+export const selectLessonsError = (state) => state.lessons.error;
+export const selectGroupsError = (state) => state.groups.error;
+export const selectProfileError = (state) => state.profile.error;
+export const selectSubscriptionsError = (state) => state.subscriptions.error;
 
 // Combine all slice loadings
 export const selectGlobalLoading = createSelector(
@@ -29,4 +35,31 @@ export const selectGlobalLoading = createSelector(
     lessonsLoading ||
     groupsLoading ||
     subscriptionsLoading
+);
+// Individual error selectors
+
+// Combine all slice errors
+export const selectGlobalError = createSelector(
+  [
+    selectAuthError,
+    selectPackagesError,
+    selectLessonsError,
+    selectGroupsError,
+    selectProfileError,
+    selectSubscriptionsError,
+  ],
+  (
+    authError,
+    packagesError,
+    lessonsError,
+    groupsError,
+    profileError,
+    subscriptionsError
+  ) =>
+    authError ||
+    packagesError ||
+    lessonsError ||
+    groupsError ||
+    profileError ||
+    subscriptionsError
 );

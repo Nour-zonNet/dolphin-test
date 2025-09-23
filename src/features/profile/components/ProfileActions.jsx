@@ -5,11 +5,14 @@ import { ProfileButtons } from "@/components";
 import { DeleteAccountModal } from "@/components/profile/modal";
 import { LogoutModal } from "@/components/profile/modal";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useModal } from "@/components/feedback/modal/useModal";
+import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
 
 const ProfileActions = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const dispatch = useDispatch();
+  const { openStatusModal } = useModal();
   const { disActiveAccount } = useAuth();
   // Logout modal handlers
   const handleCloseLogoutModal = () => setIsLogoutModalOpen(false);
@@ -19,10 +22,13 @@ const ProfileActions = () => {
   };
   const handleConfirmDelete = async () => {
     try {
-      const result = await disActiveAccount(); 
-      console.log(result);
+      await disActiveAccount();
 
-      dispatch(performLogout());
+      openStatusModal(MODAL_TYPES.SUCCESS, {
+        title: "تم التعطيل",
+        message: "تم تعطيل الحساب بنجاح.",
+        onClose: () => dispatch(performLogout()),
+      });
       setIsDeleteModalOpen(false);
     } catch (error) {
       console.error("Error while deleting account:", error);
