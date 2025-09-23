@@ -8,7 +8,7 @@ import { useMediaQuery } from "react-responsive";
 // Simple loading fallback component
 const RouteLoadingFallback = ( {spinnerSize} ) => (
   <Overlay ariaLabel="Loading page">
-    <Spinner size={spinnerSize} colorClass="border-orange-500" />
+    <Spinner size={spinnerSize} />
   </Overlay>
 );
 
