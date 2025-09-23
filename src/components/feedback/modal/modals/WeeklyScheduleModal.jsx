@@ -4,11 +4,17 @@ import { useTranslation } from "react-i18next";
 import { usePackages } from "@/features/packages/hooks/usePackages";
 import { formatTime12Hour } from "@/utils/dateHelpers";
 import { Spinner } from "@/components/feedback";
+import { useMediaQuery } from "react-responsive";
 
 const WeeklyScheduleModal = ({ onClose, data }) => {
   const { packageName, schedule = [], image, color } = data;
   const { t } = useTranslation();
   const { loading } = usePackages();
+  const isMobile = useMediaQuery({ maxWidth: 480 });
+  const isTablet = useMediaQuery({ minWidth: 481, maxWidth: 800 });
+  let spinnerSize = 100; 
+  if (isTablet) spinnerSize = 80;
+  if (isMobile) spinnerSize = 60;
 
   // Group by day_of_week
   const groupedSchedule = useMemo(() => {
@@ -167,7 +173,7 @@ const WeeklyScheduleModal = ({ onClose, data }) => {
       {/* Loading */}
       {loading && (
         <div className="flex justify-center items-center py-8">
-          <Spinner />
+          <Spinner size={spinnerSize} />
         </div>
       )}
 

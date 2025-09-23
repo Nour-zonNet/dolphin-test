@@ -3,16 +3,23 @@ import { AppLayout } from "@/components/layout";
 import { HomeSupportBtn } from "@/components/layout";
 import withAuth from "@/features/auth/hoc/withAuth";
 import { Overlay, Spinner } from "@/components/feedback";
+import { useMediaQuery } from "react-responsive";
 
 // Simple loading fallback component
-const RouteLoadingFallback = () => (
+const RouteLoadingFallback = ( {spinnerSize} ) => (
   <Overlay ariaLabel="Loading page">
-    <Spinner size={48} colorClass="border-orange-500" />
+    <Spinner size={spinnerSize} colorClass="border-orange-500" />
   </Overlay>
 );
 
 // Route renderer component
 const RouteRenderer = ({ route, children }) => {
+  const isMobile = useMediaQuery({ maxWidth: 480 });
+  const isTablet = useMediaQuery({ minWidth: 481, maxWidth: 800 });
+  let spinnerSize = 100; 
+  if (isTablet) spinnerSize = 80;
+  if (isMobile) spinnerSize = 60;
+
   const Component = route.element;
 
   if (!Component) {
@@ -31,7 +38,7 @@ const RouteRenderer = ({ route, children }) => {
   const showHomeSupportBtn = route.homeSupportBtn === true; // default false
 
   return (
-    <Suspense fallback={<RouteLoadingFallback />}>
+    <Suspense fallback={<RouteLoadingFallback spinnerSize={spinnerSize} />}>
       {shouldUseLayout ? (
         <AppLayout
           showNavbar={showNavbar}

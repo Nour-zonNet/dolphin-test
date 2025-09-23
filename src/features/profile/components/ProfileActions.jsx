@@ -49,7 +49,7 @@ const ProfileActions = () => {
       </ProfileButtons>
 
       {/* Delete Account Button */}
-      <ProfileButtons
+      {/* <ProfileButtons
         variant="danger"
         size=""
         className="w-full cursor-pointer py-3 lg:py-4 border border-[#B3261E]"
@@ -63,7 +63,7 @@ const ProfileActions = () => {
         <span className="text-navyteal font-semibold text-base md:text-xl">
           تعطيل الحساب
         </span>
-      </ProfileButtons>
+      </ProfileButtons> */}
 
       {/* Delete Account Modal */}
       <DeleteAccountModal
