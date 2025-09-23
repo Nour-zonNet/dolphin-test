@@ -63,14 +63,23 @@ const ScheduleSlider = () => {
               <SwiperSlide key={day.date}>
                 {"2025-09-23" === day.date ? (
                   <div
-                    className="flex items-center justify-center"
+                    className="flex flex-col justify-center items-center mt-12  "
                     style={{
-                      height: `calc(70svh - ${
+                      height: `calc(60svh - ${
                         NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT
                       }px)`,
                     }}
                   >
-                    <NationalDayCard src={nationalDayBanner} />
+                    <img
+                      src={nationalDayBanner}
+                      loading="lazy"
+                      alt="No lessons found"
+                      className="max-h-full w-auto object-cover  "
+                    />
+                    <p className="text-[#155274] font-semibold text-lg md:text-3xl lg:text-2xl text-center mt-4 mb-4 md:mb-0">
+                      لا توجد دروس اليوم بمناسبة اليوم <br /> الوطني السعودي
+                      استمتعوا بإجازتكم
+                    </p>
                   </div>
                 ) : lessonsForDay.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
