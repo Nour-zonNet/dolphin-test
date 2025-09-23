@@ -28,14 +28,6 @@ const ScheduleSlider = () => {
     day: "2-digit",
   }).format(new Date());
 
-  // Tomorrow in Riyadh (YYYY-MM-DD)
-  const tomorrowRiyadh = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Riyadh",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date(Date.now() + 24 * 60 * 60 * 1000));
-
   // Index of today
   const todayIndex = days.findIndex((d) => d.date === todayDate);
   const [activeIndex, setActiveIndex] = useState(todayIndex !== -1 ? todayIndex : 0);
@@ -70,13 +62,8 @@ const ScheduleSlider = () => {
                 return day.dayEn.toLowerCase() === item.day_of_week.toLowerCase();
               }
             });
-
-            // ✅ DEFINE IT HERE
-            // Option A: show banner tomorrow only (Riyadh time)
-            const showSpecialDesign = day.date === tomorrowRiyadh;
-
-            // Option B: show banner every Sept 23
-            // const showSpecialDesign = day.date.slice(5) === "09-23";
+            const isSept23 = day.date.slice(5) === "09-23";
+            const showSpecialDesign = day.date === todayDate && isSept23;
 
             return (
               <SwiperSlide key={day.date}>
@@ -88,7 +75,6 @@ const ScheduleSlider = () => {
                     }}
                   >
                     <NationalDayCard src={nationalDayBanner} />
-                    {/* Or just: <img src={nationalDayBanner} alt="Saudi National Day" className="w-full max-w-4xl h-auto rounded-2xl shadow" /> */}
                   </div>
                 ) : lessonsForDay.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
