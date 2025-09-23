@@ -15,20 +15,12 @@ import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
 import NationalDayCard from "./NationalDayCard";
+import { todayDate } from "../../../utils/dateHelpers";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();
   const days = getSevenDaysBeforeAndAfter();
 
-  // Today in Riyadh (YYYY-MM-DD)
-  const todayDate = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Riyadh",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-
-  // Index of today
   const todayIndex = days.findIndex((d) => d.date === todayDate);
   const [activeIndex, setActiveIndex] = useState(todayIndex !== -1 ? todayIndex : 0);
 
