@@ -2,7 +2,7 @@ import { lazy } from "react";
 import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
 import Checkout from "../../features/packages/pages/Checkout";
 import LoginSiblings from "../../features/auth/pages/LoginSiblings";
-import AddSiblingsPage from "../../features/auth/pages/AddSiblingsPage";
+import AddSiblingsPage from "../../features/auth/pages/AddSibilingPage/AddSiblingsPage";
 import Board from "../../features/Board/Board";
 import PDFViewerPage from "../../features/PDFViewer/PDFViewerPage";
 import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
@@ -147,7 +147,7 @@ export const routes = [
         homeSupportBtn: true,
       },
       {
-        path: "add",
+        path: "addsiblings",
         element: AddSiblingsPage,
         public: true,
         layout: false,

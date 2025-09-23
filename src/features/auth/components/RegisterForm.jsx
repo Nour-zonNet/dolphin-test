@@ -9,7 +9,7 @@ import { useClasses } from "../../../hooks/useClasses";
 
 import "./style.css";
 const RegisterForm = ({ onSubmit, loading, error }) => {
-  const { items } = useClasses();
+  const { classes } = useClasses();
   const { t } = useTranslation();
   const {
     control,
@@ -99,7 +99,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   <option className="!text-xs" value="">
                     {t("auth.selectGrade")}
                   </option>
-                  {items?.map((cls) => (
+                  {classes?.map((cls) => (
                     <option key={cls.id} value={String(cls.id)}>
                       {cls.name}
                     </option>

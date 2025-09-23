@@ -23,7 +23,7 @@ const RegisterPage = () => {
     });
 
     if (res?.meta?.requestStatus === "fulfilled") {
-      navigate("/main-packages");
+      navigate("/auth/addsiblings");
       return;
     }
   };
