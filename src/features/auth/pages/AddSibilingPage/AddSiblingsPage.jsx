@@ -82,7 +82,6 @@ const AddSiblingsPage = () => {
             onChoice={handleSiblingsChoice}
           />
 
-          {/* Form (shown only if user has siblings and limit not reached) */}
           {hasSiblings === true && brothers?.length < 3 && (
             <SiblingForm
               fullName={fullName}
@@ -99,16 +98,13 @@ const AddSiblingsPage = () => {
             />
           )}
 
-          {/* Message when limit reached */}
           {hasSiblings === true && brothers?.length >= 3 && (
             <MaxLimitReached currentCount={brothers?.length} />
           )}
 
-          {/* Message when user has no siblings */}
           {hasSiblings === false && <NoSiblingsMessage />}
         </section>
 
-        {/* Brothers List */}
         {hasSiblings === true && (
           <BrothersList brothers={brothers} classes={classes} />
         )}
