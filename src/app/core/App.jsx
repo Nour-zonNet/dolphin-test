@@ -1,33 +1,23 @@
 import { useLanguageDirection } from "@/hooks/useLanguageDirection";
-// App Components
 import AppProviders from "./AppProviders";
 import AppRoutes from "./AppRoutes";
 import ChatwootInit from "../components/ChatwootInit"
 
-// Global Components
 import GlobalLoader from "@/components/feedback/GlobalLoader";
+import GlobalError from "@/components/feedback/GlobalError";
 import ModalManager from "@/components/feedback/modal/ModalManager";
-// import { useModal } from "@/components/feedback/modal/useModal";
 
 const App = () => {
-  // Initialize language direction
   useLanguageDirection();
 
-  // Modal hook for examples
-  // const {
-  //   openBuyPackageModal,
-  //   openDetailsModal,
-  //   openConfirmModal,
-  //   openChangeGroupModal,
-  //   openReactivateModal,
-  //   openExtendPackageModal,
-  // } = useModal();
+  
 
   return (
     <AppProviders>
       <div className="app-container">
         {/* Global Components */}
         <GlobalLoader />
+        <GlobalError />
         <ModalManager />
         <AppRoutes />
       </div>
