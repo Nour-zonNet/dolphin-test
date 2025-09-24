@@ -7,11 +7,10 @@ const withAuth = (WrappedComponent) => {
   return (props) => {
     const { token, user, shouldRedirectToLogin, loading } = useAuth();
 
-    // Avoid flicker: if token exists but user not yet loaded, show blocking loader
     if (token && !user) {
       return (
         <Overlay ariaLabel="Authenticating user">
-          <Spinner size={48} colorClass="border-orange-500" />
+          <Spinner colorClass="border-orange-500" />
         </Overlay>
       );
     }

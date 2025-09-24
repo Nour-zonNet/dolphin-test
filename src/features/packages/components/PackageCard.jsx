@@ -18,7 +18,7 @@ const PackageCard = React.memo(
   ({ item, color, image, status, daysRemaining }) => {
     const { t } = useTranslation();
     const { openWeeklyScheduleModal, openStatusModal } = useModal();
-    const { getSchedule } = usePackages();
+    const { fetchScheduleById } = usePackages();
     const schedules = useSelector((state) => state.packages.schedules);
     const { group_id, package_name, group_name, name } = item;
 
@@ -28,11 +28,12 @@ const PackageCard = React.memo(
     );
 
     const handleOpenSchedule = useCallback(async () => {
+      const showError = (title, message) => {
+        openStatusModal("ERROR", { title, message });
+      };
+
       if (status === "expired") {
-        openStatusModal("ERROR", {
-          title: "الجدول غير متاح",
-          message: "لا يمكن عرض الجدول للباقات المنتهية.",
-        });
+        showError("الجدول غير متاح", "لا يمكن عرض الجدول للباقات المنتهية.");
         return;
       }
 
@@ -49,26 +50,11 @@ const PackageCard = React.memo(
         return;
       }
 
-      try {
-        const { groupId, schedule } = await getSchedule(group_id).unwrap();
+      const { groupId, schedule } = await fetchScheduleById(group_id).unwrap();
 
-        if (!schedule || Object.keys(schedule).length === 0) {
-          openStatusModal("ERROR", {
-            title: "لا يوجد جدول متاح",
-            message: "لا يوجد جدول متاح لهذه الباقة في الوقت الحالي.",
-          });
-          return;
-        }
-
-        openWeeklyScheduleModal({
-          data: { groupId, packageName: package_name, schedule, image, color },
-        });
-      } catch (err) {
-        openStatusModal("ERROR", {
-          title: "الجدول غير متاح",
-          message: err?.message ?? "حدث خطأ أثناء محاولة جلب الجدول.",
-        });
-      }
+      openWeeklyScheduleModal({
+        data: { groupId, packageName: package_name, schedule, image, color },
+      });
     }, [
       status,
       existingSchedule,
@@ -78,7 +64,7 @@ const PackageCard = React.memo(
       openWeeklyScheduleModal,
       image,
       color,
-      getSchedule,
+      fetchScheduleById,
     ]);
 
     // Status configuration
@@ -149,7 +135,7 @@ const PackageCard = React.memo(
                   <button
                     type="button"
                     onClick={handleOpenSchedule}
-                    className="w-full space-x-1 text-navyteal text-xs xs:text-base flex items-center justify-center gap-1 max-w-60 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full px-4 py-3 font-medium transition-colors duration-300"
+                    className="w-full space-x-1 text-navyteal text-xs md:text-base flex items-center justify-center gap-1 max-w-60 bg-orangedeep hover:bg-btnClicked focus:bg-btnClicked cursor-pointer rounded-full px-4 py-3 font-medium transition-colors duration-300"
                     aria-label={t("packages.previewWeeklySchedule")}
                   >
                     <Calender className="w-4 h-4" />
@@ -159,7 +145,9 @@ const PackageCard = React.memo(
               </div>
             ) : (
               <div className="px-4  py-5 ">
-                <span className="text-[#ba7c28]  font-semibold">الباقة لم تبداء بعد</span>
+                <span className="text-[#ba7c28]  font-semibold">
+                  الباقة لم تبداء بعد
+                </span>
                 <div className="flex flex-row items-center   relative z-10">
                   <Calender className="w-4 h-4" />
 

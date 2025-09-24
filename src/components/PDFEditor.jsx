@@ -1,14 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { Document, Page } from "react-pdf";
 import { PDFDocument } from "pdf-lib";
-
-// استخدام worker من CDN لتجنب مشاكل Vite
-pdfjs.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js";
+import "../utils/pdfConfig"; // Import centralized PDF configuration
 
 export default function PDFEditor() {
   const [pdfBytes, setPdfBytes] = useState(null);
-  const [numPages, setNumPages] = useState(0);
+  const [setNumPages] = useState(0);
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [stack, setStack] = useState([]); // لحفظ كل رسم أو نص

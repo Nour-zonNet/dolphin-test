@@ -13,4 +13,3 @@ const Spinner = ({ size = 48, colorClass = "border-orangedeep" }) => {
 
 export default Spinner;
 
-

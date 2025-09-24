@@ -12,9 +12,8 @@ import { useSubscriptions } from "../hooks/useSubscriptions";
 import useGroups from "../../groups/hooks/useGroups";
 import ActionButton from "./ActionButton";
 import GroupInfo from "./GroupInfo";
-import InfoRow from "./InfoRow";
 import { useModal } from "@/components/feedback/modal/useModal";
-import { packageFactory } from "../../packages/factory/packageFactory";
+import { packageFactoryWithTitle } from "../../packages/factory/packageFactory";
 import {
   formatPackageStartDate,
   getRemainingDate,
@@ -89,23 +88,29 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
 
   // Status Badge
   // ضعها داخل نفس الملف مكان formatDate الحالية
-function formatDate(dateString) {
-  const d = new Date(dateString);
-  const tz = "Asia/Riyadh";
+  function formatDate(dateString) {
+    const d = new Date(dateString);
+    const tz = "Asia/Riyadh";
 
-  // أرقام إنجليزية لليوم والسنة
-  const day   = d.toLocaleDateString("en-US", { day: "numeric",  timeZone: tz });
-  const year  = d.toLocaleDateString("en-US", { year: "numeric", timeZone: tz });
+    // أرقام إنجليزية لليوم والسنة
+    const day = d.toLocaleDateString("en-US", { day: "numeric", timeZone: tz });
+    const year = d.toLocaleDateString("en-US", {
+      year: "numeric",
+      timeZone: tz,
+    });
 
-  // اسم الشهر بالعربي
-  let month = new Intl.DateTimeFormat("ar-EG", { month: "long", timeZone: tz }).format(d);
+    // اسم الشهر بالعربي
+    let month = new Intl.DateTimeFormat("ar-EG", {
+      month: "long",
+      timeZone: tz,
+    }).format(d);
 
-  // (اختياري) توحيد الهَمزة لتوافق المثال المطلوب
-  // لو تحب تكتب الشهور بدون همزات (اغسطس/اكتوبر/ابريل)، فعّل السطر التالي:
-  // month = month.replace("أغسطس", "اغسطس").replace("أكتوبر", "اكتوبر").replace("أبريل", "ابريل");
+    // (اختياري) توحيد الهَمزة لتوافق المثال المطلوب
+    // لو تحب تكتب الشهور بدون همزات (اغسطس/اكتوبر/ابريل)، فعّل السطر التالي:
+    // month = month.replace("أغسطس", "اغسطس").replace("أكتوبر", "اكتوبر").replace("أبريل", "ابريل");
 
-  return `${day} ${month} ${year}`;
-}
+    return `${day} ${month} ${year}`;
+  }
 
   const StatusBadge = useMemo(
     () => (
@@ -203,7 +208,7 @@ function formatDate(dateString) {
       }
     );
   };
-  const { image, bgColor } = packageFactory(item.package_id);
+  const { image, bgColor } = packageFactoryWithTitle(item.package_name);
 
   // Renew flow is currently not wired in the UI
   return (

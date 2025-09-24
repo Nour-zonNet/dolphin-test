@@ -57,7 +57,6 @@ const ToolSelector = ({
       if (openDropdown === toolName) {
         setOpenDropdown(null);
       } else {
-        // Check if dropdown would go off-screen
         const button = event?.target?.closest("button");
         if (button) {
           const rect = button.getBoundingClientRect();
@@ -93,10 +92,9 @@ const ToolSelector = ({
             }`}
             title={item.title}
           >
-            <span className="text-lg">{item.icon}</span>
+            <span className="text-lg">{React.createElement(item.icon)}</span>
           </button>
 
-          {/* Dropdown for drawing tools */}
           {isDrawingTool(item.tool) && openDropdown === item.tool && (
             <div
               ref={(el) => (dropdownRefs.current[item.tool] = el)}
@@ -167,7 +165,9 @@ const ToolSelector = ({
 
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">Font Size</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        Font Size
+                      </span>
                       <span className="text-sm font-semibold text-gray-800 bg-gray-100 px-3 py-1 rounded">
                         {fontSize}px
                       </span>

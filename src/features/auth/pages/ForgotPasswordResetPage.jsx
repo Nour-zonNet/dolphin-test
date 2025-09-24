@@ -29,25 +29,14 @@ const ForgotPasswordResetPage = () => {
       });
       return;
     }
-    try {
-      await resetPassword({
-        pinCode: password,
-      }).unwrap();
-      openStatusModal(MODAL_TYPES.SUCCESS, {
-        title: "تم التغيير",
-        message: "تم تغيير الرقم السري بنجاح.",
-        onClose: (window.location.href = "/schedule"),
-      });
-    } catch (error) {
-      const message =
-        typeof error === "string"
-          ? error
-          : error?.message || "تعذر تغيير الرقم السري. حاول مرة أخرى.";
-      openStatusModal(MODAL_TYPES.ERROR, {
-        title: "فشل العملية",
-        message,
-      });
-    }
+    await resetPassword({
+      pinCode: password,
+    }).unwrap();
+    openStatusModal(MODAL_TYPES.SUCCESS, {
+      title: "تم التغيير",
+      message: "تم تغيير الرقم السري بنجاح.",
+      onClose: () => (window.location.href = "/schedule"),
+    });
   };
 
   const handleBack = () =>

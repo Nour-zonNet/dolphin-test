@@ -85,7 +85,8 @@ const packagesSlice = createSlice({
       })
       .addCase(fetchMyPackages.fulfilled, (state, action) => {
         state.loading = false;
-        state.mine = action.payload;
+        state.mine = action.payload.packages;
+        state.telegram = action.payload.telegram;
       })
       .addCase(fetchMyPackages.rejected, (state, action) => {
         state.loading = false;

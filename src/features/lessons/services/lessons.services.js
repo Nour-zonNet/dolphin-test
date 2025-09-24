@@ -7,17 +7,18 @@ class LessonsRepository {
     const { data } = await api.get(ENDPOINTS.SCHEDULE_OF_ALLPACKAGES);
     return data;
   }
+  async getPackageLessons(packageId) {
+    const { data } = await api.get(ENDPOINTS.LESSONS_OF_PACKAGE + packageId);
+    return data;
+  }
 
   // Get single lesson
   async getById(lessonId) {
     const { data } = await api.get(`/lessons/${lessonId}`);
     return data;
   }
-  async getSessionLink(roomAndSessionUId) {
-    const { data } = await api.post(
-      ENDPOINTS.GET_SESSION_LINK,
-      roomAndSessionUId
-    );
+  async getSessionLink(sessionId) {
+    const { data } = await api.get(ENDPOINTS.GET_SESSION+sessionId);
     // console.log(data)
     return data;
   }

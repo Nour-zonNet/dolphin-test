@@ -14,7 +14,7 @@ const HomeSupportBtn = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [radius, setRadius] = useState(70);
   const [supportNumber, setSupportNumber] = useState("");
-  const [subscriptionStatus, setSubscriptionStatus] = useState("");
+  const [, setSubscriptionStatus] = useState("");
   const [supportNote, setSupportNote] = useState("");
   const [loadingSupport, setLoadingSupport] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -172,7 +172,7 @@ const HomeSupportBtn = ({ className }) => {
         className ?? "fixed bottom-18 md:bottom-24 lg:bottom-24 right-0 z-50"
       }
     >
-      <div className="relative w-18 h-18 mx-4 sm:mx-6">
+      <div className="relative w-18 h-18 md:mx-10 mx-6">
         {buttons.map((btn, i) => {
           const rad = (btn.angle * Math.PI) / 180;
           const x = Math.cos(rad) * radius;

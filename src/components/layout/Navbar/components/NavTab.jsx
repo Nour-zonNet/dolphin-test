@@ -8,7 +8,7 @@ const NavTab = ({ label, labelKey, value, active, onClick }) => {
     <button
       onClick={() => onClick(value)}
       className={`relative pb-1 transition-colors focus:outline-0 cursor-pointer
-        text-sm sm:text-sm md:text-2xl lg:text-2xl text-nowrap
+        text-xs sm:text-sm md:text-2xl lg:text-2xl text-nowrap
         ${active ? "text-orangedeep" : "text-graycustom hover:text-gray-700"}
       `}
     >

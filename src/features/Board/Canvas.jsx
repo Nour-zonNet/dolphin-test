@@ -12,8 +12,10 @@ const Canvas = ({
   onMouseUp,
   onTextDblClick,
   backgroundImage,
+  containerRef: externalContainerRef,
 }) => {
-  const containerRef = useRef(null);
+  const internalContainerRef = useRef(null);
+  const containerRef = externalContainerRef || internalContainerRef;
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [bgImageEl, setBgImageEl] = useState(null);
 
@@ -74,7 +76,7 @@ const Canvas = ({
       clearTimeout(resizeTimeout);
       resizeObserver.disconnect();
     };
-  }, [bgImageEl]);
+  }, [bgImageEl, containerRef]);
 
   // Load background image when provided
   useEffect(() => {

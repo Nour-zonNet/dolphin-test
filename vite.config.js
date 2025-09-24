@@ -7,6 +7,23 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    proxy: {
+      '/api/pdf-proxy': {
+        target: 'https://torage-learnatdolphin.b-cdn.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/pdf-proxy/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            // Add CORS headers
+            proxyReq.setHeader('Access-Control-Allow-Origin', '*');
+            proxyReq.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            proxyReq.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+          });
+        }
+      }
+    }
+  },
   build: {
     rollupOptions: {
       output: {

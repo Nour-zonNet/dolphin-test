@@ -18,7 +18,7 @@ export const useClasses = () => {
 
   return useMemo(
     () => ({
-      items,
+      classes:items,
       loading,
       error,
       getClasses: dispatchGetClasses,

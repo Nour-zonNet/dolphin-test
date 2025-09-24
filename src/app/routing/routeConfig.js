@@ -2,18 +2,21 @@ import { lazy } from "react";
 import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
 import Checkout from "../../features/packages/pages/Checkout";
 import LoginSiblings from "../../features/auth/pages/LoginSiblings";
-import AddSiblingsPage from "../../features/auth/pages/AddSiblingsPage";
+import AddSiblingsPage from "../../features/auth/pages/AddSibilingPage/AddSiblingsPage";
+import Board from "../../features/Board/Board";
+import PDFViewerPage from "../../features/PDFViewer/PDFViewerPage";
+import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
 // import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
-const LessonsSchedule = lazy(() => import("@/features/lessons"));
+const SchedulePage = lazy(() => import("@/features/lessons"));
 const Packages = lazy(() => import("@/features/packages"));
 const LessonContentPage = lazy(() =>
   import("@/features/lessons/pages/LessonContentPage")
 );
 const ManageSubscription = lazy(() => import("@/features/subscription"));
-const PackageContent = lazy(() =>
+const PackagesContent = lazy(() =>
   import("@/features/packages/pages/PackagesContent")
 );
 const LessonExercise = lazy(() =>
@@ -86,12 +89,24 @@ export const routes = [
     public: true,
     layout: false, // Auth pages don't need AppLayout
   },
-  // {
-  //   path: "/pdf",
-  //   // element: Board,
-  //   public: true,
-  //   layout: false, // Auth pages don't need AppLayout
-  // },
+  {
+    path: "/pdf",
+    element: Board,
+    public: true,
+    layout: false, // Auth pages don't need AppLayout
+  },
+  {
+    path: "/privacy-policy",
+    element: PrivacyPolicyPage,
+    public: true,
+    layout: false, // Auth pages don't need AppLayout
+  },
+  {
+    path: "/pdfviewer",
+    element: PDFViewerPage,
+    public: true,
+    layout: false, // Auth pages don't need AppLayout
+  },
   {
     path: "/auth",
 
@@ -132,7 +147,7 @@ export const routes = [
         homeSupportBtn: true,
       },
       {
-        path: "add",
+        path: "addsiblings",
         element: AddSiblingsPage,
         public: true,
         layout: false,
@@ -162,7 +177,7 @@ export const routes = [
   // Protected Routes (require layout)
   {
     path: "/schedule",
-    element: LessonsSchedule,
+    element: SchedulePage,
     protected: true,
     homeSupportBtn: true,
   },
@@ -193,8 +208,11 @@ export const routes = [
   },
   {
     path: "/packages-content",
-    element: PackageContent,
+    element: PackagesContent,
     protected: true,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
   },
 
   // Nested Schedule Routes
@@ -202,7 +220,7 @@ export const routes = [
     path: "/schedule",
     children: [
       {
-        path: "lessoncontent",
+        path: "lessoncontent/:id",
         element: LessonContentPage,
         protected: true,
         layout: false,
@@ -211,9 +229,11 @@ export const routes = [
     ],
   },
   {
-    path: "/show-lessons",
+    path: "/show-lessons/:packageId",
     element: ShowLessons,
     protected: true,
+    layout: false,
+    homeSupportBtn: true,
   },
   {
     path: "/profile",

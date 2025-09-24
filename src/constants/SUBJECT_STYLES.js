@@ -2,6 +2,7 @@
 import quranImg from "@/assets/packages/quran.svg";
 import english from "@/assets/packages/english.svg";
 import math from "@/assets/packages/math.svg";
+import ability from "@/assets/schedule/ability.svg";
 import arabic from "@/assets/packages/arabic.svg";
 
 import skratch from "@/assets/packages/skratch.svg";
@@ -29,6 +30,10 @@ export const subjectStyles = {
   "رياضيات": {
     image: math,
     bgColor: "#DFBE37", // blue
+  },
+    "قدرات": {
+    image: ability,
+    bgColor: "#14B8A6", // blue
   },
   // fallback
   default: {

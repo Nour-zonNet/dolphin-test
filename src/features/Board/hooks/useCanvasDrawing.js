@@ -12,6 +12,12 @@ export const useCanvasDrawing = (
   pointerScale = 1
 ) => {
   const isDrawing = useRef(false);
+  const currentLines = useRef(lines);
+  const currentShapes = useRef(shapes);
+  
+  // Update refs when props change
+  currentLines.current = lines;
+  currentShapes.current = shapes;
 
   const handleMouseDown = useCallback((e) => {
     if (tool === "text") {
@@ -34,7 +40,8 @@ export const useCanvasDrawing = (
 
       const newShapes = [...shapes, newShape];
       setShapes(newShapes);
-      saveToHistory(lines, [], newShapes);
+      currentShapes.current = newShapes;
+      // Don't save to history here - let the parent handle it
       isDrawing.current = true;
       return { type: 'shape', shape: newShape };
     }
@@ -55,9 +62,10 @@ export const useCanvasDrawing = (
 
     const newLines = [...lines, newLine];
     setLines(newLines);
-    saveToHistory(newLines, [], shapes);
+    currentLines.current = newLines;
+    // Don't save to history here - let the parent handle it
     return { type: 'line', line: newLine };
-  }, [tool, currentColor, strokeWidth, lines, shapes, setLines, setShapes, saveToHistory, pointerScale]);
+  }, [tool, currentColor, strokeWidth, lines, shapes, setLines, setShapes, pointerScale]);
 
   const handleMouseMove = useCallback((e) => {
     if (!isDrawing.current) return;
@@ -77,9 +85,10 @@ export const useCanvasDrawing = (
           py,
         ];
 
-        const updatedShapes = shapes.slice();
-        updatedShapes.splice(shapes.length - 1, 1, lastShape);
-        setShapes(updatedShapes);
+      const updatedShapes = shapes.slice();
+      updatedShapes.splice(shapes.length - 1, 1, lastShape);
+      setShapes(updatedShapes);
+      currentShapes.current = updatedShapes;
       }
       return;
     }
@@ -93,15 +102,18 @@ export const useCanvasDrawing = (
       const updatedLines = lines.slice();
       updatedLines.splice(lines.length - 1, 1, lastLine);
       setLines(updatedLines);
+      currentLines.current = updatedLines;
     }
   }, [isDrawing, tool, shapes, lines, setShapes, setLines, pointerScale]);
 
   const handleMouseUp = useCallback(() => {
+    // Save to history when drawing is complete
     if (isDrawing.current) {
-      saveToHistory(lines, [], shapes);
+      // Use the current state from refs, which should be the updated state
+      saveToHistory(currentLines.current, [], currentShapes.current);
     }
     isDrawing.current = false;
-  }, [isDrawing, lines, shapes, saveToHistory]);
+  }, [isDrawing, saveToHistory]);
 
   return {
     isDrawing,

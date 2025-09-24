@@ -18,8 +18,8 @@ const PlansFooter = ({
                 {selectedCount} باقة(ات) محددة
               </span> */}
         
-              <span className="hidden sm:block">•</span>
-              <span className="flex items-center gap-1 text-orange-600 font-bold">
+              {/* <span className="hidden sm:block">•</span> */}
+              {/* <span className="flex items-center gap-1 text-orange-600 font-bold">
                 الإجمالي: 
                 <FormatWithCurrency
                     amount={totalPrice} 
@@ -27,7 +27,7 @@ const PlansFooter = ({
                     symbolClass="w-4 h-4 md:w-5 md:h-5"
                     symbolFill="#ea580c"
                   />
-              </span>
+              </span> */}
             </div>
           ) : (
             "لم تقم باختيار أي باقة"
@@ -35,7 +35,7 @@ const PlansFooter = ({
         </div>
         <button
           onClick={onSubscribe}
-          className={`font-semibold flex flex-row items-center gap-2 flex-nowrap py-2 px-6 rounded-full transition-colors w-auto sm:w-auto text-nowrap ${
+          className={`font-semibold flex flex-row items-center gap-2 flex-nowrap py-2 px-6 rounded-full transition-colors w-auto sm:w-auto text-nowrap cursor-pointer ${
             disabled
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-btnClicked hover:bg-orangedeep text-white"
@@ -43,7 +43,7 @@ const PlansFooter = ({
           disabled={disabled}
         >
           <LeftArrowFilled className="w-5" />
-          اشترك الآن
+          جرب المنصة الان
           {selectedCount > 0 && (
             <span
               className="
