@@ -12,7 +12,7 @@ const GlobalLoader = () => {
   useEffect(() => {
     if (error) {
       openStatusModal(MODAL_TYPES.ERROR, {
-        title: "فشل العملية",
+        // title: "فشل العملية",
         message: error,
       });
     }

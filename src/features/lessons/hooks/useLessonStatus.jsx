@@ -60,9 +60,7 @@ export const useLessonStatus = (
       });
 
       return {
-        statusText: `الحصة يوم ${weekdayName} ${dayNum} ${monthName} - ${formatArabicTime(
-          item.start_time
-        )}`,
+        statusText: `الحصة يوم ${weekdayName} ${dayNum} ${monthName} `,
         statusColor: "text-[#ba7c28]",
         statusIcon: <SandGlass className="w-4" />,
       };

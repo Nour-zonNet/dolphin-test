@@ -4,23 +4,19 @@ import { AuthLayout } from "../components";
 import { PasswordForm } from "../components";
 import { useAuth } from "../hooks/useAuth";
 
-
 const PasswordPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, loading, isFullyAuthenticated } = useAuth();
   const { phoneNumber } = location.state || {};
 
-
   if (isFullyAuthenticated()) {
-    return <Navigate to="/schedule" replace />;
+    return <Navigate to="/auth/siblings" replace />;
   }
-
- 
 
   const handlePasswordSubmit = async (data) => {
     const res = await login({ phoneNumber, pinCode: data.password }).unwrap();
-    if (res?.payload?.success) navigate("/schedule");
+    if (res?.payload?.success) navigate("/auth/siblings");
   };
 
   const handleBack = () => {

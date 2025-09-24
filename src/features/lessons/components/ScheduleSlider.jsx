@@ -38,7 +38,7 @@ const ScheduleSlider = () => {
         dayDate={days[activeIndex].date}
       />
 
-      <div className="slider py-6">
+      <div className="slider py-6 pb-20">
         <Swiper
           key={todayIndex} // ensure starting at today
           modules={[Navigation, Pagination]}
