@@ -35,6 +35,7 @@ const AddBalanceModal = ({ isOpen, onClose, onSubmit }) => {
               <img
                 className="w-6 md:w-auto"
                 alt="Close"
+                 loading="lazy"
                 src="https://c.animaapp.com/mf2i8zbdeyVMjf/img/frame.svg"
               />
             </button>

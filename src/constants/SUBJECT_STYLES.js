@@ -2,22 +2,24 @@
 import quranImg from "@/assets/packages/quran.svg";
 import english from "@/assets/packages/english.svg";
 import math from "@/assets/packages/math.svg";
+import ability from "@/assets/schedule/ability.svg";
+import arabic from "@/assets/packages/arabic.svg";
 
 import skratch from "@/assets/packages/skratch.svg";
 export const subjectStyles = {
-  البرمجة: {
+  "البرمجة": {
     image: skratch,
     bgColor: "#D47C7C",
   },
   "لغة عربية": {
-    image: english,
-    bgColor: "#F59E0B", // amber
+    image: arabic,
+    bgColor: "#C51162", // amber
   },
   "لغة انجليزية": {
     image: english,
     bgColor: "#F59E0B", // amber
   },
-  القرأن: {
+  "القرأن": {
     image: quranImg,
     bgColor: "#2E7D32", // green
   },
@@ -25,9 +27,13 @@ export const subjectStyles = {
     image: quranImg,
     bgColor: "#2E7D32", // green
   },
-  رياضيات: {
+  "رياضيات": {
     image: math,
     bgColor: "#DFBE37", // blue
+  },
+    "قدرات": {
+    image: ability,
+    bgColor: "#14B8A6", // blue
   },
   // fallback
   default: {

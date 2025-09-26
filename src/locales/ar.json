@@ -108,14 +108,15 @@
     "monday": "الاثنين",
     "tuesday": "الثلاثاء",
     "wednesday": "الأربعاء",
-    "thursday": "الخميس"
+    "thursday": "الخميس",
+    "friday": "الجمعة"
   },
   "packages": {
     "healthPackage": "باقة الصحة العامة",
     "firstGroup": "المجموعة الاولى",
     "previewWeeklySchedule": "معاينة الجدول الأسبوعي",
     "weeklySchedule": "الجدول الأسبوعي",
-     "noLesson": "لا يوجد حصص لهذا الأسبوع"
+     "noLesson": "لا يوجد حصص  "
   },
   "mobileNavigation": {
     "home": "الرئيسية",

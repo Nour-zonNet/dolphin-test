@@ -7,6 +7,7 @@ const FormatWithCurrency = ({
     symbolClass = "",
     symbolFill = "#E89B32",
     fractionDigits = 0,
+    // locale = "ar-SA",
     locale = "en-US",
     useGrouping = true,
     }) => {

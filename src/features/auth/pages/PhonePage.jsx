@@ -1,55 +1,62 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Navigate } from "react-router-dom";
-import { AuthLayout } from "../components";
-import { LoginForm } from "../components";
+import { useNavigate, Navigate } from "react-router-dom";
+import { AuthLayout, LoginForm } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { useDispatch } from "react-redux";
 import { showModal } from "../../../store/modalSlice";
 import { MODAL_TYPES } from "../../../constants/MODAL_TYPES";
-import { Overlay, Spinner } from "@/components/feedback";
 
 const PhonePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { checkPhone, loading,  isFullyAuthenticated } = useAuth();
+  const { checkPhone, loading, isFullyAuthenticated } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  // If we have a token but no user yet, and we're still loading, show loading state
-
-  // If user is already logged in, redirect to schedule
+  // Already logged in → redirect
   if (isFullyAuthenticated()) {
     return <Navigate to="/schedule" replace />;
   }
 
   const handlePhoneSubmit = async () => {
-    const res = await dispatch(checkPhone({ phone_number: phoneNumber }));
+    try {
+      // ✅ call bound thunk directly (no extra dispatch)
+      const res = await checkPhone({ phone_number: phoneNumber });
 
-    if (res?.payload?.success) {
-      if (res?.payload?.data?.otp_sent) {
-        navigate("/auth/otp", { state: { phoneNumber } });
+      if (res?.payload?.success) {
+        if (res?.payload?.data?.otp_sent) {
+          navigate("/auth/register", { state: { phoneNumber } });
+        } else {
+          navigate("/auth/password", { state: { phoneNumber } });
+        }
       } else {
-        navigate("/auth/password", { state: { phoneNumber } });
+        dispatch(
+          showModal({
+            type: MODAL_TYPES.WARNING,
+            props: {
+              title: "هنالك خطأ",
+              message: res?.payload || res?.error?.message || "حدث خطأ غير متوقع",
+            },
+          })
+        );
       }
-    } else {
+    } catch (err) {
+      // in case you switch to .unwrap() later
       dispatch(
         showModal({
           type: MODAL_TYPES.WARNING,
           props: {
-            title: "هنالك خطاء ",
-            message: res.payload || res.error.message,
+            title: "هنالك خطأ",
+            message: err?.message || "حدث خطأ غير متوقع",
           },
         })
       );
     }
   };
 
-  const handleBack = () => {
-    navigate("/");
-  };
+  const handleBack = () => navigate("/");
 
   return (
-    <AuthLayout handleBack={handleBack} showBackButton={true}>
+    <AuthLayout handleBack={handleBack} showBackButton>
       <LoginForm
         onSubmit={handlePhoneSubmit}
         loading={loading}

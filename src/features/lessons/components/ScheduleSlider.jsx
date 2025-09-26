@@ -7,33 +7,33 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import notFoundImage from "@/assets/images/notFoundLessons.png";
-import { getNext7Days } from "../../../utils/dateHelpers";
+import nationalDayBanner from "@/assets/images/national-day.svg"; 
+import { getSevenDaysBeforeAndAfter } from "@/utils/dateHelpers";
 
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
+import NationalDayCard from "./NationalDayCard";
 
 const ScheduleSlider = () => {
   const { items, loading } = useLessons();
-  const days = getNext7Days();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const days = getSevenDaysBeforeAndAfter();
+
+  // Today in Riyadh (YYYY-MM-DD)
+  const todayDate = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Riyadh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+
+  // Index of today
+  const todayIndex = days.findIndex((d) => d.date === todayDate);
+  const [activeIndex, setActiveIndex] = useState(todayIndex !== -1 ? todayIndex : 0);
 
   const NAVBAR_HEIGHT = 64;
   const MOBILE_BAR_HEIGHT = 56;
-
-  const renderNoLessons = () => (
-    <div
-      className="flex justify-center items-center"
-      style={{ height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)` }}
-    >
-      <img
-        src={notFoundImage}
-        alt="No lessons found"
-        className="max-h-full w-auto object-contain mt-12"
-      />
-    </div>
-  );
 
   if (loading) return null;
 
@@ -46,21 +46,37 @@ const ScheduleSlider = () => {
 
       <div className="slider py-6">
         <Swiper
+          key={todayIndex}
           modules={[Navigation, Pagination]}
           spaceBetween={30}
           slidesPerView={1}
           navigation={{ nextEl: ".custom-next", prevEl: ".custom-prev" }}
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+          initialSlide={activeIndex}
         >
           {days.map((day) => {
-            const lessonsForDay = items.filter(
-              (item) =>
-                day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
-            );
+            const lessonsForDay = items.filter((item) => {
+              if (item.session_date) {
+                return item.session_date === day.date;
+              } else {
+                return day.dayEn.toLowerCase() === item.day_of_week.toLowerCase();
+              }
+            });
+            const isSept23 = day.date.slice(5) === "09-23";
+            const showSpecialDesign = day.date === todayDate && isSept23;
 
             return (
               <SwiperSlide key={day.date}>
-                {lessonsForDay.length > 0 ? (
+                {showSpecialDesign ? (
+                  <div
+                    className="flex items-center justify-center"
+                    style={{
+                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                    }}
+                  >
+                    <NationalDayCard src={nationalDayBanner} />
+                  </div>
+                ) : lessonsForDay.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
                     {lessonsForDay.map((lesson, i) => {
                       const { image, bgColor } = subjectFactory(lesson.subject);
@@ -70,13 +86,25 @@ const ScheduleSlider = () => {
                           item={lesson}
                           image={image}
                           color={bgColor}
-                           lessonDate={day.date}  
+                          lessonDate={day.date}
                         />
                       );
                     })}
                   </div>
                 ) : (
-                  renderNoLessons()
+                  <div
+                    className="flex justify-center items-center"
+                    style={{
+                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                    }}
+                  >
+                    <img
+                      src={notFoundImage}
+                      loading="lazy"
+                      alt="No lessons found"
+                      className="max-h-full w-auto object-contain mt-12"
+                    />
+                  </div>
                 )}
               </SwiperSlide>
             );

@@ -11,12 +11,12 @@ import {
   ConfirmModal,
   ChangeGroupModal,
   ReactivateModal,
+  WeeklyScheduleModal,
 } from "./modals";
 
 const ModalManager = () => {
   const { type, props } = useSelector((state) => state.modal);
   const dispatch = useDispatch();
-
   if (!type) return null;
 
   const handleClose = () => {
@@ -24,10 +24,28 @@ const ModalManager = () => {
     if (props && props.onCloseId) {
       const cb = callbackRegistry.get(props.onCloseId);
       if (cb) {
-        try { cb(); } finally { callbackRegistry.delete(props.onCloseId); }
+        try {
+          cb();
+        } finally {
+          callbackRegistry.delete(props.onCloseId);
+        }
       }
     }
     dispatch(closeModal());
+  };
+  const handleConfirm = () => {
+    // Execute registered onClose callback if provided via props
+    if (props && props.onConfirmId) {
+      const cb = callbackRegistry.get(props.onConfirmId);
+      if (cb) {
+        try {
+          cb();
+        } finally {
+          callbackRegistry.delete(props.onConfirmId);
+        }
+      }
+    }
+    // dispatch(closeModal());
   };
 
   // Helper function to execute callbacks from registry
@@ -45,23 +63,24 @@ const ModalManager = () => {
     case MODAL_TYPES.WARNING:
     case MODAL_TYPES.ERROR:
       ModalContent = (
-        <StatusModal type={type} {...props} onClose={handleClose} />
+        <StatusModal
+          type={type}
+          {...props}
+          onClose={handleClose}
+          onConfirm={handleConfirm}
+        />
       );
       break;
     case MODAL_TYPES.BUY_PACKAGE:
-      ModalContent = (
-        <BuyPackageModal {...props} onClose={handleClose} />
-      );
+      ModalContent = <BuyPackageModal {...props} onClose={handleClose} />;
       break;
     case MODAL_TYPES.DETAILS:
-      ModalContent = (
-        <DetailsModal {...props} onClose={handleClose} />
-      );
+      ModalContent = <DetailsModal {...props} onClose={handleClose} />;
       break;
     case MODAL_TYPES.CONFIRM:
       ModalContent = (
-        <ConfirmModal 
-          {...props} 
+        <ConfirmModal
+          {...props}
           onClose={handleClose}
           onConfirm={(data) => {
             if (props.callbackId) {
@@ -74,8 +93,8 @@ const ModalManager = () => {
       break;
     case MODAL_TYPES.CHANGE_GROUP:
       ModalContent = (
-        <ChangeGroupModal 
-          {...props} 
+        <ChangeGroupModal
+          {...props}
           onClose={handleClose}
           onConfirm={(groupId) => {
             if (props.callbackId) {
@@ -88,8 +107,8 @@ const ModalManager = () => {
       break;
     case MODAL_TYPES.REACTIVATE:
       ModalContent = (
-        <ReactivateModal 
-          {...props} 
+        <ReactivateModal
+          {...props}
           onClose={handleClose}
           onConfirm={(data) => {
             if (props.callbackId) {
@@ -102,12 +121,11 @@ const ModalManager = () => {
       break;
     case MODAL_TYPES.EXTEND_PACKAGE:
       ModalContent = (
-        <BuyPackageModal 
-          {...props} 
-          onClose={handleClose}
-          isExtendMode={true}
-        />
+        <BuyPackageModal {...props} onClose={handleClose} isExtendMode={true} />
       );
+      break;
+    case MODAL_TYPES.WEEKLY_SCHEDULE:
+      ModalContent = <WeeklyScheduleModal {...props} onClose={handleClose} />;
       break;
     default:
       return null;

@@ -8,12 +8,119 @@ import skratch from "@/assets/packages/skratch.svg";
 import special from "@/assets/packages/special.svg";
 import science from "@/assets/packages/science.svg";
 import arabic from "@/assets/packages/arabic.svg";
+import reading from "@/assets/packages/reading.svg";
+
+// Package styles based on title keywords
+const packageTitleStyles = {
+  // Quran packages
+  quran: {
+    keywords: ["قرآن", "quran", "تلاوة", "حفظ", "تجويد", "تعليم القرأن", "ركن المسلم"],
+    style: { bgColor: "#2E7D32", image: quran }
+  },
+  
+  // Tooth/Health packages
+  tooth: {
+    keywords: ["أسنان", "tooth", "صحة", "طبي", "صحة الأسنان", "طب الأسنان", "الصحة العامة"],
+    style: { bgColor: "#0077B6", image: tooth }
+  },
+  
+  // English packages
+  english: {
+    keywords: [
+      "إنجليزي", "english", "انجليزي", "لغة إنجليزية", "تأسيس اللغة الإنجليزية", 
+      "تاسيس انجليزي", "مهارات الفهم و القراءة بالانجليزية", "احترف الانجليزي",
+      "الانجليزي من الصفر", "مادة اللغة الانجليزية", "لغة إنجليزية"
+    ],
+    style: { bgColor: "#BCA7F5", image: english }
+  },
+  
+  // Math packages
+  math: {
+    keywords: [
+      "رياضيات", "math", "حساب", "جبر", "هندسة", "رياضة", "مادة الرياضيات",
+      "تاسيس الرياضيات", "دعم حصص الرياضيات", "الرياضيات"
+    ],
+    style: { bgColor: "#DFBE37", image: math }
+  },
+  
+  // Talent packages
+  talent: {
+    keywords: [
+      "موهبة", "talent", "إبداع", "فن", "رسم", "موسيقى", "التميز الدراسي",
+      "تأسيس اختبار موهبة", "تأسيس القدرات", "دعم حصص اللغتي", "حصص داعمة للقدرات"
+    ],
+    style: { bgColor: "#F5EAD7", image: talent }
+  },
+  
+  // Game packages
+  game: {
+    keywords: ["لعبة", "game", "ألعاب", "ترفيه", "تسلية", "الروضة", "تأهيل ما قبل المدرسة"],
+    style: { bgColor: "#D8D8EB", image: game }
+  },
+  
+  // Scratch packages
+  scratch: {
+    keywords: [
+      "سكراتش", "scratch", "برمجة", "برمجيات", "كمبيوتر", "مخترعي سكراتش",
+      "مغامرات مع سكراتش", "المهارات الرقمبة"
+    ],
+    style: { bgColor: "#D47C7C", image: skratch }
+  },
+  
+  // Special packages
+  special: {
+    keywords: [
+      "خاص", "special", "مميز", "متقدم", "احترافي", "المراجعة الدراسية",
+      "حصص داعمة لمادة العلوم", "تاسيس القراءة"
+    ],
+    style: { bgColor: "#CD6036", image: special }
+  },
+  
+  // Science packages
+  science: {
+    keywords: [
+      "علوم", "science", "فيزياء", "كيمياء", "أحياء", "تجارب", "مادة العلوم",
+      "مادة الفيزياء", "مادة الكيمياء", "مادة الاحياء", "حصص داعمة لمادة العلوم"
+    ],
+    style: { bgColor: "#F99E54", image: science }
+  },
+  
+  // Arabic packages
+  arabic: {
+    keywords: [
+      "عربي", "arabic", "لغة عربية", "نحو", "صرف", "بلاغة", "مادة اللغة العربية",
+      "لغتي", "لغتى", "دعم حصص اللغتي"
+    ],
+    style: { bgColor: "#C51162", image: arabic }
+  }
+};
+
+// Function to get package style based on title
+export const getPackageStyleByTitle = (packageTitle) => {
+  if (!packageTitle) {
+    return { image: reading, bgColor: "#144b6b" }; // default fallback
+  }
+  
+  const title = packageTitle.toLowerCase();
+  
+  for (const [, config] of Object.entries(packageTitleStyles)) {
+    const hasMatch = config.keywords.some(keyword => 
+      title.includes(keyword.toLowerCase())
+    );
+    
+    if (hasMatch) {
+      return config.style;
+    }
+  }
+  
+  return { image: reading, bgColor: "#11111" };
+};
+
 const groups = [
   {
     ids: [75, 154, 155, 156, 73, 157, 158, 102, 162, 163, 164, 159, 160, 161],
     style: { bgColor: "#2E7D32", image: quran },
   },
-
   {
     ids: [198, 123, 188, 189, 190, 191, 192, 193, 194, 195, 196],
     style: { bgColor: "#0077B6", image: tooth },
@@ -50,8 +157,8 @@ const groups = [
     style: { bgColor: "#CD6036", image: special },
   },
   {
-    ids: [197],
-    style: { bgColor: "#FF6F00", image: science },
+    ids: [197, 206],
+    style: { bgColor: "#F99E54", image: science },
   },
   {
     ids: [139, 140, 141, 142, 143, 144, 195, 196],

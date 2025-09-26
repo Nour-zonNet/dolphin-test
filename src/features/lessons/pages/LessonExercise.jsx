@@ -1,4 +1,3 @@
-import React from "react";
 
 const LessonExercise = () => {
   return (
@@ -9,6 +8,8 @@ const LessonExercise = () => {
           <img
             className="w-12 h-12 md:w-16 md:h-16"
             alt="Lesson icon"
+            loading="lazy"
+
             src="https://c.animaapp.com/mezm58la2qNPWy/img/---.svg"
           />
           <h1 className="font-bold text-xl md:text-2xl text-right font-cairo self-center">

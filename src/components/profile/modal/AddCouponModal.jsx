@@ -58,6 +58,7 @@ const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
             >
               <img
                 className="w-6 md:w-auto"
+                 loading="lazy"
                 alt="Close"
                 src="https://c.animaapp.com/mf2i8zbdeyVMjf/img/frame.svg"
               />

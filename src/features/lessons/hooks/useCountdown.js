@@ -21,15 +21,15 @@ export const useCountdown = (targetTime, lessonDate) => {
       const fiveMinutesBeforeMs = diffMs - (5 * 60 * 1000);
       const shouldAllowEntry = fiveMinutesBeforeMs <= 0;
       
-      setCanEnterLesson(prev => prev === shouldAllowEntry ? prev : shouldAllowEntry);
+      setCanEnterLesson(shouldAllowEntry);
 
       if (diffMs <= 0) {
-        setIsExpired(prev => prev ? prev : true);
+        setIsExpired(true);
         setTimeRemaining('');
         return;
       }
 
-      setIsExpired(prev => prev ? false : prev);
+      setIsExpired(false);
       
       const diffMins = Math.floor(diffMs / 1000 / 60);
       const hours = Math.floor(diffMins / 60);
@@ -49,11 +49,12 @@ export const useCountdown = (targetTime, lessonDate) => {
         result += `${seconds} ثانية`;
       }
 
-      setTimeRemaining(prev => prev === result ? prev : result);
+      setTimeRemaining(result);
     } catch (error) {
       console.error('Error calculating countdown:', error);
       setTimeRemaining('');
       setIsExpired(false);
+      setCanEnterLesson(false);
     }
   }, [targetTime, lessonDate]);
 
@@ -74,14 +75,6 @@ export const useCountdown = (targetTime, lessonDate) => {
     };
   }, [calculateTimeRemaining]);
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
 
   return { timeRemaining, isExpired, canEnterLesson };
 };

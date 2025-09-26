@@ -3,33 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/homeChild.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>تعلم مع دلفين</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>منصة الدلفين التعليمية</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap"
       rel="stylesheet"
     />
+    <!-- Google Tag Manager -->
     <script>
-      (function(d,t) {
-        var BASE_URL="https://chat.learnadolphin.com";
-        var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-        g.src=BASE_URL+"/packs/js/sdk.js";
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-WWT5PDN6");
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <script>
+      (function (d, t) {
+        var BASE_URL = "https://chat.learnadolphin.com";
+        var g = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+        g.src = BASE_URL + "/packs/js/sdk.js";
         g.defer = true;
         g.async = true;
-        s.parentNode.insertBefore(g,s);
-        g.onload=function(){
+        s.parentNode.insertBefore(g, s);
+        g.onload = function () {
           window.chatwootSDK.run({
-            websiteToken: 'xpqe76ifim8597gd5FQ2dRyk',
+            websiteToken: "xpqe76ifim8597gd5FQ2dRyk",
             baseUrl: BASE_URL,
-          })
-        }
-      })(document,"script");
+          });
+        };
+      })(document, "script");
     </script>
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-WWT5PDN6"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

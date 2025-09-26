@@ -1,12 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authRepository } from "../services/auth.services";
 import api from "@/services/api";
-import {
-  fetchAllPackages,
-  fetchMyPackages,
-} from "@/features/packages/store/packagesSlice";
-import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
-import { fetchSubscriptions } from "@/features/subscription/store/subscriptionSlice";
+
 // 🔹 Generic handlers
 const handlePending = (state) => {
   state.loading = true;
@@ -42,33 +37,22 @@ export const performLogout = createAsyncThunk(
       // ignore API errors on logout
     } finally {
       dispatch(logoutUser());
+      // ensure related slices are reset
+      // dispatch(clearProfile());
     }
   }
 );
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (credentials, { rejectWithValue, dispatch }) => {
+  async (credentials, { rejectWithValue }) => {
     try {
       const response = await authRepository.login(credentials);
 
-      // Persist token immediately so subsequent requests are authorized
       const token = response?.data?.data?.token || response?.data?.token;
       if (token) {
         localStorage.setItem("token", token);
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      }
-
-      // Bootstrap data after login
-      try {
-        await Promise.all([
-          dispatch(fetchAllPackages()),
-          dispatch(fetchMyPackages()),
-          dispatch(fetchLessons()),
-          dispatch(fetchSubscriptions()),
-        ]);
-      } catch {
-        // Ignore bootstrap errors here; individual slices handle their own errors
       }
 
       return response;
@@ -76,6 +60,45 @@ export const loginUser = createAsyncThunk(
       return rejectWithValue(
         error.response?.data?.error || "Login failed. Please try again."
       );
+    }
+  }
+);
+
+export const switchUserAccount = createAsyncThunk(
+  "auth/switchUserAccount",
+  async (studentId, { rejectWithValue }) => {
+    try {
+      const result = await authRepository.switchAccount(studentId); // { token, userData }
+
+      return result;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const updateUserImage = createAsyncThunk(
+  "auth/updateUserImage",
+  async (file, { rejectWithValue, dispatch }) => {
+    try {
+      const data = await authRepository.updateUserImage(file);
+      await dispatch(fetchCurrentUser());
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async (payload, { rejectWithValue, dispatch }) => {
+    try {
+      const result = await authRepository.updateUser(payload);
+      await dispatch(fetchCurrentUser());
+      return result;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
@@ -156,13 +179,42 @@ export const resetPassword = createAsyncThunk(
     }
   }
 );
+
+export const addBrother = createAsyncThunk(
+  "profile/addBrother",
+  async (formData) => {
+    const result = await authRepository.addBrother(formData);
+    return result;
+  }
+);
+
+export const disActiveAccount = createAsyncThunk(
+  "profile/disActiveAccount",
+  async (_, { rejectWithValue }) => {
+    try {
+      const result = await authRepository.disActiveAccount();
+      return result;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error.response.data.error || "Server error");
+    }
+  }
+);
+export const getBrothers = createAsyncThunk("profile/getBrothers", async () => {
+  return await authRepository.getBrothers();
+});
+
 const savedToken = localStorage.getItem("token");
+if (savedToken) {
+  api.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
+}
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
     token: savedToken || null,
+    brothers: [],
     loading: false,
     error: null,
   },
@@ -170,75 +222,55 @@ const authSlice = createSlice({
     setToken: (state, action) => {
       state.token = action.payload;
       localStorage.setItem("token", action.payload); // ✅ persist token
+      api.defaults.headers.common["Authorization"] = `Bearer ${action.payload}`;
     },
-    logoutUser: (state) => {
-      state.user = null;
-      state.token = null;
-      localStorage.removeItem("token"); // remove token
-
-      if (api?.defaults?.headers?.common?.Authorization) {
-        delete api.defaults.headers.common["Authorization"]; // clear auth header
-      }
+    logoutUser: () => {
+      window.location.href = "/login";
+    },
+    addBrother: (state, action) => {
+      state.brothers.push(action.payload);
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-      })
+      .addCase(loginUser.pending, handlePending)
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.data.userData; // البيانات كلها
         state.token = action.payload.data.token;
         localStorage.setItem("token", action.payload.data.token);
+        api.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${action.payload.data.token}`;
       })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
+      .addCase(loginUser.rejected, handleRejected)
 
-      .addCase(checkPhone.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(checkPhone.pending, handlePending)
       .addCase(checkPhone.fulfilled, (state) => {
         state.loading = false;
         state.phoneVerified = true;
       })
-      .addCase(checkPhone.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || action.error.message;
-      }) // ✅ register
-      .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(checkPhone.rejected, handleRejected)
+      // ✅ register
+      .addCase(registerUser.pending, handlePending)
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.userData;
         state.token = action.payload.token;
         localStorage.setItem("token", action.payload.token);
+        api.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${action.payload.token}`;
       })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || action.error.message;
-      })
-      .addCase(verifyOtp.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(registerUser.rejected, handleRejected)
+      .addCase(verifyOtp.pending, handlePending)
       .addCase(verifyOtp.fulfilled, (state) => {
         state.loading = false;
         state.phoneVerified = true;
       })
-      .addCase(verifyOtp.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || action.error.message;
-      }) // ✅ fetchCurrentUser
-      .addCase(fetchCurrentUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(verifyOtp.rejected, handleRejected)
+      // ✅ fetchCurrentUser
+      .addCase(fetchCurrentUser.pending, handlePending)
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload; // هنا بيرجع user من الـ API
@@ -249,7 +281,37 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null; // ممكن تمسح التوكن لو API رجع unauthorized
         localStorage.removeItem("token");
-      });
+        if (api?.defaults?.headers?.common?.Authorization) {
+          delete api.defaults.headers.common["Authorization"];
+        }
+      })
+      // switch account
+      .addCase(switchUserAccount.pending, handlePending)
+      .addCase(switchUserAccount.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.user = payload.userData;
+        state.brothers = payload.userData.brothers || [];
+        state.token = payload.token;
+        localStorage.setItem("token", payload.token);
+        api.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${payload.token}`;
+      })
+      .addCase(switchUserAccount.rejected, handleRejected);
+    // profile-related updates owned by auth (keep user in sync)
+    builder
+      .addCase(updateUserImage.pending, handlePending)
+      .addCase(updateUserImage.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log("Updated user image:", action.payload);
+      })
+      .addCase(updateUserImage.rejected, handleRejected)
+
+      .addCase(updateUser.pending, handlePending)
+      .addCase(updateUser.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(updateUser.rejected, handleRejected);
     // send OTP reset password
     builder
       .addCase(sendOtpResetPassword.pending, handlePending)
@@ -275,11 +337,35 @@ const authSlice = createSlice({
       .addCase(resetPassword.rejected, handleRejected);
 
     // perform logout
-    builder.addCase(performLogout.fulfilled, (state) => {
-      state.user = null;
-      state.token = null;
-      localStorage.removeItem("token");
-    });
+    builder
+      .addCase(performLogout.fulfilled, (state) => {
+        state.user = null;
+        state.token = null;
+        localStorage.removeItem("token");
+        if (api?.defaults?.headers?.common?.Authorization) {
+          delete api.defaults.headers.common["Authorization"];
+        }
+      })
+
+      .addCase(getBrothers.pending, handlePending)
+      .addCase(getBrothers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.brothers = action.payload;
+      })
+      .addCase(getBrothers.rejected, handleRejected)
+
+      .addCase(addBrother.pending, handlePending)
+      .addCase(addBrother.fulfilled, (state, action) => {
+        state.loading = false;
+        state.brothers.push(action.payload.brother);
+      })
+      .addCase(addBrother.rejected, handleRejected)
+
+      .addCase(disActiveAccount.pending, handlePending)
+      .addCase(disActiveAccount.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(disActiveAccount.rejected, handleRejected);
   },
 });
 

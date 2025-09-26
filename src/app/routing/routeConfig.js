@@ -3,16 +3,20 @@ import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
 import Checkout from "../../features/packages/pages/Checkout";
 import LoginSiblings from "../../features/auth/pages/LoginSiblings";
 import AddSiblingsPage from "../../features/auth/pages/AddSiblingsPage";
+import Board from "../../features/Board/Board";
+import PDFViewerPage from "../../features/PDFViewer/PDFViewerPage";
+import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
+// import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
-const LessonsSchedule = lazy(() => import("@/features/lessons"));
+const SchedulePage = lazy(() => import("@/features/lessons"));
 const Packages = lazy(() => import("@/features/packages"));
 const LessonContentPage = lazy(() =>
   import("@/features/lessons/pages/LessonContentPage")
 );
 const ManageSubscription = lazy(() => import("@/features/subscription"));
-const PackageContent = lazy(() =>
+const PackagesContent = lazy(() =>
   import("@/features/packages/pages/PackagesContent")
 );
 const LessonExercise = lazy(() =>
@@ -61,11 +65,11 @@ const ForgotPasswordPage = lazy(() =>
     default: module.ForgotPasswordPage,
   }))
 );
-const ProfilePage = lazy(() => 
-  import("@/features/profile/pages/ProfilePage"));
+const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
 
-const BalanceDetails = lazy(() => 
-  import("@/features/balance/pages/BalanceDetails"));
+const BalanceDetails = lazy(() =>
+  import("@/features/balance/pages/BalanceDetails")
+);
 
 // Route Configuration
 export const routes = [
@@ -74,7 +78,8 @@ export const routes = [
     path: "/",
     element: HomePage,
     public: true,
-    layout: false, // Home page doesn't need AppLayout
+    layout: false,
+    homeSupportBtn: true,
   },
 
   // Auth Routes
@@ -85,14 +90,69 @@ export const routes = [
     layout: false, // Auth pages don't need AppLayout
   },
   {
+    path: "/pdf",
+    element: Board,
+    public: true,
+    layout: false, // Auth pages don't need AppLayout
+  },
+  {
+    path: "/privacy-policy",
+    element: PrivacyPolicyPage,
+    public: true,
+    layout: false, // Auth pages don't need AppLayout
+  },
+  {
+    path: "/pdfviewer",
+    element: PDFViewerPage,
+    public: true,
+    layout: false, // Auth pages don't need AppLayout
+  },
+  {
     path: "/auth",
+
     children: [
-      { path: "phone", element: PhonePage, public: true, layout: false },
-      { path: "otp", element: OtpPage, public: true, layout: false },
-      { path: "register", element: RegisterPage, public: true, layout: false },
-      { path: "password", element: PasswordPage, public: true, layout: false },
-      { path: "siblings", element: LoginSiblings, public: true, layout: false },
-      { path: "add", element: AddSiblingsPage, public: true, layout: false },
+      {
+        path: "phone",
+        element: PhonePage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "otp",
+        element: OtpPage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "register",
+        element: RegisterPage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "password",
+        element: PasswordPage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "siblings",
+        element: LoginSiblings,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
+      {
+        path: "add",
+        element: AddSiblingsPage,
+        public: true,
+        layout: false,
+        homeSupportBtn: true,
+      },
       {
         path: "forgetpassword",
         element: ForgotPasswordPage,
@@ -117,13 +177,15 @@ export const routes = [
   // Protected Routes (require layout)
   {
     path: "/schedule",
-    element: LessonsSchedule,
+    element: SchedulePage,
     protected: true,
+    homeSupportBtn: true,
   },
   {
     path: "/subscriptions",
     element: Packages,
     protected: true,
+    homeSupportBtn: true,
   },
   {
     path: "/manage-subscription",
@@ -146,17 +208,19 @@ export const routes = [
   },
   {
     path: "/packages-content",
-    element: PackageContent,
+    element: PackagesContent,
     protected: true,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
   },
-
 
   // Nested Schedule Routes
   {
     path: "/schedule",
     children: [
       {
-        path: "lessoncontent",
+        path: "lessoncontent/:id",
         element: LessonContentPage,
         protected: true,
         layout: false,
@@ -165,15 +229,19 @@ export const routes = [
     ],
   },
   {
-    path: "/show-lessons",
+    path: "/show-lessons/:packageId",
     element: ShowLessons,
     protected: true,
+    layout: false,
+    homeSupportBtn: true,
   },
   {
     path: "/profile",
     element: ProfilePage,
     protected: true,
-    layout: false,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
   },
   {
     path: "/balance-details",
@@ -181,7 +249,6 @@ export const routes = [
     protected: true,
     layout: false,
   },
-
 ];
 
 // Helper function to check if route is public

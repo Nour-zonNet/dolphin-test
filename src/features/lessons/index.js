@@ -1,1 +1,1 @@
-export { default } from "./pages/LessonsPage";
+export { default } from "./pages/SchedulePage";

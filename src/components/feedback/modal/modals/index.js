@@ -4,3 +4,4 @@ export { default as DetailsModal } from './DetailsModal';
 export { default as ConfirmModal } from './ConfirmModal';
 export { default as ChangeGroupModal } from './ChangeGroupModal';
 export { default as ReactivateModal } from './ReactivateModal';
+export { default as WeeklyScheduleModal } from './WeeklyScheduleModal';

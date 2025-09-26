@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
   loginUser,
-  logoutUser,
+  performLogout,
   fetchCurrentUser,
   checkPhone,
   registerUser,
@@ -9,33 +9,51 @@ import {
   sendOtpResetPassword,
   verifyOtpResetPassword,
   resetPassword,
+  updateUser,
+  updateUserImage,
+  switchUserAccount,
+  addBrother,
+  getBrothers,
+  disActiveAccount,
 } from "../store/authSlice";
-import { useState, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 export const useAuth = () => {
-  const { user, token, loading, error } = useSelector((state) => state.auth);
+  const { user, token, loading, error, brothers } = useSelector(
+    (state) => state.auth
+  );
   const dispatch = useDispatch();
-  // const [isAuthenticated, setIsAuthenticated] = useState(
-  //   Boolean(token && user) // just in dev mode not production
-  // );
+
   const isAuthenticated = Boolean(token && user);
 
   // Helpers
   const isAuthLoading = useCallback(
-    () => token && !user && loading,
+    () => Boolean(token && !user && loading),
     [token, user, loading]
   );
 
   const isFullyAuthenticated = useCallback(
-    () => token && user && !loading,
+    () => Boolean(token && user && !loading),
     [token, user, loading]
   );
 
+  const dispatchLogin = useCallback(
+    (credentials) => dispatch(loginUser(credentials)),
+    [dispatch]
+  );
+  const dispatchRegisterUser = useCallback(
+    (newUser) => dispatch(registerUser(newUser)),
+    [dispatch]
+  );
+  registerUser;
   const shouldRedirectToLogin = useCallback(
-    () => !loading && (!token || !user),
+    () => Boolean(!loading && (!token || !user)),
     [token, user, loading]
   );
-
+  const dispatchCheckPhone = useCallback(
+    (bro) => dispatch(checkPhone(bro)),
+    [dispatch]
+  );
   // Dispatch wrappers
   const dispatchSendOtpResetPassword = useCallback(
     (credentials) => dispatch(sendOtpResetPassword(credentials)),
@@ -46,32 +64,70 @@ export const useAuth = () => {
     (credentials) => dispatch(verifyOtpResetPassword(credentials)),
     [dispatch]
   );
-    const dispatchResetPassword = useCallback(
+  const dispatchResetPassword = useCallback(
     (credentials) => dispatch(resetPassword(credentials)),
     [dispatch]
   );
+  const dispatchUpdateUser = useCallback(
+    (credentials) => dispatch(updateUser(credentials)),
+    [dispatch]
+  );
+  const dispatchUpdateUserImage = useCallback(
+    (image) => dispatch(updateUserImage(image)),
+    [dispatch]
+  );
+  const dispatchSwitchUserAccount = useCallback(
+    (bro) => dispatch(switchUserAccount(bro)),
+    [dispatch]
+  );
 
-  // Memoized return object (prevents re-renders in components using this hook)
+  const dispatchGetBrothers = useCallback(
+    (bro) => dispatch(getBrothers(bro)),
+    [dispatch]
+  );
+
+  const dispatchLogout = useCallback(
+    (bro) => dispatch(performLogout(bro)),
+    [dispatch]
+  );
+
+  const dispatchAddBrother = useCallback(
+    (bro) => dispatch(addBrother(bro)),
+    [dispatch]
+  );
+  const dispatchDisActiveAccount = useCallback(
+    (bro) => dispatch(disActiveAccount(bro)),
+    [dispatch]
+  );
+  switchUserAccount;
+  updateUser;
   return useMemo(
     () => ({
       user,
       token,
       isAuthenticated,
-      // setIsAuthenticated, // just in dev mode not production
       loading,
       error,
       isAuthLoading,
       isFullyAuthenticated,
       shouldRedirectToLogin,
       loginUser,
-      checkPhone, // { phone_number : "**********"  }
-      registerUser,
+      checkPhone: dispatchCheckPhone,
+      registerUser: dispatchRegisterUser,
       verifyOtp,
-      logout: logoutUser,
+      brothers,
+      login: dispatchLogin,
+      logout: dispatchLogout,
       refreshUser: fetchCurrentUser,
       sendOtpResetPassword: dispatchSendOtpResetPassword,
       verifyOtpResetPassword: dispatchVerifyOtpResetPassword,
       resetPassword: dispatchResetPassword,
+      updateUser: dispatchUpdateUser,
+      updateUserImage: dispatchUpdateUserImage,
+      switchUserAccount: dispatchSwitchUserAccount,
+      addBrother: dispatchAddBrother,
+      getBrothers: dispatchGetBrothers,
+      disActiveAccount: dispatchDisActiveAccount,
     }),
     [
       user,
@@ -82,9 +138,20 @@ export const useAuth = () => {
       isAuthLoading,
       isFullyAuthenticated,
       shouldRedirectToLogin,
+      dispatchCheckPhone,
+      dispatchRegisterUser,
+      brothers,
+      dispatchLogin,
+      dispatchLogout,
       dispatchSendOtpResetPassword,
       dispatchVerifyOtpResetPassword,
       dispatchResetPassword,
+      dispatchUpdateUser,
+      dispatchUpdateUserImage,
+      dispatchSwitchUserAccount,
+      dispatchAddBrother,
+      dispatchGetBrothers,
+      dispatchDisActiveAccount,
     ]
   );
 };

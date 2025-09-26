@@ -21,17 +21,29 @@ export const Checkout = () => {
   }, [selectedPackages]);
 
   const handleSubmitTrial = useCallback(async () => {
-    await createTrialSubscription(
-      selectedPackages.map((pkg) => ({ package_id: pkg.id, start_date: null }))
-    );
+    try {
+      await createTrialSubscription(
+        selectedPackages.map((pkg) => ({
+          package_id: pkg.id,
+          start_date: null,
+      }))
+      );
 
-    // window.location.href = "/schedule";
+      openStatusModal(MODAL_TYPES.SUCCESS, {
+        title: "تم بدء الفترة التجريبية",
+        message: "تم تفعيل الفترة التجريبية للباقات المختارة.",
+        onClose: () => (window.location.href = "/schedule"),
+      });
+    } catch (error) {
+      console.error("Error creating trial subscription:", error);
 
-    openStatusModal(MODAL_TYPES.SUCCESS, {
-      title: "تم بدء الفترة التجريبية",
-      message: "تم تفعيل الفترة التجريبية للباقات المختارة.",
-      onClose: () => (window.location.href = "/schedule"),
-    });
+
+
+      openStatusModal(MODAL_TYPES.ERROR, {
+        title: "حدث خطأ",
+        message: "لم نتمكن من تفعيل الفترة التجريبية، حاول مرة أخرى لاحقًا.",
+      });
+    }
   }, [createTrialSubscription, openStatusModal, selectedPackages]);
 
   const handlePay = useCallback(() => {
@@ -203,10 +215,10 @@ const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
         </div>
       </div>
       <div className="flex  gap-2">
-        <p className="font-cairo font-semibold text-normalblue  text-md flex">
+        {/* <p className="font-cairo font-semibold text-normalblue  text-md flex">
           <span className="ml-2"> سعر الباقة: </span>{" "}
           <span className="text-md">{price}</span>
-        </p>
+        </p> */}
       </div>
     </div>
     <div className="w-full lg:w-auto">

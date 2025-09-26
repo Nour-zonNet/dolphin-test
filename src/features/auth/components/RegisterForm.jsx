@@ -5,11 +5,11 @@ import { Lock } from "../../../utils/icons";
 import OTPInput from "../../../components/ui/InputOtp";
 import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
-import { useClasses } from "@/features/profile/hooks/useClasses";
+import { useClasses } from "../../../hooks/useClasses";
 
 import "./style.css";
 const RegisterForm = ({ onSubmit, loading, error }) => {
-  const { classes } = useClasses();
+  const { items } = useClasses();
   const { t } = useTranslation();
   const {
     control,
@@ -99,7 +99,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   <option className="!text-xs" value="">
                     {t("auth.selectGrade")}
                   </option>
-                  {classes?.map((cls) => (
+                  {items?.map((cls) => (
                     <option key={cls.id} value={String(cls.id)}>
                       {cls.name}
                     </option>
@@ -199,7 +199,16 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               )}
             />
           </div>
-
+    {error ? (
+              <p className="text-red-500 text-sm text-center mt-2">
+                {typeof error === "string"
+                  ? error
+                  : error?.message ||
+                    (typeof error === "object"
+                      ? JSON.stringify(error)
+                      : String(error))}
+              </p>
+            ) : null}
           {/* زر التسجيل */}
           <div className="flex items-center justify-center ">
             <button
@@ -211,16 +220,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
               {loading ? t("auth.registering") : t("auth.completeRegistration")}
             </button>
 
-            {error ? (
-              <p className="text-red-500 text-sm text-center mt-2">
-                {typeof error === "string"
-                  ? error
-                  : error?.message ||
-                    (typeof error === "object"
-                      ? JSON.stringify(error)
-                      : String(error))}
-              </p>
-            ) : null}
+        
           </div>
         </form>
       </div>

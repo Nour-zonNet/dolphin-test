@@ -28,7 +28,7 @@ const LoginForm = ({ onSubmit, loading,  setPhoneNumber }) => {
   const isPhoneValid = mobile && validatePhone(mobile, countryCode);
 
   return (
-    <div className="flex  justify-center lg:justify-normal items-center flex-col lg:flex-row mx-auto  mt-15 xl:mr-40">
+    <div className="flex  justify-center lg:justify-normal items-center flex-col lg:flex-row mx-auto  mt-15 xl:mr-20">
       {/* Left side image + title (mobile view) */}
       <div className="flex items-center justify-center md:justify-center flex-none gap-0 ml-15 lg:ml-0  px-10 sm:px-14 md:px-12 ">
         <img

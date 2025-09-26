@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { subscriptionRepository } from "../services/subscription.services";
 
 // ===== Helper for error extraction =====
-const handleError = async (error, thunkAPI) => {
+ const handleError = async (error, thunkAPI) => {
   if (error.response && error.response.data) {
     return thunkAPI.rejectWithValue(
       error.response.data.error || "Server error"
@@ -11,7 +11,7 @@ const handleError = async (error, thunkAPI) => {
   return thunkAPI.rejectWithValue(error.message || "Unknown error");
 };
 
-// Thunks
+// =================== Thunks ===================
 export const fetchSubscriptions = createAsyncThunk(
   "subscriptions/fetch",
   async (_, thunkAPI) => {
@@ -35,6 +35,7 @@ export const cancelSubscription = createAsyncThunk(
     }
   }
 );
+
 export const reactivateSubscription = createAsyncThunk(
   "subscriptions/reactivate",
   async (subscriptionId, thunkAPI) => {
@@ -76,10 +77,18 @@ export const changeGroupSubscription = createAsyncThunk(
   async ({ id, groupId }, thunkAPI) => {
     try {
       const res = await subscriptionRepository.changeGroup(id, groupId);
-      return res.data; // ← Return the nested data, not the whole response
+      return res.data;
     } catch (err) {
       return handleError(err, thunkAPI);
     }
+  }
+);
+
+export const fetchGroupsByPackageId = createAsyncThunk(
+  "groups/fetchByPackageId",
+  async (packageId) => {
+    const res = await subscriptionRepository.getByGroupsPackageId(packageId);
+    return { packageId, groups: res.data };
   }
 );
 export const createTrialSubscription = createAsyncThunk(
@@ -87,25 +96,50 @@ export const createTrialSubscription = createAsyncThunk(
   async (ids, thunkAPI) => {
     try {
       const res = await subscriptionRepository.createTrialSubscription(ids);
-      return res.data; // ← Return the nested data, not the whole response
+      return res.data;
     } catch (err) {
       return handleError(err, thunkAPI);
     }
   }
 );
 
-// Slice
+// =================== Slice ===================
 const subscriptionSlice = createSlice({
   name: "subscriptions",
   initialState: {
     items: [],
-    groups: [],
+    groups: {},
     loading: false,
     error: null,
   },
   reducers: {
     clearSubscriptionError: (state) => {
       state.error = null;
+    },
+    addTrialSubscriptions: (state, action) => {
+      const newSubscriptions = action.payload;
+
+      if (Array.isArray(newSubscriptions)) {
+        state.items = [...state.items, ...newSubscriptions];
+      } else if (newSubscriptions?.id) {
+        state.items = [...state.items, newSubscriptions];
+      }
+    },
+    cancelSubscriptionSuccess: (state, action) => {
+      const updated = action.payload ?? null;
+      if (updated?.id) {
+        state.items = state.items.map((s) =>
+          s.id === updated.id ? { ...s, status: "cancelled" } : s
+        );
+      }
+    },
+    updateGroupInSubscription: (state, action) => {
+      const updatedSubscription = action.payload;
+      if (updatedSubscription && updatedSubscription.id) {
+        state.items = state.items.map((s) =>
+          s.id === updatedSubscription.id ? { ...s, ...updatedSubscription } : s
+        );
+      }
     },
   },
   extraReducers: (builder) => {
@@ -131,21 +165,15 @@ const subscriptionSlice = createSlice({
       // ===== Cancel =====
       .addCase(cancelSubscription.pending, handlePending)
       .addCase(cancelSubscription.fulfilled, (state, action) => {
-        // console.log("cancelSubscription.fulfilled", action);
         state.loading = false;
-
-        const updated = action?.payload ?? null;
-        if (updated?.id) {
-          state.items = state.items.map((s) =>
-            s.id === updated.id ? { ...s, status: "cancelled" } : s
-          );
-        }
+        subscriptionSlice.caseReducers.cancelSubscriptionSuccess(state, action);
       })
+      .addCase(cancelSubscription.rejected, handleRejected)
+
+      // ===== Reactivate =====
       .addCase(reactivateSubscription.pending, handlePending)
       .addCase(reactivateSubscription.fulfilled, (state, action) => {
-        // console.log("reactivateSubscription.fulfilled", action);
         state.loading = false;
-
         const updated = action?.payload ?? null;
         if (updated?.id) {
           state.items = state.items.map((s) =>
@@ -159,8 +187,8 @@ const subscriptionSlice = createSlice({
       .addCase(renewSubscription.pending, handlePending)
       .addCase(renewSubscription.fulfilled, (state, action) => {
         state.loading = false;
-        const updated = action && action.payload ? action.payload : null;
-        if (updated && updated.id) {
+        const updated = action?.payload ?? null;
+        if (updated?.id) {
           state.items = state.items.map((s) =>
             s.id === updated.id ? updated : s
           );
@@ -172,31 +200,45 @@ const subscriptionSlice = createSlice({
       .addCase(changeGroupSubscription.pending, handlePending)
       .addCase(changeGroupSubscription.fulfilled, (state, action) => {
         state.loading = false;
-
-        // Access the nested data
-        const updatedSubscription = action.payload;
-
-        if (updatedSubscription && updatedSubscription.id) {
-          state.items = state.items.map((s) =>
-            s.id === updatedSubscription.id
-              ? { ...s, ...updatedSubscription }
-              : s
-          );
-        } else {
-          // console.warn("No valid subscription data in payload");
-        }
+        subscriptionSlice.caseReducers.updateGroupInSubscription(state, action);
       })
       .addCase(changeGroupSubscription.rejected, handleRejected)
 
-      // ===== Get Groups =====
+      // ===== GET Groups =====
       .addCase(getGroupsByPackageId.pending, handlePending)
       .addCase(getGroupsByPackageId.fulfilled, (state, action) => {
         state.loading = false;
         state.groups = action.payload;
       })
-      .addCase(getGroupsByPackageId.rejected, handleRejected);
+      .addCase(getGroupsByPackageId.rejected, handleRejected)
+
+      // =====  Create Trial =====
+      .addCase(createTrialSubscription.pending, handlePending)
+      .addCase(createTrialSubscription.fulfilled, (state, action) => {
+        state.loading = false;
+        subscriptionSlice.caseReducers.addTrialSubscriptions(state, action);
+      })
+      .addCase(createTrialSubscription.rejected, handleRejected)
+      .addCase(fetchGroupsByPackageId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(fetchGroupsByPackageId.fulfilled, (state, action) => {
+        state.loading = false;
+        const { packageId, groups } = action.payload;
+        state.groups[packageId] = groups; // ✅ works now
+      })
+      .addCase(fetchGroupsByPackageId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 
-export const { clearSubscriptionError } = subscriptionSlice.actions;
+export const {
+  clearSubscriptionError,
+  updateGroupInSubscription,
+  addTrialSubscriptions,
+} = subscriptionSlice.actions;
 export default subscriptionSlice.reducer;
