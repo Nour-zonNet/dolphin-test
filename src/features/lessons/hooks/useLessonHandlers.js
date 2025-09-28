@@ -38,13 +38,7 @@ export const useLessonHandlers = (
       const newWindow = window.open(sessionUrl, features);
 
       if (!newWindow) {
-        openStatusModal(MODAL_TYPES.ERROR, {
-          title: "لم يتم فتح الحصة",
-          message:
-            "المتصفح منع فتح نافذة جديدة. اضغط موافق لفتح الحصة في نفس النافذة.",
-          onConfirm: () => (window.location.href = sessionUrl),
-          onClose: () => {},
-        });
+        window.location.href = sessionUrl;
       }
     } catch (error) {
       openStatusModal(MODAL_TYPES.ERROR, {
