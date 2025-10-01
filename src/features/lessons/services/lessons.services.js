@@ -18,11 +18,17 @@ class LessonsRepository {
     return data;
   }
   async getSessionLink(sessionId) {
-    const { data } = await api.get(ENDPOINTS.GET_SESSION+sessionId);
-    // console.log(data)
+    const { data } = await api.get(ENDPOINTS.GET_SESSION + sessionId);
     return data;
   }
 
+  // Create new lesson
+  async getContentsBySessionId(sessionId) {
+    const {data} = await api.get(
+      ENDPOINTS.GET_CONTENTS_BY_SESSION_ID + sessionId
+    );
+    return data;
+  }
   // Create new lesson
   async create(lessonData) {
     const { data } = await api.post("/lessons", lessonData);

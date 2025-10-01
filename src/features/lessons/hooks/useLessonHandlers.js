@@ -58,23 +58,10 @@ export const useLessonHandlers = (
   //   });
   // }, [navigate, item]);
   const handleOpenContent = useCallback(() => {
-    if (!item.lessons?.length) return;
+    if (!item.has_content) return;
 
-    // فلترة العناصر اللي ليها date
-    const validLessons = item.lessons.filter((lesson) => lesson && lesson.date);
-
-    if (!validLessons.length) return;
-
-    // نرتب الدروس حسب التاريخ تنازليًا
-    const sortedLessons = [...validLessons].sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
-    );
-
-    const latestLesson = sortedLessons[0];
-
-    navigate("/schedule/lessoncontent/" + latestLesson.id, {
-      state: { lesson: item, lessonId: item?.id },
-      replace: false,
+    navigate("/schedule/lessoncontent/" + item.id, {
+      state: { session: item, lessonId: item?.id },
     });
   }, [navigate, item]);
 

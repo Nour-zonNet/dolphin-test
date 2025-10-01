@@ -6,6 +6,7 @@ import AddSiblingsPage from "../../features/auth/pages/AddSibilingPage/AddSiblin
 import Board from "../../features/Board/Board";
 import PDFViewerPage from "../../features/PDFViewer/PDFViewerPage";
 import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
+import SessionPage from "../../features/lessons/pages/SessionPage";
 // import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
@@ -221,8 +222,14 @@ export const routes = [
     children: [
       {
         path: "lessoncontent/:id",
+        element: SessionPage,
+        protected: false,
+        layout: false,
+      },
+      {
+        path: "lessoncontent",
         element: LessonContentPage,
-        protected: true,
+        protected: false,
         layout: false,
       },
       { path: "exercise", element: LessonExercise, protected: true },

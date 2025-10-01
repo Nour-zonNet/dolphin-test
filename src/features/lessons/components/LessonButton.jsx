@@ -44,7 +44,7 @@ export const LessonButton = ({
             loading="lazy"
             src={delay}
             alt="delayed"
-            className="w-20 "
+            className="w-20"
           />
         </div>
         {/* <button

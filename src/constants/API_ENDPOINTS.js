@@ -26,4 +26,5 @@ export const ENDPOINTS = {
   DIS_ACTIVE_ACCOUNT: "/student/delete/account",
   CLASSES: "/student/classes",
   LESSONS_OF_PACKAGE: "/student/lessons/package/",
+  GET_CONTENTS_BY_SESSION_ID: "/student/contents/",
 };

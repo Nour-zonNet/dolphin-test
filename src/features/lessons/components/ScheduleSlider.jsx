@@ -50,12 +50,11 @@ const ScheduleSlider = () => {
         >
           {days.map((day) => {
             const lessonsForDay = items.filter((item) => {
-              if (item.session_date) {
-                return item.session_date === day.date;
-              } else {
-                return (
-                  day.dayEn.toLowerCase() === item.day_of_week.toLowerCase()
-                );
+              if (item.date) {
+                const itemDate = new Date(item.date)
+                  .toISOString()
+                  .split("T")[0];
+                return itemDate === day.date;
               }
             });
 

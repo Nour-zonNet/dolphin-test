@@ -56,7 +56,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
     );
 
     if (lessonDay < today) return LESSON_STATUS.ENDED;
-    if (item.delay) return LESSON_STATUS.DELAYED;
+    if (item.delay && item.status === "postpand") return LESSON_STATUS.DELAYED;
     if (now >= start && now <= end) return LESSON_STATUS.LIVE;
     if (now > end) return LESSON_STATUS.ENDED;
 
@@ -124,7 +124,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
             canEnterNow={canEnterNow}
             onEnterLesson={handleEnterLesson}
             onOpenContent={handleOpenContent}
-            lessons={item.lessons}
+            lessons={item.has_content}
           />
         </div>
       </div>

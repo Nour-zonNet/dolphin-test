@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { subscriptionRepository } from "../services/subscription.services";
 
 // ===== Helper for error extraction =====
- const handleError = async (error, thunkAPI) => {
+const handleError = async (error, thunkAPI) => {
   if (error.response && error.response.data) {
     return thunkAPI.rejectWithValue(
       error.response.data.error || "Server error"
@@ -86,11 +86,16 @@ export const changeGroupSubscription = createAsyncThunk(
 
 export const fetchGroupsByPackageId = createAsyncThunk(
   "groups/fetchByPackageId",
-  async (packageId) => {
-    const res = await subscriptionRepository.getByGroupsPackageId(packageId);
-    return { packageId, groups: res.data };
+  async (packageId, thunkAPI) => {
+    try {
+      const res = await subscriptionRepository.getByGroupsPackageId(packageId);
+      return { packageId, groups: res.data };
+    } catch (err) {
+      return handleError(err, thunkAPI);
+    }
   }
 );
+
 export const createTrialSubscription = createAsyncThunk(
   "subscriptions/createTrial",
   async (ids, thunkAPI) => {
@@ -210,7 +215,11 @@ const subscriptionSlice = createSlice({
         state.loading = false;
         state.groups = action.payload;
       })
-      .addCase(getGroupsByPackageId.rejected, handleRejected)
+      .addCase(getGroupsByPackageId.rejected, (state, action) => {
+        state.loading = false;
+        console.log(action);
+        state.error = action.error.error || action.error.message;
+      })
 
       // =====  Create Trial =====
       .addCase(createTrialSubscription.pending, handlePending)
