@@ -57,7 +57,7 @@ const SessionPage = () => {
  
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen 0">
       <Header onBack={"/schedule"} title={displayTitle} />
       <div className="container mx-auto px-4 py-6">
         {/* رأس الصفحة */}
@@ -76,7 +76,7 @@ const SessionPage = () => {
                 <div className="flex gap-3 flex-wrap">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
                     <svg
-                      className="w-4 h-4 mr-1"
+                      className="w-4 h-4 ml-1"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -92,7 +92,7 @@ const SessionPage = () => {
                   </span>
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                     <svg
-                      className="w-4 h-4 mr-1"
+                      className="w-4 h-4 ml-1"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -120,7 +120,7 @@ const SessionPage = () => {
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900 flex items-center">
                   <svg
-                    className="w-5 h-5 mr-2 text-orangedeep"
+                    className="w-5 h-5 ml-2 text-orangedeep"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -182,7 +182,7 @@ const SessionPage = () => {
                       onClick={() => window.open(selectedVideo.link, "_blank")}
                     >
                       <svg
-                        className="w-4 h-4 mr-1"
+                        className="w-4 h-4 ml-1"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -207,7 +207,7 @@ const SessionPage = () => {
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                     <svg
-                      className="w-5 h-5 mr-2 text-gray-600"
+                      className="w-5 h-5 ml-2 text-gray-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -237,7 +237,7 @@ const SessionPage = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
                             <svg
-                              className="w-8 h-8 text-orangedeep mr-3"
+                              className="w-8 h-8 text-orangedeep ml-3"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -282,7 +282,7 @@ const SessionPage = () => {
                     onClick={() => setActiveTab("videos")}
                   >
                     <svg
-                      className="w-4 h-4 mr-1"
+                      className="w-4 h-4 ml-1"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -305,7 +305,7 @@ const SessionPage = () => {
                     onClick={() => setActiveTab("files")}
                   >
                     <svg
-                      className="w-4 h-4 mr-1"
+                      className="w-4 h-4 ml-1"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -328,7 +328,7 @@ const SessionPage = () => {
                     onClick={() => setActiveTab("exams")}
                   >
                     <svg
-                      className="w-4 h-4 mr-1"
+                      className="w-4 h-4 ml-1"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -363,7 +363,7 @@ const SessionPage = () => {
                         onClick={() => handleVideoSelect(video)}
                       >
                         <svg
-                          className="w-5 h-5 mr-3 flex-shrink-0"
+                          className="w-5 h-5 ml-3 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -424,7 +424,7 @@ const SessionPage = () => {
                         className="flex items-center p-3 border border-gray-200 rounded-lg mb-2 bg-white hover:bg-gray-50"
                       >
                         <svg
-                          className="w-5 h-5 mr-3 text-red-500 flex-shrink-0"
+                          className="w-5 h-5 ml-3 text-red-500 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -528,7 +528,7 @@ const SessionPage = () => {
                         className="flex items-center p-3 border border-gray-200 rounded-lg mb-2 bg-white hover:bg-gray-50"
                       >
                         <svg
-                          className="w-5 h-5 mr-3 text-green-500 flex-shrink-0"
+                          className="w-5 h-5 ml-3 text-green-500 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -596,7 +596,7 @@ const SessionPage = () => {
               <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                   <svg
-                    className="w-5 h-5 mr-2 text-orangedeep"
+                    className="w-5 h-5 ml-2 text-orangedeep"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
