@@ -38,7 +38,7 @@ const MobileNav = () => {
         </button>
 
         {/* Content */}
-        <button
+        {/* <button
           onClick={() => navigate("/packages-content")}
           className="flex flex-col items-center justify-end gap-2 h-full transition cursor-pointer hover:scale-105"
         >
@@ -53,7 +53,7 @@ const MobileNav = () => {
           >
             المحتوى
           </span>
-        </button>
+        </button> */}
 
         {/* Profile */}
         <ProfileInfo isActive={activeTab === "profile"} />

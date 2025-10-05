@@ -19,7 +19,6 @@ export const useLessonHandlers = (
       const res = await dispatch(getSessionLink(item.id));
 
       if (res.error || !res.payload) {
-        // لو في خطأ من الـ API
         openStatusModal(MODAL_TYPES.ERROR, {
           title: "خطأ في فتح الحصة",
           message: "حدث خطأ أثناء محاولة فتح الحصة. حاول مرة أخرى.",
