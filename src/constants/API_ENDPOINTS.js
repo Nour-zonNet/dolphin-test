@@ -27,4 +27,6 @@ export const ENDPOINTS = {
   CLASSES: "/student/classes",
   LESSONS_OF_PACKAGE: "/student/lessons/package/",
   GET_CONTENTS_BY_SESSION_ID: "/student/contents/",
+  COMPLAINTS_SUBMIT: "/student/complaints",
+  COMPLAINTS_LIST: "/student/complaints",
 };

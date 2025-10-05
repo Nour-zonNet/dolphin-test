@@ -67,6 +67,7 @@ const ForgotPasswordPage = lazy(() =>
   }))
 );
 const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
+const ComplaintsPage = lazy(() => import("@/features/complaints/pages/ComplaintsPage"));
 
 const BalanceDetails = lazy(() =>
   import("@/features/balance/pages/BalanceDetails")
@@ -255,6 +256,14 @@ export const routes = [
     element: BalanceDetails,
     protected: true,
     layout: false,
+  },
+  {
+    path: "/complaints",
+    element: ComplaintsPage,
+    protected: true,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
   },
 ];
 

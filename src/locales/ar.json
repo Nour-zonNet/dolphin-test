@@ -136,5 +136,54 @@
     "download_file": "تنزيل الملف",
     "start_quiz": "ابدأ الاختبار",
     "quiz_intro": "ابدأ هذا الاختبار القصير لتتعرف على مستوي فهمك"
-}
+  },
+  "complaints": {
+    "title": "الشكاوى والاقتراحات",
+    "description": "نرحب بآرائكم واقتراحاتكم لتحسين تجربتكم التعليمية",
+    "addComplaint": "إضافة شكوى جديدة",
+    "myComplaints": "شكاوياتي",
+    "noComplaints": "لا توجد شكاوى بعد",
+    "noComplaintsSubtext": "يمكنك إضافة شكوى جديدة من خلال النقر على الزر أعلاه",
+    "submit": "إرسال الشكوى",
+    "categories": {
+      "technical": "مشكلة تقنية",
+      "content": "محتوى الدرس",
+      "teacher": "المعلم",
+      "schedule": "الجدول الدراسي",
+      "payment": "الدفع والاشتراك",
+      "other": "أخرى"
+    },
+    "form": {
+      "title": "عنوان الشكوى",
+      "titlePlaceholder": "اكتب عنواناً مختصراً للشكوى",
+      "category": "نوع الشكوى",
+      "description": "وصف المشكلة",
+      "descriptionPlaceholder": "اكتب تفاصيل المشكلة التي تواجهها...",
+      "attachments": "المرفقات",
+      "attachmentsHelp": "يمكنك رفع الصور أو الفيديوهات أو ملفات PDF لتوضيح المشكلة"
+    },
+    "validation": {
+      "titleRequired": "عنوان الشكوى مطلوب",
+      "descriptionRequired": "وصف المشكلة مطلوب",
+      "descriptionMinLength": "وصف المشكلة يجب أن يكون 10 أحرف على الأقل"
+    },
+    "status": {
+      "pending": "قيد المراجعة",
+      "inProgress": "قيد المعالجة",
+      "resolved": "تم الحل"
+    },
+    "dragDropFiles": "اسحب الملفات هنا",
+    "orClickToSelect": "أو انقر للاختيار",
+    "supportedFormats": "الصيغ المدعومة",
+    "maxFiles": "الحد الأقصى للملفات",
+    "maxSize": "الحد الأقصى للحجم",
+    "selectedFiles": "الملفات المحددة",
+    "removeFile": "إزالة الملف",
+    "fileSizeError": "حجم الملف كبير جداً (الحد الأقصى 10 ميجابايت)",
+    "fileTypeError": "نوع الملف غير مدعوم",
+    "maxFilesError": "تم الوصول للحد الأقصى من الملفات",
+    "download": "تحميل",
+    "response": "الرد",
+    "responseDate": "تاريخ الرد"
+  }
 }
