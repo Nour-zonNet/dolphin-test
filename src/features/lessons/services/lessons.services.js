@@ -24,7 +24,7 @@ class LessonsRepository {
 
   // Create new lesson
   async getContentsBySessionId(sessionId) {
-    const {data} = await api.get(
+    const { data } = await api.get(
       ENDPOINTS.GET_CONTENTS_BY_SESSION_ID + sessionId
     );
     return data;
@@ -44,6 +44,16 @@ class LessonsRepository {
   // Delete a lesson
   async delete(lessonId) {
     const { data } = await api.delete(`/lessons/${lessonId}`);
+    return data;
+  }
+  async getGlobalSessionByTeacherId(teacherId) {
+    const { data } = await api.get(
+      ENDPOINTS.GET_GLOBAL_SESSION_BY_TEACHER_ID + teacherId
+    );
+    return data;
+  }
+  async joinGlobalSession(joinData) {
+    const { data } = await api.post(ENDPOINTS.JOIN_GLOBAL_SESSION, joinData);
     return data;
   }
 }

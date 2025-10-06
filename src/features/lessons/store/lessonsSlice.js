@@ -26,7 +26,7 @@ export const getPackageLessons = createAsyncThunk(
       return rejectWithValue(
         error?.response?.data ||
           error?.message ||
-          "Fetch package lessons failed"
+          "خطا فى جلب بيانات الدرس"
       );
     }
   }
@@ -40,7 +40,7 @@ export const getSessionLink = createAsyncThunk(
       return data;
     } catch (error) {
       return rejectWithValue(
-        error?.response?.data || error?.message || "Fetch session link failed"
+        error?.response?.data || error?.message || "خطا فى جلب رابط الجلسة"
       );
     }
   }
@@ -58,12 +58,44 @@ export const getContentsBySessionId = createAsyncThunk(
       return rejectWithValue(
         error?.response?.data ||
           error?.message ||
-          "Fetch contents by session id failed"
+          "خطا فى جلب محتويات الجلسة"
       );
     }
   }
 );
 
+export const getGlobalSessionByTeacherId = createAsyncThunk(
+  "lessons/getGlobalSessionByTeacherId",
+  async (teacherId, { rejectWithValue }) => {
+    try {
+      const { data } = await lessonsRepository.getGlobalSessionByTeacherId(teacherId);
+      return data;
+    }
+    catch (error) {
+      return rejectWithValue(
+        error?.response?.data ||
+          error?.message ||
+          "خطا فى جلب بيانات الجلسة"
+      );
+    }
+  }
+);
+export const joinGlobalSession = createAsyncThunk(
+  "lessons/joinGlobalSession",
+  async (joinData, { rejectWithValue }) => {
+    try {
+      const { data } = await lessonsRepository.joinGlobalSession(joinData);
+      return data;
+    }
+    catch (error) {
+      return rejectWithValue(
+        error?.response?.data ||
+          error?.message ||
+          "خطا فى الانضمام الى الجلسة"
+      );
+    }
+  }
+);
 // ----------------- Slice -----------------
 const lessonsSlice = createSlice({
   name: "lessons",
@@ -157,7 +189,36 @@ const lessonsSlice = createSlice({
       .addCase(getPackageLessons.rejected, (state, action) => {
         state.loading = false;
         state.error =
-          action.payload || action.error?.message || "Unknown error";
+          action.payload || action.error?.message || "خطا فى جلب بيانات الجلسة";
+      });
+    // ---- getGlobalSessionByTeacherId ----
+    builder
+      .addCase(getGlobalSessionByTeacherId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getGlobalSessionByTeacherId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.globalSession = action.payload;
+      })
+      .addCase(getGlobalSessionByTeacherId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error?.message || "خطا فى جلب بيانات الجلسة";
+      });
+    // ---- joinGlobalSession ----
+    builder
+      .addCase(joinGlobalSession.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(joinGlobalSession.fulfilled, (state, action) => {
+        state.loading = false;
+        state.globalSession = action.payload;
+      })
+      .addCase(joinGlobalSession.rejected, (state, action) => {
+        console.log(action);
+        state.loading = false;
+        state.error = action.payload.error || action.error?.message || "خطا فى الانضمام الى الجلسة";
       });
   },
 });

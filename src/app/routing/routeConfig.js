@@ -290,9 +290,9 @@ export const routes = [
     homeSupportBtn: true,
   },
   {
-    path: "/global-session",
+    path: "/global-session/:teacherId",
     element: GlobalSessionPage,
-    protected: true,
+    protected: false,
     homeSupportBtn: true,
     navbar: false,
     mobileNav: false,

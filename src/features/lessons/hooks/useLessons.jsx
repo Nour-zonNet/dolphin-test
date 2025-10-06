@@ -6,6 +6,8 @@ import {
   getPackageLessons,
   getSessionLink,
   getContentsBySessionId,
+  getGlobalSessionByTeacherId,
+  joinGlobalSession,
 } from "../store/lessonsSlice";
 
 export const useLessons = () => {
@@ -34,6 +36,15 @@ export const useLessons = () => {
     },
     [dispatch]
   );
+  const dispatchJoinGlobalSession = useCallback(
+    (joinData) => dispatch(joinGlobalSession(joinData)),
+    [dispatch]
+  );
+
+  const dispatchGetGlobalSessionByTeacherId = useCallback(
+    (teacherId) => dispatch(getGlobalSessionByTeacherId(teacherId)),
+    [dispatch]
+  );
 
   return useMemo(
     () => ({
@@ -45,6 +56,8 @@ export const useLessons = () => {
       getPackageLessons: dispatchGetPackageLessons,
       getSessionLink: dispatchGetSessionLink,
       getContentsBySessionId: dispatchGetContentsBySessionId,
+      getGlobalSessionByTeacherId: dispatchGetGlobalSessionByTeacherId,
+      joinGlobalSession: dispatchJoinGlobalSession,
     }),
     [
       items,
@@ -55,6 +68,8 @@ export const useLessons = () => {
       dispatchGetPackageLessons,
       dispatchGetSessionLink,
       dispatchGetContentsBySessionId,
+      dispatchGetGlobalSessionByTeacherId,
+      dispatchJoinGlobalSession,
     ]
   );
 };

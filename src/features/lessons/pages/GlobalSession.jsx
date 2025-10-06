@@ -1,7 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../../assets/logo/dolphinLogo.png";
+import { useLessons } from "../hooks/useLessons";
+import { useParams } from "react-router-dom";
+import { useAuth } from "../../auth/hooks/useAuth";
+import MyPhone from "../../../components/ui/PhoneInput/PhoneInput";
 
 const GlobalSessionPage = () => {
+  const { teacherId } = useParams();
+  // = useParams()
+  const { getGlobalSessionByTeacherId, joinGlobalSession } = useLessons();
+  const { user } = useAuth();
+  const [globalSession, setGlobalSession] = useState(null);
+  useEffect(() => {
+    const getGlobalSession = async () => {
+      const res = await getGlobalSessionByTeacherId(teacherId).unwrap();
+      console.log(res);
+      setGlobalSession(res);
+    };
+    getGlobalSession();
+  }, [getGlobalSessionByTeacherId, teacherId]);
+
+  const handlePhoneChange = (phone) => {
+    setGlobalSession((prev) => ({ ...(prev || {}), phone_number: phone }));
+  };
+
+  const handleJoinGlobalSession = async () => {
+    const res = await joinGlobalSession({
+      phone_number: user?.phoneNumber || globalSession?.phone_number,
+      teacher_id: teacherId,
+      class_session_id: globalSession?.id,
+    }).unwrap();
+    if (res?.url) {
+      window.location.href = res.url;
+    }
+  };
   return (
     <div
       dir="rtl"
@@ -16,38 +48,49 @@ const GlobalSessionPage = () => {
         {/* Form Content */}
         <div className="p-6 space-y-6 border rounded-xl border-gray-200">
           {/* Teacher Name */}
+          {user?.name && (
+            <div className="space-y-2">
+              <label className="block  text-[#E89B32] font-bold">
+                اسم الطالب:
+              </label>
+              <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
+                {user?.name}
+              </div>
+            </div>
+          )}
           <div className="space-y-2">
             <label className="block  text-[#E89B32] font-bold">
               اسم المعلم:
             </label>
             <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
-              الزهراء ذهري
+              {globalSession?.teacher_name}
             </div>
           </div>
-
           {/* Grade */}
           <div className="space-y-2">
             <label className="block  text-[#E89B32] font-bold">
               الصف الدراسي
             </label>
             <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
-              الصف الرابع الابتدائي
+              {globalSession?.class_name?.[0]}
             </div>
           </div>
 
           {/* Lesson */}
-          <div className="space-y-2">
-            <label className="block  text-[#E89B32] font-bold">الدرس:</label>
-            <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
-              الاشعال المساعدة
+          {globalSession?.session_name && (
+            <div className="space-y-2">
+              <label className="block  text-[#E89B32] font-bold">الدرس:</label>
+              <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
+                {globalSession?.session_name}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Group */}
           <div className="space-y-2">
             <label className="block  text-[#E89B32] font-bold">المجموعة:</label>
             <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
-              الرابعة
+              {globalSession?.group_name}
             </div>
           </div>
 
@@ -57,15 +100,19 @@ const GlobalSessionPage = () => {
               <label className="block  text-[#E89B32] font-bold">
                 رقم الجوال
               </label>
-              <input
-                type="tel"
-                placeholder="أدخل رقم جوالك"
-                className="w-full p-3 border border-gray-300  rounded-2xl  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orangedeep focus:border-transparent"
+              <MyPhone
+                value={user?.phoneNumber || globalSession?.phone_number}
+                onChange={handlePhoneChange}
+                disabled={!!user}
+                readOnly={!!user}
               />
             </div>
 
             {/* Submit Button */}
-            <button className="w-full bg-gradient-to-r   text-navyteal py-3 rounded-full  font-bold  bg-orangedeep  transition-all duration-300 shadow-md hover:shadow-lg">
+            <button
+              onClick={handleJoinGlobalSession}
+              className="w-full bg-gradient-to-r   text-navyteal py-3 rounded-full  font-bold  bg-orangedeep  transition-all duration-300 shadow-md hover:shadow-lg"
+            >
               دخول الحصة
             </button>
           </div>
