@@ -55,13 +55,13 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       start.getDate()
     );
 
+    if (item.status === "canceled") return LESSON_STATUS.CANCELLED;
     if (lessonDay < today) return LESSON_STATUS.ENDED;
-    if (item.delay && item.status === "postpand") return LESSON_STATUS.DELAYED;
     if (now >= start && now <= end) return LESSON_STATUS.LIVE;
     if (now > end) return LESSON_STATUS.ENDED;
 
     return LESSON_STATUS.UPCOMING;
-  }, [start, item.delay, end]);
+  }, [start, item.status, end]);
 
   const canEnterNow = useMemo(
     () => lessonStatus === "live" || canEnterLesson,
@@ -94,8 +94,16 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
         // tabIndex={lessonStatus !== LESSON_STATUS.ENDED ? 0 : -1}
         onClick={() => {
           if (lessonStatus === LESSON_STATUS.ENDED) {
-            if (!item?.lessons || item?.lessons?.length === 0) {
+            if (!item?.has_content) {
               setHintMsg("الحصة انتهت ولم يتم رفع المحتوي بعد");
+            } else if (lessonStatus === LESSON_STATUS.CANCELLED) {
+              setHintMsg("الحصة ملغية");
+            } else if (lessonStatus === LESSON_STATUS.UPCOMING) {
+              setHintMsg("الحصة قريباً");
+            } else if (lessonStatus === LESSON_STATUS.DELAYED) {
+              setHintMsg("الحصة مؤجلة");
+            } else if (lessonStatus === LESSON_STATUS.LIVE) {
+              setHintMsg("الحصة بدأت");
             } else {
               setHintMsg("اضغط علي زر عرض المحتوي");
             }

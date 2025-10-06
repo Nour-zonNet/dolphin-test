@@ -20,6 +20,14 @@ export const useLessonStatus = (
       start.getDate()
     );
 
+    if (lessonStatus === "canceled") {
+      return {
+        statusText: "الحصة ملغية",
+        statusColor: "text-red-500",
+        statusIcon: <TimeCheck className="w-4" />,
+      };
+    }
+
     if (lessonStatus === "delayed") {
       return {
         statusText: `تم تأجيل الحصة ليوم ${getArabicDay(
@@ -108,12 +116,5 @@ export const useLessonStatus = (
           statusIcon: <TimeCheck className="w-4" />,
         };
     }
-  }, [
-    lessonStatus,
-    timeRemaining,
-    canEnterLesson,
-    isExpired,
-    item.start_time,
-    start,
-  ]);
+  }, [start, lessonStatus, item?.delay?.day_of_week, timeRemaining, isExpired, canEnterLesson]);
 };

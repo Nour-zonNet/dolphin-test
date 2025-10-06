@@ -72,7 +72,17 @@ export const useLessonHandlers = (
       hintTimerRef.current && clearTimeout(hintTimerRef.current);
 
       setHintMsg(
-        canEnterNow ? "اضغط علي زر دخول الحصة للبدء" : "انتظر موعد بدء الحصة"
+        lessonStatus === "live"
+          ? "اضغط علي زر دخول الحصة للبدء"
+          : lessonStatus === "canceled"
+          ? "الحصة ملغية"
+          : lessonStatus === "delayed"
+          ? "الحصة مؤجلة"
+          : lessonStatus === "upcoming"
+          ? "الحصة قريباً"
+          : lessonStatus === "live"
+          ? "الحصة بدأت"
+          : "انتظر موعد بدء الحصة"
       );
 
       hintTimerRef.current = setTimeout(() => {
@@ -80,7 +90,7 @@ export const useLessonHandlers = (
         hintTimerRef.current = null;
       }, 3500);
     },
-    [lessonStatus, canEnterNow]
+    [lessonStatus]
   );
 
   // Cleanup timer on unmount
