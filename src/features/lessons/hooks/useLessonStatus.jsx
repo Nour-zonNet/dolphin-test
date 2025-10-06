@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
 import { getArabicDay } from "../../../utils/dateHelpers";
+import { Cross } from "lucide-react";
+import { Cancel } from "../../../utils/icons";
 
 export const useLessonStatus = (
   item,
@@ -24,7 +26,7 @@ export const useLessonStatus = (
       return {
         statusText: "الحصة ملغية",
         statusColor: "text-red-500",
-        statusIcon: <TimeCheck className="w-4" />,
+        statusIcon: <Cancel className="w-4 fill-red-500 text-red-500" fill="red" />,
       };
     }
 
@@ -34,15 +36,15 @@ export const useLessonStatus = (
           item.delay.day_of_week
         )}`,
         statusColor: "text-gray-600",
-        statusIcon: <TimeCheck fill={"#111"} className="w-4" />,
+        statusIcon: <TimeCheck  fill={"#111"} className="w-4" />,
       };
     }
 
     if (lessonDay < today) {
       return {
         statusText: "انتهت الحصة",
-        statusColor: "text-red-500",
-        statusIcon: <TimeCheck className="w-4" />,
+        statusColor: "text-[#4193C3]",
+        statusIcon: <TimeCheck fill={"#4193C3"} className="w-4" />,
       };
     }
 
