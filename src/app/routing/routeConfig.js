@@ -8,6 +8,7 @@ import PDFViewerPage from "../../features/PDFViewer/PDFViewerPage";
 import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
 import SessionPage from "../../features/lessons/pages/SessionPage";
 import GlobalSessionPage from "../../features/lessons/pages/GlobalSession";
+import WeeklySchedule from "../../features/lessons/pages/WeeklySchedule";
 // import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
@@ -257,6 +258,26 @@ export const routes = [
   {
     path: "/balance-details",
     element: BalanceDetails,
+    protected: true,
+    layout: false,
+  },  {
+    path: "/weekly-schedule",
+    element: WeeklySchedule,
+    protected: true,
+    layout: false,
+  },
+  
+  {
+    path: "/complaints",
+    element: ComplaintsPage,
+    protected: true,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
+  },
+  {
+    path: "/global-session",
+    element: GlobalSessionPage,
     protected: true,
     layout: false,
   },
