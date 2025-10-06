@@ -97,10 +97,10 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50  flex justify-center items-center z-999 p-5">
-      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gradient-to-r bg-orangedeep  text-white rounded-t-2xl">
-          <h2 className="text-2xl font-bold m-0">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-3 sm:p-4 md:p-5">
+      <div className="bg-white rounded-xl sm:rounded-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="flex justify-between items-center p-6 border-b   bg-gradient-to-r bg-orangedeep  text-white rounded-t-2xl">
+          <h2 className=" font-bold m-0 text-base md:text-lg sm:text-lg ">
             {t("complaints.addComplaint")}
           </h2>
           <button

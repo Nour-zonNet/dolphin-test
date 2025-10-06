@@ -140,12 +140,12 @@ const FileUpload = ({
       files.map((file, index) => (
         <div
           key={index}
-          className="flex justify-between items-center p-3 bg-white rounded-md shadow-sm"
+          className="flex justify-between items-center p-2 sm:p-3 bg-white rounded-md shadow-sm"
         >
-          <div className="flex items-center flex-1">
-            <span className="text-xl mr-3">{getFileIcon(file)}</span>
-            <div className="flex flex-col">
-              <span className="font-medium text-navyteal break-all">
+          <div className="flex items-center flex-1 min-w-0">
+            <span className="text-lg sm:text-xl mr-2 sm:mr-3 flex-shrink-0">{getFileIcon(file)}</span>
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="font-medium text-navyteal break-all text-xs sm:text-sm truncate">
                 {file.name}
               </span>
               <span className="text-xs text-gray-500">
@@ -155,7 +155,7 @@ const FileUpload = ({
           </div>
           <button
             type="button"
-            className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors duration-300 text-lg"
+            className="bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center hover:bg-red-600 transition-colors duration-300 text-sm sm:text-lg flex-shrink-0 ml-2"
             onClick={() => removeFile(index)}
             title={t("complaints.removeFile")}
           >
@@ -170,13 +170,14 @@ const FileUpload = ({
   const dropzoneContent = useMemo(
     () => (
       <div className="pointer-events-none">
-        <div className="text-5xl mx-auto flex justify-center items-center mb-4 opacity-60">
+        <div className="text-3xl sm:text-4xl md:text-5xl mx-auto flex justify-center items-center mb-3 sm:mb-4 opacity-60">
           <svg
-            width="49"
-            height="40"
+            width="32"
+            height="26"
             viewBox="0 0 49 40"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            className="sm:w-[40px] sm:h-[32px] md:w-[49px] md:h-[40px]"
           >
             <path
               d="M37.196 10.46C34.574 4.158 28.406 0 21.5 0C12.126 0 4.5 7.626 4.5 17C4.5 18.102 4.606 19.194 4.814 20.266C2.12 22.33 0.5 25.558 0.5 29C0.5 35.064 4.986 40 10.5 40H33.5C41.772 40 48.5 33.272 48.5 25C48.5 18.066 43.812 12.128 37.196 10.46ZM31.086 24.584L26.5 19.998V31.998H22.5V19.998L17.914 24.584L15.086 21.756L21.672 15.17C23.23 13.612 25.77 13.612 27.328 15.17L33.914 21.756L31.086 24.584Z"
@@ -184,11 +185,11 @@ const FileUpload = ({
             />
           </svg>
         </div>
-        <p className="text-lg font-semibold text-navyteal mb-2">
+        <p className="text-sm sm:text-base md:text-lg font-semibold text-navyteal mb-2">
           {t("complaints.dragDropFiles")}
         </p>
-        <p className="text-gray-500 mb-4">{t("complaints.orClickToSelect")}</p>
-        <p className="text-sm text-gray-400 mb-2">
+        <p className="text-xs sm:text-sm md:text-base text-gray-500 mb-3 sm:mb-4">{t("complaints.orClickToSelect")}</p>
+        <p className="text-xs sm:text-sm text-gray-400 mb-2">
           {t("complaints.supportedFormats")}: {acceptedTypes.join(", ")}
         </p>
         <p className="text-xs text-gray-400">
@@ -203,7 +204,7 @@ const FileUpload = ({
   return (
     <div className="mt-2">
       <div
-        className={`border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer transition-all duration-300 bg-gray-50 hover:border-blue-500 hover:bg-blue-50 ${
+        className={`border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 md:p-8 text-center cursor-pointer transition-all duration-300 bg-gray-50 hover:border-blue-500 hover:bg-blue-50 ${
           dragActive ? "border-blue-500 bg-blue-50 scale-105" : ""
         }`}
         onDragEnter={handleDrag}
@@ -225,8 +226,8 @@ const FileUpload = ({
       />
 
       {files.length > 0 && (
-        <div className="mt-5 p-4 bg-gray-50 rounded-lg">
-          <h4 className="text-navyteal font-semibold mb-4">
+        <div className="mt-4 sm:mt-5 p-3 sm:p-4 bg-gray-50 rounded-lg">
+          <h4 className="text-navyteal font-semibold mb-3 sm:mb-4 text-sm sm:text-base">
             {t("complaints.selectedFiles")} ({files.length})
           </h4>
           <div className="grid grid-cols-1 gap-2">{fileItems}</div>

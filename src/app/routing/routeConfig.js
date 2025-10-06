@@ -68,7 +68,9 @@ const ForgotPasswordPage = lazy(() =>
   }))
 );
 const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
-const ComplaintsPage = lazy(() => import("@/features/complaints/pages/ComplaintsPage"));
+const ComplaintsPage = lazy(() =>
+  import("@/features/complaints/pages/ComplaintsPage")
+);
 
 const BalanceDetails = lazy(() =>
   import("@/features/balance/pages/BalanceDetails")
@@ -258,20 +260,23 @@ export const routes = [
     protected: true,
     layout: false,
   },
-      {
-        path: "/complaints",
-        element: ComplaintsPage,
-        protected: true,
-        navbar: false,
-        mobileNav: true,
-        homeSupportBtn: true,
-      },
-      {
-        path: "/global-session",
-        element: GlobalSessionPage,
-        protected: true,
-        layout: false,
-      },
+  {
+    path: "/complaints",
+    element: ComplaintsPage,
+    protected: true,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
+  },
+  {
+    path: "/global-session",
+    element: GlobalSessionPage,
+    protected: true,
+    homeSupportBtn: true,
+    navbar: false,
+    mobileNav: false,
+    layout: false,
+  },
 ];
 
 // Helper function to check if route is public

@@ -56,18 +56,18 @@ const ComplaintsList = ({ complaints, loading }) => {
 
   // Memoized loading component
   const loadingComponent = useMemo(() => (
-    <div className="text-center py-16 text-gray-600">
-      <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto mb-5"></div>
-      <p>{t('common.loading')}</p>
+    <div className="text-center py-12 sm:py-16 text-gray-600">
+      <div className="w-8 h-8 sm:w-10 sm:h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto mb-4 sm:mb-5"></div>
+      <p className="text-sm sm:text-base">{t('common.loading')}</p>
     </div>
   ), [t]);
 
   // Memoized empty state component
   const emptyStateComponent = useMemo(() => (
-    <div className="text-center py-20 text-gray-600">
-      <div className="text-6xl mb-6 opacity-50">📝</div>
-      <h3 className="text-xl mb-3 text-gray-700">{t('complaints.noComplaints')}</h3>
-      <p className="text-base opacity-70 max-w-md mx-auto">{t('complaints.noComplaintsSubtext')}</p>
+    <div className="text-center py-16 sm:py-20 text-gray-600">
+      <div className="text-5xl sm:text-6xl mb-4 sm:mb-6 opacity-50">📝</div>
+      <h3 className="text-lg sm:text-xl mb-2 sm:mb-3 text-gray-700">{t('complaints.noComplaints')}</h3>
+      <p className="text-sm sm:text-base opacity-70 max-w-md mx-auto px-4">{t('complaints.noComplaintsSubtext')}</p>
     </div>
   ), [t]);
 
@@ -94,9 +94,11 @@ const ComplaintsList = ({ complaints, loading }) => {
   }
 
   return (
-    <div className="mt-8">
-      <h2 className="text-3xl text-gray-700 mb-6 text-center">{t('complaints.myComplaints')}</h2>
-      {complaintItems}
+    <div className="mt-6 sm:mt-8">
+      <h2 className="text-xl sm:text-2xl md:text-3xl text-gray-700 mb-4 sm:mb-6 text-center">{t('complaints.myComplaints')}</h2>
+      <div className="space-y-4 sm:space-y-5">
+        {complaintItems}
+      </div>
     </div>
   );
 };
