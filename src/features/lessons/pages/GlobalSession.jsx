@@ -4,7 +4,7 @@ import { useLessons } from "../hooks/useLessons";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../auth/hooks/useAuth";
 import MyPhone from "../../../components/ui/PhoneInput/PhoneInput";
-
+import dolphinIcon from "@/assets/images/homeChild.png";
 const GlobalSessionPage = () => {
   const { teacherId } = useParams();
   // = useParams()
@@ -38,14 +38,22 @@ const GlobalSessionPage = () => {
       dir="rtl"
       className="min-h-screen bg-gradient-to-br  flex items-center justify-center p-4 font-sans"
     >
-      <div className="bg-white rounded-2xl  w-full max-w-md overflow-hidden">
+      <div className="bg-white rounded-2xl  w-full max-w-md ">
         {/* Header */}
-        <div className="bg-gradient-to-r  p-6 text-white text-center">
+        <div className="  relative p-6 text-white text-center">
           <img src={logo} alt="logo" className=" mx-auto h-15" />
+          <div className="absolute top-0 z-20 left-0 flex items-center justify-center">
+            <img
+              src={dolphinIcon}
+              alt="teacher"
+              className="w-28 rounded-full transform -scale-x-100"
+            />
+          </div>
         </div>
 
         {/* Form Content */}
-        <div className="p-6 space-y-6 border rounded-xl border-gray-200">
+        <div className="p-6 space-y-6 border rounded-xl border-gray-200 relative">
+          
           {/* Teacher Name */}
           {user?.name && (
             <div className="space-y-2">
@@ -67,7 +75,6 @@ const GlobalSessionPage = () => {
               </div>
             </div>
           )}
-          {/* Grade */}
           {globalSession?.class_name && (
             <div className="space-y-2">
               <label className="block  text-[#E89B32] font-bold">
@@ -79,7 +86,6 @@ const GlobalSessionPage = () => {
             </div>
           )}
 
-          {/* Lesson */}
           {globalSession?.session_name && (
             <div className="space-y-2">
               <label className="block  text-[#E89B32] font-bold">الدرس:</label>
@@ -89,7 +95,6 @@ const GlobalSessionPage = () => {
             </div>
           )}
 
-          {/* Group */}
           {globalSession?.group_name && (
             <div className="space-y-2">
               <label className="block  text-[#E89B32] font-bold">
@@ -102,7 +107,6 @@ const GlobalSessionPage = () => {
           )}
 
           <div className="space-y-4 border-[#00477C] rounded-2xl p-4 border-1 border-dashed">
-            {/* Phone Number */}
             <div className="space-y-2">
               <label className="block  text-[#E89B32] font-bold">
                 رقم الجوال
@@ -115,7 +119,6 @@ const GlobalSessionPage = () => {
               />
             </div>
 
-            {/* Submit Button */}
             <button
               onClick={handleJoinGlobalSession}
               disabled={
