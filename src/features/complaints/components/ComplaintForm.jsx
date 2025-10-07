@@ -10,14 +10,14 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: "technical",
-    files: [],
+    type: "technical",
+    contentItems: [],
   });
 
   const [errors, setErrors] = useState({});
 
   // Memoized categories to prevent recreation on every render
-  const categories = useMemo(
+  const types = useMemo(
     () => [
       { value: "technical", label: t("complaints.categories.technical") },
       { value: "content", label: t("complaints.categories.content") },
@@ -53,7 +53,7 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
   const handleFileChange = useCallback((files) => {
     setFormData((prev) => ({
       ...prev,
-      files: files,
+      contentItems: files,
     }));
   }, []);
 
@@ -82,13 +82,20 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
     async (e) => {
       e.preventDefault();
 
-      if (!validateForm()) {
-        return;
-      }
+      if (!validateForm()) return;
 
       try {
-        await submitComplaint(formData);
-        onSuccess();
+        const payload = {
+          title: formData.title,
+          description: formData.description,
+          type: formData.type,
+          contentItems: formData.contentItems,
+        };
+
+        const resultAction = await submitComplaint(payload);
+        if (resultAction?.meta?.requestStatus === "fulfilled") {
+          onSuccess();
+        }
       } catch (error) {
         console.error("Error submitting complaint:", error);
       }
@@ -140,21 +147,21 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
 
           <div className="mb-5">
             <label
-              htmlFor="category"
+              htmlFor="type"
               className="block mb-2 font-semibold text-navyteal text-base "
             >
               {t("complaints.form.category")}
             </label>
             <select
-              id="category"
-              name="category"
-              value={formData.category}
+              id="type"
+              name="type"
+              value={formData.type}
               onChange={handleInputChange}
               className="w-full p-3 border-1 border-gray-300 bg-[#F9F9F9] rounded-lg text-base transition-colors duration-300 focus:outline-none focus:border-blue-500"
             >
-              {categories.map((category) => (
-                <option key={category.value} value={category.value}>
-                  {category.label}
+              {types.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
                 </option>
               ))}
             </select>
@@ -208,7 +215,7 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
           <div className="flex gap-4  flex-col-reverse md:flex-row justify-end mt-8 pt-5 border-t  border-gray-200">
             <button
               type="button"
-              className="px-6 py-3 border-2 cursor-pointer border-gray-300 bg-gray-50 text-gray-600 rounded-full font-semibold hover:bg-gray-100 hover:border-gray-400 transition-all duration-300 min-w-[100px]"
+              className="px-6 py-3 border-2 cursor-pointer border-orangedeep text-navyteal rounded-full font-semibold hover:bg-gray-100 hover:border-gray-400 transition-all duration-300 min-w-[100px]"
               onClick={onClose}
             >
               {t("common.cancel")}

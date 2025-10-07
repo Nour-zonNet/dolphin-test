@@ -61,8 +61,9 @@ const complaintsSlice = createSlice({
       })
       .addCase(submitComplaint.rejected, (state, action) => {
         state.submitLoading = false;
+        console.log(action);
         state.submitError =
-          action.payload || action.error?.message || "خطأ في إرسال الشكوى";
+          action.payload.error || action.error?.message || "خطأ في إرسال الشكوى";
       });
 
     // ---- fetchComplaints ----

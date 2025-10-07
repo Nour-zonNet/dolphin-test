@@ -9,12 +9,12 @@ class ComplaintsRepository {
     // Add text fields
     formData.append('title', complaintData.title);
     formData.append('description', complaintData.description);
-    formData.append('category', complaintData.category);
+    formData.append('type', complaintData.type);
     
     // Add files if they exist
-    if (complaintData.files && complaintData.files.length > 0) {
-      complaintData.files.forEach((file, index) => {
-        formData.append(`files[${index}]`, file);
+    if (complaintData.contentItems && complaintData.contentItems.length > 0) {
+      complaintData.contentItems.forEach((file, index) => {
+        formData.append(`contentItems[${index}][file]`, file);
       });
     }
     

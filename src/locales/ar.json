@@ -140,8 +140,8 @@
   "complaints": {
     "title": "الشكاوى والاقتراحات",
     "description": "نرحب بآرائكم واقتراحاتكم لتحسين تجربتكم التعليمية",
-    "addComplaint": "إضافة شكوى جديدة",
-    "myComplaints": "شكاوياتي",
+    "addComplaint": "إضافة شكوى ",
+    "myComplaints": "الشكاوى",
     "noComplaints": "لا توجد شكاوى بعد",
     "noComplaintsSubtext": "يمكنك إضافة شكوى جديدة من خلال النقر على الزر أعلاه",
     "submit": "إرسال الشكوى",

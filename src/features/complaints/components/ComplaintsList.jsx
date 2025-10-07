@@ -1,6 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import ComplaintItem from './ComplaintItem';
+import notFoundImg from "../../../assets/complaints/notFound.svg";
+import fileIcon from "../../../assets/schedule/file-icon.svg";
 
 const ComplaintsList = ({ complaints, loading }) => {
   const { t } = useTranslation();
@@ -44,14 +46,14 @@ const ComplaintsList = ({ complaints, loading }) => {
   }, []);
 
   const getFileIcon = useCallback((fileType) => {
-    if (fileType.startsWith('image/')) {
-      return '🖼️';
-    } else if (fileType.startsWith('video/')) {
-      return '🎥';
-    } else if (fileType === 'application/pdf') {
-      return '📄';
+    if (fileType.startsWith('image')) {
+      return fileIcon;
+    } else if (fileType.startsWith('video')) {
+      return fileIcon;
+    } else if (fileType === 'pdf') {
+      return fileIcon;
     }
-    return '📎';
+    return fileIcon;
   }, []);
 
   // Memoized loading component
@@ -65,7 +67,10 @@ const ComplaintsList = ({ complaints, loading }) => {
   // Memoized empty state component
   const emptyStateComponent = useMemo(() => (
     <div className="text-center py-16 sm:py-20 text-gray-600">
-      <div className="text-5xl sm:text-6xl mb-4 sm:mb-6 opacity-50">📝</div>
+      <div className="text-5xl sm:text-6xl mb-4 sm:mb-6 ">
+
+        <img src={notFoundImg} alt="notFound" className="mx-auto w-42" />
+      </div>
       <h3 className="text-lg sm:text-xl mb-2 sm:mb-3 text-gray-700">{t('complaints.noComplaints')}</h3>
       <p className="text-sm sm:text-base opacity-70 max-w-md mx-auto px-4">{t('complaints.noComplaintsSubtext')}</p>
     </div>
@@ -75,7 +80,7 @@ const ComplaintsList = ({ complaints, loading }) => {
   const complaintItems = useMemo(() => 
     complaints.map((complaint) => (
       <ComplaintItem
-        key={complaint.id}
+        key={complaint?.id}
         complaint={complaint}
         formatDate={formatDate}
         getStatusClass={getStatusClass}
