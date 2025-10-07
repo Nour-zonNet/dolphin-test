@@ -202,8 +202,9 @@ const lessonsSlice = createSlice({
         state.globalSession = action.payload;
       })
       .addCase(getGlobalSessionByTeacherId.rejected, (state, action) => {
+        console.log(action);
         state.loading = false;
-        state.error = action.payload || action.error?.message || "خطا فى جلب بيانات الجلسة";
+        state.error = action.payload.error || action.error?.message || "خطا فى جلب بيانات الجلسة";
       });
     // ---- joinGlobalSession ----
     builder
@@ -216,10 +217,10 @@ const lessonsSlice = createSlice({
         state.globalSession = action.payload;
       })
       .addCase(joinGlobalSession.rejected, (state, action) => {
-        console.log(action);
         state.loading = false;
         state.error = action.payload.error || action.error?.message || "خطا فى الانضمام الى الجلسة";
       });
+
   },
 });
 export default lessonsSlice.reducer;

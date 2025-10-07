@@ -14,7 +14,6 @@ const GlobalSessionPage = () => {
   useEffect(() => {
     const getGlobalSession = async () => {
       const res = await getGlobalSessionByTeacherId(teacherId).unwrap();
-      console.log(res);
       setGlobalSession(res);
     };
     getGlobalSession();
@@ -58,23 +57,27 @@ const GlobalSessionPage = () => {
               </div>
             </div>
           )}
-          <div className="space-y-2">
-            <label className="block  text-[#E89B32] font-bold">
-              اسم المعلم:
-            </label>
-            <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
-              {globalSession?.teacher_name}
+          {globalSession?.teacher_name && (
+            <div className="space-y-2">
+              <label className="block  text-[#E89B32] font-bold">
+                اسم المعلم:
+              </label>
+              <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
+                {globalSession?.teacher_name}
+              </div>
             </div>
-          </div>
+          )}
           {/* Grade */}
-          <div className="space-y-2">
-            <label className="block  text-[#E89B32] font-bold">
-              الصف الدراسي
-            </label>
-            <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
-              {globalSession?.class_name?.[0]}
+          {globalSession?.class_name && (
+            <div className="space-y-2">
+              <label className="block  text-[#E89B32] font-bold">
+                الصف الدراسي
+              </label>
+              <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
+                {globalSession?.class_name?.[0]}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Lesson */}
           {globalSession?.session_name && (
@@ -87,12 +90,16 @@ const GlobalSessionPage = () => {
           )}
 
           {/* Group */}
-          <div className="space-y-2">
-            <label className="block  text-[#E89B32] font-bold">المجموعة:</label>
-            <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
-              {globalSession?.group_name}
+          {globalSession?.group_name && (
+            <div className="space-y-2">
+              <label className="block  text-[#E89B32] font-bold">
+                المجموعة:
+              </label>
+              <div className="bg-[#DDE8EE] rounded-2xl p-3  text-navyteal  border-gray-200">
+                {globalSession?.group_name}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="space-y-4 border-[#00477C] rounded-2xl p-4 border-1 border-dashed">
             {/* Phone Number */}
@@ -111,7 +118,18 @@ const GlobalSessionPage = () => {
             {/* Submit Button */}
             <button
               onClick={handleJoinGlobalSession}
-              className="w-full bg-gradient-to-r   text-navyteal py-3 rounded-full  font-bold  bg-orangedeep  transition-all duration-300 shadow-md hover:shadow-lg"
+              disabled={
+                !teacherId ||
+                (!user?.phoneNumber && !globalSession?.phone_number) ||
+                !globalSession?.id
+              }
+              className={`w-full py-3 rounded-full font-bold transition-all duration-300 shadow-md ${
+                !teacherId ||
+                (!user?.phoneNumber && !globalSession?.phone_number) ||
+                !globalSession?.id
+                  ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                  : "bg-gradient-to-r text-navyteal bg-orangedeep hover:shadow-lg"
+              }`}
             >
               دخول الحصة
             </button>

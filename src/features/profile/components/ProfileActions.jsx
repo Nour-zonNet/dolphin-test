@@ -42,7 +42,7 @@ const ProfileActions = () => {
   return (
     <div className="flex flex-col md:flex-row items-center gap-8 md:py-8 mb-20">
       {/* Complaints Button */}
-      <ProfileButtons
+      {/* <ProfileButtons
         variant="primary"
         size=""
         className="w-full cursor-pointer py-3 lg:py-4   bg-orangedeep "
@@ -51,7 +51,7 @@ const ProfileActions = () => {
         <span className="text-white font-semibold text-base md:text-xl">
           {t("complaints.title")}
         </span>
-      </ProfileButtons>
+      </ProfileButtons> */}
 
       {/* Logout Button */}
       <ProfileButtons
