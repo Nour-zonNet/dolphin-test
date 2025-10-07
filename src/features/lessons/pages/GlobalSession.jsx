@@ -6,18 +6,18 @@ import { useAuth } from "../../auth/hooks/useAuth";
 import MyPhone from "../../../components/ui/PhoneInput/PhoneInput";
 import dolphinIcon from "@/assets/images/homeChild.png";
 const GlobalSessionPage = () => {
-  const { teacherId } = useParams();
+  const { username } = useParams();
   // = useParams()
-  const { getGlobalSessionByTeacherId, joinGlobalSession } = useLessons();
+  const { getGlobalSessionByTeacherUsername, joinGlobalSession } = useLessons();
   const { user } = useAuth();
   const [globalSession, setGlobalSession] = useState(null);
   useEffect(() => {
     const getGlobalSession = async () => {
-      const res = await getGlobalSessionByTeacherId(teacherId).unwrap();
+      const res = await getGlobalSessionByTeacherUsername(username).unwrap();
       setGlobalSession(res);
     };
     getGlobalSession();
-  }, [getGlobalSessionByTeacherId, teacherId]);
+  }, [getGlobalSessionByTeacherUsername, username]);
 
   const handlePhoneChange = (phone) => {
     setGlobalSession((prev) => ({ ...(prev || {}), phone_number: phone }));
@@ -26,7 +26,7 @@ const GlobalSessionPage = () => {
   const handleJoinGlobalSession = async () => {
     const res = await joinGlobalSession({
       phone_number: user?.phoneNumber || globalSession?.phone_number,
-      teacher_id: teacherId,
+      teacher_id: globalSession?.teacher_id,
       class_session_id: globalSession?.id,
     }).unwrap();
     if (res?.url) {
@@ -122,12 +122,12 @@ const GlobalSessionPage = () => {
             <button
               onClick={handleJoinGlobalSession}
               disabled={
-                !teacherId ||
+                !globalSession?.teacher_id ||
                 (!user?.phoneNumber && !globalSession?.phone_number) ||
                 !globalSession?.id
               }
               className={`w-full py-3 rounded-full font-bold transition-all duration-300 shadow-md ${
-                !teacherId ||
+                !globalSession?.teacher_id ||
                 (!user?.phoneNumber && !globalSession?.phone_number) ||
                 !globalSession?.id
                   ? "bg-gray-400 text-gray-600 cursor-not-allowed"

@@ -64,11 +64,11 @@ export const getContentsBySessionId = createAsyncThunk(
   }
 );
 
-export const getGlobalSessionByTeacherId = createAsyncThunk(
-  "lessons/getGlobalSessionByTeacherId",
-  async (teacherId, { rejectWithValue }) => {
+export const getGlobalSessionByTeacherUsername = createAsyncThunk(
+  "lessons/getGlobalSessionByTeacherUsername",
+  async (username, { rejectWithValue }) => {
     try {
-      const { data } = await lessonsRepository.getGlobalSessionByTeacherId(teacherId);
+      const { data } = await lessonsRepository.getGlobalSessionByTeacherUsername(username);
       return data;
     }
     catch (error) {
@@ -191,17 +191,17 @@ const lessonsSlice = createSlice({
         state.error =
           action.payload || action.error?.message || "خطا فى جلب بيانات الجلسة";
       });
-    // ---- getGlobalSessionByTeacherId ----
+    // ---- getGlobalSessionByTeacherUsername ----
     builder
-      .addCase(getGlobalSessionByTeacherId.pending, (state) => {
+      .addCase(getGlobalSessionByTeacherUsername.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getGlobalSessionByTeacherId.fulfilled, (state, action) => {
+      .addCase(getGlobalSessionByTeacherUsername.fulfilled, (state, action) => {
         state.loading = false;
         state.globalSession = action.payload;
       })
-      .addCase(getGlobalSessionByTeacherId.rejected, (state, action) => {
+      .addCase(getGlobalSessionByTeacherUsername.rejected, (state, action) => {
         console.log(action);
         state.loading = false;
         state.error = action.payload.error || action.error?.message || "خطا فى جلب بيانات الجلسة";
