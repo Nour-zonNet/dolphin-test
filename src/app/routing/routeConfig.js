@@ -6,6 +6,9 @@ import AddSiblingsPage from "../../features/auth/pages/AddSibilingPage/AddSiblin
 import Board from "../../features/Board/Board";
 import PDFViewerPage from "../../features/PDFViewer/PDFViewerPage";
 import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
+import SessionPage from "../../features/lessons/pages/SessionPage";
+import GlobalSessionPage from "../../features/lessons/pages/GlobalSession";
+import WeeklySchedule from "../../features/lessons/pages/WeeklySchedule";
 // import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
@@ -66,6 +69,9 @@ const ForgotPasswordPage = lazy(() =>
   }))
 );
 const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
+const ComplaintsPage = lazy(() =>
+  import("@/features/complaints/pages/ComplaintsPage")
+);
 
 const BalanceDetails = lazy(() =>
   import("@/features/balance/pages/BalanceDetails")
@@ -221,8 +227,14 @@ export const routes = [
     children: [
       {
         path: "lessoncontent/:id",
+        element: SessionPage,
+        protected: false,
+        layout: false,
+      },
+      {
+        path: "lessoncontent",
         element: LessonContentPage,
-        protected: true,
+        protected: false,
         layout: false,
       },
       { path: "exercise", element: LessonExercise, protected: true },
@@ -247,6 +259,43 @@ export const routes = [
     path: "/balance-details",
     element: BalanceDetails,
     protected: true,
+    layout: false,
+  },  {
+    path: "/weekly-schedule",
+    element: WeeklySchedule,
+    protected: true,
+    layout: false,
+  },
+  
+  {
+    path: "/complaints",
+    element: ComplaintsPage,
+    protected: true,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
+  },
+  {
+    path: "/global-session",
+    element: GlobalSessionPage,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: "/complaints",
+    element: ComplaintsPage,
+    protected: true,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
+  },
+  {
+    path: "/global-session/:teacherId",
+    element: GlobalSessionPage,
+    protected: false,
+    homeSupportBtn: true,
+    navbar: false,
+    mobileNav: false,
     layout: false,
   },
 ];

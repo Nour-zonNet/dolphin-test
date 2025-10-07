@@ -37,13 +37,7 @@ export const useLessonHandlers = (
       const newWindow = window.open(sessionUrl, features);
 
       if (!newWindow) {
-        openStatusModal(MODAL_TYPES.ERROR, {
-          title: "لم يتم فتح الحصة",
-          message:
-            "المتصفح منع فتح نافذة جديدة. اضغط موافق لفتح الحصة في نفس النافذة.",
-          onConfirm: () => (window.location.href = sessionUrl),
-          onClose: () => {},
-        });
+        window.location.href = sessionUrl;
       }
     } catch (error) {
       openStatusModal(MODAL_TYPES.ERROR, {
@@ -63,23 +57,10 @@ export const useLessonHandlers = (
   //   });
   // }, [navigate, item]);
   const handleOpenContent = useCallback(() => {
-    if (!item.lessons?.length) return;
+    if (!item.has_content) return;
 
-    // فلترة العناصر اللي ليها date
-    const validLessons = item.lessons.filter((lesson) => lesson && lesson.date);
-
-    if (!validLessons.length) return;
-
-    // نرتب الدروس حسب التاريخ تنازليًا
-    const sortedLessons = [...validLessons].sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
-    );
-
-    const latestLesson = sortedLessons[0];
-
-    navigate("/schedule/lessoncontent/" + latestLesson.id, {
-      state: { lesson: item, lessonId: item?.id },
-      replace: false,
+    navigate("/schedule/lessoncontent/" + item.id, {
+      state: { session: item, lessonId: item?.id },
     });
   }, [navigate, item]);
 
@@ -90,7 +71,17 @@ export const useLessonHandlers = (
       hintTimerRef.current && clearTimeout(hintTimerRef.current);
 
       setHintMsg(
-        canEnterNow ? "اضغط علي زر دخول الحصة للبدء" : "انتظر موعد بدء الحصة"
+        lessonStatus === "live"
+          ? "اضغط علي زر دخول الحصة للبدء"
+          : lessonStatus === "canceled"
+          ? "الحصة ملغية"
+          : lessonStatus === "delayed"
+          ? "الحصة مؤجلة"
+          : lessonStatus === "upcoming"
+          ? "الحصة قريباً"
+          : lessonStatus === "live"
+          ? "الحصة بدأت"
+          : "انتظر موعد بدء الحصة"
       );
 
       hintTimerRef.current = setTimeout(() => {
@@ -98,7 +89,7 @@ export const useLessonHandlers = (
         hintTimerRef.current = null;
       }, 3500);
     },
-    [lessonStatus, canEnterNow]
+    [lessonStatus]
   );
 
   // Cleanup timer on unmount

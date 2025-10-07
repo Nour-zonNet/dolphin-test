@@ -5,37 +5,44 @@ import {
   fetchLessons,
   getPackageLessons,
   getSessionLink,
-  clearLessonsError,
-  clearSessionLink,
+  getContentsBySessionId,
+  getGlobalSessionByTeacherId,
+  joinGlobalSession,
 } from "../store/lessonsSlice";
 
 export const useLessons = () => {
   const dispatch = useDispatch();
   const { items, loading, error, link } = useSelector((s) => s.lessons);
 
-  // Dispatch wrappers following useAuth pattern
   const dispatchFetchLessons = useCallback(
     () => dispatch(fetchLessons()),
     [dispatch]
   );
-  
+
   const dispatchGetPackageLessons = useCallback(
     (packageId) => dispatch(getPackageLessons(packageId)),
     [dispatch]
   );
-  
+
   const dispatchGetSessionLink = useCallback(
     (sessionId) => dispatch(getSessionLink(sessionId)),
     [dispatch]
   );
 
-  const dispatchClearLessonsError = useCallback(
-    () => dispatch(clearLessonsError()),
+  const dispatchGetContentsBySessionId = useCallback(
+    (sessionId) => {
+      console.log(sessionId);
+      return dispatch(getContentsBySessionId(sessionId));
+    },
     [dispatch]
   );
-  
-  const dispatchClearSessionLink = useCallback(
-    () => dispatch(clearSessionLink()),
+  const dispatchJoinGlobalSession = useCallback(
+    (joinData) => dispatch(joinGlobalSession(joinData)),
+    [dispatch]
+  );
+
+  const dispatchGetGlobalSessionByTeacherId = useCallback(
+    (teacherId) => dispatch(getGlobalSessionByTeacherId(teacherId)),
     [dispatch]
   );
 
@@ -48,8 +55,9 @@ export const useLessons = () => {
       fetchLessons: dispatchFetchLessons,
       getPackageLessons: dispatchGetPackageLessons,
       getSessionLink: dispatchGetSessionLink,
-      clearLessonsError: dispatchClearLessonsError,
-      clearSessionLink: dispatchClearSessionLink,
+      getContentsBySessionId: dispatchGetContentsBySessionId,
+      getGlobalSessionByTeacherId: dispatchGetGlobalSessionByTeacherId,
+      joinGlobalSession: dispatchJoinGlobalSession,
     }),
     [
       items,
@@ -59,8 +67,9 @@ export const useLessons = () => {
       dispatchFetchLessons,
       dispatchGetPackageLessons,
       dispatchGetSessionLink,
-      dispatchClearLessonsError,
-      dispatchClearSessionLink,
+      dispatchGetContentsBySessionId,
+      dispatchGetGlobalSessionByTeacherId,
+      dispatchJoinGlobalSession,
     ]
   );
 };

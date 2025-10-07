@@ -9,4 +9,5 @@ export const LESSON_STATUS = Object.freeze({
   DELAYED: "delayed",
   LIVE: "live",
   UPCOMING: "upcoming",
+  CANCELLED: "canceled",
 });

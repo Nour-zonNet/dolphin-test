@@ -397,3 +397,16 @@ export const formatDateWithEnglishDay = (d, lang = "ar") => {
   });
   return { dayNum, monthName, weekdayName };
 };
+
+export function formatDayAndDate(dateString) {
+  const date = new Date(dateString);
+
+  const options = {
+    weekday: "long", 
+    day: "numeric", 
+    month: "long", 
+    year: "numeric", 
+  };
+
+  return date.toLocaleDateString("ar-EG", options);
+}
