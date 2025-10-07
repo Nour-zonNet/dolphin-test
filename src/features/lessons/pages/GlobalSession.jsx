@@ -36,7 +36,7 @@ const GlobalSessionPage = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-gradient-to-br  flex items-center justify-center p-4 font-sans"
+      className="min-h-screen bg-gradient-to-br  flex items-center justify-center p-4 "
     >
       <div className="bg-white rounded-2xl  w-full max-w-md ">
         {/* Header */}

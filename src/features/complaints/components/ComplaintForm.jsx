@@ -134,7 +134,7 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
               value={formData.title}
               onChange={handleInputChange}
               className={`w-full p-3 border-1 border-gray-300 bg-[#F9F9F9] rounded-lg text-base transition-colors duration-300 focus:outline-none focus:border-blue-500 ${
-                errors.title ? "border-red-500" : ""
+                errors.title ? "border-red-500" : ""  
               }`}
               placeholder={t("complaints.form.titlePlaceholder")}
             />
