@@ -170,7 +170,7 @@
     "status": {
       "pending": "قيد المراجعة",
       "inProgress": "قيد المعالجة",
-      "resolved": "تم الحل"
+      "resolved": "تم الرد"
     },
     "dragDropFiles": "اسحب الملفات هنا",
     "orClickToSelect": "أو انقر للاختيار",

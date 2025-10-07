@@ -127,20 +127,20 @@ const ComplaintItem = memo(
           </div>
         )}
 
-        {complaint?.response && (
+        {complaint?.replay && (
           <div className="mt-4 sm:mt-5 p-3 sm:p-4 bg-green-50 rounded-lg border-r-3 border-green-500">
             <h4 className="text-green-700 font-semibold mb-2 sm:mb-3 text-sm sm:text-base">
               {t("complaints.response")}:
             </h4>
             <p className="text-green-700 leading-relaxed mb-2 sm:mb-3 text-sm sm:text-base">
-              {complaint?.response}
+              {complaint?.replay}
             </p>
-            {complaint?.responseDate && (
+            {/* {complaint?.replay && (
               <span className="text-xs text-gray-500 italic">
                 {t("complaints.responseDate")}:{" "}
-                {formatDate(complaint?.responseDate)}
+                {formatDate(complaint?.replay)}
               </span>
-            )}
+            )} */}
           </div>
         )}
       </div>

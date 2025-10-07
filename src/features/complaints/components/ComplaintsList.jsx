@@ -14,7 +14,7 @@ const ComplaintsList = ({ complaints, loading }) => {
         return 'bg-yellow-100 text-yellow-800';
       case 'in_progress':
         return 'bg-blue-100 text-blue-800';
-      case 'resolved':
+      case 'addressed':
         return 'bg-green-100 text-green-800';
       default:
         return 'bg-yellow-100 text-yellow-800';
@@ -27,7 +27,7 @@ const ComplaintsList = ({ complaints, loading }) => {
         return t('complaints.status.pending');
       case 'in_progress':
         return t('complaints.status.inProgress');
-      case 'resolved':
+      case 'addressed':
         return t('complaints.status.resolved');
       default:
         return t('complaints.status.pending');
@@ -100,8 +100,8 @@ const ComplaintsList = ({ complaints, loading }) => {
 
   return (
     <div className="mt-6 sm:mt-8">
-      <h2 className="text-xl sm:text-2xl md:text-3xl text-gray-700 mb-4 sm:mb-6 text-center">{t('complaints.myComplaints')}</h2>
-      <div className="space-y-4 sm:space-y-5">
+      <h2 className="text-xl  sm:text-2xl md:text-3xl text-gray-700 mb-4 sm:mb-6 text-center">{t('complaints.myComplaints')}</h2>
+      <div className="space-y-4 sm:space-y-5 py-10">
         {complaintItems}
       </div>
     </div>
