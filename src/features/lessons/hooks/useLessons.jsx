@@ -6,7 +6,7 @@ import {
   getPackageLessons,
   getSessionLink,
   getContentsBySessionId,
-  getGlobalSessionByTeacherId,
+  getGlobalSessionByTeacherUsername,
   joinGlobalSession,
 } from "../store/lessonsSlice";
 
@@ -41,8 +41,8 @@ export const useLessons = () => {
     [dispatch]
   );
 
-  const dispatchGetGlobalSessionByTeacherId = useCallback(
-    (teacherId) => dispatch(getGlobalSessionByTeacherId(teacherId)),
+  const dispatchGetGlobalSessionByTeacherUsername = useCallback(
+    (username) => dispatch(getGlobalSessionByTeacherUsername(username)),
     [dispatch]
   );
 
@@ -56,7 +56,7 @@ export const useLessons = () => {
       getPackageLessons: dispatchGetPackageLessons,
       getSessionLink: dispatchGetSessionLink,
       getContentsBySessionId: dispatchGetContentsBySessionId,
-      getGlobalSessionByTeacherId: dispatchGetGlobalSessionByTeacherId,
+      getGlobalSessionByTeacherUsername: dispatchGetGlobalSessionByTeacherUsername,
       joinGlobalSession: dispatchJoinGlobalSession,
     }),
     [
@@ -68,7 +68,7 @@ export const useLessons = () => {
       dispatchGetPackageLessons,
       dispatchGetSessionLink,
       dispatchGetContentsBySessionId,
-      dispatchGetGlobalSessionByTeacherId,
+      dispatchGetGlobalSessionByTeacherUsername,
       dispatchJoinGlobalSession,
     ]
   );

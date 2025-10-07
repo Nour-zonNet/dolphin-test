@@ -29,6 +29,6 @@ export const ENDPOINTS = {
   GET_CONTENTS_BY_SESSION_ID: "/student/contents/",
   COMPLAINTS_SUBMIT: "/student/complaints",
   COMPLAINTS_LIST: "/student/complaints",
-  GET_GLOBAL_SESSION_BY_TEACHER_ID: "/get/global/link/",
-  JOIN_GLOBAL_SESSION: "/get/link/student",
+  GET_GLOBAL_SESSION_BY_TEACHER_ID: "/teacher/",
+  JOIN_GLOBAL_SESSION: "/teacher",
 };

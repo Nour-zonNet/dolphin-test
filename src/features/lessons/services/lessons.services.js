@@ -46,9 +46,9 @@ class LessonsRepository {
     const { data } = await api.delete(`/lessons/${lessonId}`);
     return data;
   }
-  async getGlobalSessionByTeacherId(teacherId) {
+  async getGlobalSessionByTeacherUsername(username) {
     const { data } = await api.get(
-      ENDPOINTS.GET_GLOBAL_SESSION_BY_TEACHER_ID + teacherId
+      ENDPOINTS.GET_GLOBAL_SESSION_BY_TEACHER_ID + username
     );
     return data;
   }

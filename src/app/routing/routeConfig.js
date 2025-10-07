@@ -276,12 +276,6 @@ export const routes = [
     homeSupportBtn: true,
   },
   {
-    path: "/global-session",
-    element: GlobalSessionPage,
-    protected: true,
-    layout: false,
-  },
-  {
     path: "/complaints",
     element: ComplaintsPage,
     protected: true,
@@ -290,7 +284,7 @@ export const routes = [
     homeSupportBtn: true,
   },
   {
-    path: "/global-session/:teacherId",
+    path: "/teacher/:username",
     element: GlobalSessionPage,
     protected: false,
     homeSupportBtn: true,
