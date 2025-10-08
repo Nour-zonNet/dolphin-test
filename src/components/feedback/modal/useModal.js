@@ -131,15 +131,6 @@ export const useModal = () => {
     );
   };
 
-  const openSessionEvaluationModal = (sessions = []) => {
-    dispatch(
-      openModal({
-        type: MODAL_TYPES.EVALUATION_SESSION,
-        props: { sessions },
-      })
-    );
-  };
-
   const closeCurrentModal = () => {
     dispatch(closeModal());
   };
@@ -162,7 +153,6 @@ export const useModal = () => {
     openExtendPackageModal,
     openStatusModal,
     openWeeklyScheduleModal,
-    openSessionEvaluationModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

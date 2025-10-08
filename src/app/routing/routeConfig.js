@@ -292,6 +292,15 @@ export const routes = [
     mobileNav: false,
     layout: false,
   },
+  {
+    path: "/teacher",
+    element: GlobalSessionPage,
+    protected: false,
+    homeSupportBtn: true,
+    navbar: false,
+    mobileNav: false,
+    layout: false,
+  },
 ];
 
 // Helper function to check if route is public
