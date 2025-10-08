@@ -9,15 +9,15 @@ import "swiper/css/pagination";
 import notFoundImage from "@/assets/images/notFoundLessons.png";
 import nationalDayBanner from "@/assets/images/national-day.svg";
 import { getSevenDaysBeforeAndAfter, todayDate } from "@/utils/dateHelpers";
+import PreviewScheduleBtn from "@/components/ui/PreviewScheduleBtn";
 
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
-import NationalDayCard from "./NationalDayCard";
 
 const ScheduleSlider = () => {
-  const { items, loading } = useLessons();
+  const { items } = useLessons();
   const days = getSevenDaysBeforeAndAfter();
 
   // Index of today
@@ -29,7 +29,6 @@ const ScheduleSlider = () => {
   const NAVBAR_HEIGHT = 64;
   const MOBILE_BAR_HEIGHT = 56;
 
-  if (loading) return null;
 
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-10">
@@ -37,6 +36,9 @@ const ScheduleSlider = () => {
         dayLabel={days[activeIndex].label}
         dayDate={days[activeIndex].date}
       />
+      <div className="lg:hidden block ">
+        <PreviewScheduleBtn />
+      </div>
 
       <div className="slider py-6 pb-20">
         <Swiper

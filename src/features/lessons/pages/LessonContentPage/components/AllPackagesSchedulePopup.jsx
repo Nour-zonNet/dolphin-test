@@ -88,7 +88,7 @@ function normalizeDay(dayRaw, startDate) {
 const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
   const { t } = useTranslation();
   // We just read what's already in the store; preloading happens in the button.
-  const { items = [], error } = useLessons();
+  const { items , error } = useLessons();
 
   const close = useCallback(() => {
     if (typeof onClose === "function") onClose();

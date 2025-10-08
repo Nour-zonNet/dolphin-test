@@ -39,11 +39,11 @@ function Navbar() {
       </div>
 
     <div className="flex gap-2 sm:gap-4 w-full justify-end md:w-auto">
-      {/* {activeTab === "schedule" && (
+      {activeTab === "schedule" && (
         <div className="lg:block hidden w-full">
           <PreviewScheduleBtn />
         </div>
-      )} */}
+      )}
       <SubscribeBtn />
     </div>
     </nav>
