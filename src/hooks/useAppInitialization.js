@@ -9,6 +9,7 @@ import { fetchSubscriptions } from "@/features/subscription/store/subscriptionSl
 import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
 import { useAuth } from "../features/auth/hooks/useAuth";
 import { useClasses } from "./useClasses";
+import { useSessionTracking } from "./useSessionTracking";
 
 export const useAppInitialization = () => {
   const dispatch = useDispatch();
