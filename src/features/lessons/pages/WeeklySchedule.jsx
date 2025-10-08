@@ -1,7 +1,8 @@
 import { useLessons } from "../hooks/useLessons";
 import backgroundImage from "@/assets/schedule/background.png";
 import dolphinChild from "@/assets/images/homeChild.png";
-
+import "./print.css";
+import streamline from "@/assets/images/streamline.png";
 const WeeklySchedule = () => {
   const { items } = useLessons();
 
@@ -63,14 +64,8 @@ const WeeklySchedule = () => {
 
   // ✅ دالة الطباعة
   const handlePrint = () => {
-    const printContents = document.getElementById("schedule-content").innerHTML;
-    const originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
     window.print();
-    document.body.innerHTML = originalContents;
-    window.location.reload(); // لإعادة تحميل الصفحة بعد الطباعة
   };
-
   return (
     <div
       className="w-full relative px-4 pt-16 bg-cover bg-center bg-no-repeat min-h-screen flex justify-center items-start"
@@ -85,10 +80,11 @@ const WeeklySchedule = () => {
           className="w-full h-full "
         />
       </div>
-      <div className="absolute left-0 top-0">
+      <div className="absolute left-0 top-0 w-20">
         <svg
           width="87"
           height="99"
+          className="w-full h-full"
           viewBox="0 0 87 99"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -101,11 +97,11 @@ const WeeklySchedule = () => {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto bg-white rounded-2xl shadow-md border border-gray-200">
-        <div className="absolute right-0 -top-15">
+        <div className="absolute right-0 -top-20">
           <img
             src={dolphinChild}
             alt="Path"
-            className="h-8 sm:h-15 md:h-20 lg:h-30 object-contain lg:mb-6"
+            className="h-38 object-contain lg:mb-6"
           />
         </div>
 
@@ -119,7 +115,7 @@ const WeeklySchedule = () => {
         <div className="overflow-x-auto">
           <table className="min-w-full table-fixed border-collapse text-center">
             <thead>
-              <tr className="bg-gray-100 text-gray-700">
+              {/* <tr className="bg-gray-100 text-gray-700">
                 <th className="py-3 px-4 border border-gray-200 w-[140px]">
                   اليوم
                 </th>
@@ -131,7 +127,7 @@ const WeeklySchedule = () => {
                     {slot !== "—" ? slot : ""}
                   </th>
                 ))}
-              </tr>
+              </tr> */}
             </thead>
 
             <tbody>
@@ -149,7 +145,7 @@ const WeeklySchedule = () => {
                     return (
                       <td
                         key={`${day}-${slot}-${index}`}
-                        className="border border-gray-200 w-[180px] h-[100px] text-center align-middle"
+                        className="border border-gray-200 w-[300px] h-[100px] text-center align-middle"
                       >
                         {session ? (
                           <>
@@ -179,11 +175,15 @@ const WeeklySchedule = () => {
           <i className="bi bi-info-circle me-1"></i>
           جميع الحصص المتاحة خلال الاسبوع.
         </div>
+        <div className="absolute -bottom-10 -right-5">
+          <img className="w-40 object-contain" src={streamline} alt="print icon" />
+        </div>
       </div>
       {/* ✅ زر عائم للطباعة */}
       <button
         onClick={handlePrint}
-        className="fixed bottom-6 right-6  text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-green-600 transition-all hover:cursor-pointer print:hidden"
+        
+        className="fixed bottom-6 right-6  text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-green-600 transition-all hover:cursor-pointer print:hidden z-50"
         title="طباعة الجدول الأسبوعي"
       >
         <svg
