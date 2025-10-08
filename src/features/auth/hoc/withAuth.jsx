@@ -10,7 +10,7 @@ const withAuth = (WrappedComponent) => {
     if (token && !user) {
       return (
         <Overlay ariaLabel="Authenticating user">
-          <Spinner colorClass="border-orange-500" />
+          <Spinner size={spinnerSize} />
         </Overlay>
       );
     }

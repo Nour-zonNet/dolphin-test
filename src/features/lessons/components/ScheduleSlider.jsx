@@ -42,7 +42,7 @@ const ScheduleSlider = () => {
 
       <div className="slider py-6 pb-20">
         <Swiper
-          key={todayIndex} // ensure starting at today
+          key={todayIndex}
           modules={[Navigation, Pagination]}
           spaceBetween={30}
           slidesPerView={1}
