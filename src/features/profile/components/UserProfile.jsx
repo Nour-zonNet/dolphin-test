@@ -132,36 +132,10 @@ const UserProfile = () => {
   const handleImageChange = async (e, userId) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Validate file size (max 5MB)
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-    if (file.size > MAX_FILE_SIZE) {
-      openStatusModal("ERROR", {
-        title: "حجم الصورة كبير جداً",
-        message: "حجم الصورة يجب أن يكون أقل من 5 ميجابايت",
-      });
-      return;
-    }
-
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      openStatusModal("ERROR", {
-        title: "نوع الملف غير مدعوم",
-        message: "يرجى اختيار صورة بصيغة JPG أو PNG أو GIF أو WebP",
-      });
-      return;
-    }
-
     setSelectedImages((prev) => ({ ...prev, [userId]: file }));
     try {
       await updateUserImage(file);
-      openStatusModal("SUCCESS", {
-        title: "تم تحديث الصورة بنجاح",
-        message: "تم تحديث صورة الملف الشخصي بنجاح",
-      });
     } catch (err) {
-      console.error("Image upload error:", err);
       openStatusModal("ERROR", {
         title: "فشل رفع الصورة",
         message: err?.message || "تعذر رفع الصورة. حاول مرة أخرى.",
