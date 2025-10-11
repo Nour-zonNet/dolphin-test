@@ -185,13 +185,5 @@
     "download": "تحميل",
     "response": "الرد",
     "responseDate": "تاريخ الرد"
-  },
-  "evaluation": {
-    "howWereYourSessions": "كيف كانت جلساتك أمس؟",
-    "yourOpinionMatters": "رأيك يهمنا ويساعدنا علي التحسين",
-    "rateSession": "قيم الجلسة:",
-    "shareYourOpinion": "شاركنا رأيك....",
-    "skip": "تخطي",
-    "send": "ارسال"
   }
 }
