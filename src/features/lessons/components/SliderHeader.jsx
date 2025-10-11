@@ -54,8 +54,8 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
           className="bg-orange-200 text-black px-6 py-3 rounded-lg"
         >
           تقييم الجلسات
-      </button> */}
-{/* 
+      </button>
+
       <SessionRatingModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

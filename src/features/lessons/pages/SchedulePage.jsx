@@ -1,21 +1,30 @@
 import { useState } from "react";
 import { ScheduleSlider } from "../components";
+import SessionRatingModal from "../../../components/feedback/modal/modals/SessionRatingModal";
+import { useSessionRatingModal } from "../hooks/useSessionRatingModal";
 
 const SchedulePage = () => {
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleSubmitRatings = (ratings) => {
-    console.log('User ratings:', ratings);
-    // Handle the submission (API call, etc.)
-    setIsModalOpen(false);
-  };
+  const {
+    isModalOpen,
+    shouldShowModal,
+    handleSubmitRatings,
+    handleCloseModal,
+    yesterdaySessions
+  } = useSessionRatingModal();
 
   return (
     <div className="pt-28 md:pt-41">
       <ScheduleSlider />
-      <div>
-    </div>
+      
+      {/* Session Rating Modal */}
+      {shouldShowModal && yesterdaySessions && yesterdaySessions.length > 0 && (
+        <SessionRatingModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmitRatings}
+          sessions={yesterdaySessions}
+        />
+      )}
     </div>
   );
 };

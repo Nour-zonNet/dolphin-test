@@ -66,9 +66,7 @@ class AuthRepository {
     formData.append("image", file);
     formData.append("_method", "PATCH");
 
-    const response = await api.post(ENDPOINTS.UPDATE_IMAGE, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await api.post(ENDPOINTS.UPDATE_IMAGE, formData);
 
     return response.data?.data?.userData;
   }

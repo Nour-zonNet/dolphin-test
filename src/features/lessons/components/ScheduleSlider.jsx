@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-import SessionRatingModal from "../../../components/feedback/modal/modals/SessionRatingModal";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
