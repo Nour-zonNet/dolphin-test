@@ -1,4 +1,4 @@
-import "./style.css";
+// import "./style.css";
 import ZoomMtgEmbedded from "@zoom/meetingsdk/embedded";
 
 function ZoomMeting() {
@@ -8,8 +8,8 @@ function ZoomMeting() {
   const meetingNumber = "97372526003"; // real meeting ID
   const passWord = "j9WTJAoybL9lQPaP9VrjDXhQbHbbWa"; // exact meeting passcode
   const role = 1; // 0 = participant, 1 = host
-  const userName = "John Doe";
-  const userEmail = "john.doe@example.com";
+  const userName = "mahmoud";
+  const userEmail = "mahmoud@example.com";
   const registrantToken = "";
   const zakToken = "";
 
@@ -51,21 +51,21 @@ function ZoomMeting() {
         tk: registrantToken,
         zak: zakToken,
       });
-      console.log("joined successfully");
+      console.log("تم الانضمام الى الحصة بنجاح");
     } catch (error) {
       console.log(error);
     }
   }
 
   return (
-    <div className="">
+    <div className=" flex justify-center items-center text-center">
       <main>
         <h1>اجتماع مباشر</h1>
         {/* For Component View */}
-        <div id="meetingSDKElement">
+        <div id="meetingSDKElement" className="min-h-[300px]">
           {/* Zoom Meeting SDK Component View Rendered Here */}
         </div>
-        <button onClick={()=>startMeeting()}>الانضمام الى الحصة</button>
+        <button className="bg-orangedeep mx-auto text-white px-4 py-2 rounded-full hover:cursor-pointer" onClick={()=>startMeeting()}>الانضمام الى الحصة</button>
       </main>
     </div>
   );
