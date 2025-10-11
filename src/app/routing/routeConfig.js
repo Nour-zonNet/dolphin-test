@@ -9,6 +9,7 @@ import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
 import SessionPage from "../../features/lessons/pages/SessionPage";
 import GlobalSessionPage from "../../features/lessons/pages/GlobalSession";
 import WeeklySchedule from "../../features/lessons/pages/WeeklySchedule";
+import TeacherProfile from "../../features/teacher/pages/profile";
 // import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
@@ -286,6 +287,15 @@ export const routes = [
   {
     path: "/teacher/:username",
     element: GlobalSessionPage,
+    protected: false,
+    homeSupportBtn: true,
+    navbar: false,
+    mobileNav: false,
+    layout: false,
+  },
+  {
+    path: "/teacher/profile",
+    element: TeacherProfile,
     protected: false,
     homeSupportBtn: true,
     navbar: false,

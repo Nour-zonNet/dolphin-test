@@ -16,6 +16,8 @@ const GlobalSessionPage = () => {
       const res = await getGlobalSessionByTeacherUsername(username).unwrap();
       setGlobalSession(res);
     };
+
+    
     getGlobalSession();
   }, [getGlobalSessionByTeacherUsername, username]);
 
