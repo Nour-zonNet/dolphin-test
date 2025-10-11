@@ -1,5 +1,4 @@
 import { useState } from "react";
-import SessionRatingModal from "../../../components/feedback/modal/modals/SessionRatingModal";
 import { ScheduleSlider } from "../components";
 
 const SchedulePage = () => {

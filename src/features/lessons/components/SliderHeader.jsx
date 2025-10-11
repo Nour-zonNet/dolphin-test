@@ -55,12 +55,12 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
         >
           تقييم الجلسات
       </button> */}
-
+{/* 
       <SessionRatingModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmitRatings}
-      />
+      /> */}
     </div>
  
   );

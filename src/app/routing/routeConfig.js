@@ -9,6 +9,7 @@ import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
 import SessionPage from "../../features/lessons/pages/SessionPage";
 import GlobalSessionPage from "../../features/lessons/pages/GlobalSession";
 import WeeklySchedule from "../../features/lessons/pages/WeeklySchedule";
+import SessionRatingModal from "../../components/feedback/modal/modals/SessionRatingModal";
 // import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
@@ -297,6 +298,15 @@ export const routes = [
     element: GlobalSessionPage,
     protected: false,
     homeSupportBtn: true,
+    navbar: false,
+    mobileNav: false,
+    layout: false,
+  },
+  {
+    path: "/rating",
+    element: SessionRatingModal,
+    protected: false,
+    homeSupportBtn: false,
     navbar: false,
     mobileNav: false,
     layout: false,

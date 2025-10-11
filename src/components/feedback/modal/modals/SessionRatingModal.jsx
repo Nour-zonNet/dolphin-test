@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import dolphinEvaluate from '@/assets/images/dolphin-evaluate.svg';
+import dolphinStars from '@/assets/images/dolphin-stars.svg';
+import sendRateIcon from '@/assets/images/send-rate-icon.svg';
+import { Teacher } from '@/utils/icons';
 
 const SessionRatingModal = ({ isOpen, onClose, onSubmit }) => {
     const [ratings, setRatings] = useState({
@@ -37,25 +40,25 @@ const SessionRatingModal = ({ isOpen, onClose, onSubmit }) => {
         setComments({ session1: '', session2: '' });
     };
 
-    if (!isOpen) return null;
+    // if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl relative">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl relative max-h-[90vh] flex flex-col">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors z-10"
+                    className="absolute top-4 right-4 w-8 h-8 lg:w-10 lg:h-10 rounded-full border-[0.5px] border-solid border-[#8c8c8c] flex items-center justify-center hover:bg-gray-200 transition-colors z-10"
                 >
-                    <span className="text-lg">×</span>
+                    <span className="text-lg lg:text-2xl">×</span>
                 </button>
 
                 {/* Header */}
-                <div className="bg-gradient-to-r from-orange-200 to-blue-50 p-8 rounded-t-2xl text-center">
+                <div className="bg-gradient-to-r from-orange-200 to-blue-50 p-4 md:p-8 rounded-t-2xl text-center flex-shrink-0">
                     <div className="mb-4">
-                        <img src={dolphinEvaluate} alt="Dolphin Character" className="mx-auto w-20 h-20" />
+                        <img src={dolphinEvaluate} alt="Dolphin Character" className="mx-auto w-16 h-16 md:w-20 md:h-20" />
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                    <h2 className="text-base md:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
                         كيف كانت جلساتك أمس؟
                     </h2>
                     <p className="text-gray-600 text-sm md:text-base">
@@ -64,25 +67,21 @@ const SessionRatingModal = ({ isOpen, onClose, onSubmit }) => {
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
+                <div className="p-4 md:p-6 flex-1 overflow-y-auto">
                     {/* Session Rating Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         {/* Session 1 Card */}
                         <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                             <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-gray-800 text-sm">قيم الجلسة:</span>
+                                <span className="text-[#165072] text-sm md:text-lg font-semibold">قيم الجلسة:</span>
+                                <div className="flex items-center gap-2 text-[#165072]">
+                                    <Teacher className="w-4 h-4" />
+                                    <span className="font-semibold text-sm md:text-lg">أ. حنان</span>
                                 </div>
-                                <span className="text-gray-800 font-medium">أ. حنان</span>
                             </div>
                             
                             {/* Star Rating */}
-                            <div className="flex justify-center gap-1 mb-4">
+                            <div className="flex justify-start gap-1 mb-4">
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <button
                                         key={star}
@@ -111,34 +110,30 @@ const SessionRatingModal = ({ isOpen, onClose, onSubmit }) => {
                             </div>
 
                             {/* Comment Textarea */}
-                            <div className="border-2 border-dashed border-gray-200 rounded-lg p-3 flex items-start gap-2">
-                                <img src={dolphinEvaluate} alt="" className="w-6 h-6 flex-shrink-0" />
+                            <div className="border-[0.5px] border-dashed border-[#1B648E] rounded-lg p-3 flex items-start gap-2 relative min-h-24">
                                 <textarea
                                     value={comments.session1}
                                     onChange={(e) => handleCommentChange('session1', e.target.value)}
                                     placeholder="شاركنا رأيك..."
-                                    className="flex-1 text-sm text-gray-500 placeholder-gray-400 border-none outline-none resize-none"
+                                    className="flex-1 text-sm md:text-lg text-[#707070] placeholder-[#707070] border-none outline-none resize-none"
                                     rows={2}
                                 />
+                                <img src={dolphinStars} alt="" className="flex-shrink-0 absolute -left-6 -top-4" />
                             </div>
                         </div>
 
                         {/* Session 2 Card */}
                         <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                             <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-gray-800 text-sm">قيم الجلسة:</span>
+                                <span className="text-[#165072] text-sm md:text-lg font-semibold">قيم الجلسة:</span>
+                                <div className="flex items-center gap-2 text-[#165072]">
+                                    <Teacher className="w-4 h-4" />
+                                    <span className="font-semibold text-sm md:text-lg">أ. حنان</span>
                                 </div>
-                                <span className="text-gray-800 font-medium">أ. حنان</span>
                             </div>
                             
                             {/* Star Rating */}
-                            <div className="flex justify-center gap-1 mb-4">
+                            <div className="flex justify-start gap-1 mb-4">
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <button
                                         key={star}
@@ -167,15 +162,15 @@ const SessionRatingModal = ({ isOpen, onClose, onSubmit }) => {
                             </div>
 
                             {/* Comment Textarea */}
-                            <div className="border-2 border-dashed border-gray-200 rounded-lg p-3 flex items-start gap-2">
-                                <img src={dolphinEvaluate} alt="" className="w-6 h-6 flex-shrink-0" />
+                            <div className="border-[0.5px] border-dashed border-[#1B648E] rounded-lg p-3 flex items-start gap-2 relative min-h-24">
                                 <textarea
                                     value={comments.session2}
                                     onChange={(e) => handleCommentChange('session2', e.target.value)}
                                     placeholder="شاركنا رأيك..."
-                                    className="flex-1 text-sm text-gray-500 placeholder-gray-400 border-none outline-none resize-none"
+                                    className="flex-1 text-sm md:text-lg text-[#707070] placeholder-[#707070] border-none outline-none resize-none"
                                     rows={2}
                                 />
+                                <img src={dolphinStars} alt="" className="flex-shrink-0 absolute -left-6 -top-4" />
                             </div>
                         </div>
                     </div>
@@ -185,16 +180,15 @@ const SessionRatingModal = ({ isOpen, onClose, onSubmit }) => {
                         <button
                             onClick={handleSubmit}
                             disabled={ratings.session1 === 0 || ratings.session2 === 0}
-                            className="px-6 py-3 bg-orangedeep text-navyteal flex items-center justify-center rounded-full cursor-pointer w-50 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="px-6 py-3 bg-orangedeep text-navyteal flex items-center justify-center rounded-full w-40 md:w-60 cursor-pointer font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                            </svg>
+                            <img src={sendRateIcon} alt="send icon" />
+
                             ارسال
                         </button>
                         <button
                             onClick={handleSkip}
-                            className="px-6 py-3 text-gray-700 font-medium hover:text-gray-900 transition-colors w-50 cursor-pointer"
+                            className="px-6 py-3 text-[#8C8C8C] font-semibold hover:text-gray-900 transition-colors w-40 md:w-60 cursor-pointer text-sm md:text-lg xl:text-xl"
                         >
                             تخطي
                         </button>
