@@ -84,7 +84,7 @@ const TransactionCard = ({ transaction, className = '' }) => {
           {/* Transaction Details */}
           <div className="flex-1">
             <div className="flex items-start justify-between">
-              <h3 className="text-sm md:text-base lg:text-lg font-bold text-navyteal mb-2">
+              <h3 className="text-sm md:text-base lg:text-lg font-bold text-navyteal">
                 {transaction.title}
               </h3>
               
