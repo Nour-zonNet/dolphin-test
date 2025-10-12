@@ -85,7 +85,12 @@ export const updateUserImage = createAsyncThunk(
       await dispatch(fetchCurrentUser());
       return data;
     } catch (err) {
-      return rejectWithValue(err.response?.data || "فشل في تحديث صورة المستخدم. تأكد من صحة الملف");
+      console.error("Update user image error:", err);
+      const errorMessage = err.response?.data?.message || 
+                          err.response?.data?.error || 
+                          err.message || 
+                          "فشل في تحديث صورة المستخدم. تأكد من صحة الملف";
+      return rejectWithValue(errorMessage);
     }
   }
 );

@@ -1,11 +1,19 @@
 import SliderNavButton from "./SliderNavButton";
 import { useTranslation } from "react-i18next";
 import { LeftArrow, RightArrow } from "@/utils/icons";
+import SessionRatingModal from "../../../components/feedback/modal/modals/SessionRatingModal";
+import { useState } from "react";
 
 const SliderHeader = ({ dayLabel, dayDate }) => {
   const { i18n } = useTranslation();
   const dateObj = new Date(dayDate);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleSubmitRatings = (ratings) => {
+    console.log('User ratings:', ratings);
+    // Handle the submission (API call, etc.)
+    setIsModalOpen(false);
+  };
   // Always English digits for the day number
   const dayNumber = dateObj.toLocaleDateString("en-US", { day: "numeric" });
 
@@ -41,6 +49,18 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
           <LeftArrow size={22} className="w-4 sm:w-5" />
         </SliderNavButton>
       </div>
+        {/* <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-orange-200 text-black px-6 py-3 rounded-lg"
+        >
+          تقييم الجلسات
+      </button>
+
+      <SessionRatingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmitRatings}
+      /> */}
     </div>
  
   );

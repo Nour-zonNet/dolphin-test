@@ -9,8 +9,12 @@ import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
 import SessionPage from "../../features/lessons/pages/SessionPage";
 import GlobalSessionPage from "../../features/lessons/pages/GlobalSession";
 import WeeklySchedule from "../../features/lessons/pages/WeeklySchedule";
+<<<<<<< HEAD
 import TeacherProfile from "../../features/teacher/pages/profile";
 import ZoomDemo from "../../features/zoom/pages/ZoomDemo";
+=======
+import SessionRatingModal from "../../components/feedback/modal/modals/SessionRatingModal";
+>>>>>>> 936b97889f3b5634da1eb764ff67d9e15c55830e
 // import Board from "../../features/Board/Board";
 
 // Lazy load components for better performance
@@ -295,8 +299,13 @@ export const routes = [
     layout: false,
   },
   {
+<<<<<<< HEAD
     path: "/teacher/profile",
     element: TeacherProfile,
+=======
+    path: "/teacher",
+    element: GlobalSessionPage,
+>>>>>>> 936b97889f3b5634da1eb764ff67d9e15c55830e
     protected: false,
     homeSupportBtn: true,
     navbar: false,
@@ -304,8 +313,13 @@ export const routes = [
     layout: false,
   },
   {
+<<<<<<< HEAD
     path: "/zoom-demo",
     element: ZoomDemo,
+=======
+    path: "/rating",
+    element: SessionRatingModal,
+>>>>>>> 936b97889f3b5634da1eb764ff67d9e15c55830e
     protected: false,
     homeSupportBtn: false,
     navbar: false,

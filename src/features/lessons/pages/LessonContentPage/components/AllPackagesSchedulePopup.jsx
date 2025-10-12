@@ -122,6 +122,8 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
 
   const mergedByDay = useMemo(() => {
     const out = {};
+    const seenSessions = new Set(); // Track unique sessions to prevent duplicates
+    
     (filteredItems || []).forEach((it) => {
       const dayKey = normalizeDay(
         it.day_of_week ?? it.day ?? it.weekday ?? null,

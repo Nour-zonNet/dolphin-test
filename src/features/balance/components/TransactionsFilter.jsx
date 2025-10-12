@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, DatePicker, SearchTransactions } from "@/utils/icons";
 import highlight from "@/assets/balance/highlight.svg";
 
@@ -7,12 +7,34 @@ const TransactionsFilter = ({ onDateFilter }) => {
   const [selectedMonth, setSelectedMonth] = useState("جميع الأشهر");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const dropdownRef = useRef(null);
 
   const monthOptions = [
+    "جميع الأشهر",
     "الشهر الحالي",
     "الشهر الماضي",
     "آخر 3 شهور",
   ];
+
+  // Always show all options in the dropdown
+  const filteredMonthOptions = monthOptions;
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const handleSelectMonth = (month) => {
     setSelectedMonth(month);
@@ -63,8 +85,31 @@ const TransactionsFilter = ({ onDateFilter }) => {
   };
 
   const handleSearch = () => {
+    // Validate date range
+    if (fromDate && toDate && fromDate > toDate) {
+      alert("تاريخ البداية يجب أن يكون قبل تاريخ النهاية");
+      return;
+    }
+
+    // If no dates are selected, show all transactions
+    if (!fromDate && !toDate) {
+      if (onDateFilter) {
+        onDateFilter("", "");
+      }
+      return;
+    }
+
     if (onDateFilter) {
       onDateFilter(fromDate, toDate);
+    }
+  };
+
+  const handleClearFilters = () => {
+    setFromDate("");
+    setToDate("");
+    setSelectedMonth("جميع الأشهر");
+    if (onDateFilter) {
+      onDateFilter("", "");
     }
   };
 
@@ -94,7 +139,7 @@ const TransactionsFilter = ({ onDateFilter }) => {
                 </span>
                 <div className="flex items-center relative">
                   <DatePicker 
-                    className="w-4 md:w-5 cursor-pointer" 
+                    className="w-4 md:w-5 cursor-pointer z-10" 
                     onClick={() => document.getElementById('fromDateInput').showPicker()}
                   />
                   <input
@@ -102,12 +147,10 @@ const TransactionsFilter = ({ onDateFilter }) => {
                     type="date"
                     value={fromDate}
                     onChange={(e) => handleDateChange("from", e.target.value)}
-                    className="appearance-none bg-transparent text-sm md:text-xl font-bold text-[#8C8C8C] focus:outline-none cursor-pointer opacity-0 absolute inset-0"
-                    placeholder="mm/dd/yyyy"
+                    className="w-full h-10 md:h-12 bg-transparent text-sm md:text-base font-bold text-[#8C8C8C] focus:outline-none cursor-pointer"
+                    placeholder="اختر التاريخ"
+                    title="اختر تاريخ البداية"
                   />
-                  <span className="text-sm md:text-xl font-bold text-[#8C8C8C] mr-2">
-                    {fromDate || "اختر التاريخ"}
-                  </span>
                 </div>
               </div>
             </div>
@@ -120,7 +163,7 @@ const TransactionsFilter = ({ onDateFilter }) => {
                 </span>
                 <div className="flex items-center relative">
                   <DatePicker 
-                    className="w-4 md:w-5 cursor-pointer" 
+                    className="w-4 md:w-5 cursor-pointer z-10" 
                     onClick={() => document.getElementById('toDateInput').showPicker()}
                   />
                   <input
@@ -128,31 +171,32 @@ const TransactionsFilter = ({ onDateFilter }) => {
                     type="date"
                     value={toDate}
                     onChange={(e) => handleDateChange("to", e.target.value)}
-                    className="appearance-none bg-transparent text-sm md:text-xl font-bold text-[#8C8C8C] focus:outline-none cursor-pointer opacity-0 absolute inset-0"
-                    placeholder="mm/dd/yyyy"
+                    className="w-full h-10 md:h-12 bg-transparent text-sm md:text-base font-bold text-[#8C8C8C] focus:outline-none cursor-pointer"
+                    placeholder="اختر التاريخ"
+                    title="اختر تاريخ النهاية"
                   />
-                  <span className="text-sm md:text-xl font-bold text-[#8C8C8C] mr-2">
-                    {toDate || "اختر التاريخ"}
-                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Search Button */}
-          <button
-            onClick={handleSearch}
-            className="flex bg-orangedeep hover:bg-btnClicked rounded-tr rounded-tl md:rounded-4xl 
-                      w-full md:w-[140px] h-[50px] md:h-[90px] 
-                      items-center justify-center 
-                      cursor-pointer transition-colors duration-300"
-          >
-            <SearchTransactions className="w-5 md:w-6" />
-          </button>
+          {/* Action Buttons */}
+          <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+            {/* Search Button */}
+            <button
+              onClick={handleSearch}
+              className="flex bg-orangedeep hover:bg-btnClicked rounded-tr rounded-tl md:rounded-4xl 
+                        w-full md:w-[140px] h-[50px] md:h-[90px] 
+                        items-center justify-center 
+                        cursor-pointer transition-colors duration-300"
+            >
+              <SearchTransactions className="w-5 md:w-6" />
+            </button>
+          </div>
         </div>
 
          {/* Dropdown */}
-        <div className="relative h-[50px] md:h-[90px]">
+        <div ref={dropdownRef} className="relative h-[50px] md:h-[90px]">
           <div
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center justify-center gap-4 px-4 min-h-16 md:min-h-23 cursor-pointer min-w-[200px] rounded-2xl md:rounded-4xl border-[0.5px] border-[#8C8C8C66] overflow-hidden bg-white hover:bg-gray-50 transition-colors duration-300"
@@ -163,7 +207,7 @@ const TransactionsFilter = ({ onDateFilter }) => {
 
           {isDropdownOpen && (
             <div className="absolute top-full mt-4 lg:mt-2 w-full py-4 px-10 bg-white border-[0.5px] border-[#8C8C8C66] rounded-2xl text-center z-10">
-              {monthOptions.map((month) => (
+              {filteredMonthOptions.map((month) => (
                 <div
                   key={month}
                   onClick={() => handleSelectMonth(month)}

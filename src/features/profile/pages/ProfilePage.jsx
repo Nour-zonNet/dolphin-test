@@ -20,7 +20,7 @@ const ProfilePage = () => {
         </div>
 
         <div className="space-y-8 md:space-y-16">
-          {/* <WalletBalance /> */}
+          <WalletBalance />
           <Divider />
           <AccountInfo user={user} />
           <Divider />

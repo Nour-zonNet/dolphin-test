@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -42,7 +41,7 @@ const ScheduleSlider = () => {
 
       <div className="slider py-6 pb-20">
         <Swiper
-          key={todayIndex} // ensure starting at today
+          key={todayIndex}
           modules={[Navigation, Pagination]}
           spaceBetween={30}
           slidesPerView={1}
@@ -119,6 +118,8 @@ const ScheduleSlider = () => {
           })}
         </Swiper>
       </div>
+
+
     </div>
   );
 };
