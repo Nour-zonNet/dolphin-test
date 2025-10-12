@@ -131,10 +131,10 @@ const UserProfile = () => {
   // Handle avatar selection from modal
   const handleAvatarSelect = async (avatarSrc) => {
     try {
-      // Convert avatar path to file-like object for consistency
+
       const response = await fetch(avatarSrc);
       const blob = await response.blob();
-      const file = new File([blob], 'avatar.png', { type: blob.type });
+      const file = new File([blob], avatarSrc.split('/').pop(), { type: blob.type });
       
       setSelectedImages((prev) => ({ ...prev, [user.id]: file }));
       await updateUserImage(file);
