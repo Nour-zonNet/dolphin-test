@@ -52,6 +52,7 @@ const TransactionsList = ({
       <div className={`w-[90%] mx-auto mt-8 ${className}`}>
         <NoTransactions />
       </div>
+      
     );
   }
 

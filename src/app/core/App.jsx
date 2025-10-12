@@ -6,6 +6,7 @@ import ChatwootInit from "../components/ChatwootInit"
 import GlobalLoader from "@/components/feedback/GlobalLoader";
 import GlobalError from "@/components/feedback/GlobalError";
 import ModalManager from "@/components/feedback/modal/ModalManager";
+import SessionRatingInitializer from "@/components/SessionRatingInitializer";
 
 const App = () => {
   useLanguageDirection();
@@ -19,6 +20,7 @@ const App = () => {
         <GlobalLoader />
         <GlobalError />
         <ModalManager />
+        <SessionRatingInitializer />
         <AppRoutes />
       </div>
       <ChatwootInit />

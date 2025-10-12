@@ -15,6 +15,7 @@ import {
   AvatarModal,
   AddBalanceModal,
   AddCouponModal,
+  SessionRatingModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -168,6 +169,28 @@ const ModalManager = () => {
               executeCallback(props.callbackId, data);
             }
             handleClose();
+          }}
+        />
+      );
+      break;
+    case MODAL_TYPES.SESSION_RATING:
+      ModalContent = (
+        <SessionRatingModal
+          {...props}
+          onClose={handleClose}
+          onSubmit={async (data) => {
+            try {
+              if (props.onSubmit) {
+                await props.onSubmit(data);
+              }
+              if (props.callbackId) {
+                executeCallback(props.callbackId, data);
+              }
+            } catch (error) {
+              console.error('Error in SessionRatingModal onSubmit:', error);
+            } finally {
+              handleClose();
+            }
           }}
         />
       );

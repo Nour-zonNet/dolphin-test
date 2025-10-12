@@ -16,4 +16,6 @@ export const MODAL_TYPES = {
   // Balance-related modals
   ADD_BALANCE: "ADD_BALANCE",
   ADD_COUPON: "ADD_COUPON",
+  // Session rating modal
+  SESSION_RATING: "SESSION_RATING",
 };
