@@ -12,6 +12,7 @@ import {
   ChangeGroupModal,
   ReactivateModal,
   WeeklyScheduleModal,
+  AvatarModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -126,6 +127,20 @@ const ModalManager = () => {
       break;
     case MODAL_TYPES.WEEKLY_SCHEDULE:
       ModalContent = <WeeklyScheduleModal {...props} onClose={handleClose} />;
+      break;
+    case MODAL_TYPES.AVATAR_MODAL:
+      ModalContent = (
+        <AvatarModal
+          {...props}
+          onClose={handleClose}
+          onSelect={(avatarSrc) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, avatarSrc);
+            }
+            handleClose();
+          }}
+        />
+      );
       break;
     default:
       return null;
