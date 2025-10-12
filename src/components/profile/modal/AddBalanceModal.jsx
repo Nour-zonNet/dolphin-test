@@ -3,7 +3,7 @@ import Divider from "../../ui/Divider";
 import { ArrowNext } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
-const AddBalanceModal = ({ isOpen, onClose, onSubmit }) => {
+const AddBalanceModal = ({ onClose, onSubmit }) => {
   const [amount, setAmount] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
@@ -19,8 +19,6 @@ const AddBalanceModal = ({ isOpen, onClose, onSubmit }) => {
       }, 2000);
     }
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-100 p-4">

@@ -3,7 +3,7 @@ import Divider from "../../ui/Divider";
 import { ConfirmCheck } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
-const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
+const AddCouponModal = ({ onClose, onSubmit }) => {
   const [couponCode, setCouponCode] = useState("");
   const [couponValue, setCouponValue] = useState("");
   const [error, setError] = useState("");
@@ -43,8 +43,6 @@ const AddCouponModal = ({ isOpen, onClose, onSubmit }) => {
       }, 2000);
     }
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-100 p-4">

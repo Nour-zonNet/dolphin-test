@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ChevronDown, DatePicker, SearchTransactions } from "@/utils/icons";
-import highlight from "@/assets/balance/highlight.svg";
+import { ChevronDown, SearchTransactions, Cross } from "@/utils/icons";
 
-const TransactionsFilter = ({ onDateFilter }) => {
+/**
+ * Enhanced Transactions Filter Component
+ * Supports date filtering, month selection, and clear filters functionality
+ */
+const TransactionsFilter = ({ 
+  onDateFilter, 
+  onClearFilters, 
+  hasActiveFilters = false,
+  className = '' 
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("جميع الأشهر");
   const [fromDate, setFromDate] = useState("");
@@ -15,9 +23,6 @@ const TransactionsFilter = ({ onDateFilter }) => {
     "الشهر الماضي",
     "آخر 3 شهور",
   ];
-
-  // Always show all options in the dropdown
-  const filteredMonthOptions = monthOptions;
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -40,7 +45,7 @@ const TransactionsFilter = ({ onDateFilter }) => {
     setSelectedMonth(month);
     setIsDropdownOpen(false);
     
-    // تطبيق التصفية حسب الشهر المحدد
+    // Apply filtering based on selected month
     const today = new Date();
     let startDate = "";
     let endDate = "";
@@ -78,7 +83,7 @@ const TransactionsFilter = ({ onDateFilter }) => {
       setToDate(value);
     }
 
-    // إعادة تعيين الشهر المحدد إذا تم تغيير التاريخ يدوياً
+    // Reset selected month if date is changed manually
     if (selectedMonth !== "جميع الأشهر") {
       setSelectedMonth("جميع الأشهر");
     }
@@ -108,116 +113,93 @@ const TransactionsFilter = ({ onDateFilter }) => {
     setFromDate("");
     setToDate("");
     setSelectedMonth("جميع الأشهر");
-    if (onDateFilter) {
-      onDateFilter("", "");
+    if (onClearFilters) {
+      onClearFilters();
     }
   };
 
   return (
-    <div className="w-[90%] mx-auto mt-10 relative">
+    <div className={`w-[90%] mx-auto mt-10 relative ${className}`}>
       <div className="relative">
         <h2 className="text-base md:text-[32px] font-bold text-navyteal">
           سجل المعاملات
         </h2>
-        <img
-          src={highlight}
-          alt="highlight"
-          className="absolute top-0 right-10 md:right-18 -z-1 w-24 md:w-auto"
-        />
-      </div>
+        
+        {/* Filter Controls */}
+        <div className="flex flex-col md:flex-row gap-4 mt-6">
+          {/* Month Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex items-center justify-between w-full md:w-48 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <span className="text-sm font-medium text-gray-700">{selectedMonth}</span>
+              <ChevronDown className="w-4 h-4 text-gray-500" />
+            </button>
 
-
-      {/* Main filter box */}
-      <div className="flex items-stretch flex-col md:flex-row gap-6 my-12">
-        <div className="flex flex-col md:flex-row items-center justify-between w-full rounded-2xl md:rounded-4xl border-[0.5px] border-[#8C8C8C66] overflow-hidden bg-white relative">
-          <div className="flex flex-col md:flex-row items-center justify-between w-full">
-            {/* From Date */}
-            <div className="flex items-center gap-2 px-4 py-4 lg:py-0 flex-1 lg:border-l-3 md:border-[#165072] w-full border-b md:border-b-0 border-[#D9D9D9]">
-              <div className="flex flex-row md:flex-col items-center gap-8 md:gap-2 ms-0 lg:ms-14 w-full">
-                <span className="text-black font-bold text-[12px] md:text-lg text-nowrap">
-                  من تاريخ:
-                </span>
-                <div className="flex items-center relative">
-                  <DatePicker 
-                    className="w-4 md:w-5 cursor-pointer z-10" 
-                    onClick={() => document.getElementById('fromDateInput').showPicker()}
-                  />
-                  <input
-                    id="fromDateInput"
-                    type="date"
-                    value={fromDate}
-                    onChange={(e) => handleDateChange("from", e.target.value)}
-                    className="w-full h-10 md:h-12 bg-transparent text-sm md:text-base font-bold text-[#8C8C8C] focus:outline-none cursor-pointer"
-                    placeholder="اختر التاريخ"
-                    title="اختر تاريخ البداية"
-                  />
-                </div>
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                {monthOptions.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSelectMonth(option)}
+                    className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${
+                      selectedMonth === option ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
               </div>
+            )}
+          </div>
+
+          {/* Date Range Inputs */}
+          <div className="flex flex-col md:flex-row gap-2 flex-1">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                من تاريخ
+              </label>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => handleDateChange("from", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
-
-            {/* To Date */}
-            <div className="flex items-center gap-2 px-4 flex-1 w-full py-4 md:py-0 lg:mt-0 border-b md:border-b-0 border-[#D9D9D9]">
-              <div className="flex flex-row md:flex-col items-center gap-8 md:gap-2 ms-0 lg:ms-14 w-full">
-                <span className="text-black font-bold text-[12px] md:text-lg text-nowrap">
-                  إلى تاريخ:
-                </span>
-                <div className="flex items-center relative">
-                  <DatePicker 
-                    className="w-4 md:w-5 cursor-pointer z-10" 
-                    onClick={() => document.getElementById('toDateInput').showPicker()}
-                  />
-                  <input
-                    id="toDateInput"
-                    type="date"
-                    value={toDate}
-                    onChange={(e) => handleDateChange("to", e.target.value)}
-                    className="w-full h-10 md:h-12 bg-transparent text-sm md:text-base font-bold text-[#8C8C8C] focus:outline-none cursor-pointer"
-                    placeholder="اختر التاريخ"
-                    title="اختر تاريخ النهاية"
-                  />
-                </div>
-              </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                إلى تاريخ
+              </label>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => handleDateChange("to", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-            {/* Search Button */}
+          <div className="flex gap-2 items-end">
             <button
               onClick={handleSearch}
-              className="flex bg-orangedeep hover:bg-btnClicked rounded-tr rounded-tl md:rounded-4xl 
-                        w-full md:w-[140px] h-[50px] md:h-[90px] 
-                        items-center justify-center 
-                        cursor-pointer transition-colors duration-300"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             >
-              <SearchTransactions className="w-5 md:w-6" />
+              <SearchTransactions className="w-4 h-4" />
             </button>
+            
+            {hasActiveFilters && (
+              <button
+                onClick={handleClearFilters}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+                title="مسح الفلاتر"
+              >
+                <Cross className="w-4 h-4" />
+              </button>
+            )}
           </div>
-        </div>
-
-         {/* Dropdown */}
-        <div ref={dropdownRef} className="relative h-[50px] md:h-[90px]">
-          <div
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center justify-center gap-4 px-4 min-h-16 md:min-h-23 cursor-pointer min-w-[200px] rounded-2xl md:rounded-4xl border-[0.5px] border-[#8C8C8C66] overflow-hidden bg-white hover:bg-gray-50 transition-colors duration-300"
-          >
-            <span className="text-black font-bold text-base md:text-lg">{selectedMonth}</span>
-            <ChevronDown className={`w-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-          </div>
-
-          {isDropdownOpen && (
-            <div className="absolute top-full mt-4 lg:mt-2 w-full py-4 px-10 bg-white border-[0.5px] border-[#8C8C8C66] rounded-2xl text-center z-10">
-              {filteredMonthOptions.map((month) => (
-                <div
-                  key={month}
-                  onClick={() => handleSelectMonth(month)}
-                  className="px-4 cursor-pointer font-bold text-nowrap text-base md:text-lg text-black border-b border-[#D9D9D9] last:border-b-0 py-4"
-                >
-                  {month}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -13,6 +13,8 @@ import {
   ReactivateModal,
   WeeklyScheduleModal,
   AvatarModal,
+  AddBalanceModal,
+  AddCouponModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -136,6 +138,34 @@ const ModalManager = () => {
           onSelect={(avatarSrc) => {
             if (props.callbackId) {
               executeCallback(props.callbackId, avatarSrc);
+            }
+            handleClose();
+          }}
+        />
+      );
+      break;
+    case MODAL_TYPES.ADD_BALANCE:
+      ModalContent = (
+        <AddBalanceModal
+          {...props}
+          onClose={handleClose}
+          onSubmit={(data) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, data);
+            }
+            handleClose();
+          }}
+        />
+      );
+      break;
+    case MODAL_TYPES.ADD_COUPON:
+      ModalContent = (
+        <AddCouponModal
+          {...props}
+          onClose={handleClose}
+          onSubmit={(data) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, data);
             }
             handleClose();
           }}

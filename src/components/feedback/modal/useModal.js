@@ -148,6 +148,40 @@ export const useModal = () => {
     );
   };
 
+  const openAddBalanceModal = (onSubmit) => {
+    // Store callback in registry with a unique ID
+    const callbackId = Date.now().toString();
+    if (onSubmit) {
+      callbackRegistry.set(callbackId, onSubmit);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.ADD_BALANCE,
+        props: {
+          callbackId: onSubmit ? callbackId : null,
+        },
+      })
+    );
+  };
+
+  const openAddCouponModal = (onSubmit) => {
+    // Store callback in registry with a unique ID
+    const callbackId = Date.now().toString();
+    if (onSubmit) {
+      callbackRegistry.set(callbackId, onSubmit);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.ADD_COUPON,
+        props: {
+          callbackId: onSubmit ? callbackId : null,
+        },
+      })
+    );
+  };
+
   const closeCurrentModal = () => {
     dispatch(closeModal());
   };
@@ -171,6 +205,8 @@ export const useModal = () => {
     openStatusModal,
     openWeeklyScheduleModal,
     openAvatarModal,
+    openAddBalanceModal,
+    openAddCouponModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };
