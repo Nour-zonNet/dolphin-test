@@ -5,11 +5,11 @@ import { ChevronDown, SearchTransactions, Cross } from "@/utils/icons";
  * Enhanced Transactions Filter Component
  * Supports date filtering, month selection, and clear filters functionality
  */
-const TransactionsFilter = ({ 
-  onDateFilter, 
-  onClearFilters, 
+const TransactionsFilter = ({
+  onDateFilter,
+  onClearFilters,
   hasActiveFilters = false,
-  className = '' 
+  className = "",
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("جميع الأشهر");
@@ -33,18 +33,18 @@ const TransactionsFilter = ({
     };
 
     if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isDropdownOpen]);
 
   const handleSelectMonth = (month) => {
     setSelectedMonth(month);
     setIsDropdownOpen(false);
-    
+
     // Apply filtering based on selected month
     const today = new Date();
     let startDate = "";
@@ -52,16 +52,26 @@ const TransactionsFilter = ({
 
     switch (month) {
       case "الشهر الحالي":
-        startDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-        endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+        startDate = new Date(today.getFullYear(), today.getMonth(), 1)
+          .toISOString()
+          .split("T")[0];
+        endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+          .toISOString()
+          .split("T")[0];
         break;
       case "الشهر الماضي":
-        startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1).toISOString().split('T')[0];
-        endDate = new Date(today.getFullYear(), today.getMonth(), 0).toISOString().split('T')[0];
+        startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+          .toISOString()
+          .split("T")[0];
+        endDate = new Date(today.getFullYear(), today.getMonth(), 0)
+          .toISOString()
+          .split("T")[0];
         break;
       case "آخر 3 شهور":
-        startDate = new Date(today.getFullYear(), today.getMonth() - 2, 1).toISOString().split('T')[0];
-        endDate = today.toISOString().split('T')[0];
+        startDate = new Date(today.getFullYear(), today.getMonth() - 2, 1)
+          .toISOString()
+          .split("T")[0];
+        endDate = today.toISOString().split("T")[0];
         break;
       default:
         startDate = "";
@@ -70,7 +80,7 @@ const TransactionsFilter = ({
 
     setFromDate(startDate);
     setToDate(endDate);
-    
+
     if (onDateFilter) {
       onDateFilter(startDate, endDate);
     }
@@ -124,16 +134,21 @@ const TransactionsFilter = ({
         <h2 className="text-base md:text-[32px] font-bold text-navyteal">
           سجل المعاملات
         </h2>
-        
+
         {/* Filter Controls */}
         <div className="flex flex-col md:flex-row gap-4 mt-6">
           {/* Month Dropdown */}
           <div className="relative" ref={dropdownRef}>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+                الشهر
+              </label>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center justify-between w-full md:w-48 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <span className="text-sm font-medium text-gray-700">{selectedMonth}</span>
+              <span className="text-sm font-medium text-gray-700">
+                {selectedMonth}
+              </span>
               <ChevronDown className="w-4 h-4 text-gray-500" />
             </button>
 
@@ -145,7 +160,9 @@ const TransactionsFilter = ({
                     key={index}
                     onClick={() => handleSelectMonth(option)}
                     className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${
-                      selectedMonth === option ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                      selectedMonth === option
+                        ? "bg-blue-50 text-orangedeep"
+                        : "text-gray-700"
                     }`}
                   >
                     {option}
@@ -185,11 +202,11 @@ const TransactionsFilter = ({
           <div className="flex gap-2 items-end">
             <button
               onClick={handleSearch}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              className="px-6 py-2 bg-orangedeep text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             >
               <SearchTransactions className="w-4 h-4" />
             </button>
-            
+
             {hasActiveFilters && (
               <button
                 onClick={handleClearFilters}
@@ -207,3 +224,7 @@ const TransactionsFilter = ({
 };
 
 export default TransactionsFilter;
+// teacher profile page in student profile
+// zoom meeting details
+// avatars in student profile
+// refactor balance details page

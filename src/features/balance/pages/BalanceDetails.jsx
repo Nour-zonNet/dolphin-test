@@ -33,7 +33,7 @@ const BalanceDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       {/* Header */}
       <Header 
         title="تفاصيل الرصيد" 
