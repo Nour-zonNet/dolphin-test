@@ -1,5 +1,5 @@
 // import "./style.css";
-import ZoomMtgEmbedded from "@zoom/meetingsdk/embedded";
+// import ZoomMtgEmbedded from "@zoom/meetingsdk/embedded";
 
 function ZoomMeting() {
   const client = ZoomMtgEmbedded.createClient();
