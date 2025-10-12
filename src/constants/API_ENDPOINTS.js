@@ -31,4 +31,5 @@ export const ENDPOINTS = {
   COMPLAINTS_LIST: "/student/complaints",
   GET_GLOBAL_SESSION_BY_TEACHER_ID: "/teacher/",
   JOIN_GLOBAL_SESSION: "/teacher",
+  SESSION_REVIEW: "/student/review/session",
 };

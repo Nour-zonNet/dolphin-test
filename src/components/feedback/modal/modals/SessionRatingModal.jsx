@@ -4,7 +4,7 @@ import dolphinStars from '@/assets/images/dolphin-stars.svg';
 import sendRateIcon from '@/assets/images/send-rate-icon.svg';
 import { Teacher } from '@/utils/icons';
 
-const SessionRatingModal = ({ isOpen, onClose, onSubmit, sessions = [] }) => {
+const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     const [ratings, setRatings] = useState({});
     const [comments, setComments] = useState({});
 
@@ -66,18 +66,26 @@ const SessionRatingModal = ({ isOpen, onClose, onSubmit, sessions = [] }) => {
         }));
     };
 
-    const handleSubmit = () => {
-        onSubmit({ ratings, comments });
-        // Reset state
-        const resetRatings = {};
-        const resetComments = {};
-        validSessions.forEach((session, index) => {
-            const sessionKey = `session${index + 1}`;
-            resetRatings[sessionKey] = 0;
-            resetComments[sessionKey] = '';
-        });
-        setRatings(resetRatings);
-        setComments(resetComments);
+    const handleSubmit = async () => {
+        try {
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Submitting session ratings:', { ratings, comments });
+            }
+            await onSubmit({ ratings, comments });
+            
+            // Reset state
+            const resetRatings = {};
+            const resetComments = {};
+            validSessions.forEach((session, index) => {
+                const sessionKey = `session${index + 1}`;
+                resetRatings[sessionKey] = 0;
+                resetComments[sessionKey] = '';
+            });
+            setRatings(resetRatings);
+            setComments(resetComments);
+        } catch (error) {
+            console.error('Error submitting session ratings:', error);
+        }
     };
 
     const handleSkip = () => {
@@ -94,7 +102,7 @@ const SessionRatingModal = ({ isOpen, onClose, onSubmit, sessions = [] }) => {
         setComments(resetComments);
     };
 
-    if (!isOpen) return null;
+    // Modal is always open when this component is rendered (controlled by ModalManager)
 
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
@@ -113,7 +121,7 @@ const SessionRatingModal = ({ isOpen, onClose, onSubmit, sessions = [] }) => {
                         <img src={dolphinEvaluate} alt="Dolphin Character" className="mx-auto w-16 h-16 md:w-20 md:h-20" />
                     </div>
                     <h2 className="text-base md:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
-                        كيف كانت جلساتك أمس؟
+                        كيف كانت جلساتك اليوم؟
                     </h2>
                     <p className="text-gray-600 text-sm md:text-base">
                         رأيك يهمنا ويساعدنا علي التحسين

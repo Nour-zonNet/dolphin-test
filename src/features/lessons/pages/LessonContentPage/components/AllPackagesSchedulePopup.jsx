@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
-import { Cross, Clock, Teacher, ChevronDown } from "@/utils/icons";
+import { Cross, Clock, Teacher, ChevronDown, PrintIcon } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
 import { useLessons } from "@/features/lessons/hooks/useLessons";
 import { formatTime12Hour } from "@/utils/dateHelpers";
@@ -361,25 +361,15 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
                   );
                 })}
               </div>
-              <div className="flex justify-center mt-8">
+              <div className="flex justify-center mt-8 px-6 gap-4">
                 {/* ✅ زر عائم للطباعة */}
                 <button
                   onClick={() => navigate("/weekly-schedule")}
-                  className="  text-white rounded-full w-14 h-14 flex items-center justify-center  hover:scale-110 transition-all hover:cursor-pointer print:hidden z-50"
+                  className="mx-auto text-orangedeep border border-orangedeep p-2 rounded flex items-center justify-center hover:scale-102 transition-all hover:cursor-pointer print:hidden z-50 gap-2"
                   title="طباعة الجدول الأسبوعي"
                 >
-                  <svg
-                    width="50"
-                    height="50"
-                    viewBox="0 0 50 50"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M25 0C20.0555 0 15.222 1.46622 11.1108 4.21326C6.99953 6.96029 3.79521 10.8648 1.90302 15.4329C0.0108322 20.0011 -0.484251 25.0277 0.480379 29.8773C1.44501 34.7268 3.82603 39.1814 7.32234 42.6777C10.8187 46.174 15.2732 48.555 20.1228 49.5196C24.9723 50.4843 29.9989 49.9892 34.5671 48.097C39.1353 46.2048 43.0397 43.0005 45.7867 38.8893C48.5338 34.778 50 29.9445 50 25C50 18.3696 47.3661 12.0107 42.6777 7.32233C37.9893 2.63392 31.6304 0 25 0ZM33.201 41.1042H16.799C16.2464 41.1042 15.7165 40.8847 15.3258 40.494C14.9351 40.1033 14.7156 39.5734 14.7156 39.0208C14.7156 38.4683 14.9351 37.9384 15.3258 37.5477C15.7165 37.157 16.2464 36.9375 16.799 36.9375H33.201C33.7536 36.9375 34.2835 37.157 34.6742 37.5477C35.0649 37.9384 35.2844 38.4683 35.2844 39.0208C35.2844 39.5734 35.0649 40.1033 34.6742 40.494C34.2835 40.8847 33.7536 41.1042 33.201 41.1042ZM34.674 25.4333L26.4667 33.6458C26.076 34.0364 25.5462 34.2558 24.9938 34.2558C24.4413 34.2558 23.9115 34.0364 23.5208 33.6458L15.3261 25.4521C14.9346 25.0614 14.7143 24.5313 14.7137 23.9782C14.7132 23.4252 14.9323 22.8946 15.3229 22.5031C15.7136 22.1117 16.2437 21.8914 16.7968 21.8908C17.3498 21.8902 17.8804 22.1094 18.2719 22.5L22.9167 27.1448V8.71354C22.9167 8.16101 23.1362 7.6311 23.5269 7.2404C23.9176 6.8497 24.4475 6.63021 25 6.63021C25.5525 6.63021 26.0824 6.8497 26.4732 7.2404C26.8638 7.6311 27.0833 8.16101 27.0833 8.71354V27.1323L31.7281 22.4875C32.1211 22.108 32.6473 21.898 33.1936 21.9028C33.7398 21.9075 34.2623 22.1266 34.6486 22.5129C35.0349 22.8991 35.254 23.4217 35.2587 23.9679C35.2635 24.5142 35.0535 25.0404 34.674 25.4333Z"
-                      fill="#E89B32"
-                    />
-                  </svg>
+                  <PrintIcon className="w-6 h-6" />
+                  طباعة الجدول الأسبوعي
                 </button>
               </div>
             </div>
