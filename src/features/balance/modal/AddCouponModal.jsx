@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Divider from "../../ui/Divider";
+import Divider from "@/components/ui/Divider";
 import { ConfirmCheck } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
