@@ -297,14 +297,16 @@ export const routes = [
     layout: false,
   },
   {
-    path: "/teacher",
-    element: GlobalSessionPage,
+    path: "/teacher/profile",
+    element: TeacherProfile,
+
     protected: false,
     homeSupportBtn: true,
     navbar: false,
     mobileNav: false,
     layout: false,
   },
+
   {
     path: "/teacher/profile",
     element: TeacherProfile,

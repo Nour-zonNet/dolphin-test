@@ -62,6 +62,7 @@ class AuthRepository {
   }
 
   async updateUserImage(file) {
+    console.log(file);
     const formData = new FormData();
     formData.append("image", file);
     formData.append("_method", "PATCH");

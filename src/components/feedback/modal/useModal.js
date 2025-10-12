@@ -131,6 +131,23 @@ export const useModal = () => {
     );
   };
 
+  const openAvatarModal = (onSelect) => {
+    // Store callback in registry with a unique ID
+    const callbackId = Date.now().toString();
+    if (onSelect) {
+      callbackRegistry.set(callbackId, onSelect);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.AVATAR_MODAL,
+        props: {
+          callbackId: onSelect ? callbackId : null,
+        },
+      })
+    );
+  };
+
   const closeCurrentModal = () => {
     dispatch(closeModal());
   };
@@ -153,6 +170,7 @@ export const useModal = () => {
     openExtendPackageModal,
     openStatusModal,
     openWeeklyScheduleModal,
+    openAvatarModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };
