@@ -5,28 +5,21 @@ import { useDispatch } from 'react-redux';
 import { openModal } from '@/store/modalSlice';
 import { MODAL_TYPES } from '@/constants/MODAL_TYPES';
 import sessionReviewService from '@/services/sessionReview';
+import { useLocation } from 'react-router-dom';
 
 const STORAGE_KEY = 'sessionRatingModal';
-const RATING_COOLDOWN_HOURS = 24; // Don't show modal again for 24 hours after rating
 
-// Helper function to debug session data structure
-// This helps troubleshoot session ID issues by showing which fields are available
-const debugSessionStructure = (session, index) => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`Session ${index + 1} Structure:`, {
-      id: session.id,
-      class_session_id: session.class_session_id,
-      session_id: session.session_id,
-      lesson_id: session.lesson_id,
-      date: session.date,
-      status: session.status,
-      teacher_name: session.teacher_name,
-      subject: session.subject,
-      start_time: session.start_time,
-      duration: session.duration,
-      allKeys: Object.keys(session)
-    });
-  }
+// Helper function to get today's date string for storage key
+const getTodayDateString = () => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
+// Helper function to get yesterday's date string for storage key
+const getYesterdayDateString = () => {
+  const today = new Date();
+  const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+  return yesterday.toISOString().split('T')[0];
 };
 
 // Helper function to validate session data
@@ -41,7 +34,15 @@ const validateSessionData = (session) => {
     errors.push('Missing start_time');
   }
   
-  if (!session.class_session_id && !session.session_id && !session.id && !session.lesson_id) {
+  // Check for any valid session ID field
+  const hasValidId = session.id || 
+                    session.class_session_id || 
+                    session.session_id || 
+                    session.lesson_id ||
+                    session.class_id ||
+                    session.group_id;
+  
+  if (!hasValidId) {
     errors.push('Missing valid session ID');
   }
   
@@ -59,11 +60,13 @@ export const useSessionRatingModal = () => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const { items } = useLessons();
   const dispatch = useDispatch();
+  const location = useLocation();
 
-  // Get stored rating data
-  const getStoredRatingData = useCallback(() => {
+  // Get stored rating data for a specific date
+  const getStoredRatingData = useCallback((dateString) => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const storageKey = `${STORAGE_KEY}_${dateString}`;
+      const stored = localStorage.getItem(storageKey);
       return stored ? JSON.parse(stored) : null;
     } catch (error) {
       console.error('Error reading rating data from localStorage:', error);
@@ -71,304 +74,279 @@ export const useSessionRatingModal = () => {
     }
   }, []);
 
-  // Save rating data to localStorage
-  const saveRatingData = useCallback((data) => {
+  // Save rating data to localStorage for a specific date
+  const saveRatingData = useCallback((dateString, data) => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      const storageKey = `${STORAGE_KEY}_${dateString}`;
+      localStorage.setItem(storageKey, JSON.stringify(data));
     } catch (error) {
       console.error('Error saving rating data to localStorage:', error);
     }
   }, []);
 
-  // Check if all sessions from today are completed
-  const checkTodaySessionsCompleted = useCallback(() => {
+  // Get sessions that are eligible for rating (yesterday's completed sessions)
+  const getEligibleSessions = useCallback(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
     
-    // Get today's date in YYYY-MM-DD format
     const todayStr = today.toISOString().split('T')[0];
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
     
-    // Filter sessions for today (excluding cancelled sessions)
-    const todaySessions = items.filter((item) => {
-      if (!item.date) return false;
-      const itemDate = new Date(item.date).toISOString().split('T')[0];
-      return itemDate === todayStr && item.status !== LESSON_STATUS.CANCELLED;
-    });
-
-    if (todaySessions.length === 0) {
-      return false; // No sessions today
-    }
-
-    // Check if all sessions from today are completed
-    const allCompleted = todaySessions.every((session) => {
-      // Check if session status is explicitly 'ended'
-      if (session.status === LESSON_STATUS.ENDED) {
-        return true;
-      }
-      
-      // If no explicit status, check if session time has passed
-      if (session.start_time) {
-        const [hours, minutes] = session.start_time.split(':').map(Number);
-        const sessionStart = new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          today.getDate(),
-          hours,
-          minutes
-        );
-        
-        const durationMinutes = session.duration || 60;
-        const sessionEnd = new Date(sessionStart.getTime() + durationMinutes * 60000);
-        
-        // Session is completed if it's past the end time
-        // Add a 10-minute buffer to ensure session has truly ended
-        const bufferTime = new Date(sessionEnd.getTime() + 10 * 60000);
-        return now > bufferTime;
-      }
-      
-      return false;
-    });
-
+    // For testing: Show sessions from yesterday if available, otherwise show any recent sessions
     if (process.env.NODE_ENV === 'development') {
-      console.log('Session completion check:', {
-        totalSessions: todaySessions.length,
-        allCompleted,
-        currentTime: now.toISOString(),
-        sessions: todaySessions.map(s => {
-          const sessionStart = s.start_time ? (() => {
-            const [hours, minutes] = s.start_time.split(':').map(Number);
-            return new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
-          })() : null;
-          
-          const sessionEnd = sessionStart ? (() => {
-            const durationMinutes = s.duration || 60;
-            return new Date(sessionStart.getTime() + durationMinutes * 60000);
-          })() : null;
-          
-          const bufferTime = sessionEnd ? new Date(sessionEnd.getTime() + 10 * 60000) : null;
-          
-          return {
-            id: s.id,
-            class_session_id: s.class_session_id,
-            start_time: s.start_time,
-            duration: s.duration,
-            status: s.status,
-            teacher_name: s.teacher_name,
-            sessionStart: sessionStart?.toISOString(),
-            sessionEnd: sessionEnd?.toISOString(),
-            bufferTime: bufferTime?.toISOString(),
-            isCompleted: s.status === LESSON_STATUS.ENDED || (bufferTime && now > bufferTime)
-          };
-        })
+      // First try to get yesterday's sessions
+      const yesterdaySessions = items.filter((item) => {
+        const validation = validateSessionData(item);
+        if (!validation.isValid) return false;
+        
+        let itemDate;
+        try {
+          const dateObj = new Date(item.date);
+          if (isNaN(dateObj.getTime())) return false;
+          itemDate = dateObj.toISOString().split('T')[0];
+        } catch (error) {
+          return false;
+        }
+        
+        return itemDate === yesterdayStr;
       });
-    }
-
-    return allCompleted;
-  }, [items]);
-
-  // Check if we should show the rating modal
-  const checkShouldShowModal = useCallback(() => {
-    // First check if there are any sessions to rate
-    const sessionsCompleted = checkTodaySessionsCompleted();
-    if (!sessionsCompleted) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Modal check: No completed sessions to rate');
-      }
-      return false; // No completed sessions to rate
-    }
-
-    const storedData = getStoredRatingData();
-    
-    if (!storedData) {
-      // No stored data, show modal if sessions are completed
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Modal check: No stored data, showing modal');
-      }
-      return true;
-    }
-
-    // Check if user has already rated for this period
-    const lastRatingDate = storedData.lastRatingDate ? new Date(storedData.lastRatingDate) : null;
-    const today = new Date();
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
-    if (lastRatingDate && lastRatingDate >= todayStart) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Modal check: Already rated today, not showing modal');
-      }
-      return false; // Already rated today
-    }
-
-    // Check if we've already shown the modal today and user closed it without rating
-    const lastShown = storedData.lastShown ? new Date(storedData.lastShown) : null;
-    
-    if (lastShown) {
-      const lastShownStart = new Date(lastShown.getFullYear(), lastShown.getMonth(), lastShown.getDate());
       
-      // If modal was shown today and user didn't rate, show it again
-      if (lastShownStart >= todayStart && !lastRatingDate) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Modal check: Modal was shown today but no rating, showing again');
-        }
-        return true;
+      if (yesterdaySessions.length > 0) {
+        console.log('Development mode: Using yesterday sessions for modal:', yesterdaySessions.length);
+        return yesterdaySessions;
       }
-
-      // If modal was shown yesterday or earlier and user didn't rate, show it again
-      if (lastShownStart < todayStart && !lastRatingDate) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Modal check: Modal was shown earlier but no rating, showing again');
+      
+      // If no yesterday sessions, show any recent sessions for testing
+      const testSessions = items.filter((item) => {
+        const validation = validateSessionData(item);
+        if (!validation.isValid) return false;
+        
+        let itemDate;
+        try {
+          const dateObj = new Date(item.date);
+          if (isNaN(dateObj.getTime())) return false;
+          itemDate = dateObj.toISOString().split('T')[0];
+        } catch (error) {
+          return false;
         }
-        return true;
+        
+        // For testing, include sessions from the last 3 days
+        const threeDaysAgo = new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000);
+        const threeDaysAgoStr = threeDaysAgo.toISOString().split('T')[0];
+        
+        return itemDate >= threeDaysAgoStr;
+      }).slice(0, 2); // Limit to 2 sessions for testing
+      
+      if (testSessions.length > 0) {
+        console.log('Development mode: Using test sessions for modal:', testSessions.length);
+        return testSessions;
       }
     }
-
-    // Show modal if sessions are completed and conditions are met
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Modal check: All conditions met, showing modal');
-    }
-    return true;
-  }, [getStoredRatingData, checkTodaySessionsCompleted]);
-
-  // Get today's sessions for rating
-  const getTodaySessions = useCallback(() => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const todayStr = today.toISOString().split('T')[0];
     
     return items.filter((item) => {
       // Validate session data first
       const validation = validateSessionData(item);
       if (!validation.isValid) {
         if (process.env.NODE_ENV === 'development') {
-          console.warn('Invalid session data:', {
-            session: item,
-            errors: validation.errors
-          });
+          console.log('Session validation failed:', validation.errors, item);
         }
         return false;
       }
       
-      const itemDate = new Date(item.date).toISOString().split('T')[0];
-      
-      // Only include sessions from today
-      if (itemDate !== todayStr) {
+      // Handle different date formats
+      let itemDate;
+      try {
+        const dateObj = new Date(item.date);
+        if (isNaN(dateObj.getTime())) {
+          return false;
+        }
+        itemDate = dateObj.toISOString().split('T')[0];
+      } catch (error) {
         return false;
       }
       
-      // Include sessions that are explicitly marked as ended
-      if (item.status === LESSON_STATUS.ENDED) {
+      // Only include sessions from yesterday (completed sessions from previous day)
+      if (itemDate !== yesterdayStr) {
+        return false;
+      }
+      
+      // Check if session is completed
+      const completedStatuses = [
+        LESSON_STATUS.ENDED,
+        'ended',
+        'completed',
+        'finished'
+      ];
+      
+      // For yesterday's sessions, include them if they have a completed status
+      if (completedStatuses.includes(item.status)) {
         return true;
       }
       
-      // Include sessions that have passed their end time
+      // Also include yesterday's sessions that have passed their end time
       if (item.start_time) {
-        const [hours, minutes] = item.start_time.split(':').map(Number);
-        const sessionStart = new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          today.getDate(),
-          hours,
-          minutes
-        );
-        
-        const durationMinutes = item.duration || 60;
-        const sessionEnd = new Date(sessionStart.getTime() + durationMinutes * 60000);
-        
-        // Add a 10-minute buffer to ensure session has truly ended
-        const bufferTime = new Date(sessionEnd.getTime() + 10 * 60000);
-        return now > bufferTime;
+        try {
+          const [hours, minutes] = item.start_time.split(':').map(Number);
+          if (isNaN(hours) || isNaN(minutes)) {
+            return false;
+          }
+          
+          const sessionStart = new Date(
+            yesterday.getFullYear(),
+            yesterday.getMonth(),
+            yesterday.getDate(),
+            hours,
+            minutes
+          );
+          
+          const durationMinutes = item.duration || 60;
+          const sessionEnd = new Date(sessionStart.getTime() + durationMinutes * 60000);
+          
+          // Session is completed if it's past the end time
+          return now > sessionEnd;
+        } catch (error) {
+          return false;
+        }
       }
       
       return false;
     });
   }, [items]);
 
+  // Check if we should show the rating modal
+  const checkShouldShowModal = useCallback(() => {
+    // Only show modal on schedule page
+    if (!location.pathname.includes('/schedule')) {
+      return false;
+    }
+    
+    const eligibleSessions = getEligibleSessions();
+    
+    if (eligibleSessions.length === 0) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Modal check: No eligible sessions to rate');
+      }
+      return false;
+    }
+
+    // Check if we've already shown the modal for these sessions
+    const todayStr = getTodayDateString();
+    const yesterdayStr = getYesterdayDateString();
+    
+    const todayData = getStoredRatingData(todayStr);
+    const yesterdayData = getStoredRatingData(yesterdayStr);
+    
+    // If we've already shown the modal today, don't show again
+    if (todayData?.lastShown) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Modal check: Already shown modal today');
+      }
+      return false;
+    }
+
+    // For testing: Always show modal in development mode if we have sessions
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Modal check: Development mode - showing modal for testing');
+      console.log('Modal check: Showing modal for eligible sessions:', eligibleSessions.length);
+      return true;
+    }
+
+    // In production, show modal for yesterday's sessions
+    console.log('Modal check: Showing modal for eligible sessions:', eligibleSessions.length);
+    return true;
+  }, [getEligibleSessions, getStoredRatingData, location.pathname]);
+
   // Handle modal submission
   const handleSubmitRatings = useCallback(async (data) => {
     const { ratings, comments } = data;
-    const todaySessions = getTodaySessions();
+    const eligibleSessions = getEligibleSessions();
     
-    if (todaySessions.length === 0) {
+    if (eligibleSessions.length === 0) {
       console.warn('No sessions available for rating');
       setShouldShowModal(false);
       return;
     }
     
-    console.log('Submitting ratings:', { ratings, comments, todaySessions });
+    console.log('Submitting ratings:', { ratings, comments, eligibleSessions });
     
     try {
-      // Prepare review data for each session
-      const reviewPromises = todaySessions.map(async (session, index) => {
+      // Prepare review data for each session that has a rating
+      const reviewPromises = eligibleSessions.map(async (session, index) => {
         const sessionKey = `session${index + 1}`;
         const rating = ratings[sessionKey];
         const comment = comments[sessionKey] || '';
         
-        // Extract session ID with better validation - prioritize class_session_id
-        // The API expects class_session_id, so we need to ensure we have the correct field
-        const classSessionId = session.class_session_id || session.session_id || session.id || session.lesson_id;
+        // Only process sessions with ratings (rating is optional)
+        if (!rating || rating <= 0) {
+          return null;
+        }
         
-        // Debug session structure for troubleshooting
-        debugSessionStructure(session, index);
+        // Extract session ID - use class_session_id as primary identifier
+        const classSessionId = session.class_session_id || 
+                              session.id || 
+                              session.session_id || 
+                              session.lesson_id ||
+                              session.class_id ||
+                              session.group_id;
+        
+        // Validate that we have a valid session ID
+        if (!classSessionId) {
+          console.error(`Session ${index + 1} has no valid class_session_id:`, session);
+          throw new Error(`Session ${index + 1} is missing required session ID`);
+        }
+        
+        // Ensure class_session_id is a number
+        const numericSessionId = parseInt(classSessionId);
+        if (isNaN(numericSessionId)) {
+          console.error(`Session ${index + 1} has invalid class_session_id format:`, classSessionId);
+          throw new Error(`Session ${index + 1} has invalid session ID format`);
+        }
+        
+        // Validate rating is within valid range
+        if (rating < 1 || rating > 5) {
+          console.error(`Session ${index + 1} has invalid rating:`, rating);
+          throw new Error(`Session ${index + 1} has invalid rating value`);
+        }
+        
+        const reviewData = {
+          class_session_id: numericSessionId,
+          rating: rating,
+          comment: comment || ''
+        };
         
         if (process.env.NODE_ENV === 'development') {
-          console.log(`Session ${index + 1}:`, {
-            sessionKey,
-            rating,
-            comment,
-            class_session_id: classSessionId,
-            sessionData: session,
-            availableFields: {
-              class_session_id: session.class_session_id,
-              id: session.id,
-              session_id: session.session_id,
-              lesson_id: session.lesson_id
-            }
-          });
+          console.log('Submitting review data:', reviewData);
         }
         
-        if (rating > 0) {
-          // Validate that we have a valid session ID
-          if (!classSessionId) {
-            console.error(`Session ${index + 1} has no valid class_session_id:`, session);
-            throw new Error(`Session ${index + 1} is missing required session ID`);
-          }
-          
-          // Validate rating is within valid range
-          if (rating < 1 || rating > 5) {
-            console.error(`Session ${index + 1} has invalid rating:`, rating);
-            throw new Error(`Session ${index + 1} has invalid rating value`);
-          }
-          
-          const reviewData = {
-            class_session_id: classSessionId,
-            rating: rating,
-            comment: comment || '' // Ensure comment is always a string
-          };
-          
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Submitting review data:', reviewData);
-          }
-          
-          const response = await sessionReviewService.submitSessionReview(reviewData);
-          
-          // Validate API response structure
-          if (!response || !response.success) {
-            console.error(`Session ${index + 1} review failed:`, response);
-            throw new Error(`Session ${index + 1} review submission failed: ${response?.message || 'Unknown error'}`);
-          }
-          
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`Session ${index + 1} review submitted successfully:`, response);
-          }
-          
-          return response;
+        const response = await sessionReviewService.submitSessionReview(reviewData);
+        
+        // Validate API response structure
+        if (!response) {
+          console.error(`Session ${index + 1} review failed: No response received`);
+          throw new Error(`Session ${index + 1} review submission failed: No response received`);
         }
-        return null;
+        
+        // Check if the response indicates failure
+        if (response.success === false) {
+          console.error(`Session ${index + 1} review failed:`, response);
+          throw new Error(`Session ${index + 1} review submission failed: ${response.message || response.error || 'Unknown error'}`);
+        }
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`Session ${index + 1} review submitted successfully:`, response);
+        }
+        
+        return response;
       });
       
       // Filter out null values and submit reviews
       const validReviews = reviewPromises.filter(promise => promise !== null);
-      if (validReviews.length > 0) {
+      
+      // If no sessions were rated, that's still a successful submission
+      if (validReviews.length === 0) {
+        console.log('No sessions were rated - submission successful');
+      } else {
         const results = await Promise.all(validReviews);
         
         // Validate that all reviews were submitted successfully
@@ -381,68 +359,36 @@ export const useSessionRatingModal = () => {
         if (process.env.NODE_ENV === 'development') {
           console.log('Session reviews submitted successfully:', results);
         }
-      } else {
-        console.warn('No valid reviews to submit');
       }
       
-      // Save rating data
+      // Save rating data for today
+      const todayStr = getTodayDateString();
       const ratingData = {
         lastShown: new Date().toISOString(),
         lastRatingDate: new Date().toISOString(),
         ratings: ratings,
-        sessionsRated: todaySessions.map(s => s.class_session_id || s.id)
+        sessionsRated: eligibleSessions.map(s => s.class_session_id || s.id)
       };
-      saveRatingData(ratingData);
+      saveRatingData(todayStr, ratingData);
       
       setShouldShowModal(false);
     } catch (error) {
       console.error('Error submitting session reviews:', error);
       
-      // Check if it's a validation error (missing session ID or invalid rating)
-      if (error.message && (
-        error.message.includes('missing required session ID') ||
-        error.message.includes('invalid rating value')
-      )) {
-        console.error('Validation error:', error.message);
-        // Don't save rating data if there are validation errors
-        // This allows the modal to be shown again with corrected data
-        return;
-      }
-      
-      // Check if it's an API error
-      if (error.response) {
-        console.error('API Error:', {
-          status: error.response.status,
-          data: error.response.data,
-          message: error.response.data?.message || 'Unknown API error'
-        });
-        
-        // For API errors, we might want to show an error message to the user
-        // but still prevent the modal from showing again to avoid infinite loops
-      }
-      
-      // Save the rating data to prevent showing modal again for other errors
-      // This prevents infinite loops while still allowing the user to try again later
-      const ratingData = {
-        lastShown: new Date().toISOString(),
-        lastRatingDate: new Date().toISOString(),
-        ratings: ratings,
-        sessionsRated: todaySessions.map(s => s.class_session_id || s.id),
-        error: error.message // Store error for debugging
-      };
-      saveRatingData(ratingData);
-      setShouldShowModal(false);
+      // Re-throw the error so the modal can handle it
+      throw error;
     }
-  }, [saveRatingData, getTodaySessions]);
+  }, [getEligibleSessions, saveRatingData]);
 
   // Handle modal close/skip
   const handleCloseModal = useCallback(() => {
+    const todayStr = getTodayDateString();
     const ratingData = {
       lastShown: new Date().toISOString(),
       lastRatingDate: null, // User didn't rate
       ratings: null
     };
-    saveRatingData(ratingData);
+    saveRatingData(todayStr, ratingData);
     
     setShouldShowModal(false);
   }, [saveRatingData]);
@@ -451,21 +397,33 @@ export const useSessionRatingModal = () => {
   useEffect(() => {
     const checkAndShowModal = () => {
       const shouldShow = checkShouldShowModal();
-      const todaySessions = getTodaySessions();
+      const eligibleSessions = getEligibleSessions();
       
-      // Debug logging (can be removed in production)
+      // Debug logging
       if (process.env.NODE_ENV === 'development') {
         console.log('SessionRatingModal Debug:', {
           shouldShow,
           itemsCount: items.length,
-          todaySessionsCount: todaySessions.length,
+          eligibleSessionsCount: eligibleSessions.length,
           currentTime: new Date().toISOString(),
-          todaySessions: todaySessions.map(s => ({
+          todayDate: getTodayDateString(),
+          yesterdayDate: getYesterdayDateString(),
+          eligibleSessions: eligibleSessions.map(s => ({
             id: s.id,
             class_session_id: s.class_session_id,
             status: s.status,
             start_time: s.start_time,
             duration: s.duration,
+            teacher_name: s.teacher_name,
+            subject: s.subject,
+            date: s.date,
+            teacher: s.teacher
+          })),
+          allItems: items.slice(0, 3).map(s => ({
+            id: s.id,
+            class_session_id: s.class_session_id,
+            status: s.status,
+            date: s.date,
             teacher_name: s.teacher_name,
             subject: s.subject
           }))
@@ -480,18 +438,18 @@ export const useSessionRatingModal = () => {
         return prevShouldShow;
       });
       
-      if (shouldShow && todaySessions.length > 0) {
+      if (shouldShow && eligibleSessions.length > 0) {
         // Add a small delay to ensure the page is fully loaded
         const timer = setTimeout(() => {
           dispatch(openModal({
             type: MODAL_TYPES.SESSION_RATING,
             props: {
-              sessions: todaySessions,
+              sessions: eligibleSessions,
               onSubmit: handleSubmitRatings,
               onClose: handleCloseModal
             }
           }));
-        }, 500); // Reduced delay for production
+        }, 500);
         
         return () => clearTimeout(timer);
       }
@@ -500,21 +458,21 @@ export const useSessionRatingModal = () => {
     // Initial check
     checkAndShowModal();
 
-    // Set up periodic check every 2 minutes to catch sessions that end while user is on the page
-    const intervalId = setInterval(checkAndShowModal, 2 * 60 * 1000); // 2 minutes
+    // Set up periodic check every 2 minutes
+    const intervalId = setInterval(checkAndShowModal, 2 * 60 * 1000);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [items, checkShouldShowModal, dispatch, getTodaySessions, handleSubmitRatings, handleCloseModal]);
+  }, [items, checkShouldShowModal, dispatch, getEligibleSessions, handleSubmitRatings, handleCloseModal, location.pathname]);
 
-  // Memoize today sessions to prevent unnecessary re-renders
-  const todaySessions = useMemo(() => getTodaySessions(), [items]);
+  // Memoize eligible sessions to prevent unnecessary re-renders
+  const eligibleSessions = useMemo(() => getEligibleSessions(), [items]);
 
   return {
     shouldShowModal,
     handleSubmitRatings,
     handleCloseModal,
-    todaySessions
+    eligibleSessions
   };
 };

@@ -3,10 +3,15 @@ import dolphinEvaluate from '@/assets/images/dolphin-evaluate.svg';
 import dolphinStars from '@/assets/images/dolphin-stars.svg';
 import sendRateIcon from '@/assets/images/send-rate-icon.svg';
 import { Teacher } from '@/utils/icons';
+import { useDispatch } from 'react-redux';
+import { openModal } from '@/store/modalSlice';
+import { MODAL_TYPES } from '@/constants/MODAL_TYPES';
 
 const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     const [ratings, setRatings] = useState({});
     const [comments, setComments] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const dispatch = useDispatch();
 
     // Initialize state based on sessions
     React.useEffect(() => {
@@ -35,7 +40,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
             );
             return hasChanged ? initialComments : prevComments;
         });
-    }, [sessions?.length, sessions?.map(s => s.id).join(',')]);
+    }, [sessions?.length, sessions?.map(s => s.class_session_id || s.id).join(',')]);
 
     // Don't render if no sessions
     if (!sessions || sessions.length === 0) {
@@ -44,7 +49,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
 
     // Validate sessions data
     const validSessions = sessions.filter(session => {
-        return session && (session.id || session.lesson_id || session.session_id);
+        return session && (session.class_session_id || session.id || session.session_id || session.lesson_id);
     });
 
     if (validSessions.length === 0) {
@@ -67,10 +72,14 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     };
 
     const handleSubmit = async () => {
+        if (isSubmitting) return;
+        
+        setIsSubmitting(true);
         try {
             if (process.env.NODE_ENV === 'development') {
                 console.log('Submitting session ratings:', { ratings, comments });
             }
+            
             await onSubmit({ ratings, comments });
             
             // Reset state
@@ -83,8 +92,41 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
             });
             setRatings(resetRatings);
             setComments(resetComments);
+            
+            // Close the rating modal first, then show success modal
+            onClose();
+            
+            // Show success modal after a brief delay to ensure the rating modal is closed
+            setTimeout(() => {
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('Dispatching SUCCESS modal');
+                }
+                dispatch(openModal({
+                    type: MODAL_TYPES.SUCCESS,
+                    props: {
+                        title: "تهانينا",
+                        message: "تم إرسال تقييمك بنجاح"
+                    }
+                }));
+            }, 300);
         } catch (error) {
             console.error('Error submitting session ratings:', error);
+            
+            // Show error modal after a brief delay
+            setTimeout(() => {
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('Dispatching ERROR modal');
+                }
+                dispatch(openModal({
+                    type: MODAL_TYPES.ERROR,
+                    props: {
+                        title: "عذراً",
+                        message: error.message || "حدث خطأ في إرسال التقييم"
+                    }
+                }));
+            }, 300);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -102,11 +144,11 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
         setComments(resetComments);
     };
 
-    // Modal is always open when this component is rendered (controlled by ModalManager)
+    // Check if any session has been rated
+    const hasAnyRating = Object.values(ratings).some(rating => rating > 0);
 
     return (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl relative max-h-[90vh] flex flex-col">
+        <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col mx-4">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -137,8 +179,21 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                             const teacherName = session.teacher_name || session.teacherName || session.teacher?.name || 'المعلم';
                             const sessionTitle = session.subject || session.title || session.name || session.session_name || 'جلسة تعليمية';
                             
+                            // Debug session data in development
+                            if (process.env.NODE_ENV === 'development') {
+                                console.log(`SessionRatingModal - Session ${index + 1}:`, {
+                                    class_session_id: session.class_session_id,
+                                    id: session.id,
+                                    teacher_name: session.teacher_name,
+                                    subject: session.subject,
+                                    date: session.date,
+                                    start_time: session.start_time,
+                                    status: session.status
+                                });
+                            }
+                            
                             return (
-                                <div key={session.id || index} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                                <div key={session.class_session_id || session.id || index} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                                     <div className="flex items-center justify-between mb-3">
                                         <span className="text-[#165072] text-sm md:text-lg font-semibold">قيم الجلسة:</span>
                                         <div className="flex items-center gap-2 text-[#165072]">
@@ -203,22 +258,37 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                     <div className="flex gap-4 justify-center w-full">
                         <button
                             onClick={handleSubmit}
-                            disabled={validSessions.some((_, index) => ratings[`session${index + 1}`] === 0)}
-                            className="px-6 py-3 bg-orangedeep text-navyteal flex items-center justify-center rounded-full w-40 md:w-60 cursor-pointer font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            disabled={isSubmitting}
+                            className="px-6 py-3 bg-orangedeep text-white flex items-center justify-center rounded-full w-40 md:w-60 cursor-pointer font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
-                            <img src={sendRateIcon} alt="send icon" />
-
-                            ارسال
+                            {isSubmitting ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    جاري الإرسال...
+                                </>
+                            ) : (
+                                <>
+                                    <img src={sendRateIcon} alt="send icon" />
+                                    ارسال التقييم
+                                </>
+                            )}
                         </button>
                         <button
                             onClick={handleSkip}
-                            className="px-6 py-3 text-[#8C8C8C] font-semibold hover:text-gray-900 transition-colors w-40 md:w-60 cursor-pointer text-sm md:text-lg xl:text-xl"
+                            disabled={isSubmitting}
+                            className="px-6 py-3 text-[#8C8C8C] font-semibold hover:text-gray-900 transition-colors w-40 md:w-60 cursor-pointer text-sm md:text-lg xl:text-xl disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             تخطي
                         </button>
                     </div>
+                    
+                    {/* Optional rating note */}
+                    <div className="text-center mt-4">
+                        <p className="text-sm text-gray-500">
+                            التقييم اختياري - يمكنك تقييم أي جلسة أو تخطي التقييم
+                        </p>
+                    </div>
                 </div>
-            </div>
         </div>
     );
 };
