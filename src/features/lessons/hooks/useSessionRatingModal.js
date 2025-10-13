@@ -98,7 +98,12 @@ export const useSessionRatingModal = () => {
       // First try to get yesterday's sessions
       const yesterdaySessions = items.filter((item) => {
         const validation = validateSessionData(item);
-        if (!validation.isValid) return false;
+        if (!validation.isValid) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Session validation failed for yesterday:', validation.errors, item);
+          }
+          return false;
+        }
         
         let itemDate;
         try {
@@ -120,7 +125,12 @@ export const useSessionRatingModal = () => {
       // If no yesterday sessions, show any recent sessions for testing
       const testSessions = items.filter((item) => {
         const validation = validateSessionData(item);
-        if (!validation.isValid) return false;
+        if (!validation.isValid) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Session validation failed for test:', validation.errors, item);
+          }
+          return false;
+        }
         
         let itemDate;
         try {
@@ -131,16 +141,30 @@ export const useSessionRatingModal = () => {
           return false;
         }
         
-        // For testing, include sessions from the last 3 days
-        const threeDaysAgo = new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000);
-        const threeDaysAgoStr = threeDaysAgo.toISOString().split('T')[0];
+        // For testing, include sessions from the last 7 days
+        const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
         
-        return itemDate >= threeDaysAgoStr;
-      }).slice(0, 2); // Limit to 2 sessions for testing
+        return itemDate >= sevenDaysAgoStr;
+      }).slice(0, 3); // Limit to 3 sessions for testing
       
       if (testSessions.length > 0) {
         console.log('Development mode: Using test sessions for modal:', testSessions.length);
         return testSessions;
+      }
+      
+      // If still no sessions, show any available sessions for testing
+      const anySessions = items.filter((item) => {
+        const validation = validateSessionData(item);
+        if (!validation.isValid) return false;
+        
+        // Just check if it has basic required fields
+        return item.id || item.class_session_id || item.session_id || item.lesson_id;
+      }).slice(0, 2); // Limit to 2 sessions for testing
+      
+      if (anySessions.length > 0) {
+        console.log('Development mode: Using any available sessions for modal:', anySessions.length);
+        return anySessions;
       }
     }
     
@@ -214,9 +238,92 @@ export const useSessionRatingModal = () => {
     });
   }, [items]);
 
+  // Check if all sessions of yesterday have ended
+  const checkAllSessionsEnded = useCallback(() => {
+    const now = new Date();
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    // Get all sessions from yesterday
+    const yesterdaySessions = items.filter((item) => {
+      const validation = validateSessionData(item);
+      if (!validation.isValid) return false;
+      
+      let itemDate;
+      try {
+        const dateObj = new Date(item.date);
+        if (isNaN(dateObj.getTime())) return false;
+        itemDate = dateObj.toISOString().split('T')[0];
+      } catch (error) {
+        return false;
+      }
+      
+      return itemDate === yesterdayStr;
+    });
+    
+    if (yesterdaySessions.length === 0) {
+      return true; // No sessions yesterday, consider all ended
+    }
+    
+    // Check if all sessions have ended
+    return yesterdaySessions.every((session) => {
+      const completedStatuses = [
+        LESSON_STATUS.ENDED,
+        'ended',
+        'completed',
+        'finished'
+      ];
+      
+      if (completedStatuses.includes(session.status)) {
+        return true;
+      }
+      
+      // Check if session has passed its end time
+      if (session.start_time) {
+        try {
+          const [hours, minutes] = session.start_time.split(':').map(Number);
+          if (isNaN(hours) || isNaN(minutes)) {
+            return false;
+          }
+          
+          const sessionStart = new Date(
+            yesterday.getFullYear(),
+            yesterday.getMonth(),
+            yesterday.getDate(),
+            hours,
+            minutes
+          );
+          
+          const durationMinutes = session.duration || 60;
+          const sessionEnd = new Date(sessionStart.getTime() + durationMinutes * 60000);
+          
+          return now > sessionEnd;
+        } catch (error) {
+          return false;
+        }
+      }
+      
+      return false;
+    });
+  }, [items]);
+
   // Check if we should show the rating modal
   const checkShouldShowModal = useCallback(() => {
-    // Only show modal on schedule page
+    // For testing: Always show modal in development mode regardless of page
+    if (process.env.NODE_ENV === 'development') {
+      const eligibleSessions = getEligibleSessions();
+      
+      if (eligibleSessions.length === 0) {
+        console.log('Modal check: No eligible sessions to rate for testing');
+        return false;
+      }
+      
+      console.log('Modal check: Development mode - showing modal for testing with real data');
+      console.log('Modal check: Showing modal for eligible sessions:', eligibleSessions.length);
+      return true;
+    }
+    
+    // Only show modal on schedule page in production
     if (!location.pathname.includes('/schedule')) {
       return false;
     }
@@ -224,9 +331,6 @@ export const useSessionRatingModal = () => {
     const eligibleSessions = getEligibleSessions();
     
     if (eligibleSessions.length === 0) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Modal check: No eligible sessions to rate');
-      }
       return false;
     }
 
@@ -237,29 +341,34 @@ export const useSessionRatingModal = () => {
     const todayData = getStoredRatingData(todayStr);
     const yesterdayData = getStoredRatingData(yesterdayStr);
     
-    // If we've already shown the modal today, don't show again
+    // If we've already shown the modal today (either submitted or skipped), don't show again
     if (todayData?.lastShown) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Modal check: Already shown modal today');
-      }
       return false;
     }
 
-    // For testing: Always show modal in development mode if we have sessions
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Modal check: Development mode - showing modal for testing');
-      console.log('Modal check: Showing modal for eligible sessions:', eligibleSessions.length);
-      return true;
+    // If user has skipped the modal today, don't show again
+    if (todayData?.skipped) {
+      return false;
     }
 
-    // In production, show modal for yesterday's sessions
+    // Check if user has already submitted reviews for yesterday's sessions
+    if (yesterdayData?.lastRatingDate) {
+      return false;
+    }
+
+    // In production, only show modal if all sessions of yesterday have ended
+    const allSessionsEnded = checkAllSessionsEnded();
+    if (!allSessionsEnded) {
+      return false;
+    }
+
     console.log('Modal check: Showing modal for eligible sessions:', eligibleSessions.length);
     return true;
-  }, [getEligibleSessions, getStoredRatingData, location.pathname]);
+  }, [getEligibleSessions, getStoredRatingData, checkAllSessionsEnded, location.pathname]);
 
   // Handle modal submission
   const handleSubmitRatings = useCallback(async (data) => {
-    const { ratings, comments } = data;
+    const { reviews } = data;
     const eligibleSessions = getEligibleSessions();
     
     if (eligibleSessions.length === 0) {
@@ -268,97 +377,26 @@ export const useSessionRatingModal = () => {
       return;
     }
     
-    console.log('Submitting ratings:', { ratings, comments, eligibleSessions });
+    console.log('Submitting reviews:', { reviews, eligibleSessions });
     
     try {
-      // Prepare review data for each session that has a rating
-      const reviewPromises = eligibleSessions.map(async (session, index) => {
-        const sessionKey = `session${index + 1}`;
-        const rating = ratings[sessionKey];
-        const comment = comments[sessionKey] || '';
-        
-        // Only process sessions with ratings (rating is optional)
-        if (!rating || rating <= 0) {
-          return null;
-        }
-        
-        // Extract session ID - use class_session_id as primary identifier
-        const classSessionId = session.class_session_id || 
-                              session.id || 
-                              session.session_id || 
-                              session.lesson_id ||
-                              session.class_id ||
-                              session.group_id;
-        
-        // Validate that we have a valid session ID
-        if (!classSessionId) {
-          console.error(`Session ${index + 1} has no valid class_session_id:`, session);
-          throw new Error(`Session ${index + 1} is missing required session ID`);
-        }
-        
-        // Ensure class_session_id is a number
-        const numericSessionId = parseInt(classSessionId);
-        if (isNaN(numericSessionId)) {
-          console.error(`Session ${index + 1} has invalid class_session_id format:`, classSessionId);
-          throw new Error(`Session ${index + 1} has invalid session ID format`);
-        }
-        
-        // Validate rating is within valid range
-        if (rating < 1 || rating > 5) {
-          console.error(`Session ${index + 1} has invalid rating:`, rating);
-          throw new Error(`Session ${index + 1} has invalid rating value`);
-        }
-        
-        const reviewData = {
-          class_session_id: numericSessionId,
-          rating: rating,
-          comment: comment || ''
-        };
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Submitting review data:', reviewData);
-        }
-        
-        const response = await sessionReviewService.submitSessionReview(reviewData);
-        
-        // Validate API response structure
-        if (!response) {
-          console.error(`Session ${index + 1} review failed: No response received`);
-          throw new Error(`Session ${index + 1} review submission failed: No response received`);
-        }
-        
-        // Check if the response indicates failure
-        if (response.success === false) {
-          console.error(`Session ${index + 1} review failed:`, response);
-          throw new Error(`Session ${index + 1} review submission failed: ${response.message || response.error || 'Unknown error'}`);
-        }
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`Session ${index + 1} review submitted successfully:`, response);
-        }
-        
-        return response;
-      });
+      // Submit all reviews in a single API call
+      const response = await sessionReviewService.submitSessionReviews({ reviews });
       
-      // Filter out null values and submit reviews
-      const validReviews = reviewPromises.filter(promise => promise !== null);
+      // Validate API response structure
+      if (!response) {
+        console.error('Session reviews failed: No response received');
+        throw new Error('Session reviews submission failed: No response received');
+      }
       
-      // If no sessions were rated, that's still a successful submission
-      if (validReviews.length === 0) {
-        console.log('No sessions were rated - submission successful');
-      } else {
-        const results = await Promise.all(validReviews);
-        
-        // Validate that all reviews were submitted successfully
-        const failedReviews = results.filter(result => !result || !result.success);
-        if (failedReviews.length > 0) {
-          console.error('Some reviews failed to submit:', failedReviews);
-          throw new Error(`${failedReviews.length} out of ${validReviews.length} reviews failed to submit`);
-        }
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Session reviews submitted successfully:', results);
-        }
+      // Check if the response indicates failure
+      if (response.success === false) {
+        console.error('Session reviews failed:', response);
+        throw new Error(`Session reviews submission failed: ${response.message || response.error || 'Unknown error'}`);
+      }
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Session reviews submitted successfully:', response);
       }
       
       // Save rating data for today
@@ -366,8 +404,8 @@ export const useSessionRatingModal = () => {
       const ratingData = {
         lastShown: new Date().toISOString(),
         lastRatingDate: new Date().toISOString(),
-        ratings: ratings,
-        sessionsRated: eligibleSessions.map(s => s.class_session_id || s.id)
+        reviewsSubmitted: reviews.length,
+        sessionsRated: reviews.map(r => r.class_session_id)
       };
       saveRatingData(todayStr, ratingData);
       
@@ -386,7 +424,9 @@ export const useSessionRatingModal = () => {
     const ratingData = {
       lastShown: new Date().toISOString(),
       lastRatingDate: null, // User didn't rate
-      ratings: null
+      reviewsSubmitted: 0,
+      sessionsRated: [],
+      skipped: true // Mark as skipped to prevent showing again
     };
     saveRatingData(todayStr, ratingData);
     

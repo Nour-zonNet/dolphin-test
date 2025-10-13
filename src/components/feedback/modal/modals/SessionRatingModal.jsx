@@ -6,6 +6,7 @@ import { Teacher } from '@/utils/icons';
 import { useDispatch } from 'react-redux';
 import { openModal } from '@/store/modalSlice';
 import { MODAL_TYPES } from '@/constants/MODAL_TYPES';
+import { X } from "lucide-react";
 
 const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     const [ratings, setRatings] = useState({});
@@ -76,11 +77,34 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
         
         setIsSubmitting(true);
         try {
+            // Prepare reviews array for the new API structure
+            const reviews = [];
+            
+            validSessions.forEach((session, index) => {
+                const sessionKey = `session${index + 1}`;
+                const rating = ratings[sessionKey];
+                const comment = comments[sessionKey] || '';
+                
+                // Only include sessions with ratings (rating is optional)
+                if (rating && rating > 0) {
+                    const classSessionId = session.class_session_id || session.id || session.session_id || session.lesson_id;
+                    
+                    if (classSessionId) {
+                        reviews.push({
+                            class_session_id: parseInt(classSessionId),
+                            rating: rating,
+                            comment: comment
+                        });
+                    }
+                }
+            });
+            
             if (process.env.NODE_ENV === 'development') {
-                console.log('Submitting session ratings:', { ratings, comments });
+                console.log('Submitting session reviews:', { reviews });
             }
             
-            await onSubmit({ ratings, comments });
+            // Submit the reviews array
+            await onSubmit({ reviews });
             
             // Reset state
             const resetRatings = {};
@@ -148,13 +172,13 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     const hasAnyRating = Object.values(ratings).some(rating => rating > 0);
 
     return (
-        <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col mx-4">
+        <div className="relative w-full xl:min-w-3xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col mx-4">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 w-8 h-8 lg:w-10 lg:h-10 rounded-full border-[0.5px] border-solid border-[#8c8c8c] flex items-center justify-center hover:bg-gray-200 transition-colors z-10"
-                >
-                    <span className="text-lg lg:text-2xl">×</span>
+                    className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 rounded-full border-[0.5px] border-solid border-[#8c8c8c] p-2"
+                    >
+                    <X className="w-5 h-5 text-gray-600" />
                 </button>
 
                 {/* Header */}

@@ -7,8 +7,8 @@ import { useLocation } from 'react-router-dom';
 const SessionRatingInitializer = () => {
   const location = useLocation();
   
-  // This hook will automatically check for today's ended sessions and show the modal if needed
-  // Only run the hook on schedule page for production behavior
+  // This hook will automatically check for yesterday's sessions and show the modal if needed
+  // In development mode, it will show on any page for testing
   const { eligibleSessions, handleSubmitRatings, handleCloseModal } = useSessionRatingModal();
   const dispatch = useDispatch();
   
@@ -95,9 +95,9 @@ const SessionRatingInitializer = () => {
           sessions: testSessions,
           onSubmit: async (data) => {
             console.log('Test submission:', data);
-            // Simulate API call
+            // Simulate API call with new structure
             await new Promise(resolve => setTimeout(resolve, 1000));
-            console.log('Test submission completed');
+            console.log('Test submission completed with reviews:', data.reviews);
           },
           onClose: () => {
             console.log('Test modal closed');
@@ -107,14 +107,23 @@ const SessionRatingInitializer = () => {
       console.log('Test SessionRatingModal opened with test sessions');
     };
     
+    // Add a function to clear localStorage for testing
+    window.clearSessionRatingData = () => {
+      const keys = Object.keys(localStorage).filter(key => key.startsWith('sessionRatingModal'));
+      keys.forEach(key => localStorage.removeItem(key));
+      console.log('Cleared session rating data from localStorage:', keys);
+    };
+    
     console.log('SessionRatingModal testing functions available:');
     console.log('- window.showSessionRatingModal() - Show modal with current eligible sessions');
     console.log('- window.createTestSessions() - Show modal with test sessions');
     console.log('- window.testSessionRatingModal() - Show modal immediately for testing');
+    console.log('- window.clearSessionRatingData() - Clear localStorage data for testing');
   }
   
-  // Only initialize automatic modal checking on schedule page
-  if (!location.pathname.includes('/schedule')) {
+  // In development mode, initialize on any page for testing
+  // In production, only initialize on schedule page
+  if (process.env.NODE_ENV !== 'development' && !location.pathname.includes('/schedule')) {
     return null;
   }
   
