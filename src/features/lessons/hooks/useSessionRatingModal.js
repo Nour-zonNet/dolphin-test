@@ -83,7 +83,7 @@ export const useSessionRatingModal = () => {
     }
   }, []);
 
-  // Get sessions that are eligible for rating (today's completed sessions)
+  // Get sessions that are eligible for rating (today's sessions)
   const getEligibleSessions = useCallback(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -114,49 +114,9 @@ export const useSessionRatingModal = () => {
         return false;
       }
       
-      // Check if session is completed
-      const completedStatuses = [
-        LESSON_STATUS.ENDED,
-        'ended',
-        'completed',
-        'finished'
-      ];
-      
-      // For today's sessions, include them if they have a completed status
-      if (completedStatuses.includes(item.status)) {
-        return true;
-      }
-      
-      // Also include today's sessions that have passed their end time
-      if (item.start_time) {
-        try {
-          const [hours, minutes] = item.start_time.split(':').map(Number);
-          if (isNaN(hours) || isNaN(minutes)) {
-            return false;
-          }
-          
-          const sessionStart = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate(),
-            hours,
-            minutes
-          );
-          
-          // Use default duration of 60 minutes since API doesn't provide duration
-          const durationMinutes = item.duration || 60;
-          const sessionEnd = new Date(sessionStart.getTime() + durationMinutes * 60000);
-          
-          // Session is completed if it's past the end time
-          const hasEnded = now > sessionEnd;
-          
-          return hasEnded;
-        } catch (error) {
-          return false;
-        }
-      }
-      
-      return false;
+      // Include all today's sessions regardless of status
+      // The modal will only show after all sessions have ended
+      return true;
     });
   }, [items]);
 
@@ -196,6 +156,7 @@ export const useSessionRatingModal = () => {
         'finished'
       ];
       
+      // If session has completed status, it's ended
       if (completedStatuses.includes(session.status)) {
         return true;
       }
@@ -217,7 +178,8 @@ export const useSessionRatingModal = () => {
           );
           
           // Use default duration of 60 minutes since API doesn't provide duration
-          const durationMinutes = session.duration || 60;
+          // This is a reasonable assumption for most educational sessions
+          const durationMinutes = 60; // Fixed duration since API doesn't provide this field
           const sessionEnd = new Date(sessionStart.getTime() + durationMinutes * 60000);
           
           const hasEnded = now > sessionEnd;
@@ -258,7 +220,7 @@ export const useSessionRatingModal = () => {
       return false;
     }
 
-    // Get eligible sessions (today's completed sessions)
+    // Get eligible sessions (today's sessions)
     const eligibleSessions = getEligibleSessions();
     
     if (eligibleSessions.length === 0) {
@@ -365,8 +327,8 @@ export const useSessionRatingModal = () => {
     // Initial check
     checkAndShowModal();
 
-    // Set up periodic check every 2 minutes
-    const intervalId = setInterval(checkAndShowModal, 2 * 60 * 1000);
+    // Set up periodic check every 10 minutes to reduce unnecessary API calls
+    const intervalId = setInterval(checkAndShowModal, 10 * 60 * 1000);
 
     return () => {
       clearInterval(intervalId);

@@ -11,8 +11,6 @@ import SessionRatingInitializer from "@/components/SessionRatingInitializer";
 const App = () => {
   useLanguageDirection();
 
-  
-
   return (
     <AppProviders>
       <div className="app-container">

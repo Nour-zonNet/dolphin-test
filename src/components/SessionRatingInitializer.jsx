@@ -4,7 +4,15 @@ import { useLocation } from 'react-router-dom';
 const SessionRatingInitializer = () => {
   const location = useLocation();
   
-  // This hook will automatically check for yesterday's sessions and show the modal if needed
+  // Only initialize on schedule page
+  // Note: Even though this component is included in App.jsx globally,
+  // it only activates when the user is on the schedule page to avoid
+  // unnecessary API calls and modal checks on other pages
+  if (!location.pathname.includes('/schedule')) {
+    return null;
+  }
+  
+  // This hook will automatically check for today's sessions and show the modal if needed
   // It uses real API data from the lessons service
   const { eligibleSessions, handleSubmitRatings, handleCloseModal } = useSessionRatingModal();
   
@@ -18,7 +26,6 @@ const SessionRatingInitializer = () => {
       const todayData = JSON.parse(localStorage.getItem(`sessionRatingModal_${todayStr}`) || 'null');
       const yesterdayData = JSON.parse(localStorage.getItem(`sessionRatingModal_${yesterdayStr}`) || 'null');
       
-      
       return { todayData, yesterdayData, eligibleSessions };
     };
     
@@ -29,7 +36,6 @@ const SessionRatingInitializer = () => {
       
       const todayData = JSON.parse(localStorage.getItem(`sessionRatingModal_${todayStr}`) || 'null');
       const yesterdayData = JSON.parse(localStorage.getItem(`sessionRatingModal_${yesterdayStr}`) || 'null');
-      
       
       return {
         shouldShow: !todayData?.lastShown && !todayData?.skipped && !yesterdayData?.lastRatingDate && eligibleSessions.length > 0,
@@ -47,13 +53,6 @@ const SessionRatingInitializer = () => {
       const keys = Object.keys(localStorage).filter(key => key.startsWith('sessionRatingModal'));
       keys.forEach(key => localStorage.removeItem(key));
     };
-    
-  }
-  
-  // In development mode, initialize on any page for testing
-  // In production, only initialize on schedule page
-  if (process.env.NODE_ENV !== 'development' && !location.pathname.includes('/schedule')) {
-    return null;
   }
   
   return null;
