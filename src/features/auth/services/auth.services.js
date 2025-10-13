@@ -62,12 +62,13 @@ class AuthRepository {
   }
 
   async updateUserImage(file) {
-    console.log(file);
     const formData = new FormData();
     formData.append("image", file);
     formData.append("_method", "PATCH");
 
-    const response = await api.post(ENDPOINTS.UPDATE_IMAGE, formData);
+    const response = await api.post(ENDPOINTS.UPDATE_IMAGE, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
     return response.data?.data?.userData;
   }

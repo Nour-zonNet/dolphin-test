@@ -5,6 +5,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import successImg from "@/assets/images/successModal.svg";
 import warningImg from "@/assets/images/paymentFailed.svg";
 import pendingImg from "@/assets/images/paymentPending.svg";
+import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
 
 const STATUS_CONFIG = {
   success: {
@@ -77,11 +78,11 @@ const STATUS_CONFIG = {
 // 🔹 helper for styles
 const buttonClasses = (variant) => {
   const base =
-    "text-base md:text-lg w-full md:w-[80%] mx-auto font-medium py-2 md:py-4 flex items-center justify-center gap-2 rounded-full transition-all";
+    "text-base md:text-lg w-full md:w-[80%] mx-auto font-medium py-2 md:py-4 flex items-center justify-center gap-2 rounded-full transition-all font-semibold text-sm md:text-lg";
   const filled =
-    "bg-orangedeep text-darkblue hover:bg-btnClicked focus:bg-btnClicked";
+    "bg-orangedeep text-darkblue hover:bg-btnClicked focus:bg-btnClicked font-semibold text-sm md:text-lg";
   const outline =
-    "bg-transparent text-navyteal border border-orangedeep hover:bg-orangedeep/10";
+    "bg-transparent text-navyteal border border-orangedeep hover:bg-orangedeep/10 font-semibold text-sm md:text-lg";
 
   return `${base} ${variant === "filled" ? filled : outline}`;
 };
@@ -119,6 +120,7 @@ const PaymentStatus = () => {
           )
         )}
       </div>
+      <HomeSupportBtn />
     </div>
   );
 };
