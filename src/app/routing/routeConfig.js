@@ -13,6 +13,7 @@ import TeacherProfile from "../../features/teacher/pages/profile";
 import ZoomDemo from "../../features/zoom/pages/ZoomDemo";
 import SessionRatingModal from "../../components/feedback/modal/modals/SessionRatingModal";
 // import Board from "../../features/Board/Board";
+import CommunityPage from "@/features/community/CommunityPage";
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
@@ -218,6 +219,16 @@ export const routes = [
   {
     path: "/packages-content",
     element: PackagesContent,
+    protected: true,
+    navbar: false,
+    mobileNav: true,
+    homeSupportBtn: true,
+  },
+
+  // Community
+  {
+    path: "/community",
+    element: CommunityPage,
     protected: true,
     navbar: false,
     mobileNav: true,

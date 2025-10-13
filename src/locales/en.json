@@ -118,7 +118,8 @@
   "mobileNavigation": {
     "home": "Home",
     "content": "Content",
-    "profile": "My Account"
+    "profile": "My Account",
+    "community": "Community"
   },
   "lesson_content": {
     "exam": "Lesson Exam",

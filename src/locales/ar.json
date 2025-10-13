@@ -121,7 +121,8 @@
   "mobileNavigation": {
     "home": "الرئيسية",
     "content": "المحتوي",
-    "profile": "حسابى"
+    "profile": "حسابى",
+    "community": "المجتمع"
 
   },
   "lesson_content": {
