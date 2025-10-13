@@ -54,15 +54,6 @@ export const sessionReviewService = {
         }
       });
 
-      // Log successful response for debugging
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Session reviews submitted successfully:', {
-          request: apiData,
-          response: response.data,
-          status: response.status
-        });
-      }
-
       // Validate response structure
       if (!response.data) {
         throw new Error('No response data received from server');
@@ -76,11 +67,6 @@ export const sessionReviewService = {
       // Return the full response data which should include success, message, and data fields
       return response.data;
     } catch (error) {
-      console.error('Error submitting session reviews:', {
-        data,
-        error: error.response?.data || error.message,
-        status: error.response?.status
-      });
       throw error;
     }
   },
@@ -120,15 +106,6 @@ export const sessionReviewService = {
         }
       });
 
-      // Log successful response for debugging
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Session review submitted successfully:', {
-          request: apiData,
-          response: response.data,
-          status: response.status
-        });
-      }
-
       // Validate response structure
       if (!response.data) {
         throw new Error('No response data received from server');
@@ -142,11 +119,6 @@ export const sessionReviewService = {
       // Return the full response data which should include success, message, and data fields
       return response.data;
     } catch (error) {
-      console.error('Error submitting session review:', {
-        reviewData,
-        error: error.response?.data || error.message,
-        status: error.response?.status
-      });
       throw error;
     }
   },
@@ -164,7 +136,6 @@ export const sessionReviewService = {
       const responses = await Promise.all(promises);
       return responses;
     } catch (error) {
-      console.error('Error submitting multiple session reviews:', error);
       throw error;
     }
   }

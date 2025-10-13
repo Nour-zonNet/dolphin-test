@@ -54,7 +54,6 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     });
 
     if (validSessions.length === 0) {
-        console.warn('SessionRatingModal: No valid sessions found');
         return null;
     }
 
@@ -99,9 +98,6 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                 }
             });
             
-            if (process.env.NODE_ENV === 'development') {
-                console.log('Submitting session reviews:', { reviews });
-            }
             
             // Submit the reviews array
             await onSubmit({ reviews });
@@ -122,9 +118,6 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
             
             // Show success modal after a brief delay to ensure the rating modal is closed
             setTimeout(() => {
-                if (process.env.NODE_ENV === 'development') {
-                    console.log('Dispatching SUCCESS modal');
-                }
                 dispatch(openModal({
                     type: MODAL_TYPES.SUCCESS,
                     props: {
@@ -134,13 +127,8 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                 }));
             }, 300);
         } catch (error) {
-            console.error('Error submitting session ratings:', error);
-            
             // Show error modal after a brief delay
             setTimeout(() => {
-                if (process.env.NODE_ENV === 'development') {
-                    console.log('Dispatching ERROR modal');
-                }
                 dispatch(openModal({
                     type: MODAL_TYPES.ERROR,
                     props: {
@@ -203,18 +191,6 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                             const teacherName = session.teacher_name || session.teacherName || session.teacher?.name || 'المعلم';
                             const sessionTitle = session.subject || session.title || session.name || session.session_name || 'جلسة تعليمية';
                             
-                            // Debug session data in development
-                            if (process.env.NODE_ENV === 'development') {
-                                console.log(`SessionRatingModal - Session ${index + 1}:`, {
-                                    class_session_id: session.class_session_id,
-                                    id: session.id,
-                                    teacher_name: session.teacher_name,
-                                    subject: session.subject,
-                                    date: session.date,
-                                    start_time: session.start_time,
-                                    status: session.status
-                                });
-                            }
                             
                             return (
                                 <div key={session.class_session_id || session.id || index} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
