@@ -1,4 +1,4 @@
-import { Home } from "@/utils/icons"; // 👈 ضفنا Book
+import { Home } from "@/utils/icons"; 
 import { ProfileInfo } from "./components";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -10,8 +10,8 @@ const MobileNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const activeColor = "#1B648E";
-  const inactiveColor = "#7A8085";
+  const activeColor = "#E89B32";
+  const inactiveColor = "#7F8081";
 
   // Detect active tab from current route
   let activeTab = "home";

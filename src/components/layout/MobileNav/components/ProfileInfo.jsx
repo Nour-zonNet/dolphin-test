@@ -14,7 +14,7 @@ const ProfileInfo = ({ isActive = false }) => {
       className="flex flex-col items-center justify-end hover:scale-105 transition cursor-pointer"
     >
       <div
-        style={{ borderColor: isActive ? "#1B648E" : " #7a8085 " }}
+        style={{ borderColor: isActive ? "#E89B32" : " #7F8081" }}
         className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full   border-[0.1px] overflow-hidden bg-white"
       >
         <img
@@ -26,7 +26,7 @@ const ProfileInfo = ({ isActive = false }) => {
 
       <span
         className={`text-xs sm:text-xs font-semibold ${
-          isActive ? "text-[#1B648E]" : "text-[#7A8085]"
+          isActive ? "text-[#E89B32]" : "text-[#7F8081]"
         }`}
       >
         {t("mobileNavigation.profile")}
