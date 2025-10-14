@@ -80,6 +80,9 @@ const ComplaintsPage = lazy(() =>
 const BalanceDetails = lazy(() =>
   import("@/features/balance/pages/BalanceDetails")
 );
+const PaymentStatus = lazy(() =>
+  import("@/features/balance/pages/PaymentStatus")
+);
 
 // Route Configuration
 export const routes = [
@@ -275,6 +278,13 @@ export const routes = [
     protected: true,
     layout: false,
   },
+  {
+    path: "/balance/payment/:status",
+    element: PaymentStatus,
+    protected: true,
+    layout: false,
+  },
+  
   {
     path: "/weekly-schedule",
     element: WeeklySchedule,
