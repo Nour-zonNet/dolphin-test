@@ -76,3 +76,31 @@
   object-fit: contain;
 }
   
+/* Custom scrollbar for Reports page - clean design without arrows */
+.custom-scrollbar-2::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar-2::-webkit-scrollbar-track {
+  background: #F1F1F1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar-2::-webkit-scrollbar-thumb {
+  background: #8C8C8C;
+  border-radius: 10px;
+}
+
+.custom-scrollbar-2::-webkit-scrollbar-thumb:hover {
+  background: #8C8C8C
+}
+
+/* Hide scrollbar arrows */
+.custom-scrollbar-2::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Firefox scrollbar styling */
+.custom-scrollbar-2 {
+  scrollbar-color: #8C8C8C;
+}

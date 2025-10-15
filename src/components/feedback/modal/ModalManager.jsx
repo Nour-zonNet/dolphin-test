@@ -16,6 +16,8 @@ import {
   AddBalanceModal,
   AddCouponModal,
   SessionRatingModal,
+  CommentsModal,
+  PerformanceChartModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -194,6 +196,12 @@ const ModalManager = () => {
           }}
         />
       );
+      break;
+    case MODAL_TYPES.COMMENTS:
+      ModalContent = <CommentsModal {...props} onClose={handleClose} />;
+      break;
+    case MODAL_TYPES.PERFORMANCE_CHART:
+      ModalContent = <PerformanceChartModal {...props} onClose={handleClose} />;
       break;
     default:
       return null;

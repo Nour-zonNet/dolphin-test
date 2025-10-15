@@ -18,4 +18,8 @@ export const MODAL_TYPES = {
   ADD_COUPON: "ADD_COUPON",
   // Session rating modal
   SESSION_RATING: "SESSION_RATING",
+  // Comments modal
+  COMMENTS: "COMMENTS",
+  // Performance chart modal
+  PERFORMANCE_CHART: "PERFORMANCE_CHART",
 };

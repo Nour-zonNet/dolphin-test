@@ -4,12 +4,15 @@ import whatsapp from "@/assets/images/whatsapp.svg";
 import youtube from "@/assets/images/youtube.svg";
 import snapchat from "@/assets/images/snapchat.svg";
 import LifeChat from "@/assets/images/message.svg";
+import support from "@/assets/images/support.svg";
 import { X } from "lucide-react";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
 const HomeSupportBtn = ({ className }) => {
   const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
   const [radius, setRadius] = useState(70);
@@ -93,6 +96,11 @@ const HomeSupportBtn = ({ className }) => {
     setIsChatOpen((prev) => !prev);
   };
 
+  const openComplaints = () => {
+    navigate("/complaints");
+    setIsOpen(false);
+  };
+
   // Close on outside click or Escape
   useEffect(() => {
     const handlePointerDown = (e) => {
@@ -129,7 +137,13 @@ const HomeSupportBtn = ({ className }) => {
   const buttons = useMemo(() => {
     if (isAuthenticated)
       return [
-        { icon: whatsapp, angle: -40, alt: "WhatsApp", onClick: openWhatsApp },
+        { icon: whatsapp, angle: -90, alt: "WhatsApp", onClick: openWhatsApp },
+        {
+          icon: support,
+          angle: -40,
+          alt: "Support",
+          onClick: openComplaints,
+        },
         {
           icon: LifeChat,
           angle: 10,

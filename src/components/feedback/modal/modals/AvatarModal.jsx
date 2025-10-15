@@ -52,7 +52,7 @@ const AvatarModal = ({ onClose, onSelect }) => {
           onClick={onClose}
           className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 rounded-full p-2"
         >
-          <X className="w-5 h-5 text-gray-600" />
+          <X className="w-5 h-5 text-navyteal" />
         </button>
 
         {/* Title */}

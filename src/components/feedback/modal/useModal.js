@@ -186,6 +186,24 @@ export const useModal = () => {
     dispatch(closeModal());
   };
 
+  const openCommentsModal = (subject = {}) => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.COMMENTS,
+        props: { subject },
+      })
+    );
+  };
+
+  const openPerformanceChartModal = (subject = {}, period = "month") => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.PERFORMANCE_CHART,
+        props: { subject, period },
+      })
+    );
+  };
+
   // Function to execute and remove callback from registry
   const executeCallback = (callbackId, ...args) => {
     const callback = callbackRegistry.get(callbackId);
@@ -207,6 +225,8 @@ export const useModal = () => {
     openAvatarModal,
     openAddBalanceModal,
     openAddCouponModal,
+    openCommentsModal,
+    openPerformanceChartModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

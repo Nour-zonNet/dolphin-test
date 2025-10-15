@@ -9,7 +9,6 @@ export const STATUS_CONFIG = {
     lineColor: "stroke-[#185A80]",
     fill: "#185A80",
     bg: "bg-health",
-
     icon: "Checked",
   },
   trial: {

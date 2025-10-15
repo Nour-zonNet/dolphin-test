@@ -14,7 +14,7 @@ import ZoomDemo from "../../features/zoom/pages/ZoomDemo";
 import SessionRatingModal from "../../components/feedback/modal/modals/SessionRatingModal";
 // import Board from "../../features/Board/Board";
 import CommunityPage from "@/features/community/CommunityPage";
-
+// import Reports from "@/features/profile/pages/Reports";
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
 const SchedulePage = lazy(() => import("@/features/lessons"));
@@ -73,6 +73,7 @@ const ForgotPasswordPage = lazy(() =>
   }))
 );
 const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
+const Reports = lazy(() => import("@/features/profile/pages/Reports"));
 const ComplaintsPage = lazy(() =>
   import("@/features/complaints/pages/ComplaintsPage")
 );
@@ -270,6 +271,14 @@ export const routes = [
     protected: true,
     navbar: false,
     mobileNav: true,
+    homeSupportBtn: true,
+  },
+  {
+    path: "/reports",
+    element: Reports,
+    protected: true,
+    navbar: false,
+    mobileNav: false,
     homeSupportBtn: true,
   },
   {

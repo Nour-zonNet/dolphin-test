@@ -55,6 +55,7 @@ import skratch from "@/assets/packages/skratch.svg";
 import special from "@/assets/packages/special.svg";
 import science from "@/assets/packages/science.svg";
 import arabic from "@/assets/packages/arabic.svg";
+import tooth from "@/assets/images/tooth.svg";
 
 export const packageStyles = {
   75: {
@@ -65,6 +66,10 @@ export const packageStyles = {
     image: quran,
     bgColor: "#9A8158",
   },
+  // 113: {
+  //   image: tooth,
+  //   bgColor: "#0077B6",
+  // },
   114: {
     image: game,
     bgColor: "#D8D8EB",
