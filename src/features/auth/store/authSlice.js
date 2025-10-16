@@ -282,7 +282,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || action.error.message;
+        // state.error = action.payload || action.error.message;
         state.user = null;
         state.token = null; // ممكن تمسح التوكن لو API رجع unauthorized
         localStorage.removeItem("token");

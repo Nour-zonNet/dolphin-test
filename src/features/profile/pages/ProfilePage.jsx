@@ -54,15 +54,12 @@ const ProfilePage = () => {
           </Link>
 
           {/* Reports Card */}
-          <Link
-            to="/reports"
-            className="flex flex-col items-center justify-center gap-3 rounded-2xl p-5 bg-[#EAF3FB] hover:bg-[#d9eaf9] transition"
-          >
+          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl p-5 bg-[#EAF3FB] opacity-50 cursor-not-allowed">
             <Reports className="w-8 h-8 md:w-6 md:h-6 lg:w-8 lg:h-8" />
             <span className="text-sm md:text-base lg:text-lg text-navyteal font-semibold">
               تقاريري
             </span>
-          </Link>
+          </div>
         </div>
 
         <div className="space-y-8 md:space-y-16">

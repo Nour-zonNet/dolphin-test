@@ -10,7 +10,6 @@ import SessionPage from "../../features/lessons/pages/SessionPage";
 import GlobalSessionPage from "../../features/lessons/pages/GlobalSession";
 import WeeklySchedule from "../../features/lessons/pages/WeeklySchedule";
 import TeacherProfile from "../../features/teacher/pages/profile";
-import ZoomDemo from "../../features/zoom/pages/ZoomDemo";
 import SessionRatingModal from "../../components/feedback/modal/modals/SessionRatingModal";
 import OfflineScreen from "@/components/OfflineScreen";
 // import Board from "../../features/Board/Board";
@@ -370,16 +369,7 @@ export const routes = [
     mobileNav: false,
     layout: false,
   },
-  {
-    path: "/zoom-demo",
-    element: ZoomDemo,
-
-    protected: false,
-    homeSupportBtn: false,
-    navbar: false,
-    mobileNav: false,
-    layout: false,
-  },
+ 
 ];
 
 // Helper function to check if route is public

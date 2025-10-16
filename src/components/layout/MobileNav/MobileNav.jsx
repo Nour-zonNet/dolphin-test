@@ -40,7 +40,7 @@ const MobileNav = () => {
         </button>
 
         {/* Community */}
-        <button
+        {/* <button
           onClick={() => navigate("/community")}
           className="flex flex-col items-center justify-end gap-2 h-full transition cursor-pointer hover:scale-105"
         >
@@ -85,7 +85,7 @@ const MobileNav = () => {
           >
             {t("mobileNavigation.community")}
           </span>
-        </button>
+        </button> */}
 
         {/* Profile */}
         <ProfileInfo isActive={activeTab === "profile"} />

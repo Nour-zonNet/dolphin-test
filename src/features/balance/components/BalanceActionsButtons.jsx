@@ -29,7 +29,8 @@ const BalanceActionsButtons = () => {
       <div className="flex flex-col md:flex-row w-[90%] xl:w-[40%] lg:w-[70%] mx-auto gap-[18px] justify-center items-center my-8 md:my-14">
         <button
           onClick={handleAddBalance}
-          className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover transition-colors"
+          disabled={true}
+          className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Plus className="w-3 md:w-4 lg:w-6" />
           <div className="font-semibold text-sm md:text-2xl">إضافة رصيد</div>
@@ -37,7 +38,8 @@ const BalanceActionsButtons = () => {
         
         <button
           onClick={handleAddCoupon}
-          className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 border border-orangedeep cursor-pointer rounded-[32px] hover:bg-orange-50 transition-colors"
+          disabled={true}
+          className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 border border-orangedeep cursor-pointer rounded-[32px] hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Gift className="w-4 lg:w-6" />
           <div className="font-semibold text-sm md:text-2xl">
