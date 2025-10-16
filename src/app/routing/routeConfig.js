@@ -12,8 +12,10 @@ import WeeklySchedule from "../../features/lessons/pages/WeeklySchedule";
 import TeacherProfile from "../../features/teacher/pages/profile";
 import ZoomDemo from "../../features/zoom/pages/ZoomDemo";
 import SessionRatingModal from "../../components/feedback/modal/modals/SessionRatingModal";
+import OfflineScreen from "@/components/OfflineScreen";
 // import Board from "../../features/Board/Board";
 import CommunityPage from "@/features/community/CommunityPage";
+import MaintenanceScreen from "@/components/MaintenanceScreen";
 // import Reports from "@/features/profile/pages/Reports";
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
@@ -293,7 +295,19 @@ export const routes = [
     protected: true,
     layout: false,
   },
-  
+  {
+    path: "/offline",
+    element: OfflineScreen,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: "/under-maintenance",
+    element: MaintenanceScreen,
+    protected: true,
+    layout: false,
+  },
+
   {
     path: "/weekly-schedule",
     element: WeeklySchedule,
