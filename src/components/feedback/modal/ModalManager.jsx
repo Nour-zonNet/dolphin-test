@@ -182,8 +182,12 @@ const ModalManager = () => {
           onClose={handleClose}
           onSubmit={async (data) => {
             try {
-              if (props.onSubmit) {
-                await props.onSubmit(data);
+              // Execute registered onSubmit callback if provided via props
+              if (props.onSubmitId) {
+                const cb = callbackRegistry.get(props.onSubmitId);
+                if (cb) {
+                  await cb(data);
+                }
               }
               if (props.callbackId) {
                 executeCallback(props.callbackId, data);

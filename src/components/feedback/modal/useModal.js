@@ -204,6 +204,30 @@ export const useModal = () => {
     );
   };
 
+  const openSessionRatingModal = (sessions = [], onSubmit, onClose) => {
+    // Store callbacks in registry with unique IDs to keep Redux serializable
+    const onSubmitId = onSubmit ? Date.now().toString() : null;
+    const onCloseId = onClose ? Date.now().toString() + "_close" : null;
+    
+    if (onSubmitId && onSubmit) {
+      callbackRegistry.set(onSubmitId, onSubmit);
+    }
+    if (onCloseId && onClose) {
+      callbackRegistry.set(onCloseId, onClose);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.SESSION_RATING,
+        props: {
+          sessions,
+          onSubmitId: onSubmitId,
+          onCloseId: onCloseId,
+        },
+      })
+    );
+  };
+
   // Function to execute and remove callback from registry
   const executeCallback = (callbackId, ...args) => {
     const callback = callbackRegistry.get(callbackId);
@@ -227,6 +251,7 @@ export const useModal = () => {
     openAddCouponModal,
     openCommentsModal,
     openPerformanceChartModal,
+    openSessionRatingModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

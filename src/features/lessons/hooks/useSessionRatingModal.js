@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLessons } from './useLessons';
 import { LESSON_STATUS } from '../../../utils';
-import { useDispatch } from 'react-redux';
-import { openModal } from '@/store/modalSlice';
-import { MODAL_TYPES } from '@/constants/MODAL_TYPES';
+import { useModal } from '@/components/feedback/modal/useModal';
 import sessionReviewService from '@/services/sessionReview';
 import { useLocation } from 'react-router-dom';
 
@@ -59,7 +57,7 @@ const validateSessionData = (session) => {
 export const useSessionRatingModal = () => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const { items } = useLessons();
-  const dispatch = useDispatch();
+  const { openSessionRatingModal } = useModal();
   const location = useLocation();
 
   // Get stored rating data for a specific date
@@ -310,14 +308,11 @@ export const useSessionRatingModal = () => {
       if (shouldShow && eligibleSessions.length > 0) {
         // Add a small delay to ensure the page is fully loaded
         const timer = setTimeout(() => {
-          dispatch(openModal({
-            type: MODAL_TYPES.SESSION_RATING,
-            props: {
-              sessions: eligibleSessions,
-              onSubmit: handleSubmitRatings,
-              onClose: handleCloseModal
-            }
-          }));
+          openSessionRatingModal(
+            eligibleSessions,
+            handleSubmitRatings,
+            handleCloseModal
+          );
         }, 500);
         
         return () => clearTimeout(timer);
@@ -333,7 +328,7 @@ export const useSessionRatingModal = () => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [items, checkShouldShowModal, dispatch, getEligibleSessions, handleSubmitRatings, handleCloseModal, location.pathname]);
+  }, [items, checkShouldShowModal, openSessionRatingModal, getEligibleSessions, handleSubmitRatings, handleCloseModal, location.pathname]);
 
   // Memoize eligible sessions to prevent unnecessary re-renders
   const eligibleSessions = useMemo(() => getEligibleSessions(), [items]);
