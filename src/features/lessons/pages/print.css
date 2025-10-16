@@ -3,7 +3,7 @@
     /* حجم الصفحة A4 بشكل أفقي (Landscape) */
     @page {
       size: A4 landscape;
-      margin: 5mm;
+      margin: 1mm;
     }
   
     /* اجعل الخلفية تظهر */
@@ -20,7 +20,7 @@
   
     /* ثبّت مقاسات العناصر داخل الجدول */
     #schedule-content {
-      width:270mm !important;
+      width:295mm !important;
       height:110mm !important;
       overflow: hidden !important;
       transform: scale(1);

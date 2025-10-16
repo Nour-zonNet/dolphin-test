@@ -3,7 +3,7 @@ import books from "@/assets/schedule/books.svg";
 import sandGlass from "@/assets/schedule/sandGlass.svg";
 import clock from "@/assets/schedule/clock.svg";
 import cancelled from "@/assets/schedule/cancelled.svg";
-import delay from "@/assets/schedule/cancelled.svg";
+import delay from "@/assets/schedule/delay.svg";
 import { LESSON_STATUS } from "../../../utils";
 
 export const LessonButton = ({
@@ -13,6 +13,7 @@ export const LessonButton = ({
   onOpenContent,
   lessons,
 }) => {
+  console.log("lessonStatus", lessonStatus);
   if (lessonStatus === LESSON_STATUS.ENDED) {
     return (
       <>
