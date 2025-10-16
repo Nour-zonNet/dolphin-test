@@ -1,11 +1,69 @@
 import React from "react";
 import Header from "@/components/layout/Header";
-import { LeftArrowFilled, SupportIcon, WalletGray } from "@/utils/icons";
+import { LeftArrowFilled, SupportIcon, WalletGray, Retry } from "@/utils/icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import successImg from "@/assets/images/successModal.svg";
 import warningImg from "@/assets/images/paymentFailed.svg";
 import pendingImg from "@/assets/images/paymentPending.svg";
 import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
+import FormatWithCurrency from "@/utils/FormatWithCurrency";
+
+// Order Summary Card Component
+const OrderSummaryCard = () => {
+  const orderItems = [
+    { name: "باقة الصحة العامة", price: 200 },
+    { name: "باقة ركن المسلم", price: 100 },
+    { name: "باقة اللغة الانجليزية المستوي الاول", price: 300 },
+    { name: "باقة التميز", price: 400 },
+    { name: "باقة التميز", price: 700 },
+  ];
+
+  const discount = 500;
+  const subtotal = orderItems.reduce((sum, item) => sum + item.price, 0);
+  const total = subtotal - discount;
+
+  return (
+    <div className="bg-white border border-[#8C8C8C22] rounded-[24px] p-6 w-full">
+      <h3 className="text-lg md:text-xl font-bold text-black mb-6">ملخص الطلب</h3>
+      
+      <div className="space-y-3 mb-4">
+        {orderItems.map((item, index) => (
+          <div key={index} className="flex justify-between gap-6 items-center">
+            <span className="text-[#645C5C] font-medium text-sm md:text-lg">{item.name}</span>
+            <FormatWithCurrency 
+              amount={item.price} 
+              symbolFill="#645C5C" 
+              symbolClass="w-4 h-4 md:w-6 md:h-6"
+              className="text-[#645C5C] font-medium"
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-between items-center mb-4">
+        <span className="text-[#AE7426] font-medium text-sm md:text-lg">الخصم</span>
+        <FormatWithCurrency 
+          amount={-discount}
+          symbolFill="#AE7426" 
+          symbolClass="w-4 h-4 md:w-6 md:h-6"
+          className="text-[#AE7426] font-medium"
+        />
+      </div>
+
+      <div className="border-t border-dashed border-gray-300 pt-4">
+        <div className="flex justify-between items-center">
+          <span className="text-navyteal font-bold text-base md:text-lg">الإجمالي</span>
+          <FormatWithCurrency 
+            amount={total} 
+            symbolFill="#08233F" 
+            symbolClass="w-4 h-4 md:w-6 md:h-6"
+            className="text-navyteal font-bold text-lg"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const STATUS_CONFIG = {
   success: {
@@ -17,7 +75,7 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: <LeftArrowFilled color="#0C2D40" />,
+        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
         variant: "filled",
         onClick: (navigate) => navigate("/"),
       },
@@ -39,13 +97,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "حاول مرة أخرى",
+        icon: <Retry className="w-4 h-4 md:w-6 md:h-6" />,
         variant: "filled",
         onClick: () => window.history.back(),
       },
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: <LeftArrowFilled color="#0C2D40" />,
+        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
@@ -67,7 +126,7 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: <LeftArrowFilled color="#0C2D40" />,
+        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
@@ -99,7 +158,17 @@ const PaymentStatus = () => {
       <Header title={data.title} onBack="/profile" showBalanceSection={false} showArrow={false} />
 
       <div className="flex flex-col items-center px-4 py-8 gap-6 mt-14 md:mt-20 lg:mt-8">
-        <img src={data.image} alt={data.title} className="w-[40%] md:w-[30%] lg:w-[20%] h-auto" loading="lazy" />
+        {/* For success status, show image and card side by side */}
+        {status === 'success' ? (
+          <div className="flex flex-col lg:flex-row items-center justify-center w-full lg:gap-60 gap-10">
+            <img src={data.image} alt={data.title} className="w-[40%] md:w-[30%] lg:w-[20%] h-auto" loading="lazy" />
+            <div>
+              <OrderSummaryCard />
+            </div>
+          </div>
+        ) : (
+          <img src={data.image} alt={data.title} className="w-[40%] md:w-[30%] lg:w-[20%] h-auto" loading="lazy" />
+        )}
 
         <div className="text-center mb-4 lg:mb-6">
           <h2 className="font-semibold md:text-3xl text-xl text-navyteal">{data.heading}</h2>

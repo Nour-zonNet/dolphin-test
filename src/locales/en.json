@@ -14,6 +14,16 @@
     "yes": "Yes",
     "no": "No"
   },
+  "offline": {
+    "title": "You are not connected to the internet",
+    "description": "Please check your network connection and try again",
+    "retry": "Try Again"
+  },
+  "maintenance": {
+    "title": "Site Under Maintenance",
+    "description": "We are currently performing development and maintenance work to improve your experience",
+    "goHome": "Return to Homepage"
+  },
   "navigation": {
     "schedule": "Study Schedule",
     "subscriptions": "Subscribed Packages",

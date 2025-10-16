@@ -144,7 +144,7 @@ const Reports = () => {
         month2: 50,
         month3: 48
       }
-    }
+    },
   ];
 
   const getSubjectsByPeriod = (period) => {
