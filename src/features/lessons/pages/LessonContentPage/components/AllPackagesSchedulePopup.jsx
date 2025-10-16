@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
-import { Cross, Clock, Teacher, ChevronDown, PrintIcon } from "@/utils/icons";
+import { Cross, Clock, Teacher, ChevronDown, PrintIcon, LeftArrow } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
 import { useLessons } from "@/features/lessons/hooks/useLessons";
 import { formatTime12Hour } from "@/utils/dateHelpers";
@@ -90,12 +90,13 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
   // We just read what's already in the store; preloading happens in the button.
   const { items, error } = useLessons();
   const [isPrinting, setIsPrinting] = useState(false);
+  
   const close = useCallback(() => {
     if (typeof onClose === "function") onClose();
     else if (typeof setOpen === "function") setOpen(false);
   }, [onClose, setOpen]);
 
-  const handlePrint = () => {
+  const handlePrint = useCallback(() => {
     setIsPrinting(true);
     
     // Create a hidden iframe to load the weekly schedule and print
@@ -156,7 +157,7 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
     };
     
     iframe.src = "/weekly-schedule";
-  };
+  }, []);
 
   // Lock scroll + ESC while visible (iOS-safe)
   useEffect(() => {
@@ -200,7 +201,7 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
   
     return unique;
   }, [items, groupInfos]);
-  
+
   const mergedByDay = useMemo(() => {
     const out = {};
   
@@ -222,7 +223,7 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
       // initialize day array if needed
       out[dayKey] ||= [];
   
-      // ✅ only add if that time doesn’t already exist for this day
+      // ✅ only add if that time doesn't already exist for this day
       const alreadyExists = out[dayKey].some(
         (existing) => existing.__time === item.__time
       );
@@ -238,7 +239,6 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
   
     return out;
   }, [filteredItems]);
-  
 
   const days = useMemo(
     () =>
@@ -359,12 +359,14 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
 
                           {count > 1 && (
                             <span
-                              className={`transition-transform duration-300 ${
-                                isOpen ? "rotate-180" : "rotate-0"
-                              }`}
+                              className="transition-transform duration-300"
                               aria-hidden="true"
                             >
-                              <ChevronDown className="w-4 h-4" />
+                              {isOpen ? (
+                                <LeftArrow className="w-4 h-4" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4" />
+                              )}
                             </span>
                           )}
                         </button>
