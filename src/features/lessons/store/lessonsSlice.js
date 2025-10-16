@@ -147,7 +147,6 @@ const lessonsSlice = createSlice({
         state.error = null;
       })
       .addCase(getContentsBySessionId.fulfilled, (state, action) => {
-        console.log(action);
         state.loading = false;
       })
       .addCase(getContentsBySessionId.rejected, (state, action) => {
@@ -202,7 +201,6 @@ const lessonsSlice = createSlice({
         state.globalSession = action.payload;
       })
       .addCase(getGlobalSessionByTeacherUsername.rejected, (state, action) => {
-        console.log(action);
         state.loading = false;
         state.error = action.payload.error || action.error?.message || "خطا فى جلب بيانات الجلسة";
       });

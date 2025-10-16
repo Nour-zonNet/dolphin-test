@@ -13,7 +13,6 @@ export const LessonButton = ({
   onOpenContent,
   lessons,
 }) => {
-  console.log("lessonStatus", lessonStatus);
   if (lessonStatus === LESSON_STATUS.ENDED) {
     return (
       <>
