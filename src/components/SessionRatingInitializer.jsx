@@ -8,13 +8,13 @@ const SessionRatingInitializer = () => {
   // Note: Even though this component is included in App.jsx globally,
   // it only activates when the user is on the schedule page to avoid
   // unnecessary API calls and modal checks on other pages
+  const { eligibleSessions } = useSessionRatingModal();
   if (!location.pathname.includes('/schedule')) {
     return null;
   }
   
   // This hook will automatically check for today's sessions and show the modal if needed
   // It uses real API data from the lessons service
-  const { eligibleSessions, handleSubmitRatings, handleCloseModal } = useSessionRatingModal();
   
   // Development mode debugging - only show real data info
   if (process.env.NODE_ENV === 'development') {
