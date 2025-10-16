@@ -10,7 +10,7 @@ const SchedulePage = () => {
     <div className="pt-28 md:pt-41">
       <ScheduleSlider />
       {/* Temporary test button to open Session Rating Modal */}
-      {/* <div className="fixed bottom-30 left-4 z-50 cursor-pointer">
+      <div className="fixed bottom-30 left-4 z-50 cursor-pointer">
         <button
           type="button"
           onClick={() =>
@@ -24,7 +24,7 @@ const SchedulePage = () => {
         >
           إضافة تقييم  
         </button>
-      </div> */}
+      </div>
     </div>
   );
 };

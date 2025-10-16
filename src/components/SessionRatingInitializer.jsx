@@ -37,11 +37,22 @@ const SessionRatingInitializer = () => {
       const todayData = JSON.parse(localStorage.getItem(`sessionRatingModal_${todayStr}`) || 'null');
       const yesterdayData = JSON.parse(localStorage.getItem(`sessionRatingModal_${yesterdayStr}`) || 'null');
       
+      // Check if we should show yesterday's sessions
+      const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
+      
       return {
-        shouldShow: !todayData?.lastShown && !todayData?.skipped && !yesterdayData?.lastRatingDate && eligibleSessions.length > 0,
+        shouldShow: eligibleSessions.length > 0 && (
+          shouldShowYesterdaySessions ? 
+            (!todayData?.lastShown && !todayData?.skipped && !todayData?.lastRatingDate) :
+            (!todayData?.lastShown && !todayData?.skipped && !todayData?.lastRatingDate)
+        ),
         conditions: {
+          showingYesterdaySessions: shouldShowYesterdaySessions,
           notShownToday: !todayData?.lastShown,
           notSkippedToday: !todayData?.skipped,
+          notRatedToday: !todayData?.lastRatingDate,
+          notShownYesterday: !yesterdayData?.lastShown,
+          notSkippedYesterday: !yesterdayData?.skipped,
           notRatedYesterday: !yesterdayData?.lastRatingDate,
           hasEligibleSessions: eligibleSessions.length > 0
         }
