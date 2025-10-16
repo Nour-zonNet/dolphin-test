@@ -42,7 +42,7 @@ const SubjectCard = ({ subject, period, hasScroll = false }) => {
 
   return (
     <div 
-      className={`border border-[#E8E8E8] rounded-xl p-6 space-y-4 ${hasScroll ? 'me-4' : ''}`}
+      className={`border border-[#E8E8E8] rounded-xl p-6 space-y-4 ${hasScroll ? 'me-4 md:me-0' : 'me-0'}`}
     >
       {/* Subject Header */}
       <div className="flex items-center justify-between">

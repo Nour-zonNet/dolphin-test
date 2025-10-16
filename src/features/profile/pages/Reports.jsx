@@ -168,6 +168,8 @@ const Reports = () => {
 
   const subjects = getSubjectsByPeriod(selectedPeriod);
   const overallPerformance = getOverallPerformanceByPeriod(selectedPeriod);
+  // Only apply scroll margin on mobile when there are more than 2 subjects
+  // On desktop (md+), we can fit more subjects without scroll
   const hasScroll = subjects.length > 2;
 
   return (
