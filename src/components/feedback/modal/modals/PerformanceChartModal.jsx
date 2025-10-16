@@ -163,9 +163,7 @@ const PerformanceChartModal = ({ subject, period, onClose }) => {
     },
   };
 
-  const getPeriodText = (period) => {
-    return period === "month" ? "شهري" : "فصلي";
-  };
+ 
 
   return (
     <div className="bg-white rounded-xl p-6 w-full md:min-w-xl xl:min-w-2xl max-w-2xl mx-auto">
