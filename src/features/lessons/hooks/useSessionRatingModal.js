@@ -166,56 +166,110 @@ export const useSessionRatingModal = () => {
     }
     
     // Check if all sessions have ended
-    const allEnded = targetSessions.every((session) => {
-      const completedStatuses = [
-        LESSON_STATUS.ENDED,
-        'ended',
-        'completed',
-        'finished'
-      ];
+    // const allEnded = targetSessions.every((session) => {
+    //   const completedStatuses = [
+    //     LESSON_STATUS.ENDED,
+    //     'ended',
+    //     'completed',
+    //     'finished'
+    //   ];
       
-      // If session has completed status, it's ended
-      if (completedStatuses.includes(session.status)) {
-        return true;
+    //   // If session has completed status, it's ended
+    //   if (completedStatuses.includes(session.status)) {
+    //     return true;
+    //   }
+      
+    //   // For yesterday's sessions, they are always considered ended
+    //   if (shouldShowYesterdaySessions) {
+    //     return true;
+    //   }
+      
+    //   // Check if session has passed its end time (only for today's sessions)
+    //   if (session.start_time) {
+    //     try {
+    //       const [hours, minutes] = session.start_time.split(':').map(Number);
+    //       if (isNaN(hours) || isNaN(minutes)) {
+    //         return false;
+    //       }
+          
+    //       const sessionStart = new Date(
+    //         targetDate.getFullYear(),
+    //         targetDate.getMonth(),
+    //         targetDate.getDate(),
+    //         hours,
+    //         minutes
+    //       );
+          
+    //       // Use default duration of 60 minutes since API doesn't provide duration
+    //       // This is a reasonable assumption for most educational sessions
+    //       const durationMinutes = 60; // Fixed duration since API doesn't provide this field
+    //       const sessionEnd = new Date(sessionStart.getTime() + durationMinutes * 60000);
+          
+    //       const hasEnded = now > sessionEnd;
+          
+    //       return hasEnded;
+    //     } catch (error) {
+    //       return false;
+    //     }
+    //   }
+      
+    //   return false;
+    // });
+    // Default duration for each session (1 hour)
+const DEFAULT_SESSION_DURATION_MINUTES = 60;
+
+const allEnded = targetSessions.every((session) => {
+  const completedStatuses = [
+    LESSON_STATUS.ENDED,
+    'ended',
+    'completed',
+    'finished'
+  ];
+
+  if (completedStatuses.includes(session.status)) {
+    return true;
+  }
+
+  // For yesterday's sessions, assume all ended
+  if (shouldShowYesterdaySessions) {
+    return true;
+  }
+
+  // Estimate end time for today's sessions
+  if (session.start_time) {
+    try {
+      // Normalize start_time like "15:00:00" → "15:00"
+      const [hoursStr, minutesStr] = session.start_time.split(':');
+      const hours = parseInt(hoursStr, 10);
+      const minutes = parseInt(minutesStr || '0', 10);
+
+      if (isNaN(hours) || isNaN(minutes)) {
+        return false;
       }
-      
-      // For yesterday's sessions, they are always considered ended
-      if (shouldShowYesterdaySessions) {
-        return true;
-      }
-      
-      // Check if session has passed its end time (only for today's sessions)
-      if (session.start_time) {
-        try {
-          const [hours, minutes] = session.start_time.split(':').map(Number);
-          if (isNaN(hours) || isNaN(minutes)) {
-            return false;
-          }
-          
-          const sessionStart = new Date(
-            targetDate.getFullYear(),
-            targetDate.getMonth(),
-            targetDate.getDate(),
-            hours,
-            minutes
-          );
-          
-          // Use default duration of 60 minutes since API doesn't provide duration
-          // This is a reasonable assumption for most educational sessions
-          const durationMinutes = 60; // Fixed duration since API doesn't provide this field
-          const sessionEnd = new Date(sessionStart.getTime() + durationMinutes * 60000);
-          
-          const hasEnded = now > sessionEnd;
-          
-          return hasEnded;
-        } catch (error) {
-          return false;
-        }
-      }
-      
+
+      const sessionStart = new Date(
+        targetDate.getFullYear(),
+        targetDate.getMonth(),
+        targetDate.getDate(),
+        hours,
+        minutes
+      );
+
+      // Add default duration (1 hour)
+      const sessionEnd = new Date(sessionStart.getTime() + DEFAULT_SESSION_DURATION_MINUTES * 60 * 1000);
+
+      // Add small grace period (5 minutes) to avoid early trigger
+      const gracePeriod = 5 * 60 * 1000;
+
+      return now.getTime() > sessionEnd.getTime() + gracePeriod;
+    } catch {
       return false;
-    });
-    
+    }
+  }
+
+  return false;
+});
+
     return allEnded;
   }, [items, getStoredRatingData]);
 
