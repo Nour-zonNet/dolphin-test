@@ -63,7 +63,7 @@ const AvatarModal = ({ onClose, onSelect }) => {
             <button
               key={idx}
               onClick={() => onSelect(src, null)}
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-transparent hover:border-blue-400 transition-all overflow-hidden hover:cursor-pointer"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-transparent hover:border-orangedeep transition-all overflow-hidden hover:cursor-pointer"
             >
               <img
                 src={src}
