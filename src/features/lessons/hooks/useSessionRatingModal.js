@@ -81,12 +81,18 @@ export const useSessionRatingModal = () => {
     }
   }, []);
 
-  // Get sessions that are eligible for rating (today's sessions)
+  // Get sessions that are eligible for rating (today's sessions or yesterday's if not rated)
   const getEligibleSessions = useCallback(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
     
     const todayStr = today.toISOString().split('T')[0];
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    // Check if we should show yesterday's sessions
+    const yesterdayData = getStoredRatingData(yesterdayStr);
+    const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
     
     return items.filter((item) => {
       // Validate session data first
@@ -107,25 +113,39 @@ export const useSessionRatingModal = () => {
         return false;
       }
       
-      // Only include sessions from today
-      if (itemDate !== todayStr) {
-        return false;
+      // Include today's sessions
+      if (itemDate === todayStr) {
+        return true;
       }
       
-      // Include all today's sessions regardless of status
-      // The modal will only show after all sessions have ended
-      return true;
+      // Include yesterday's sessions if they weren't rated
+      if (shouldShowYesterdaySessions && itemDate === yesterdayStr) {
+        return true;
+      }
+      
+      return false;
     });
-  }, [items]);
+  }, [items, getStoredRatingData]);
 
-  // Check if all sessions of today have ended
+  // Check if all sessions of the target date have ended (today or yesterday)
   const checkAllSessionsEnded = useCallback(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const todayStr = today.toISOString().split('T')[0];
+    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
     
-    // Get all sessions from today
-    const todaySessions = items.filter((item) => {
+    const todayStr = today.toISOString().split('T')[0];
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    // Check if we should show yesterday's sessions
+    const yesterdayData = getStoredRatingData(yesterdayStr);
+    const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
+    
+    // Determine which date to check
+    const targetDate = shouldShowYesterdaySessions ? yesterday : today;
+    const targetDateStr = shouldShowYesterdaySessions ? yesterdayStr : todayStr;
+    
+    // Get all sessions from the target date
+    const targetSessions = items.filter((item) => {
       const validation = validateSessionData(item);
       if (!validation.isValid) return false;
       
@@ -138,15 +158,15 @@ export const useSessionRatingModal = () => {
         return false;
       }
       
-      return itemDate === todayStr;
+      return itemDate === targetDateStr;
     });
     
-    if (todaySessions.length === 0) {
-      return true; // No sessions today, consider all ended
+    if (targetSessions.length === 0) {
+      return true; // No sessions on target date, consider all ended
     }
     
     // Check if all sessions have ended
-    const allEnded = todaySessions.every((session) => {
+    const allEnded = targetSessions.every((session) => {
       const completedStatuses = [
         LESSON_STATUS.ENDED,
         'ended',
@@ -159,7 +179,12 @@ export const useSessionRatingModal = () => {
         return true;
       }
       
-      // Check if session has passed its end time
+      // For yesterday's sessions, they are always considered ended
+      if (shouldShowYesterdaySessions) {
+        return true;
+      }
+      
+      // Check if session has passed its end time (only for today's sessions)
       if (session.start_time) {
         try {
           const [hours, minutes] = session.start_time.split(':').map(Number);
@@ -168,9 +193,9 @@ export const useSessionRatingModal = () => {
           }
           
           const sessionStart = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate(),
+            targetDate.getFullYear(),
+            targetDate.getMonth(),
+            targetDate.getDate(),
             hours,
             minutes
           );
@@ -192,40 +217,62 @@ export const useSessionRatingModal = () => {
     });
     
     return allEnded;
-  }, [items]);
+  }, [items, getStoredRatingData]);
 
   // Check if we should show the rating modal
   const checkShouldShowModal = useCallback(() => {
     const todayStr = getTodayDateString();
     const yesterdayStr = getYesterdayDateString();
     
-    // Check if we've already shown the modal for today
+    // Check stored data for both today and yesterday
     const todayData = getStoredRatingData(todayStr);
     const yesterdayData = getStoredRatingData(yesterdayStr);
     
-    // If we've already shown the modal today (either submitted or skipped), don't show again
-    if (todayData?.lastShown) {
-      return false;
+    // Check if we should show yesterday's sessions
+    const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
+    
+    // If showing yesterday's sessions, check if we've already shown modal for today
+    if (shouldShowYesterdaySessions) {
+      // If we've already shown the modal today (either submitted or skipped), don't show again
+      if (todayData?.lastShown) {
+        return false;
+      }
+
+      // If user has skipped the modal today, don't show again
+      if (todayData?.skipped) {
+        return false;
+      }
+
+      // Check if user has already submitted reviews for today's sessions
+      if (todayData?.lastRatingDate) {
+        return false;
+      }
+    } else {
+      // Showing today's sessions - check today's data
+      // If we've already shown the modal today (either submitted or skipped), don't show again
+      if (todayData?.lastShown) {
+        return false;
+      }
+
+      // If user has skipped the modal today, don't show again
+      if (todayData?.skipped) {
+        return false;
+      }
+
+      // Check if user has already submitted reviews for today's sessions
+      if (todayData?.lastRatingDate) {
+        return false;
+      }
     }
 
-    // If user has skipped the modal today, don't show again
-    if (todayData?.skipped) {
-      return false;
-    }
-
-    // Check if user has already submitted reviews for today's sessions
-    if (todayData?.lastRatingDate) {
-      return false;
-    }
-
-    // Get eligible sessions (today's sessions)
+    // Get eligible sessions (today's or yesterday's sessions)
     const eligibleSessions = getEligibleSessions();
     
     if (eligibleSessions.length === 0) {
       return false;
     }
 
-    // Only show modal if all sessions of today have ended
+    // Only show modal if all sessions of the target date have ended
     const allSessionsEnded = checkAllSessionsEnded();
     if (!allSessionsEnded) {
       return false;
@@ -258,8 +305,15 @@ export const useSessionRatingModal = () => {
         throw new Error(`Session reviews submission failed: ${response.message || response.error || 'Unknown error'}`);
       }
       
-      // Save rating data for today
+      // Determine which date to save the rating data for
       const todayStr = getTodayDateString();
+      const yesterdayStr = getYesterdayDateString();
+      const yesterdayData = getStoredRatingData(yesterdayStr);
+      const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
+      
+      const targetDateStr = shouldShowYesterdaySessions ? yesterdayStr : todayStr;
+      
+      // Save rating data for the appropriate date
       const ratingData = {
         lastShown: new Date().toISOString(),
         lastRatingDate: new Date().toISOString(),
@@ -267,18 +321,24 @@ export const useSessionRatingModal = () => {
         sessionsRated: reviews.map(r => r.class_session_id),
         skipped: false // User submitted ratings, didn't skip
       };
-      saveRatingData(todayStr, ratingData);
+      saveRatingData(targetDateStr, ratingData);
       
       setShouldShowModal(false);
     } catch (error) {
       // Re-throw the error so the modal can handle it
       throw error;
     }
-  }, [getEligibleSessions, saveRatingData]);
+  }, [getEligibleSessions, saveRatingData, getStoredRatingData]);
 
   // Handle modal close/skip
   const handleCloseModal = useCallback(() => {
     const todayStr = getTodayDateString();
+    const yesterdayStr = getYesterdayDateString();
+    const yesterdayData = getStoredRatingData(yesterdayStr);
+    const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
+    
+    const targetDateStr = shouldShowYesterdaySessions ? yesterdayStr : todayStr;
+    
     const ratingData = {
       lastShown: new Date().toISOString(),
       lastRatingDate: null, // User didn't rate
@@ -286,10 +346,10 @@ export const useSessionRatingModal = () => {
       sessionsRated: [],
       skipped: true // Mark as skipped to prevent showing again
     };
-    saveRatingData(todayStr, ratingData);
+    saveRatingData(targetDateStr, ratingData);
     
     setShouldShowModal(false);
-  }, [saveRatingData]);
+  }, [saveRatingData, getStoredRatingData]);
 
   // Check for modal on component mount and when lessons change
   useEffect(() => {
