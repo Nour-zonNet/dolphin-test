@@ -160,7 +160,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     const hasAnyRating = Object.values(ratings).some(rating => rating > 0);
 
     return (
-        <div className="relative w-full xl:min-w-3xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col mx-4">
+        <div className="relative w-[90%] mx-auto md:w-full xl:min-w-3xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col mx-4">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -259,7 +259,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                         <button
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className="px-6 py-3 bg-orangedeep text-navyteal flex items-center justify-center rounded-full w-40 md:w-60 cursor-pointer font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="px-6 py-3 bg-orangedeep text-navyteal flex items-center justify-center rounded-full w-40 md:w-60 cursor-pointer text-sm md:text-lg xl:text-xl text-nowrap font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                             {isSubmitting ? (
                                 <>
