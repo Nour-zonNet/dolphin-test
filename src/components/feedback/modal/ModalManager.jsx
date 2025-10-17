@@ -13,8 +13,8 @@ import {
   ReactivateModal,
   WeeklyScheduleModal,
   AvatarModal,
-  AddBalanceModal,
-  AddCouponModal,
+  // AddBalanceModal,
+  // AddCouponModal,
   // SessionRatingModal,
   // CommentsModal,
   // PerformanceChartModal,
@@ -147,34 +147,34 @@ const ModalManager = () => {
         />
       );
       break;
-    case MODAL_TYPES.ADD_BALANCE:
-      ModalContent = (
-        <AddBalanceModal
-          {...props}
-          onClose={handleClose}
-          onSubmit={(data) => {
-            if (props.callbackId) {
-              executeCallback(props.callbackId, data);
-            }
-            handleClose();
-          }}
-        />
-      );
-      break;
-    case MODAL_TYPES.ADD_COUPON:
-      ModalContent = (
-        <AddCouponModal
-          {...props}
-          onClose={handleClose}
-          onSubmit={(data) => {
-            if (props.callbackId) {
-              executeCallback(props.callbackId, data);
-            }
-            handleClose();
-          }}
-        />
-      );
-      break;
+    // case MODAL_TYPES.ADD_BALANCE:
+    //   ModalContent = (
+    //     <AddBalanceModal
+    //       {...props}
+    //       onClose={handleClose}
+    //       onSubmit={(data) => {
+    //         if (props.callbackId) {
+    //           executeCallback(props.callbackId, data);
+    //         }
+    //         handleClose();
+    //       }}
+    //     />
+    //   );
+    //   break;
+    // case MODAL_TYPES.ADD_COUPON:
+    //   ModalContent = (
+    //     <AddCouponModal
+    //       {...props}
+    //       onClose={handleClose}
+    //       onSubmit={(data) => {
+    //         if (props.callbackId) {
+    //           executeCallback(props.callbackId, data);
+    //         }
+    //         handleClose();
+    //       }}
+    //     />
+    //   );
+    //   break;
     // case MODAL_TYPES.SESSION_RATING:
     //   ModalContent = (
     //     <SessionRatingModal
