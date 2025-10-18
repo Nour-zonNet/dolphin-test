@@ -8,6 +8,12 @@ import pendingImg from "@/assets/images/paymentPending.svg";
 import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
+// Icon components
+const BackToHomeIcon = <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />;
+const ViewBalanceIcon = <WalletGray fill="#0C2D40" />;
+const RetryIcon = <Retry className="w-4 h-4 md:w-6 md:h-6" />;
+const SupportIconComponent = <SupportIcon />;
+
 // Order Summary Card Component
 const OrderSummaryCard = () => {
   const orderItems = [
@@ -75,14 +81,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
+        icon: BackToHomeIcon,
         variant: "filled",
         onClick: (navigate) => navigate("/"),
       },
       {
         type: "link",
         label: "معاينة الرصيد",
-        icon: <WalletGray fill="#0C2D40" />,
+        icon: ViewBalanceIcon,
         variant: "outline",
         to: "/balance-details",
       },
@@ -97,14 +103,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "حاول مرة أخرى",
-        icon: <Retry className="w-4 h-4 md:w-6 md:h-6" />,
+        icon: RetryIcon,
         variant: "filled",
         onClick: () => window.history.back(),
       },
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
+        icon: BackToHomeIcon,
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
@@ -119,14 +125,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "تواصل مع الدعم",
-        icon: <SupportIcon />,
+        icon: SupportIconComponent,
         variant: "filled",
         onClick: () => window.history.back(),
       },
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
+        icon: BackToHomeIcon,
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
