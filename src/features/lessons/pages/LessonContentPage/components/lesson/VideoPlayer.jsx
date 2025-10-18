@@ -1,5 +1,5 @@
 // components/VideoPlayer.jsx
-import React, { useEffect, useRef, useState, useMemo } from "react"; 
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react"; 
 import stopVideo from "@/assets/schedule/stop-video.svg";
 import { DatePicker, Teacher } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
@@ -167,7 +167,7 @@ const VideoPlayer = ({ lessonId }) => {
   }, [isIframe, userTriedPlay, source.src]);
 
   // Cover click → start playback (video) or mount iframe (with autoplay)
-  const handleCoverClick = async () => {
+  const handleCoverClick = useCallback(async () => {
     setUserTriedPlay(true);
 
     if (isIframe) {
@@ -195,7 +195,7 @@ const VideoPlayer = ({ lessonId }) => {
         // keep cover; user may need to tap native control
       }
     }
-  };
+  }, [isIframe]);
 
   // Hide cover after iframe is loaded (post user intent)
   useEffect(() => {
@@ -309,12 +309,12 @@ const VideoPlayer = ({ lessonId }) => {
     };
   }, [isEmulatedFS]);
 
-  const togglePlay = () => {
+  const togglePlay = useCallback(() => {
     if (isIframe || showCover) return;
     const v = videoRef.current;
     if (!v) return;
     v.paused ? v.play() : v.pause();
-  };
+  }, [isIframe, showCover]);
 
   // ---------- fullscreen & rotation ----------
   const enterIOSNativeFS = () => {
@@ -338,7 +338,7 @@ const VideoPlayer = ({ lessonId }) => {
     if (exit) await exit.call(document);
   };
 
-  const toggleFullscreen = async () => {
+  const toggleFullscreen = useCallback(async () => {
     // iOS: prefer native video fullscreen (more reliable + auto-rotation UI)
     if (isIOS()) {
       if (!enterIOSNativeFS()) {
@@ -360,7 +360,7 @@ const VideoPlayer = ({ lessonId }) => {
 
     setIsHovered(false);
     setShowSettings(false);
-  };
+  }, []);
 
   // Listen for FS changes (all vendors)
   useEffect(() => {
@@ -385,7 +385,7 @@ const VideoPlayer = ({ lessonId }) => {
       document.removeEventListener("webkitfullscreenchange", onFsChange);
       document.removeEventListener("MSFullscreenChange", onFsChange);
     };
-  }, []);
+  }, [clearOrientation]);
 
   // iOS native end-fullscreen
   useEffect(() => {
@@ -416,12 +416,12 @@ const VideoPlayer = ({ lessonId }) => {
     setRotateFallback(true);
   };
 
-  const clearOrientation = async () => {
+  const clearOrientation = useCallback(async () => {
     if (rotateFallback) setRotateFallback(false);
     if (typeof screen !== "undefined" && screen.orientation && screen.orientation.unlock) {
       try { screen.orientation.unlock(); } catch {}
     }
-  };
+  }, [rotateFallback]);
 
   // Emulated fullscreen page scroll handling
   useEffect(() => {
@@ -433,7 +433,7 @@ const VideoPlayer = ({ lessonId }) => {
       document.body.style.overflow = prev;
       clearOrientation();
     };
-  }, [isEmulatedFS]);
+  }, [isEmulatedFS, clearOrientation]);
 
   // Show/hide controls fade on movement in FS
   useEffect(() => {
@@ -458,13 +458,13 @@ const VideoPlayer = ({ lessonId }) => {
     if (videoRef.current) videoRef.current.playbackRate = r;
     setShowSettings(false);
   };
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     if (isIframe) return;
     const m = !muted;
     setMuted(m);
     if (videoRef.current) videoRef.current.muted = m;
-  };
-  const setVol = (v) => {
+  }, [isIframe, muted]);
+  const setVol = useCallback((v) => {
     if (isIframe) return;
     const val = Math.min(1, Math.max(0, v));
     setVolume(val);
@@ -475,7 +475,7 @@ const VideoPlayer = ({ lessonId }) => {
         setMuted(false);
       }
     }
-  };
+  }, [isIframe, muted]);
 
   useEffect(() => {
     if (!showSettings) return;
@@ -541,7 +541,7 @@ const VideoPlayer = ({ lessonId }) => {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [duration, volume, muted, isIframe, showCover]);
+  }, [duration, volume, muted, isIframe, showCover, handleCoverClick, setVol, toggleFullscreen, toggleMute, togglePlay]);
 
   // ---------- scrubbing (video only) ----------
   const [scrubbing, setScrubbing] = useState(false);

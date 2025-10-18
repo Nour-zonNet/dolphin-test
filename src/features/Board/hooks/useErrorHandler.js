@@ -20,7 +20,7 @@ const useErrorHandler = () => {
     if (!errorInfo.recoverable) {
       setTimeout(() => removeError(errorId), 5000);
     }
-  }, []);
+  }, [removeError]);
 
   const removeError = useCallback((errorId) => {
     setErrors(prev => prev.filter(e => e.id !== errorId));

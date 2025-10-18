@@ -41,7 +41,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
             );
             return hasChanged ? initialComments : prevComments;
         });
-    }, [sessions?.length, sessions?.map(s => s.class_session_id || s.id).join(',')]);
+    }, [sessions]);
 
     // Don't render if no sessions
     if (!sessions || sessions.length === 0) {

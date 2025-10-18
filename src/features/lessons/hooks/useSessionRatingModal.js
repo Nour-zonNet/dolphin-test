@@ -445,7 +445,7 @@ const allEnded = targetSessions.every((session) => {
   }, [items, checkShouldShowModal, openSessionRatingModal, getEligibleSessions, handleSubmitRatings, handleCloseModal, location.pathname]);
 
   // Memoize eligible sessions to prevent unnecessary re-renders
-  const eligibleSessions = useMemo(() => getEligibleSessions(), [items]);
+  const eligibleSessions = useMemo(() => getEligibleSessions(), [getEligibleSessions]);
 
   return {
     shouldShowModal,
