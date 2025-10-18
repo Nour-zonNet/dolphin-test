@@ -98,10 +98,10 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                 }
             });
             
-            
             // Submit the reviews array
             await onSubmit({ reviews });
             
+            // Only show success modal if submission was successful
             // Reset state
             const resetRatings = {};
             const resetComments = {};

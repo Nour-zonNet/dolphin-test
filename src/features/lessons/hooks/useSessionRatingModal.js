@@ -205,7 +205,11 @@ export const useSessionRatingModal = () => {
           const durationMinutes = 60; // Fixed duration since API doesn't provide this field
           const sessionEnd = new Date(sessionStart.getTime() + durationMinutes * 60000);
           
-          const hasEnded = now > sessionEnd;
+          // Add 1 hour buffer after session ends before showing modal
+          const bufferTime = 60 * 60 * 1000; // 1 hour in milliseconds
+          const sessionEndWithBuffer = new Date(sessionEnd.getTime() + bufferTime);
+          
+          const hasEnded = now > sessionEndWithBuffer;
           
           return hasEnded;
         } catch (error) {
@@ -228,7 +232,7 @@ export const useSessionRatingModal = () => {
     const todayData = getStoredRatingData(todayStr);
     const yesterdayData = getStoredRatingData(yesterdayStr);
     
-    // Check if we should show yesterday's sessions
+    // Check if we should show yesterday's sessions (if user didn't take action yesterday)
     const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
     
     // If showing yesterday's sessions, check if we've already shown modal for today
@@ -272,7 +276,7 @@ export const useSessionRatingModal = () => {
       return false;
     }
 
-    // Only show modal if all sessions of the target date have ended
+    // Only show modal if all sessions of the target date have ended (with 1 hour buffer)
     const allSessionsEnded = checkAllSessionsEnded();
     if (!allSessionsEnded) {
       return false;
