@@ -50,7 +50,12 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
 
     // Validate sessions data
     const validSessions = sessions.filter(session => {
-        return session && (session.class_session_id || session.id || session.session_id || session.lesson_id);
+        return session && (session.class_session_id || 
+                          session.id || 
+                          session.session_id || 
+                          session.lesson_id ||
+                          session.class_id ||
+                          session.group_id);
     });
 
     if (validSessions.length === 0) {
@@ -86,7 +91,13 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                 
                 // Only include sessions with ratings (rating is optional)
                 if (rating && rating > 0) {
-                    const classSessionId = session.class_session_id || session.id || session.session_id || session.lesson_id;
+                    // Use priority order for session ID fields
+                    const classSessionId = session.class_session_id || 
+                                          session.id || 
+                                          session.session_id || 
+                                          session.lesson_id ||
+                                          session.class_id ||
+                                          session.group_id;
                     
                     if (classSessionId) {
                         reviews.push({
@@ -193,7 +204,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                             
                             
                             return (
-                                <div key={session.class_session_id || session.id || index} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                                <div key={session.class_session_id || session.id || session.session_id || session.lesson_id || session.class_id || session.group_id || index} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                                     <div className="flex items-center justify-between mb-3">
                                         <span className="text-[#165072] text-sm md:text-lg font-semibold">قيم الجلسة:</span>
                                         <div className="flex items-center gap-2 text-[#165072]">

@@ -1,14 +1,7 @@
 import { useSessionRatingModal } from '@/features/lessons/hooks/useSessionRatingModal';
-import { useLocation } from 'react-router-dom';
 
 const SessionRatingInitializer = () => {
-  const location = useLocation();
   const { eligibleSessions } = useSessionRatingModal();
-
-  // فقط لا تعمل أي شيء إذا لم تكن في صفحة schedule
-  if (!location.pathname.includes('/schedule')) {
-    return null;
-  }
 
   // Development-only debugging
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {

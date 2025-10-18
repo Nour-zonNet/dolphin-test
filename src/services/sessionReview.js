@@ -38,11 +38,11 @@ export const sessionReviewService = {
       }
     });
 
-    // Prepare the data for API submission
+    // Prepare the data for API submission - try different structures
     const apiData = {
       reviews: reviews.map(review => ({
         class_session_id: parseInt(review.class_session_id),
-        rating: review.rating,
+        rating: parseInt(review.rating),
         comment: review.comment || ''
       }))
     };
