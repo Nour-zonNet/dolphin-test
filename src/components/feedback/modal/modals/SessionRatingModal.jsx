@@ -246,8 +246,13 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                                             placeholder="شاركنا رأيك..."
                                             className="flex-1 text-sm md:text-lg text-[#707070] placeholder-[#707070] border-none outline-none resize-none"
                                             rows={2}
+                                            maxLength={1000}
                                         />
                                         <img src={dolphinStars} alt="" className="flex-shrink-0 absolute -left-6 -top-4" />
+                                        {/* Character counter */}
+                                        <div className="absolute bottom-1 right-1 text-xs text-gray-400">
+                                            {(comments[sessionKey] || '').length}/1000
+                                        </div>
                                     </div>
                                 </div>
                             );

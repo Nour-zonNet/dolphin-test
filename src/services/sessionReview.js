@@ -37,6 +37,10 @@ export const sessionReviewService = {
         if (!review.rating || review.rating < 1 || review.rating > 5) {
           throw new Error(`Review ${index + 1}: rating must be between 1 and 5`);
         }
+        // Validate comment length if provided
+        if (review.comment && review.comment.length > 1000) {
+          throw new Error(`Review ${index + 1}: comment must be less than 1000 characters`);
+        }
       });
 
       // Prepare the data for API submission
@@ -91,6 +95,10 @@ export const sessionReviewService = {
       }
       if (!reviewData.rating || reviewData.rating < 1 || reviewData.rating > 5) {
         throw new Error('rating must be between 1 and 5');
+      }
+      // Validate comment length if provided
+      if (reviewData.comment && reviewData.comment.length > 1000) {
+        throw new Error('comment must be less than 1000 characters');
       }
 
       // Prepare the data for API submission

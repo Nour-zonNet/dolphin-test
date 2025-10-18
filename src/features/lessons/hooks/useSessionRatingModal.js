@@ -63,10 +63,14 @@ export const useSessionRatingModal = () => {
   // Get stored rating data for a specific date
   const getStoredRatingData = useCallback((dateString) => {
     try {
+      if (!dateString || typeof dateString !== 'string') {
+        return null;
+      }
       const storageKey = `${STORAGE_KEY}_${dateString}`;
       const stored = localStorage.getItem(storageKey);
       return stored ? JSON.parse(stored) : null;
     } catch (error) {
+      console.warn('Failed to parse stored rating data:', error);
       return null;
     }
   }, []);
@@ -74,9 +78,13 @@ export const useSessionRatingModal = () => {
   // Save rating data to localStorage for a specific date
   const saveRatingData = useCallback((dateString, data) => {
     try {
+      if (!dateString || typeof dateString !== 'string' || !data) {
+        return;
+      }
       const storageKey = `${STORAGE_KEY}_${dateString}`;
       localStorage.setItem(storageKey, JSON.stringify(data));
     } catch (error) {
+      console.warn('Failed to save rating data:', error);
       // Silently handle localStorage errors
     }
   }, []);

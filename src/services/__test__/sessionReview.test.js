@@ -1,7 +1,7 @@
 // Test file for session review service
 // This is just for verification - not a real test file
 
-import sessionReviewService from '@/services/sessionReview';
+import { sessionReviewService } from '@/services/sessionReview';
 
 // Example usage of the session review service
 const testSessionReview = async () => {
@@ -30,7 +30,7 @@ const testSessionReview = async () => {
       }
     ];
     
-    const responses = await sessionReviewService.submitMultipleReviews(multipleReviews);
+    const responses = await sessionReviewService.submitSessionReviews({ reviews: multipleReviews });
     console.log('Multiple reviews response:', responses);
     
   } catch (error) {

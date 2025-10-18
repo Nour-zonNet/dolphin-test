@@ -5,7 +5,8 @@ import AppProviders from "./AppProviders";
 import AppRoutes from "./AppRoutes";
 import ChatwootInit from "../components/ChatwootInit"
 import MaintenanceScreen from "@/components/MaintenanceScreen";
-
+import { GlobalLoader, GlobalError } from "@/components/feedback";
+import { ModalManager } from "@/components/feedback/modal";
 import SessionRatingInitializer from "@/components/SessionRatingInitializer";
 
 const App = () => {
