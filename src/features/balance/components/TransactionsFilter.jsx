@@ -104,14 +104,14 @@ const TransactionsFilter = ({ onDateFilter }) => {
     }
   };
 
-  const handleClearFilters = () => {
-    setFromDate("");
-    setToDate("");
-    setSelectedMonth("جميع الأشهر");
-    if (onDateFilter) {
-      onDateFilter("", "");
-    }
-  };
+  // const handleClearFilters = () => {
+  //   setFromDate("");
+  //   setToDate("");
+  //   setSelectedMonth("جميع الأشهر");
+  //   if (onDateFilter) {
+  //     onDateFilter("", "");
+  //   }
+  // };
 
   return (
     <div className="w-[90%] mx-auto mt-10 relative">

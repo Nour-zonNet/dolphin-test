@@ -80,7 +80,7 @@ const fetchFileSize = async (url) => {
       if (cl && !isNaN(Number(cl)) && Number(cl) > 1) return Number(cl);
     }
   } catch {
-    // Ignore Range request errors
+    // Ignore fetch errors
   }
   return null; // unknown
 };
@@ -193,6 +193,7 @@ const AttachmentsSection = ({ lessonId }) => {
       URL.revokeObjectURL(a.href);
       a.remove();
     } catch {
+      // Fallback to opening via anchor if download fails
       openViaAnchor(url);
     }
   }, []);

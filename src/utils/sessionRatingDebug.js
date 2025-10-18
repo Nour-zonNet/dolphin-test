@@ -48,6 +48,6 @@ export const sessionRatingDebug = {
 };
 
 // Make it available globally in development
-if (typeof window !== 'undefined' && import.meta.env?.DEV) {
+if (typeof window !== 'undefined' && window.location?.hostname === 'localhost') {
   window.sessionRatingDebug = sessionRatingDebug;
 }

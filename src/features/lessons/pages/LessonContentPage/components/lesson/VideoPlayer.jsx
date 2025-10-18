@@ -152,7 +152,7 @@ const VideoPlayer = ({ lessonId }) => {
   const [duration, setDuration] = useState(0);
   const [current, setCurrent] = useState(0);
   const [bufferedEnd, setBufferedEnd] = useState(0);
-  const [playbackRate] = useState(1);
+  const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
 
@@ -326,7 +326,9 @@ const VideoPlayer = ({ lessonId }) => {
   const enterIOSNativeFS = () => {
     const v = videoRef.current;
     if (v && v.webkitEnterFullscreen) {
-      try { v.webkitEnterFullscreen(); } catch {
+      try { 
+        v.webkitEnterFullscreen(); 
+      } catch {
         // Ignore fullscreen errors
       }
       return true;
@@ -429,7 +431,11 @@ const VideoPlayer = ({ lessonId }) => {
   const clearOrientation = useCallback(async () => {
     if (rotateFallback) setRotateFallback(false);
     if (typeof screen !== "undefined" && screen.orientation && screen.orientation.unlock) {
-      try { screen.orientation.unlock(); } catch {}
+      try { 
+        screen.orientation.unlock(); 
+      } catch {
+        // Ignore orientation unlock errors
+      }
     }
   }, [rotateFallback]);
 
@@ -513,7 +519,7 @@ const VideoPlayer = ({ lessonId }) => {
   //     if (document.pictureInPictureElement) await document.exitPictureInPicture();
   //     else await videoRef.current.requestPictureInPicture();
   //   } catch {
-  //     // Ignore URL parsing errors
+  //     // Ignore PiP errors
   //   }
   // };
 
@@ -556,20 +562,20 @@ const VideoPlayer = ({ lessonId }) => {
   }, [duration, volume, muted, isIframe, showCover, handleCoverClick, setVol, toggleFullscreen, toggleMute, togglePlay]);
 
   // ---------- scrubbing (video only) ----------
-  const [scrubbing, setScrubbing] = useState(false);
-  const pctFromClientX = (clientX) => {
-    const track = progressTrackRef.current;
-    if (!track || !duration) return 0;
-    const rect = track.getBoundingClientRect();
-    const x = Math.min(rect.right, Math.max(rect.left, clientX)) - rect.left;
-    return Math.min(1, Math.max(0, x / rect.width));
-  };
-  const seekToPct = (pct) => {
-    if (!videoRef.current || !duration) return;
-    const newTime = pct * duration;
-    videoRef.current.currentTime = newTime;
-    setCurrent(newTime);
-  };
+  // const [scrubbing, setScrubbing] = useState(false);
+  // const pctFromClientX = (clientX) => {
+  //   const track = progressTrackRef.current;
+  //   if (!track || !duration) return 0;
+  //   const rect = track.getBoundingClientRect();
+  //   const x = Math.min(rect.right, Math.max(rect.left, clientX)) - rect.left;
+  //   return Math.min(1, Math.max(0, x / rect.width));
+  // };
+  // const seekToPct = (pct) => {
+  //   if (!videoRef.current || !duration) return;
+  //   const newTime = pct * duration;
+  //   videoRef.current.currentTime = newTime;
+  //   setCurrent(newTime);
+  // };
   // const onPointerDown = (e) => {
   //   if (isIframe || showCover) return;
   //   e.preventDefault();
@@ -582,23 +588,23 @@ const VideoPlayer = ({ lessonId }) => {
   //   window.addEventListener("touchmove", onTouchMove, { passive: false });
   //   window.addEventListener("touchend", onPointerUp);
   // };
-  const onPointerMove = (e) => {
-    if (!scrubbing) return;
-    e.preventDefault();
-    seekToPct(pctFromClientX(e.clientX));
-  };
-  const onTouchMove = (e) => {
-    if (!scrubbing) return;
-    if (!e.touches?.length) return;
-    seekToPct(pctFromClientX(e.touches[0].clientX));
-  };
-  const onPointerUp = () => {
-    setScrubbing(false);
-    window.removeEventListener("pointermove", onPointerMove);
-    window.removeEventListener("pointerup", onPointerUp);
-    window.removeEventListener("touchmove", onTouchMove);
-    window.removeEventListener("touchend", onPointerUp);
-  };
+  // const onPointerMove = (e) => {
+  //   if (!scrubbing) return;
+  //   e.preventDefault();
+  //   seekToPct(pctFromClientX(e.clientX));
+  // };
+  // const onTouchMove = (e) => {
+  //   if (!scrubbing) return;
+  //   if (!e.touches?.length) return;
+  //   seekToPct(pctFromClientX(e.touches[0].clientX));
+  // };
+  // const onPointerUp = () => {
+  //   setScrubbing(false);
+  //   window.removeEventListener("pointermove", onPointerMove);
+  //   window.removeEventListener("pointerup", onPointerUp);
+  //   window.removeEventListener("touchmove", onTouchMove);
+  //   window.removeEventListener("touchend", onPointerUp);
+  // };
 
   // const progressPct = duration ? (current / duration) * 100 : 0;
   // const bufferPct = duration ? (Math.min(bufferedEnd, duration) / duration) * 100 : 0;

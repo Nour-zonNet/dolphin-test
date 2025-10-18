@@ -345,43 +345,38 @@ const allEnded = targetSessions.every((session) => {
       return;
     }
     
-    try {
-      // Submit all reviews in a single API call
-      const response = await sessionReviewService.submitSessionReviews({ reviews });
-      
-      // Validate API response structure
-      if (!response) {
-        throw new Error('Session reviews submission failed: No response received');
-      }
-      
-      // Check if the response indicates failure
-      if (response.success === false) {
-        throw new Error(`Session reviews submission failed: ${response.message || response.error || 'Unknown error'}`);
-      }
-      
-      // Determine which date to save the rating data for
-      const todayStr = getTodayDateString();
-      const yesterdayStr = getYesterdayDateString();
-      const yesterdayData = getStoredRatingData(yesterdayStr);
-      const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
-      
-      const targetDateStr = shouldShowYesterdaySessions ? yesterdayStr : todayStr;
-      
-      // Save rating data for the appropriate date
-      const ratingData = {
-        lastShown: new Date().toISOString(),
-        lastRatingDate: new Date().toISOString(),
-        reviewsSubmitted: reviews.length,
-        sessionsRated: reviews.map(r => r.class_session_id),
-        skipped: false // User submitted ratings, didn't skip
-      };
-      saveRatingData(targetDateStr, ratingData);
-      
-      setShouldShowModal(false);
-    } catch (error) {
-      // Re-throw the error so the modal can handle it
-      throw error;
+    // Submit all reviews in a single API call
+    const response = await sessionReviewService.submitSessionReviews({ reviews });
+    
+    // Validate API response structure
+    if (!response) {
+      throw new Error('Session reviews submission failed: No response received');
     }
+    
+    // Check if the response indicates failure
+    if (response.success === false) {
+      throw new Error(`Session reviews submission failed: ${response.message || response.error || 'Unknown error'}`);
+    }
+    
+    // Determine which date to save the rating data for
+    const todayStr = getTodayDateString();
+    const yesterdayStr = getYesterdayDateString();
+    const yesterdayData = getStoredRatingData(yesterdayStr);
+    const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
+    
+    const targetDateStr = shouldShowYesterdaySessions ? yesterdayStr : todayStr;
+    
+    // Save rating data for the appropriate date
+    const ratingData = {
+      lastShown: new Date().toISOString(),
+      lastRatingDate: new Date().toISOString(),
+      reviewsSubmitted: reviews.length,
+      sessionsRated: reviews.map(r => r.class_session_id),
+      skipped: false // User submitted ratings, didn't skip
+    };
+    saveRatingData(targetDateStr, ratingData);
+    
+    setShouldShowModal(false);
   }, [getEligibleSessions, saveRatingData, getStoredRatingData]);
 
   // Handle modal close/skip

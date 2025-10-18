@@ -1,6 +1,6 @@
 import { ScheduleSlider } from "../components";
-import { useSessionRatingModal } from "@/features/lessons/hooks/useSessionRatingModal";
-import { useModal } from "@/components/feedback/modal/useModal";
+// import { useSessionRatingModal } from "@/features/lessons/hooks/useSessionRatingModal";
+// import { useModal } from "@/components/feedback/modal/useModal";
 
 const SchedulePage = () => {
   // const { openSessionRatingModal } = useModal();
