@@ -8,12 +8,6 @@ import pendingImg from "@/assets/images/paymentPending.svg";
 import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
-// Icon components
-const BackToHomeIcon = <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />;
-const ViewBalanceIcon = <WalletGray fill="#0C2D40" />;
-const RetryIcon = <Retry className="w-4 h-4 md:w-6 md:h-6" />;
-const SupportIconComponent = <SupportIcon />;
-
 // Order Summary Card Component
 const OrderSummaryCard = () => {
   const orderItems = [
@@ -81,14 +75,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: BackToHomeIcon,
+        iconName: "backToHome",
         variant: "filled",
         onClick: (navigate) => navigate("/"),
       },
       {
         type: "link",
         label: "معاينة الرصيد",
-        icon: ViewBalanceIcon,
+        iconName: "viewBalance",
         variant: "outline",
         to: "/balance-details",
       },
@@ -103,14 +97,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "حاول مرة أخرى",
-        icon: RetryIcon,
+        iconName: "retry",
         variant: "filled",
         onClick: () => window.history.back(),
       },
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: BackToHomeIcon,
+        iconName: "backToHome",
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
@@ -125,14 +119,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "تواصل مع الدعم",
-        icon: SupportIconComponent,
+        iconName: "support",
         variant: "filled",
         onClick: () => window.history.back(),
       },
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: BackToHomeIcon,
+        iconName: "backToHome",
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
@@ -156,6 +150,17 @@ const PaymentStatus = () => {
   const navigate = useNavigate();
   const { status } = useParams();
   const data = STATUS_CONFIG[status];
+
+  // Icon mapping function
+  const getIcon = (iconName) => {
+    const iconMap = {
+      backToHome: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
+      viewBalance: <WalletGray fill="#0C2D40" />,
+      retry: <Retry className="w-4 h-4 md:w-6 md:h-6" />,
+      support: <SupportIcon />,
+    };
+    return iconMap[iconName] || null;
+  };
 
   if (!data) return <div className="p-6 text-center text-red-500">حالة غير معروفة</div>;
 
@@ -184,12 +189,12 @@ const PaymentStatus = () => {
         {data.actions.map((a, i) =>
           a.type === "link" ? (
             <Link key={i} to={a.to} className={`${buttonClasses(a.variant)} lg:mt-4`}>
-              {a.icon}
+              {getIcon(a.iconName)}
               <span>{a.label}</span>
             </Link>
           ) : (
             <button key={i} onClick={() => a.onClick(navigate)} className={`${buttonClasses(a.variant)} lg:mt-4`}>
-              {a.icon}
+              {getIcon(a.iconName)}
               {a.label}
             </button>
           )
