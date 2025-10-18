@@ -9,6 +9,7 @@ import modalSlice from "./modalSlice";
 import profileReducer from "@/features/profile/store/profileSlice";
 import classesReducer from "./classesSlice";
 import complaintsReducer from "@/features/complaints/store/complaintsSlice";
+import balanceReducer from "./balanceSlice";
 
 const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
     profile: profileReducer,
     classes: classesReducer,
     complaints: complaintsReducer,
+    balance: balanceReducer,
   },
 });
 export default store;

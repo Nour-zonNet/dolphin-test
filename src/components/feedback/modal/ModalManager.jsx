@@ -13,7 +13,7 @@ import {
   ReactivateModal,
   WeeklyScheduleModal,
   AvatarModal,
-  // AddBalanceModal,
+  AddBalanceModal,
   // AddCouponModal,
   SessionRatingModal,
   // CommentsModal,
@@ -197,6 +197,20 @@ const ModalManager = () => {
             } finally {
               handleClose();
             }
+          }}
+        />
+      );
+      break;
+    case MODAL_TYPES.ADD_BALANCE:
+      ModalContent = (
+        <AddBalanceModal
+          {...props}
+          onClose={handleClose}
+          onSubmit={(data) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, data);
+            }
+            handleClose();
           }}
         />
       );

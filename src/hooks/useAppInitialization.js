@@ -7,6 +7,7 @@ import {
 } from "@/features/packages/store/packagesSlice";
 import { fetchSubscriptions } from "@/features/subscription/store/subscriptionSlice";
 import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
+import { fetchWalletBalance } from "@/store/balanceSlice";
 import { useAuth } from "../features/auth/hooks/useAuth";
 import { useClasses } from "./useClasses";
 
@@ -35,6 +36,7 @@ export const useAppInitialization = () => {
           dispatch(fetchMyPackages()),
           dispatch(fetchLessons()),
           dispatch(fetchSubscriptions()),
+          dispatch(fetchWalletBalance()),
           getBrothers(),
           getClasses(),
         ]);

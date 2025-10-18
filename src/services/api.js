@@ -15,5 +15,44 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Wallet charge API function
+export const chargeWallet = async (amount) => {
+  try {
+    console.log('Making wallet charge request:', { amount, baseURL: api.defaults.baseURL });
+    
+    const response = await api.post('/student/wallet/charge', {
+      amount: amount
+    });
+    
+    console.log('Wallet charge response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Wallet charge error:', error);
+    console.error('Error response:', error.response?.data);
+    console.error('Error status:', error.response?.status);
+    console.error('Error headers:', error.response?.headers);
+    
+    throw new Error(error.response?.data?.message || error.message || 'فشل في شحن المحفظة');
+  }
+};
+
+// Get wallet balance API function
+export const getWalletBalance = async () => {
+  try {
+    console.log('Fetching wallet balance:', { baseURL: api.defaults.baseURL });
+    
+    const response = await api.get('/student/wallet/balance');
+    
+    console.log('Wallet balance response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Wallet balance error:', error);
+    console.error('Error response:', error.response?.data);
+    console.error('Error status:', error.response?.status);
+    
+    throw new Error(error.response?.data?.message || error.message || 'فشل في جلب رصيد المحفظة');
+  }
+};
+
 export default api;
   

@@ -288,7 +288,7 @@ export const routes = [
     layout: false,
   },
   {
-    path: "/balance/payment/:status",
+    path: "/payment-status/:status",
     element: PaymentStatus,
     protected: true,
     layout: false,
