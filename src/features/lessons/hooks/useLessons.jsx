@@ -31,7 +31,6 @@ export const useLessons = () => {
 
   const dispatchGetContentsBySessionId = useCallback(
     (sessionId) => {
-      console.log(sessionId);
       return dispatch(getContentsBySessionId(sessionId));
     },
     [dispatch]

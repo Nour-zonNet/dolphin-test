@@ -217,7 +217,6 @@ const subscriptionSlice = createSlice({
       })
       .addCase(getGroupsByPackageId.rejected, (state, action) => {
         state.loading = false;
-        console.log(action);
         state.error = action.error.error || action.error.message;
       })
 

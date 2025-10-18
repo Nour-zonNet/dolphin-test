@@ -1,20 +1,33 @@
 import React, { useRef } from "react";
-import { X, Plus } from "lucide-react";
+import { X } from "lucide-react";
+
+// Import all avatars
+import avatar1 from "@/assets/avatars/avatar1.png";
+import avatar2 from "@/assets/avatars/avatar2.png";
+import avatar3 from "@/assets/avatars/avatar3.png";
+import avatar4 from "@/assets/avatars/avatar4.png";
+import avatar5 from "@/assets/avatars/avatar5.png";
+import avatar6 from "@/assets/avatars/avatar6.png";
+import avatar7 from "@/assets/avatars/avatar7.png";
+import avatar8 from "@/assets/avatars/avatar8.png";
+import avatar9 from "@/assets/avatars/avatar9.png";
+import avatar10 from "@/assets/avatars/avatar10.png";
+import avatar11 from "@/assets/avatars/avatar11.png";
+import imgUpload from "@/assets/avatars/img-upload.png";
 
 const avatars = [
-  "/src/assets/avatars/avatar1.png",
-  "/src/assets/avatars/avatar2.png",
-  "/src/assets/avatars/avatar3.png",
-  "/src/assets/avatars/avatar4.png",
-  "/src/assets/avatars/avatar5.png",
-  "/src/assets/avatars/avatar6.png",
-  "/src/assets/avatars/avatar7.png",
-  "/src/assets/avatars/avatar8.png",
-  "/src/assets/avatars/avatar9.png",
-  "/src/assets/avatars/avatar10.png",
-  "/src/assets/avatars/avatar11.png",
+  avatar1,
+  avatar2,
+  avatar3,
+  avatar4,
+  avatar5,
+  avatar6,
+  avatar7,
+  avatar8,
+  avatar9,
+  avatar10,
+  avatar11,
 ];
-
 
 const AvatarModal = ({ onClose, onSelect }) => {
   const fileInputRef = useRef(null);
@@ -23,18 +36,17 @@ const AvatarModal = ({ onClose, onSelect }) => {
     const file = event.target.files[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
         return;
       }
-      
+
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('File size must be less than 5MB');
+        alert("File size must be less than 5MB");
         return;
       }
-      
-      // Create object URL for preview and pass to parent
+
       const fileUrl = URL.createObjectURL(file);
       onSelect(fileUrl, file);
     }
@@ -55,8 +67,6 @@ const AvatarModal = ({ onClose, onSelect }) => {
           <X className="w-5 h-5 text-navyteal" />
         </button>
 
-        {/* Title */}
-
         {/* Avatar Grid */}
         <div className="grid grid-cols-3 gap-6 place-items-center mt-6">
           {avatars.map((src, idx) => (
@@ -74,17 +84,17 @@ const AvatarModal = ({ onClose, onSelect }) => {
           ))}
 
           {/* Upload Button */}
-          <button 
+          <button
             onClick={handleUploadClick}
-            className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center bg-amber-100 hover:bg-amber-200 rounded-full transition-all hover:cursor-pointer"
+            className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center bg-amber-100 hover:bg-amber-200 rounded-full transition-all hover:cursor-pointer overflow-hidden"
           >
             <img
-              src={"/src/assets/avatars/img-upload.png"}
-              alt={`upload`}
+              src={imgUpload}
+              alt="Upload avatar"
               className="w-full h-full object-cover"
             />
           </button>
-          
+
           {/* Hidden File Input */}
           <input
             ref={fileInputRef}

@@ -55,6 +55,7 @@ const LessonCard = ({ item, color, image, lessonDate }) => {
       start.getDate()
     );
 
+    if (item.status === "postpand") return LESSON_STATUS.DELAYED;
     if (item.status === "canceled") return LESSON_STATUS.CANCELLED;
     if (lessonDay < today) return LESSON_STATUS.ENDED;
     if (now >= start && now <= end) return LESSON_STATUS.LIVE;

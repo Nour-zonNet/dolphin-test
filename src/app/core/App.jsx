@@ -1,39 +1,35 @@
 import { useLanguageDirection } from "@/hooks/useLanguageDirection";
-import { useOfflineDetection } from "@/hooks/useOfflineDetection";
-import { useMaintenanceDetection } from "@/hooks/useMaintenanceDetection";
+// import { useOfflineDetection } from "@/hooks/useOfflineDetection";
+// import { useMaintenanceDetection } from "@/hooks/useMaintenanceDetection";
 import AppProviders from "./AppProviders";
 import AppRoutes from "./AppRoutes";
 import ChatwootInit from "../components/ChatwootInit"
-import OfflineScreen from "@/components/OfflineScreen";
 import MaintenanceScreen from "@/components/MaintenanceScreen";
 
 import GlobalLoader from "@/components/feedback/GlobalLoader";
 import GlobalError from "@/components/feedback/GlobalError";
 import ModalManager from "@/components/feedback/modal/ModalManager";
-import SessionRatingInitializer from "@/components/SessionRatingInitializer";
 
 const App = () => {
   useLanguageDirection();
-  const isOnline = useOfflineDetection();
-  const { isMaintenanceMode } = useMaintenanceDetection();
 
   // Show maintenance screen when maintenance mode is active
-  if (isMaintenanceMode) {
-    return (
-      <AppProviders>
-        <MaintenanceScreen onGoHome={() => window.location.href = '/'} />
-      </AppProviders>
-    );
-  }
+  // if (isMaintenanceMode) {
+  //   return (
+  //     <AppProviders>
+  //       <MaintenanceScreen onGoHome={() => window.location.href = '/'} />
+  //     </AppProviders>
+  //   );
+  // }
 
   // Show offline screen when not connected to internet
-  if (!isOnline) {
-    return (
-      <AppProviders>
-        <OfflineScreen onRetry={() => window.location.reload()} />
-      </AppProviders>
-    );
-  }
+  // if (!isOnline) {
+  //   return (
+  //     <AppProviders>
+  //       <OfflineScreen onRetry={() => window.location.reload()} />
+  //     </AppProviders>
+  //   );
+  // }
 
   return (
     <AppProviders>
@@ -42,7 +38,6 @@ const App = () => {
         <GlobalLoader />
         <GlobalError />
         <ModalManager />
-        <SessionRatingInitializer />
         <AppRoutes />
       </div>
       <ChatwootInit />

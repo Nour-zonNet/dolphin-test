@@ -13,11 +13,11 @@ import {
   ReactivateModal,
   WeeklyScheduleModal,
   AvatarModal,
-  AddBalanceModal,
-  AddCouponModal,
-  SessionRatingModal,
-  CommentsModal,
-  PerformanceChartModal,
+  // AddBalanceModal,
+  // AddCouponModal,
+  // SessionRatingModal,
+  // CommentsModal,
+  // PerformanceChartModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -147,66 +147,66 @@ const ModalManager = () => {
         />
       );
       break;
-    case MODAL_TYPES.ADD_BALANCE:
-      ModalContent = (
-        <AddBalanceModal
-          {...props}
-          onClose={handleClose}
-          onSubmit={(data) => {
-            if (props.callbackId) {
-              executeCallback(props.callbackId, data);
-            }
-            handleClose();
-          }}
-        />
-      );
-      break;
-    case MODAL_TYPES.ADD_COUPON:
-      ModalContent = (
-        <AddCouponModal
-          {...props}
-          onClose={handleClose}
-          onSubmit={(data) => {
-            if (props.callbackId) {
-              executeCallback(props.callbackId, data);
-            }
-            handleClose();
-          }}
-        />
-      );
-      break;
-    case MODAL_TYPES.SESSION_RATING:
-      ModalContent = (
-        <SessionRatingModal
-          {...props}
-          onClose={handleClose}
-          onSubmit={async (data) => {
-            try {
-              // Execute registered onSubmit callback if provided via props
-              if (props.onSubmitId) {
-                const cb = callbackRegistry.get(props.onSubmitId);
-                if (cb) {
-                  await cb(data);
-                }
-              }
-              if (props.callbackId) {
-                executeCallback(props.callbackId, data);
-              }
-            } catch (error) {
-              console.error('Error in SessionRatingModal onSubmit:', error);
-            } finally {
-              handleClose();
-            }
-          }}
-        />
-      );
-      break;
-    case MODAL_TYPES.COMMENTS:
-      ModalContent = <CommentsModal {...props} onClose={handleClose} />;
-      break;
-    case MODAL_TYPES.PERFORMANCE_CHART:
-      ModalContent = <PerformanceChartModal {...props} onClose={handleClose} />;
-      break;
+    // case MODAL_TYPES.ADD_BALANCE:
+    //   ModalContent = (
+    //     <AddBalanceModal
+    //       {...props}
+    //       onClose={handleClose}
+    //       onSubmit={(data) => {
+    //         if (props.callbackId) {
+    //           executeCallback(props.callbackId, data);
+    //         }
+    //         handleClose();
+    //       }}
+    //     />
+    //   );
+    //   break;
+    // case MODAL_TYPES.ADD_COUPON:
+    //   ModalContent = (
+    //     <AddCouponModal
+    //       {...props}
+    //       onClose={handleClose}
+    //       onSubmit={(data) => {
+    //         if (props.callbackId) {
+    //           executeCallback(props.callbackId, data);
+    //         }
+    //         handleClose();
+    //       }}
+    //     />
+    //   );
+    //   break;
+    // case MODAL_TYPES.SESSION_RATING:
+    //   ModalContent = (
+    //     <SessionRatingModal
+    //       {...props}
+    //       onClose={handleClose}
+    //       onSubmit={async (data) => {
+    //         try {
+    //           // Execute registered onSubmit callback if provided via props
+    //           if (props.onSubmitId) {
+    //             const cb = callbackRegistry.get(props.onSubmitId);
+    //             if (cb) {
+    //               await cb(data);
+    //             }
+    //           }
+    //           if (props.callbackId) {
+    //             executeCallback(props.callbackId, data);
+    //           }
+    //         } catch (error) {
+    //           console.error('Error in SessionRatingModal onSubmit:', error);
+    //         } finally {
+    //           handleClose();
+    //         }
+    //       }}
+    //     />
+    //   );
+    //   break;
+    // case MODAL_TYPES.COMMENTS:
+    //   ModalContent = <CommentsModal {...props} onClose={handleClose} />;
+    //   break;
+    // case MODAL_TYPES.PERFORMANCE_CHART:
+    //   ModalContent = <PerformanceChartModal {...props} onClose={handleClose} />;
+    //   break;
     default:
       return null;
   }

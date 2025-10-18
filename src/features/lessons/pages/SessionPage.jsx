@@ -42,7 +42,6 @@ const SessionPage = () => {
   useEffect(() => {
     const fetchContents = async () => {
       const res = await getContentsBySessionId(sessionId).unwrap();
-      console.log(res);
       if (res) {
         setContents(res);
         setSelectedVideo(

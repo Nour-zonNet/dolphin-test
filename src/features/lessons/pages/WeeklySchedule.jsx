@@ -2,8 +2,11 @@ import { useLessons } from "../hooks/useLessons";
 import backgroundImage from "@/assets/schedule/background.png";
 import dolphinChild from "@/assets/images/homeChild.png";
 import "./print.css";
+import ticket from "@/assets/images/ticket.png";
 import streamline from "@/assets/images/streamline.png";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 const WeeklySchedule = () => {
+  const { user } = useAuth();
   const { items } = useLessons();
 
   // ✅ تحويل الوقت إلى صيغة عربية
@@ -176,13 +179,22 @@ const WeeklySchedule = () => {
           جميع الحصص المتاحة خلال الاسبوع.
         </div>
         <div className="absolute -bottom-10 -right-5">
-          <img className="w-40 object-contain" src={streamline} alt="print icon" />
+          <img
+            className="w-40 object-contain"
+            src={streamline}
+            alt="print icon"
+          />
+        </div>
+        <div className="absolute flex flex-col items-center justify-center -bottom-30 -left-5">
+          <img className="w-90 object-contain" src={ticket} alt="print icon" />
+          <p className="text-black font-bold text-lg absolute bottom-[40%] left-1/2 -translate-x-1/2 pr-10 text-nowrap">
+           {user?.name}
+          </p>
         </div>
       </div>
       {/* ✅ زر عائم للطباعة */}
       <button
         onClick={handlePrint}
-        
         className="fixed bottom-6 right-6  text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-green-600 transition-all hover:cursor-pointer print:hidden z-50"
         title="طباعة الجدول الأسبوعي"
       >

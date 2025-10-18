@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
-import { Cross, Clock, Teacher, ChevronDown, PrintIcon } from "@/utils/icons";
+import { Cross, Clock, Teacher, ChevronDown, PrintIcon, LeftArrow } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
 import { useLessons } from "@/features/lessons/hooks/useLessons";
 import { formatTime12Hour } from "@/utils/dateHelpers";
 import Divider from "@/components/ui/Divider";
-import { useNavigate } from "react-router-dom";
 
 const WEEK_ORDER = [
   "sunday",
@@ -90,11 +89,75 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
   const { t } = useTranslation();
   // We just read what's already in the store; preloading happens in the button.
   const { items, error } = useLessons();
-  const navigate = useNavigate();
+  const [isPrinting, setIsPrinting] = useState(false);
+  
   const close = useCallback(() => {
     if (typeof onClose === "function") onClose();
     else if (typeof setOpen === "function") setOpen(false);
   }, [onClose, setOpen]);
+
+  const handlePrint = useCallback(() => {
+    setIsPrinting(true);
+    
+    // Create a hidden iframe to load the weekly schedule and print
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '-9999px';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
+    
+    document.body.appendChild(iframe);
+    
+    iframe.onload = () => {
+      // Wait for content to be fully loaded and rendered
+      setTimeout(() => {
+        try {
+          // Check if the iframe content is ready
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (iframeDoc.readyState === 'complete') {
+            iframe.contentWindow.print();
+            // Remove iframe after printing
+            setTimeout(() => {
+              document.body.removeChild(iframe);
+              setIsPrinting(false);
+            }, 1000);
+          } else {
+            // Wait for document to be ready
+            iframeDoc.addEventListener('DOMContentLoaded', () => {
+              setTimeout(() => {
+                iframe.contentWindow.print();
+                setTimeout(() => {
+                  document.body.removeChild(iframe);
+                  setIsPrinting(false);
+                }, 1000);
+              }, 500);
+            });
+          }
+        } catch (error) {
+          console.error('Print failed:', error);
+          // Fallback: try opening in new window
+          const printWindow = window.open("/weekly-schedule", "_blank");
+          if (printWindow) {
+            printWindow.onload = () => {
+              setTimeout(() => {
+                printWindow.print();
+                setTimeout(() => {
+                  printWindow.close();
+                  setIsPrinting(false);
+                }, 1000);
+              }, 1000);
+            };
+          }
+          document.body.removeChild(iframe);
+          setIsPrinting(false);
+        }
+      }, 2000); // Wait 2 seconds for full content load
+    };
+    
+    iframe.src = "/weekly-schedule";
+  }, []);
 
   // Lock scroll + ESC while visible (iOS-safe)
   useEffect(() => {
@@ -116,32 +179,64 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
   const filteredItems = useMemo(() => {
     if (!Array.isArray(items)) return [];
     if (!Array.isArray(groupInfos) || groupInfos.length === 0) return items;
-    const ids = new Set(groupInfos.map((g) => g.groupId));
-    return items.filter((it) => ids.has(it.group_id ?? it.groupId ?? it.group));
+  
+    // Step 1: Match only sessions that have same subject, start_time, day_of_week
+    const matched = items.filter((item) =>
+      groupInfos.some(
+        (g) =>
+          g.subject === item.subject &&
+          g.start_time === item.start_time &&
+          g.day_of_week === item.day_of_week
+      )
+    );
+  
+    // Step 2: Remove duplicates (keep unique combinations)
+    const seen = new Set();
+    const unique = matched.filter((it) => {
+      const key = `${it.subject}-${it.start_time}-${it.day_of_week}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  
+    return unique;
   }, [items, groupInfos]);
 
   const mergedByDay = useMemo(() => {
     const out = {};
-    const seenSessions = new Set(); // Track unique sessions to prevent duplicates
-    
+  
     (filteredItems || []).forEach((it) => {
       const dayKey = normalizeDay(
         it.day_of_week ?? it.day ?? it.weekday ?? null,
         it.start_date ?? it.date ?? it.session_date
       );
       if (!dayKey) return;
-      (out[dayKey] ||= []).push({
+  
+      const item = {
         ...it,
-        __time:
-          it.start_time || it.time || it.session_time || it.startTime || "",
+        __time: it.start_time || it.time || it.session_time || it.startTime || "",
         __subject: it.subject || it.name || it.title || "",
         __group: it.group || it.group_name || it.package_name || "",
         __teacher: it.teacher_name || it.teacher || "",
-      });
+      };
+  
+      // initialize day array if needed
+      out[dayKey] ||= [];
+  
+      // ✅ only add if that time doesn't already exist for this day
+      const alreadyExists = out[dayKey].some(
+        (existing) => existing.__time === item.__time
+      );
+      if (!alreadyExists) {
+        out[dayKey].push(item);
+      }
     });
+  
+    // sort by time
     for (const d of Object.keys(out)) {
       out[d].sort((a, b) => String(a.__time).localeCompare(String(b.__time)));
     }
+  
     return out;
   }, [filteredItems]);
 
@@ -264,12 +359,14 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
 
                           {count > 1 && (
                             <span
-                              className={`transition-transform duration-300 ${
-                                isOpen ? "rotate-180" : "rotate-0"
-                              }`}
+                              className="transition-transform duration-300"
                               aria-hidden="true"
                             >
-                              <ChevronDown className="w-4 h-4" />
+                              {isOpen ? (
+                                <LeftArrow className="w-4 h-4" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4" />
+                              )}
                             </span>
                           )}
                         </button>
@@ -364,12 +461,21 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
               <div className="flex justify-center mt-8 px-6 gap-4">
                 {/* ✅ زر عائم للطباعة */}
                 <button
-                  onClick={() => navigate("/weekly-schedule")}
-                  className="mx-auto text-orangedeep border border-orangedeep p-2 rounded flex items-center justify-center hover:scale-102 transition-all hover:cursor-pointer print:hidden z-50 gap-2"
-                  title="طباعة الجدول الأسبوعي"
+                  onClick={handlePrint}
+                  disabled={isPrinting}
+                  className={`mx-auto text-orangedeep border border-orangedeep p-2 rounded flex items-center justify-center transition-all print:hidden z-50 gap-2 ${
+                    isPrinting 
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : 'hover:scale-102 hover:cursor-pointer'
+                  }`}
+                  title={isPrinting ? "جاري التحميل..." : "طباعة الجدول الأسبوعي"}
                 >
-                  <PrintIcon className="w-6 h-6" />
-                  طباعة الجدول الأسبوعي
+                  {isPrinting ? (
+                    <div className="w-6 h-6 border-2 border-orangedeep border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <PrintIcon className="w-6 h-6" />
+                  )}
+                  {isPrinting ? "جاري التحميل..." : "طباعة الجدول الأسبوعي"}
                 </button>
               </div>
             </div>
