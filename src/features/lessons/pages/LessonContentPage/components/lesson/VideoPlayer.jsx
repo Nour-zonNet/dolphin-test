@@ -1,5 +1,5 @@
 // components/VideoPlayer.jsx
-import React, { useEffect, useRef, useState, useMemo } from "react"; 
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react"; 
 import stopVideo from "@/assets/schedule/stop-video.svg";
 import { DatePicker, Teacher } from "@/utils/icons";
 import { useTranslation } from "react-i18next";
@@ -21,13 +21,13 @@ const formatDayMonthAr = (iso) => {
 };
 
 // Helpers
-const formatTime = (sec) => {
-  if (!isFinite(sec) || sec < 0) return "0:00";
-  const s = Math.floor(sec);
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${String(r).padStart(2, "0")}`;
-};
+// const formatTime = (sec) => {
+//   if (!isFinite(sec) || sec < 0) return "0:00";
+//   const s = Math.floor(sec);
+//   const m = Math.floor(s / 60);
+//   const r = s % 60;
+//   return `${m}:${String(r).padStart(2, "0")}`;
+// };
 
 const isMobileOrTablet = () =>
   typeof window !== "undefined" &&
@@ -54,7 +54,9 @@ const toYouTubeEmbed = (url) => {
       if (id) return `https://www.youtube.com/embed/${id}${t ? `?start=${parseInt(t, 10)}` : ""}`;
       if (u.pathname.startsWith("/embed/")) return url;
     }
-  } catch {}
+  } catch {
+    // Ignore URL parsing errors
+  }
   return null;
 };
 
@@ -67,7 +69,9 @@ const toVimeoEmbed = (url) => {
       if (id && /^\d+$/.test(id)) return `https://player.vimeo.com/video/${id}`;
       if (u.hostname.includes("player.vimeo.com")) return url;
     }
-  } catch {}
+  } catch {
+    // Ignore URL parsing errors
+  }
   return null;
 };
 
@@ -156,7 +160,7 @@ const VideoPlayer = ({ lessonId }) => {
   const [isEmulatedFS, setIsEmulatedFS] = useState(false);
   const [rotateFallback, setRotateFallback] = useState(false);
 
-  const showUI = !showCover && !isIframe && (showSettings || !isPlaying || (isHovered && !isFullscreen && !isEmulatedFS));
+  // const showUI = !showCover && !isIframe && (showSettings || !isPlaying || (isHovered && !isFullscreen && !isEmulatedFS));
 
   const setVideoRef = (el) => { videoRef.current = el; setVideoEl(el); };
 
@@ -167,7 +171,7 @@ const VideoPlayer = ({ lessonId }) => {
   }, [isIframe, userTriedPlay, source.src]);
 
   // Cover click → start playback (video) or mount iframe (with autoplay)
-  const handleCoverClick = async () => {
+  const handleCoverClick = useCallback(async () => {
     setUserTriedPlay(true);
 
     if (isIframe) {
@@ -195,7 +199,7 @@ const VideoPlayer = ({ lessonId }) => {
         // keep cover; user may need to tap native control
       }
     }
-  };
+  }, [isIframe]);
 
   // Hide cover after iframe is loaded (post user intent)
   useEffect(() => {
@@ -220,7 +224,9 @@ const VideoPlayer = ({ lessonId }) => {
     const onProgress = () => {
       try {
         if (v.buffered?.length) setBufferedEnd(v.buffered.end(v.buffered.length - 1));
-      } catch {}
+      } catch {
+    // Ignore URL parsing errors
+  }
     };
 
     if (!isNaN(v.duration)) setDuration(v.duration || 0);
@@ -309,18 +315,22 @@ const VideoPlayer = ({ lessonId }) => {
     };
   }, [isEmulatedFS]);
 
-  const togglePlay = () => {
+  const togglePlay = useCallback(() => {
     if (isIframe || showCover) return;
     const v = videoRef.current;
     if (!v) return;
     v.paused ? v.play() : v.pause();
-  };
+  }, [isIframe, showCover]);
 
   // ---------- fullscreen & rotation ----------
   const enterIOSNativeFS = () => {
     const v = videoRef.current;
     if (v && v.webkitEnterFullscreen) {
-      try { v.webkitEnterFullscreen(); } catch {}
+      try { 
+        v.webkitEnterFullscreen(); 
+      } catch {
+        // Ignore fullscreen errors
+      }
       return true;
     }
     return false;
@@ -338,7 +348,7 @@ const VideoPlayer = ({ lessonId }) => {
     if (exit) await exit.call(document);
   };
 
-  const toggleFullscreen = async () => {
+  const toggleFullscreen = useCallback(async () => {
     // iOS: prefer native video fullscreen (more reliable + auto-rotation UI)
     if (isIOS()) {
       if (!enterIOSNativeFS()) {
@@ -360,7 +370,7 @@ const VideoPlayer = ({ lessonId }) => {
 
     setIsHovered(false);
     setShowSettings(false);
-  };
+  }, []);
 
   // Listen for FS changes (all vendors)
   useEffect(() => {
@@ -385,7 +395,7 @@ const VideoPlayer = ({ lessonId }) => {
       document.removeEventListener("webkitfullscreenchange", onFsChange);
       document.removeEventListener("MSFullscreenChange", onFsChange);
     };
-  }, []);
+  }, [clearOrientation]);
 
   // iOS native end-fullscreen
   useEffect(() => {
@@ -410,18 +420,24 @@ const VideoPlayer = ({ lessonId }) => {
         await screen.orientation.lock("landscape");
         setRotateFallback(false);
         return;
-      } catch {}
+      } catch {
+    // Ignore URL parsing errors
+  }
     }
     // iOS / unsupported → use emulated fullscreen if requested later
     setRotateFallback(true);
   };
 
-  const clearOrientation = async () => {
+  const clearOrientation = useCallback(async () => {
     if (rotateFallback) setRotateFallback(false);
     if (typeof screen !== "undefined" && screen.orientation && screen.orientation.unlock) {
-      try { screen.orientation.unlock(); } catch {}
+      try { 
+        screen.orientation.unlock(); 
+      } catch {
+        // Ignore orientation unlock errors
+      }
     }
-  };
+  }, [rotateFallback]);
 
   // Emulated fullscreen page scroll handling
   useEffect(() => {
@@ -433,7 +449,7 @@ const VideoPlayer = ({ lessonId }) => {
       document.body.style.overflow = prev;
       clearOrientation();
     };
-  }, [isEmulatedFS]);
+  }, [isEmulatedFS, clearOrientation]);
 
   // Show/hide controls fade on movement in FS
   useEffect(() => {
@@ -452,19 +468,19 @@ const VideoPlayer = ({ lessonId }) => {
   }, [isFullscreen, isEmulatedFS]);
 
   // ---------- settings ----------
-  const setSpeed = (r) => {
-    if (isIframe) return;
-    setPlaybackRate(r);
-    if (videoRef.current) videoRef.current.playbackRate = r;
-    setShowSettings(false);
-  };
-  const toggleMute = () => {
+  // const setSpeed = (r) => {
+  //   if (isIframe) return;
+  //   setPlaybackRate(r);
+  //   if (videoRef.current) videoRef.current.playbackRate = r;
+  //   setShowSettings(false);
+  // };
+  const toggleMute = useCallback(() => {
     if (isIframe) return;
     const m = !muted;
     setMuted(m);
     if (videoRef.current) videoRef.current.muted = m;
-  };
-  const setVol = (v) => {
+  }, [isIframe, muted]);
+  const setVol = useCallback((v) => {
     if (isIframe) return;
     const val = Math.min(1, Math.max(0, v));
     setVolume(val);
@@ -475,7 +491,7 @@ const VideoPlayer = ({ lessonId }) => {
         setMuted(false);
       }
     }
-  };
+  }, [isIframe, muted]);
 
   useEffect(() => {
     if (!showSettings) return;
@@ -495,15 +511,17 @@ const VideoPlayer = ({ lessonId }) => {
     };
   }, [showSettings]);
 
-  const togglePiP = async () => {
-    if (isIframe) return;
-    if (!videoRef.current) return;
-    if (!("pictureInPictureEnabled" in document)) return;
-    try {
-      if (document.pictureInPictureElement) await document.exitPictureInPicture();
-      else await videoRef.current.requestPictureInPicture();
-    } catch {}
-  };
+  // const togglePiP = async () => {
+  //   if (isIframe) return;
+  //   if (!videoRef.current) return;
+  //   if (!("pictureInPictureEnabled" in document)) return;
+  //   try {
+  //     if (document.pictureInPictureElement) await document.exitPictureInPicture();
+  //     else await videoRef.current.requestPictureInPicture();
+  //   } catch {
+  //     // Ignore PiP errors
+  //   }
+  // };
 
   // ---------- keyboard shortcuts (video only) ----------
   useEffect(() => {
@@ -541,55 +559,55 @@ const VideoPlayer = ({ lessonId }) => {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [duration, volume, muted, isIframe, showCover]);
+  }, [duration, volume, muted, isIframe, showCover, handleCoverClick, setVol, toggleFullscreen, toggleMute, togglePlay]);
 
   // ---------- scrubbing (video only) ----------
-  const [scrubbing, setScrubbing] = useState(false);
-  const pctFromClientX = (clientX) => {
-    const track = progressTrackRef.current;
-    if (!track || !duration) return 0;
-    const rect = track.getBoundingClientRect();
-    const x = Math.min(rect.right, Math.max(rect.left, clientX)) - rect.left;
-    return Math.min(1, Math.max(0, x / rect.width));
-  };
-  const seekToPct = (pct) => {
-    if (!videoRef.current || !duration) return;
-    const newTime = pct * duration;
-    videoRef.current.currentTime = newTime;
-    setCurrent(newTime);
-  };
-  const onPointerDown = (e) => {
-    if (isIframe || showCover) return;
-    e.preventDefault();
-    const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
-    if (clientX == null) return;
-    setScrubbing(true);
-    seekToPct(pctFromClientX(clientX));
-    window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("touchend", onPointerUp);
-  };
-  const onPointerMove = (e) => {
-    if (!scrubbing) return;
-    e.preventDefault();
-    seekToPct(pctFromClientX(e.clientX));
-  };
-  const onTouchMove = (e) => {
-    if (!scrubbing) return;
-    if (!e.touches?.length) return;
-    seekToPct(pctFromClientX(e.touches[0].clientX));
-  };
-  const onPointerUp = () => {
-    setScrubbing(false);
-    window.removeEventListener("pointermove", onPointerMove);
-    window.removeEventListener("pointerup", onPointerUp);
-    window.removeEventListener("touchmove", onTouchMove);
-    window.removeEventListener("touchend", onPointerUp);
-  };
+  // const [scrubbing, setScrubbing] = useState(false);
+  // const pctFromClientX = (clientX) => {
+  //   const track = progressTrackRef.current;
+  //   if (!track || !duration) return 0;
+  //   const rect = track.getBoundingClientRect();
+  //   const x = Math.min(rect.right, Math.max(rect.left, clientX)) - rect.left;
+  //   return Math.min(1, Math.max(0, x / rect.width));
+  // };
+  // const seekToPct = (pct) => {
+  //   if (!videoRef.current || !duration) return;
+  //   const newTime = pct * duration;
+  //   videoRef.current.currentTime = newTime;
+  //   setCurrent(newTime);
+  // };
+  // const onPointerDown = (e) => {
+  //   if (isIframe || showCover) return;
+  //   e.preventDefault();
+  //   const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
+  //   if (clientX == null) return;
+  //   setScrubbing(true);
+  //   seekToPct(pctFromClientX(clientX));
+  //   window.addEventListener("pointermove", onPointerMove);
+  //   window.addEventListener("pointerup", onPointerUp);
+  //   window.addEventListener("touchmove", onTouchMove, { passive: false });
+  //   window.addEventListener("touchend", onPointerUp);
+  // };
+  // const onPointerMove = (e) => {
+  //   if (!scrubbing) return;
+  //   e.preventDefault();
+  //   seekToPct(pctFromClientX(e.clientX));
+  // };
+  // const onTouchMove = (e) => {
+  //   if (!scrubbing) return;
+  //   if (!e.touches?.length) return;
+  //   seekToPct(pctFromClientX(e.touches[0].clientX));
+  // };
+  // const onPointerUp = () => {
+  //   setScrubbing(false);
+  //   window.removeEventListener("pointermove", onPointerMove);
+  //   window.removeEventListener("pointerup", onPointerUp);
+  //   window.removeEventListener("touchmove", onTouchMove);
+  //   window.removeEventListener("touchend", onPointerUp);
+  // };
 
-  const progressPct = duration ? (current / duration) * 100 : 0;
-  const bufferPct = duration ? (Math.min(bufferedEnd, duration) / duration) * 100 : 0;
+  // const progressPct = duration ? (current / duration) * 100 : 0;
+  // const bufferPct = duration ? (Math.min(bufferedEnd, duration) / duration) * 100 : 0;
 
   // ---------- stage (video or iframe) ----------
   const StageInner = (

@@ -6,8 +6,9 @@ export { default as ChangeGroupModal } from './ChangeGroupModal';
 export { default as ReactivateModal } from './ReactivateModal';
 export { default as WeeklyScheduleModal } from './WeeklyScheduleModal';
 export { default as AvatarModal } from './AvatarModal';
-// export { default as AddBalanceModal } from '@/features/Balance/modal/AddBalanceModal';
-// export { default as AddCouponModal } from '@/features/Balance/modal/AddCouponModal';
-// export { default as SessionRatingModal } from './SessionRatingModal';
-// export { default as CommentsModal } from './CommentsModal';
-// export { default as PerformanceChartModal } from './PerformanceChartModal';
+
+export { default as AddBalanceModal } from '@/features/balance/modal/AddBalanceModal.jsx';
+export { default as AddCouponModal } from '@/features/balance/modal/AddCouponModal.jsx';
+export { default as SessionRatingModal } from './SessionRatingModal';
+export { default as CommentsModal } from './CommentsModal';
+export { default as PerformanceChartModal } from './PerformanceChartModal';

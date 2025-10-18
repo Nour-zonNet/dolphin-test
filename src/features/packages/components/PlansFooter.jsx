@@ -5,7 +5,6 @@ import FormatWithCurrency from "@/utils/FormatWithCurrency";
 const PlansFooter = ({
   disabled,
   onSubscribe,
-  totalPrice,
   selectedCount,
 }) => {
   return (

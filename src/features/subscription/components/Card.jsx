@@ -125,7 +125,7 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
         </span>
       </div>
     ),
-    [Icon, config, daysLeft]
+    [config, daysLeft]
   );
 
   // Toggle Icon

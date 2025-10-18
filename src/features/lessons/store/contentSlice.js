@@ -28,7 +28,9 @@ const getFilesOrigin = () => {
       try {
         const u2 = new URL(`https://${envOrigin.replace(/^\/+|\/+$/g, "")}`);
         return `${u2.protocol}//${u2.host}`;
-      } catch {}
+      } catch {
+        // Ignore URL parsing errors for fallback
+      }
     }
   }
 

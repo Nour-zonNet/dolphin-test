@@ -55,7 +55,6 @@ import skratch from "@/assets/packages/skratch.svg";
 import special from "@/assets/packages/special.svg";
 import science from "@/assets/packages/science.svg";
 import arabic from "@/assets/packages/arabic.svg";
-import tooth from "@/assets/images/tooth.svg";
 
 export const packageStyles = {
   75: {

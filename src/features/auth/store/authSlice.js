@@ -280,7 +280,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload; // هنا بيرجع user من الـ API
       })
-      .addCase(fetchCurrentUser.rejected, (state, action) => {
+      .addCase(fetchCurrentUser.rejected, (state) => {
         state.loading = false;
         // state.error = action.payload || action.error.message;
         state.user = null;

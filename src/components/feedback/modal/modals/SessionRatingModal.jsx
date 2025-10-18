@@ -41,7 +41,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
             );
             return hasChanged ? initialComments : prevComments;
         });
-    }, [sessions?.length, sessions?.map(s => s.class_session_id || s.id).join(',')]);
+    }, [sessions]);
 
     // Don't render if no sessions
     if (!sessions || sessions.length === 0) {
@@ -157,7 +157,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     };
 
     // Check if any session has been rated
-    const hasAnyRating = Object.values(ratings).some(rating => rating > 0);
+    // const hasAnyRating = Object.values(ratings).some(rating => rating > 0);
 
     return (
         <div className="relative w-[90%] mx-auto md:w-full xl:min-w-3xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col mx-4">

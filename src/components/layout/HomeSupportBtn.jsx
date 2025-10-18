@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import dolphinCallCenter from "@/assets/images/dolphin-call-center.svg";
 import whatsapp from "@/assets/images/whatsapp.svg";
 import youtube from "@/assets/images/youtube.svg";
@@ -24,13 +24,13 @@ const HomeSupportBtn = ({ className }) => {
 
   const wrapperRef = useRef(null);
 
-  const closeAll = () => {
+  const closeAll = useCallback(() => {
     setIsOpen(false);
     if (isChatOpen && window.$chatwoot) {
       window.$chatwoot.hide?.() || window.$chatwoot.toggle?.();
       setIsChatOpen(false);
     }
-  };
+  }, [isChatOpen]);
 
   // Fetch support number
   useEffect(() => {
@@ -81,14 +81,14 @@ const HomeSupportBtn = ({ className }) => {
     return `https://wa.me/${supportNumber}?text=${defaultWAString}`;
   }, [supportNumber, defaultWAString]);
 
-  const openWhatsApp = () => {
+  const openWhatsApp = useCallback(() => {
     if (!supportNumber) {
       alert("تعذر جلب رقم الدعم الآن. حاول مرة أخرى لاحقًا.");
       return;
     }
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     setIsOpen(false);
-  };
+  }, [supportNumber, whatsappUrl]);
 
   const toggleChatwoot = () => {
     if (!window.$chatwoot) return;
@@ -96,10 +96,10 @@ const HomeSupportBtn = ({ className }) => {
     setIsChatOpen((prev) => !prev);
   };
 
-  const openComplaints = () => {
+  const openComplaints = useCallback(() => {
     navigate("/complaints");
     setIsOpen(false);
-  };
+  }, [navigate]);
 
   // Close on outside click or Escape
   useEffect(() => {
@@ -120,7 +120,7 @@ const HomeSupportBtn = ({ className }) => {
       document.removeEventListener("touchstart", handlePointerDown, true);
       document.removeEventListener("keydown", handleKeyDown, true);
     };
-  }, [isChatOpen]);
+  }, [closeAll]);
 
   // Update radius on resize
   useEffect(() => {
@@ -177,7 +177,7 @@ const HomeSupportBtn = ({ className }) => {
           ),
       },
     ];
-  }, [isAuthenticated, supportNumber, defaultWAString]);
+  }, [isAuthenticated, openWhatsApp, openComplaints]);
 
   return (
     <div

@@ -1,7 +1,7 @@
 import { Header } from "@/components";
 import { useState } from "react";
 import { PeriodDropdown, SubjectCard, PerformanceChart } from "../components";
-import { packageStyles } from "@/constants/PACKAGE_COLORS";
+// import { packageStyles } from "@/constants/PACKAGE_COLORS";
 
 const Reports = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("month");

@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 
 const ComplaintItem = memo(
-  ({ complaint, formatDate, getStatusClass, getStatusText, getFileIcon }) => {
+  ({ complaint, formatDate, getStatusClass, getStatusText }) => {
     const { t } = useTranslation();
 
     return (
