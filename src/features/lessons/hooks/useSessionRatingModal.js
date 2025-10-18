@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLessons } from './useLessons';
 import { LESSON_STATUS } from '../../../utils';
 import { useModal } from '@/components/feedback/modal/useModal';
-import sessionReviewService from '@/services/sessionReview';
+import { sessionReviewService } from '@/services/sessionReview';
 import { useLocation } from 'react-router-dom';
 
 const STORAGE_KEY = 'sessionRatingModal';

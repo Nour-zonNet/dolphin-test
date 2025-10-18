@@ -15,7 +15,7 @@ import {
   AvatarModal,
   // AddBalanceModal,
   // AddCouponModal,
-  // SessionRatingModal,
+  SessionRatingModal,
   // CommentsModal,
   // PerformanceChartModal,
 } from "./modals";
@@ -175,32 +175,32 @@ const ModalManager = () => {
     //     />
     //   );
     //   break;
-    // case MODAL_TYPES.SESSION_RATING:
-    //   ModalContent = (
-    //     <SessionRatingModal
-    //       {...props}
-    //       onClose={handleClose}
-    //       onSubmit={async (data) => {
-    //         try {
-    //           // Execute registered onSubmit callback if provided via props
-    //           if (props.onSubmitId) {
-    //             const cb = callbackRegistry.get(props.onSubmitId);
-    //             if (cb) {
-    //               await cb(data);
-    //             }
-    //           }
-    //           if (props.callbackId) {
-    //             executeCallback(props.callbackId, data);
-    //           }
-    //         } catch (error) {
-    //           console.error('Error in SessionRatingModal onSubmit:', error);
-    //         } finally {
-    //           handleClose();
-    //         }
-    //       }}
-    //     />
-    //   );
-    //   break;
+    case MODAL_TYPES.SESSION_RATING:
+      ModalContent = (
+        <SessionRatingModal
+          {...props}
+          onClose={handleClose}
+          onSubmit={async (data) => {
+            try {
+              // Execute registered onSubmit callback if provided via props
+              if (props.onSubmitId) {
+                const cb = callbackRegistry.get(props.onSubmitId);
+                if (cb) {
+                  await cb(data);
+                }
+              }
+              if (props.callbackId) {
+                executeCallback(props.callbackId, data);
+              }
+            } catch (error) {
+              console.error('Error in SessionRatingModal onSubmit:', error);
+            } finally {
+              handleClose();
+            }
+          }}
+        />
+      );
+      break;
     // case MODAL_TYPES.COMMENTS:
     //   ModalContent = <CommentsModal {...props} onClose={handleClose} />;
     //   break;
