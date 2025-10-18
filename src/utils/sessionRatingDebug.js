@@ -48,6 +48,6 @@ export const sessionRatingDebug = {
 };
 
 // Make it available globally in development
-if (process.env.NODE_ENV === 'development') {
+if (typeof window !== 'undefined' && import.meta.env?.DEV) {
   window.sessionRatingDebug = sessionRatingDebug;
 }

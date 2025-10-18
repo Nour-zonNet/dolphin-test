@@ -129,15 +129,11 @@ export const sessionReviewService = {
    * @returns {Promise} Array of API responses
    */
   submitMultipleReviews: async (reviews) => {
-    try {
-      const promises = reviews.map(review => 
-        sessionReviewService.submitSessionReview(review)
-      );
-      const responses = await Promise.all(promises);
-      return responses;
-    } catch (error) {
-      throw error;
-    }
+    const promises = reviews.map(review => 
+      sessionReviewService.submitSessionReview(review)
+    );
+    const responses = await Promise.all(promises);
+    return responses;
   }
 };
 

@@ -57,7 +57,9 @@ const fetchFileSize = async (url) => {
       const cl = h.headers.get("Content-Length");
       if (cl && !isNaN(Number(cl))) return Number(cl);
     }
-  } catch {}
+  } catch {
+    // Ignore HEAD request errors
+  }
   try {
     // const r = await fetch(url, {
     //   method: "GET",
@@ -77,7 +79,9 @@ const fetchFileSize = async (url) => {
       const cl = r.headers.get("Content-Length");
       if (cl && !isNaN(Number(cl)) && Number(cl) > 1) return Number(cl);
     }
-  } catch {}
+  } catch {
+    // Ignore Range request errors
+  }
   return null; // unknown
 };
 
@@ -163,12 +167,14 @@ const AttachmentsSection = ({ lessonId }) => {
       const res = await fetch(url);
       const blob = await res.blob();
       const cd = res.headers.get("Content-Disposition") || "";
-      const match = cd.match(/filename\*?=(?:UTF-8'')?"?([^\";]+)"?/i);
+      const match = cd.match(/filename\*?=(?:UTF-8'')?"?([^";]+)"?/i);
       // const nameFromHeader = match ? decodeURIComponent(match[1]) : null;
       let nameFromHeader = null;
       try {
         nameFromHeader = match ? decodeURIComponent(match[1]) : null;
-      } catch {}
+      } catch {
+        // Ignore decode errors
+      }
       const fallbackName = (() => {
         try {
           const u = new URL(url, window.location.origin);

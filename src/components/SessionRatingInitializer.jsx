@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 const SessionRatingInitializer = () => {
   const location = useLocation();
-  const { eligibleSessions, handleSubmitRatings, handleCloseModal } = useSessionRatingModal();
+  const { eligibleSessions } = useSessionRatingModal();
 
   // فقط لا تعمل أي شيء إذا لم تكن في صفحة schedule
   if (!location.pathname.includes('/schedule')) {
@@ -11,7 +11,7 @@ const SessionRatingInitializer = () => {
   }
 
   // Development-only debugging
-  if (process.env.NODE_ENV === 'development') {
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
     window.checkSessionRatingState = () => {
       const todayStr = new Date().toISOString().split('T')[0];
       const yesterdayStr = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];

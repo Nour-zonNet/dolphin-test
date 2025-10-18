@@ -146,7 +146,7 @@ const lessonsSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(getContentsBySessionId.fulfilled, (state, action) => {
+      .addCase(getContentsBySessionId.fulfilled, (state) => {
         state.loading = false;
       })
       .addCase(getContentsBySessionId.rejected, (state, action) => {

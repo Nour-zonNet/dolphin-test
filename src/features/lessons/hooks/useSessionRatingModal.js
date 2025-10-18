@@ -66,7 +66,7 @@ export const useSessionRatingModal = () => {
       const storageKey = `${STORAGE_KEY}_${dateString}`;
       const stored = localStorage.getItem(storageKey);
       return stored ? JSON.parse(stored) : null;
-    } catch (error) {
+    } catch {
       return null;
     }
   }, []);
@@ -76,7 +76,7 @@ export const useSessionRatingModal = () => {
     try {
       const storageKey = `${STORAGE_KEY}_${dateString}`;
       localStorage.setItem(storageKey, JSON.stringify(data));
-    } catch (error) {
+    } catch {
       // Silently handle localStorage errors
     }
   }, []);
@@ -109,7 +109,7 @@ export const useSessionRatingModal = () => {
           return false;
         }
         itemDate = dateObj.toISOString().split('T')[0];
-      } catch (error) {
+      } catch {
         return false;
       }
       
@@ -154,7 +154,7 @@ export const useSessionRatingModal = () => {
         const dateObj = new Date(item.date);
         if (isNaN(dateObj.getTime())) return false;
         itemDate = dateObj.toISOString().split('T')[0];
-      } catch (error) {
+      } catch {
         return false;
       }
       

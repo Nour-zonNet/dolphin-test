@@ -21,13 +21,13 @@ const formatDayMonthAr = (iso) => {
 };
 
 // Helpers
-const formatTime = (sec) => {
-  if (!isFinite(sec) || sec < 0) return "0:00";
-  const s = Math.floor(sec);
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${String(r).padStart(2, "0")}`;
-};
+// const formatTime = (sec) => {
+//   if (!isFinite(sec) || sec < 0) return "0:00";
+//   const s = Math.floor(sec);
+//   const m = Math.floor(s / 60);
+//   const r = s % 60;
+//   return `${m}:${String(r).padStart(2, "0")}`;
+// };
 
 const isMobileOrTablet = () =>
   typeof window !== "undefined" &&
@@ -54,7 +54,9 @@ const toYouTubeEmbed = (url) => {
       if (id) return `https://www.youtube.com/embed/${id}${t ? `?start=${parseInt(t, 10)}` : ""}`;
       if (u.pathname.startsWith("/embed/")) return url;
     }
-  } catch {}
+  } catch {
+    // Ignore URL parsing errors
+  }
   return null;
 };
 
@@ -67,7 +69,9 @@ const toVimeoEmbed = (url) => {
       if (id && /^\d+$/.test(id)) return `https://player.vimeo.com/video/${id}`;
       if (u.hostname.includes("player.vimeo.com")) return url;
     }
-  } catch {}
+  } catch {
+    // Ignore URL parsing errors
+  }
   return null;
 };
 
@@ -148,7 +152,7 @@ const VideoPlayer = ({ lessonId }) => {
   const [duration, setDuration] = useState(0);
   const [current, setCurrent] = useState(0);
   const [bufferedEnd, setBufferedEnd] = useState(0);
-  const [playbackRate, setPlaybackRate] = useState(1);
+  const [playbackRate] = useState(1);
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
 
@@ -156,7 +160,7 @@ const VideoPlayer = ({ lessonId }) => {
   const [isEmulatedFS, setIsEmulatedFS] = useState(false);
   const [rotateFallback, setRotateFallback] = useState(false);
 
-  const showUI = !showCover && !isIframe && (showSettings || !isPlaying || (isHovered && !isFullscreen && !isEmulatedFS));
+  // const showUI = !showCover && !isIframe && (showSettings || !isPlaying || (isHovered && !isFullscreen && !isEmulatedFS));
 
   const setVideoRef = (el) => { videoRef.current = el; setVideoEl(el); };
 
@@ -220,7 +224,9 @@ const VideoPlayer = ({ lessonId }) => {
     const onProgress = () => {
       try {
         if (v.buffered?.length) setBufferedEnd(v.buffered.end(v.buffered.length - 1));
-      } catch {}
+      } catch {
+    // Ignore URL parsing errors
+  }
     };
 
     if (!isNaN(v.duration)) setDuration(v.duration || 0);
@@ -320,7 +326,9 @@ const VideoPlayer = ({ lessonId }) => {
   const enterIOSNativeFS = () => {
     const v = videoRef.current;
     if (v && v.webkitEnterFullscreen) {
-      try { v.webkitEnterFullscreen(); } catch {}
+      try { v.webkitEnterFullscreen(); } catch {
+        // Ignore fullscreen errors
+      }
       return true;
     }
     return false;
@@ -410,7 +418,9 @@ const VideoPlayer = ({ lessonId }) => {
         await screen.orientation.lock("landscape");
         setRotateFallback(false);
         return;
-      } catch {}
+      } catch {
+    // Ignore URL parsing errors
+  }
     }
     // iOS / unsupported → use emulated fullscreen if requested later
     setRotateFallback(true);
@@ -452,12 +462,12 @@ const VideoPlayer = ({ lessonId }) => {
   }, [isFullscreen, isEmulatedFS]);
 
   // ---------- settings ----------
-  const setSpeed = (r) => {
-    if (isIframe) return;
-    setPlaybackRate(r);
-    if (videoRef.current) videoRef.current.playbackRate = r;
-    setShowSettings(false);
-  };
+  // const setSpeed = (r) => {
+  //   if (isIframe) return;
+  //   setPlaybackRate(r);
+  //   if (videoRef.current) videoRef.current.playbackRate = r;
+  //   setShowSettings(false);
+  // };
   const toggleMute = useCallback(() => {
     if (isIframe) return;
     const m = !muted;
@@ -495,15 +505,17 @@ const VideoPlayer = ({ lessonId }) => {
     };
   }, [showSettings]);
 
-  const togglePiP = async () => {
-    if (isIframe) return;
-    if (!videoRef.current) return;
-    if (!("pictureInPictureEnabled" in document)) return;
-    try {
-      if (document.pictureInPictureElement) await document.exitPictureInPicture();
-      else await videoRef.current.requestPictureInPicture();
-    } catch {}
-  };
+  // const togglePiP = async () => {
+  //   if (isIframe) return;
+  //   if (!videoRef.current) return;
+  //   if (!("pictureInPictureEnabled" in document)) return;
+  //   try {
+  //     if (document.pictureInPictureElement) await document.exitPictureInPicture();
+  //     else await videoRef.current.requestPictureInPicture();
+  //   } catch {
+  //     // Ignore URL parsing errors
+  //   }
+  // };
 
   // ---------- keyboard shortcuts (video only) ----------
   useEffect(() => {
@@ -558,18 +570,18 @@ const VideoPlayer = ({ lessonId }) => {
     videoRef.current.currentTime = newTime;
     setCurrent(newTime);
   };
-  const onPointerDown = (e) => {
-    if (isIframe || showCover) return;
-    e.preventDefault();
-    const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
-    if (clientX == null) return;
-    setScrubbing(true);
-    seekToPct(pctFromClientX(clientX));
-    window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("touchend", onPointerUp);
-  };
+  // const onPointerDown = (e) => {
+  //   if (isIframe || showCover) return;
+  //   e.preventDefault();
+  //   const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
+  //   if (clientX == null) return;
+  //   setScrubbing(true);
+  //   seekToPct(pctFromClientX(clientX));
+  //   window.addEventListener("pointermove", onPointerMove);
+  //   window.addEventListener("pointerup", onPointerUp);
+  //   window.addEventListener("touchmove", onTouchMove, { passive: false });
+  //   window.addEventListener("touchend", onPointerUp);
+  // };
   const onPointerMove = (e) => {
     if (!scrubbing) return;
     e.preventDefault();
@@ -588,8 +600,8 @@ const VideoPlayer = ({ lessonId }) => {
     window.removeEventListener("touchend", onPointerUp);
   };
 
-  const progressPct = duration ? (current / duration) * 100 : 0;
-  const bufferPct = duration ? (Math.min(bufferedEnd, duration) / duration) * 100 : 0;
+  // const progressPct = duration ? (current / duration) * 100 : 0;
+  // const bufferPct = duration ? (Math.min(bufferedEnd, duration) / duration) * 100 : 0;
 
   // ---------- stage (video or iframe) ----------
   const StageInner = (

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import offlineDolphin from '@/assets/images/offline-dolphin.svg';
 import { Retry } from '@/utils/icons';
 
-const RefreshIcon = ({ className }) => (
+const RefreshIcon = () => (
   <Retry className="w-4 h-4 md:w-6 md:h-6" />
 );
 
@@ -38,7 +38,7 @@ const OfflineScreen = ({ onRetry }) => {
           className="bg-orangedeep hover:bg-btnClicked border-none rounded-full px-8 py-3 md:py-4 text-base md:text-lg font-semibold cursor-pointer flex items-center gap-2 transition-colors duration-200 w-full lg:w-[50%] justify-center"
           onClick={onRetry}
         >
-          <RefreshIcon className="w-5 h-5" />
+          <RefreshIcon />
           <span className="text-navyteal">{t('offline.retry', 'حاول مرة أخري')}</span>
         </button>
       </div>

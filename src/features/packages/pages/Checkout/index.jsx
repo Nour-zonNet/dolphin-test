@@ -197,7 +197,7 @@ const SelectedPackages = ({ selectedPackages }) => {
   );
 };
 
-const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
+const PackageItem = ({ title, /* price, */ icon, showDatePicker, status }) => (
   <div className="flex flex-col items-start justify-between gap-4">
     <div className="w-full flex flex-col  gap-3 justify-between ">
       <div className=" flex items-center gap-3 justify-start lg:justify-start">
@@ -307,7 +307,7 @@ const DiscountBar = ({ totalPrice, onApply }) => (
   </div>
 );
 
-const Actions = ({ onSubmitTrial, onPay }) => (
+const Actions = ({ onSubmitTrial, /* onPay */ }) => (
   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 lg:gap-8 mt-8">
     <button
       onClick={onSubmitTrial}

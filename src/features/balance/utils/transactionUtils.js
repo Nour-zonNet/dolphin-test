@@ -6,7 +6,7 @@ import { TRANSACTION_STATUS } from './constants';
  * @param {string} currency - Currency code (default: 'SAR')
  * @returns {string} Formatted currency string
  */
-export const formatCurrency = (amount, currency = 'SAR') => {
+export const formatCurrency = (amount) => {
   if (typeof amount !== 'number' || isNaN(amount)) {
     return '0.00 ر.س';
   }

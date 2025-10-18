@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ModalContainer from "../ModalContainer";
 import { Teacher, ChevronDown } from "@/utils/icons";
 import { X } from "lucide-react";
-const CommentsModal = ({ subject, onClose }) => {
+const CommentsModal = ({ onClose }) => {
   const [selectedPeriod, setSelectedPeriod] = useState("شهري");
 
   // Sample comments data - in a real app, this would come from props or API
