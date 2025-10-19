@@ -77,14 +77,16 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
+        iconType: "LeftArrowFilled",
+        iconProps: { className: "w-4 h-4 md:w-6 md:h-6", color: "#0C2D40" },
         variant: "filled",
         onClick: (navigate) => navigate("/"),
       },
       {
         type: "link",
         label: "معاينة الرصيد",
-        icon: <WalletGray fill="#0C2D40" />,
+        iconType: "WalletGray",
+        iconProps: { fill: "#0C2D40" },
         variant: "outline",
         to: "/balance-details",
       },
@@ -99,14 +101,16 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "حاول مرة أخرى",
-        icon: <Retry className="w-4 h-4 md:w-6 md:h-6" />,
+        iconType: "Retry",
+        iconProps: { className: "w-4 h-4 md:w-6 md:h-6" },
         variant: "filled",
         onClick: () => window.history.back(),
       },
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
+        iconType: "LeftArrowFilled",
+        iconProps: { className: "w-4 h-4 md:w-6 md:h-6", color: "#0C2D40" },
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
@@ -121,14 +125,16 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "تواصل مع الدعم",
-        icon: <SupportIcon />,
+        iconType: "SupportIcon",
+        iconProps: {},
         variant: "filled",
         onClick: () => window.history.back(),
       },
       {
         type: "button",
         label: "العودة للرئيسية",
-        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
+        iconType: "LeftArrowFilled",
+        iconProps: { className: "w-4 h-4 md:w-6 md:h-6", color: "#0C2D40" },
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
@@ -146,6 +152,24 @@ const buttonClasses = (variant) => {
     "bg-transparent text-navyteal border border-orangedeep hover:bg-orangedeep/10 font-semibold text-sm md:text-lg";
 
   return `${base} ${variant === "filled" ? filled : outline}`;
+};
+
+// 🔹 helper for creating icons dynamically
+const createIcon = (iconType, iconProps = {}) => {
+  const iconMap = {
+    LeftArrowFilled,
+    WalletGray,
+    Retry,
+    SupportIcon,
+  };
+  
+  const IconComponent = iconMap[iconType];
+  if (!IconComponent) {
+    console.warn(`Icon component "${iconType}" not found`);
+    return null;
+  }
+  
+  return <IconComponent {...iconProps} />;
 };
 
 const PaymentStatus = () => {
@@ -230,12 +254,12 @@ const PaymentStatus = () => {
         {data.actions.map((a, i) =>
           a.type === "link" ? (
             <Link key={i} to={a.to} className={`${buttonClasses(a.variant)} lg:mt-4`}>
-              {a.icon}
+              {createIcon(a.iconType, a.iconProps)}
               <span>{a.label}</span>
             </Link>
           ) : (
             <button key={i} onClick={() => a.onClick(navigate)} className={`${buttonClasses(a.variant)} lg:mt-4`}>
-              {a.icon}
+              {createIcon(a.iconType, a.iconProps)}
               {a.label}
             </button>
           )
