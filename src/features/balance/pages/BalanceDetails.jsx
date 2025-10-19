@@ -7,6 +7,7 @@ import { TransactionsList } from '../components/transactions';
 import { useProfile } from '@/features/profile/hooks/useProfile';
 import { useTransactions } from '../hooks/useTransactions';
 import { useTransactionFilter } from '../hooks/useTransactionFilter';
+import { useSelector } from 'react-redux';
 
 /**
  * Enhanced Balance Details Page
@@ -20,6 +21,7 @@ import { useTransactionFilter } from '../hooks/useTransactionFilter';
  */
 const BalanceDetails = () => {
   const { user } = useProfile();
+  const { currentBalance } = useSelector((state) => state.balance);
   const { transactions, loading, error, refreshTransactions } = useTransactions();
   const { 
     filteredTransactions, 
@@ -37,7 +39,7 @@ const BalanceDetails = () => {
       {/* Header */}
       <Header 
         title="تفاصيل الرصيد" 
-        balance={0} 
+        balance={currentBalance} 
         showBalanceSection={false} 
         onBack="/profile" 
       />

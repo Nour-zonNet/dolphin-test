@@ -5,15 +5,15 @@ import Divider from "@/components/ui/Divider";
 import { ArrowNext } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 import { chargeWallet } from "@/services/api";
-import { setPaymentInProgress, addToBalance, setLastTransaction } from "@/store/balanceSlice";
+import { setPaymentInProgress, setLastTransaction } from "@/store/balanceSlice";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
 const AddBalanceModal = ({ onClose, onSubmit }) => {
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { user } = useAuth();
+  // const navigate = useNavigate();
+  // const { user } = useAuth();
   const { currentBalance, paymentInProgress } = useSelector((state) => state.balance);
 
   const handleSubmit = async (e) => {

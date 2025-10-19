@@ -13,11 +13,9 @@ const BalanceActionsButtons = () => {
 
   const handleAddBalance = () => {
     openAddBalanceModal((data) => {
-      console.log('Balance payment initiated:', data);
       
       // After payment initiation, redirect directly to MyFatora
       if (data && data.invoice_id && data.url) {
-        console.log('Redirecting to MyFatora:', data.url);
         
         // Store the transaction data for the status page
         sessionStorage.setItem('currentTransaction', JSON.stringify({
@@ -37,10 +35,10 @@ const BalanceActionsButtons = () => {
           bonusAmount: data.amount * 0.2,
         }));
         
-        console.log('Transaction data stored, redirecting to:', data.url);
-        
-        // Redirect directly to MyFatora payment page
-        window.location.href = data.url;
+        // Add a small delay to make the network request visible in console
+        setTimeout(() => {
+          window.location.href = data.url;
+        }, 1000); // 1 second delay
       } else {
         console.error('Invalid payment data received:', data);
       }
@@ -49,7 +47,6 @@ const BalanceActionsButtons = () => {
 
   const handleAddCoupon = () => {
     openAddCouponModal((data) => {
-      console.log('Coupon applied:', data);
       // TODO: Handle coupon application logic
     });
   };

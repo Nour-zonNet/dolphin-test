@@ -31,12 +31,12 @@ export const useAppInitialization = () => {
         }
 
         // Fetch related data in parallel
-        await Promise.all([
+        await Promise.allSettled([
           dispatch(fetchAllPackages()),
           dispatch(fetchMyPackages()),
           dispatch(fetchLessons()),
           dispatch(fetchSubscriptions()),
-          dispatch(fetchWalletBalance()),
+          dispatch(fetchWalletBalance()), // This will handle 404 gracefully
           getBrothers(),
           getClasses(),
         ]);

@@ -201,9 +201,6 @@ const PaymentStatus = () => {
       // For now, we'll just show the pending status
       setIsVerifying(true);
       
-      // In a real implementation, you might want to poll the API or use webhooks
-      // to check payment status. For now, we'll just show the pending state.
-      console.log('Payment is pending, waiting for confirmation...');
     }
   }, [status, transactionData?.id, dispatch, navigate]);
 
@@ -214,72 +211,7 @@ const PaymentStatus = () => {
       <Header title={data.title} onBack="/profile" showBalanceSection={false} showArrow={false} />
 
       <div className="flex flex-col items-center px-4 py-8 gap-6 mt-14 md:mt-20 lg:mt-8">
-        {/* For success status, show image and transaction card side by side on desktop, stacked on mobile */}
-        {status === 'success' ? (
-          <div className="flex flex-col lg:flex-row items-center justify-center w-full lg:gap-20 gap-10">
-            <img src={data.image} alt={data.title} className="w-[40%] md:w-[30%] lg:w-[20%] h-auto" loading="lazy" />
-            
-            {/* Transaction Details Card - Only show on success */}
-            {transactionData && (
-              <div className="bg-white border border-[#8C8C8C22] rounded-[24px] p-6 w-full lg:w-auto lg:max-w-md">
-                <h3 className="text-lg font-bold text-navyteal mb-4">تفاصيل المعاملة</h3>
-                
-                <div className="space-y-3 text-right">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#645C5C] font-medium">رقم المعاملة:</span>
-                    <span className="text-navyteal font-semibold">{transactionData.id}</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#645C5C] font-medium">المبلغ المدفوع:</span>
-                    <FormatWithCurrency 
-                      amount={transactionData.amount} 
-                      symbolFill="#645C5C" 
-                      symbolClass="w-4 h-4"
-                      className="text-[#645C5C] font-medium"
-                    />
-                  </div>
-                  
-                  {transactionData.bonusAmount > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-[#1C9C30] font-medium">المكافأة:</span>
-                      <FormatWithCurrency 
-                        amount={transactionData.bonusAmount}
-                        symbolFill="#1C9C30" 
-                        symbolClass="w-4 h-4"
-                        className="text-[#1C9C30] font-medium"
-                      />
-                    </div>
-                  )}
-                  
-                  <div className="border-t border-dashed border-gray-300 pt-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-navyteal font-bold">إجمالي الرصيد المضاف:</span>
-                      <FormatWithCurrency 
-                        amount={transactionData.amount + (transactionData.bonusAmount || 0)} 
-                        symbolFill="#08233F" 
-                        symbolClass="w-4 h-4"
-                        className="text-navyteal font-bold"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="text-[#645C5C] font-medium">الرصيد الحالي:</span>
-                    <FormatWithCurrency 
-                      amount={currentBalance} 
-                      symbolFill="#e89b32" 
-                      symbolClass="w-4 h-4"
-                      className="text-orangedeep font-bold"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <img src={data.image} alt={data.title} className="w-[40%] md:w-[30%] lg:w-[20%] h-auto" loading="lazy" />
-        )}
+        <img src={data.image} alt={data.title} className="w-[40%] md:w-[30%] lg:w-[20%] h-auto" loading="lazy" />
 
         <div className="text-center mb-4 lg:mb-6">
           <h2 className="font-semibold md:text-3xl text-xl text-navyteal">{data.heading}</h2>

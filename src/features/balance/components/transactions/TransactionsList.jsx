@@ -47,12 +47,11 @@ const TransactionsList = ({
   }
 
   // Empty state
-  if (!displayTransactions || displayTransactions.length > 0) {
+  if (!displayTransactions || displayTransactions.length === 0) {
     return (
       <div className={`w-[90%] mx-auto mt-8 ${className}`}>
         <NoTransactions />
       </div>
-      
     );
   }
 
