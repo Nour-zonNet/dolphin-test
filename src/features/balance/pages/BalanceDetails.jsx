@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
 import Divider from '@/components/ui/Divider';
 import { BalanceCard, BalanceActionsButtons } from '../components';
@@ -29,9 +29,14 @@ const BalanceDetails = () => {
     clearFilters, 
     hasActiveFilters 
   } = useTransactionFilter(transactions);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const handleRefresh = () => {
     refreshTransactions();
+  };
+
+  const handleFiltering = (filtering) => {
+    setIsFiltering(filtering);
   };
 
   return (
@@ -56,15 +61,14 @@ const BalanceDetails = () => {
       {/* Transactions Filter */}
       <TransactionsFilter 
         onDateFilter={handleDateFilter}
-        onClearFilters={clearFilters}
-        hasActiveFilters={hasActiveFilters}
+        onFiltering={handleFiltering}
       />
       
       {/* Transactions List */}
       <TransactionsList 
         transactions={transactions}
         filteredTransactions={filteredTransactions}
-        loading={loading}
+        loading={loading || isFiltering}
         error={error}
         onRefresh={handleRefresh}
       />

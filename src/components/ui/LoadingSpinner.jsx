@@ -7,7 +7,7 @@ import React from 'react';
 const LoadingSpinner = ({ 
   size = 'md', 
   className = '',
-  color = 'text-blue-600'
+  color = 'text-orangedeep'
 }) => {
   const sizeClasses = {
     sm: 'w-4 h-4',
@@ -18,7 +18,7 @@ const LoadingSpinner = ({
 
   return (
     <div 
-      className={`animate-spin rounded-full border-2 border-gray-300 border-t-current ${sizeClasses[size]} ${color} ${className}`}
+      className={`animate-spin rounded-full border-2 border-orangedeep border-t-current ${sizeClasses[size]} ${color} ${className}`}
       role="status"
       aria-label="جاري التحميل"
     >

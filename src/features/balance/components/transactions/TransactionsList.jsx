@@ -11,11 +11,12 @@ const TransactionsList = ({
   transactions = [], 
   filteredTransactions = [], 
   loading = false, 
-  error = '',
+  error = '', 
   className = '' 
 }) => {
   // Use filtered transactions if available, otherwise use all transactions
-  const displayTransactions = filteredTransactions.length > 0 ? filteredTransactions : transactions;
+  // If filteredTransactions is provided and has length, use it; otherwise use all transactions
+  const displayTransactions = filteredTransactions && filteredTransactions.length >= 0 ? filteredTransactions : transactions;
 
   // Loading state
   if (loading) {
@@ -46,7 +47,7 @@ const TransactionsList = ({
     );
   }
 
-  // Empty state
+  // Empty state - check if we have any transactions to display
   if (!displayTransactions || displayTransactions.length === 0) {
     return (
       <div className={`w-[90%] mx-auto mt-8 ${className}`}>
@@ -70,7 +71,10 @@ const TransactionsList = ({
       
       {/* Transaction count info */}
       <div className="mt-6 text-center text-sm text-gray-500">
-        عرض {displayTransactions.length} من {transactions.length} معاملة
+        {filteredTransactions && filteredTransactions.length >= 0 
+          ? `عرض ${displayTransactions.length} من ${transactions.length} معاملة`
+          : `عرض ${displayTransactions.length} معاملة`
+        }
       </div>
     </div>
   );
