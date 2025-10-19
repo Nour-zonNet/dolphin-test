@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import Divider from "@/components/ui/Divider";
 import { ArrowNext } from "@/utils/icons";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 import { chargeWallet } from "@/services/api";
 import { setPaymentInProgress, setLastTransaction } from "@/store/balanceSlice";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 
 const AddBalanceModal = ({ onClose, onSubmit }) => {
   const [amount, setAmount] = useState("");
@@ -72,7 +70,7 @@ const AddBalanceModal = ({ onClose, onSubmit }) => {
         throw new Error("فشل في إنشاء طلب الدفع");
       }
     } catch (error) {
-      console.error("Payment error:", error);
+      // Payment error
       setError(error.message || "حدث خطأ أثناء معالجة الدفع");
       dispatch(setPaymentInProgress(false));
     }
@@ -121,7 +119,7 @@ const AddBalanceModal = ({ onClose, onSubmit }) => {
             <div className="space-y-4">
               <label className="flex items-start justify-between flex-col lg:flex-row font-semibold text-navyteal text-sm md:text-2xl">
                 <span className="text-nowrap">قيمة الإيداع</span>
-                <span className="text-[12px] md:text-base mt-2">(اشحن  رصيدك الآن واحصل علي 20 % هدية مجانية إضافية)</span>
+                {/* <span className="text-[12px] md:text-base mt-2">(اشحن  رصيدك الآن واحصل علي 20 % هدية مجانية إضافية)</span> */}
               </label>
               <input
                 type="number"
@@ -133,7 +131,7 @@ const AddBalanceModal = ({ onClose, onSubmit }) => {
               />
 
               {/* Dynamic total with gift */}
-              {amount && (
+              {/* {amount && (
                   <p className="text-[#1C9C30] font-semibold text-sm md:text-lg">
                     إجمالي رصيدك مع الهدية :{" "}
                     <FormatWithCurrency
@@ -144,7 +142,7 @@ const AddBalanceModal = ({ onClose, onSubmit }) => {
                       className="text-[#1C9C30]"
                     />
                   </p>
-              )}
+              )} */}
             </div>
 
             {/* Error message */}

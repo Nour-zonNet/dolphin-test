@@ -3,7 +3,6 @@ import { CheckCircle, ClockBalance, XCircle, Copy, CalendarGray, WalletGray } fr
 import FormatWithCurrency from '@/utils/FormatWithCurrency';
 import { TransactionStatusBadge, TransactionAmount, TransactionDate, TransactionPaymentMethod } from './TransactionComponents';
 import { TRANSACTION_TYPE_LABELS } from '../../utils/sampleData';
-import { getArabicStatusLabel } from '../../utils/transactionTransform';
 
 /**
  * Enhanced Transaction Card Component
@@ -60,9 +59,8 @@ const TransactionCard = ({ transaction, className = '' }) => {
       const idToCopy = transaction.reference_id || transaction.id;
       await navigator.clipboard.writeText(idToCopy.toString());
       // TODO: Add toast notification for successful copy
-      console.log('Copied transaction ID:', idToCopy);
-    } catch (error) {
-      console.error('Failed to copy transaction ID:', error);
+    } catch (_error) {
+      // Failed to copy transaction ID
       // TODO: Add error notification
     }
   };

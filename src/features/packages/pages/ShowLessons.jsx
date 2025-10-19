@@ -102,7 +102,7 @@ const ShowLessons = () => {
           setFilteredLessons(res.payload.lessons); // 👈 update state
         }
       } catch (error) {
-        console.error("Failed to fetch lessons:", error);
+        // Failed to fetch lessons
       }
     };
 

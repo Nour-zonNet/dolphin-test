@@ -1,9 +1,7 @@
-import { useSessionRatingModal } from '@/features/lessons/hooks/useSessionRatingModal';
 import { useLocation } from 'react-router-dom';
 
 const SessionRatingInitializer = () => {
   const location = useLocation();
-  const { eligibleSessions, handleSubmitRatings, handleCloseModal } = useSessionRatingModal();
 
   // فقط لا تعمل أي شيء إذا لم تكن في صفحة schedule
   if (!location.pathname.includes('/schedule')) {
@@ -17,7 +15,7 @@ const SessionRatingInitializer = () => {
       const yesterdayStr = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       const todayData = JSON.parse(localStorage.getItem(`sessionRatingModal_${todayStr}`) || 'null');
       const yesterdayData = JSON.parse(localStorage.getItem(`sessionRatingModal_${yesterdayStr}`) || 'null');
-      return { todayData, yesterdayData, eligibleSessions };
+      return { todayData, yesterdayData };
     };
 
     window.debugSessionRatingModal = () => {
@@ -28,11 +26,7 @@ const SessionRatingInitializer = () => {
       const shouldShowYesterdaySessions = !yesterdayData?.lastShown && !yesterdayData?.skipped && !yesterdayData?.lastRatingDate;
 
       return {
-        shouldShow:
-          eligibleSessions.length > 0 &&
-          (shouldShowYesterdaySessions
-            ? !todayData?.lastShown && !todayData?.skipped && !todayData?.lastRatingDate
-            : !todayData?.lastShown && !todayData?.skipped && !todayData?.lastRatingDate),
+        shouldShow: false,
         conditions: {
           showingYesterdaySessions: shouldShowYesterdaySessions,
           notShownToday: !todayData?.lastShown,
@@ -41,7 +35,7 @@ const SessionRatingInitializer = () => {
           notShownYesterday: !yesterdayData?.lastShown,
           notSkippedYesterday: !yesterdayData?.skipped,
           notRatedYesterday: !yesterdayData?.lastRatingDate,
-          hasEligibleSessions: eligibleSessions.length > 0,
+          hasEligibleSessions: false,
         },
       };
     };

@@ -8,11 +8,11 @@ import warningImg from "@/assets/images/paymentFailed.svg";
 import pendingImg from "@/assets/images/paymentPending.svg";
 import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
-import { addToBalance, setPaymentInProgress, setLastTransaction } from "@/store/balanceSlice";
+import { addToBalance, setLastTransaction } from "@/store/balanceSlice";
 
 // Order Summary Card Component
 const OrderSummaryCard = () => {
-  const orderItems = [
+  const _orderItems = [
     { name: "باقة الصحة العامة", price: 200 },
     { name: "باقة ركن المسلم", price: 100 },
     { name: "باقة اللغة الانجليزية المستوي الاول", price: 300 },
@@ -21,7 +21,7 @@ const OrderSummaryCard = () => {
   ];
 
   const discount = 500;
-  const subtotal = orderItems.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = _orderItems.reduce((sum, item) => sum + item.price, 0);
   const total = subtotal - discount;
 
   // return (
@@ -154,7 +154,6 @@ const PaymentStatus = () => {
   const { status } = useParams();
   const [transactionData, setTransactionData] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  const { currentBalance } = useSelector((state) => state.balance);
   
   const data = STATUS_CONFIG[status];
 

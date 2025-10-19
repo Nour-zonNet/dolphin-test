@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import offlineDolphin from '@/assets/images/offline-dolphin.svg';
 import { Retry } from '@/utils/icons';
 
-const RefreshIcon = ({ className }) => (
+const RefreshIcon = () => (
   <Retry className="w-4 h-4 md:w-6 md:h-6" />
 );
 

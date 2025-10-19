@@ -25,7 +25,7 @@ export const transformApiTransactions = (apiTransactions = []) => {
  * @param {number} amount - Transaction amount
  * @returns {string} Transaction title
  */
-const getTransactionTitle = (type, amount) => {
+const getTransactionTitle = (type, _amount) => {
   const typeLabels = {
     'deposit': 'شحن الرصيد',
     'withdrawal': 'سحب من الرصيد',
@@ -86,8 +86,8 @@ const formatTransactionDate = (dateString) => {
     };
     
     return date.toLocaleDateString('ar-SA', options);
-  } catch (error) {
-    console.error('Error formatting date:', error);
+  } catch (_error) {
+    // Error formatting date
     return 'تاريخ غير محدد';
   }
 };

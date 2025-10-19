@@ -24,11 +24,7 @@ export const chargeWallet = async (amount) => {
     
     return response.data;
   } catch (error) {
-    console.error('❌ Wallet charge error:', error);
-    console.error('📋 Error response:', error.response?.data);
-    console.error('🔢 Error status:', error.response?.status);
-    console.error('📄 Error headers:', error.response?.headers);
-    
+    // Wallet charge error
     throw new Error(error.response?.data?.message || error.message || 'فشل في شحن المحفظة');
   }
 };
@@ -40,10 +36,7 @@ export const getWalletBalance = async () => {
     
     return response.data;
   } catch (error) {
-    console.error('Wallet balance error:', error);
-    console.error('Error response:', error.response?.data);
-    console.error('Error status:', error.response?.status);
-    
+    // Wallet balance error
     // Re-throw the error so it can be handled by the calling code
     throw error;
   }

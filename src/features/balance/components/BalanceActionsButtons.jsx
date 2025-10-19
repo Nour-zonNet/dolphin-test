@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Gift, Plus } from "@/utils/icons";
 import { useModal } from "@/components/feedback/modal/useModal";
 
@@ -8,12 +7,10 @@ import { useModal } from "@/components/feedback/modal/useModal";
  * Uses the centralized modal system for better state management
  */
 const BalanceActionsButtons = () => {
-  const navigate = useNavigate();
   const { openAddBalanceModal, openAddCouponModal } = useModal();
 
   const handleAddBalance = () => {
     openAddBalanceModal((data) => {
-      
       // After payment initiation, redirect directly to MyFatora
       if (data && data.invoice_id && data.url) {
         
@@ -40,7 +37,7 @@ const BalanceActionsButtons = () => {
           window.location.href = data.url;
         }, 1000); // 1 second delay
       } else {
-        console.error('Invalid payment data received:', data);
+        // Invalid payment data received
       }
     });
   };

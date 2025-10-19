@@ -41,7 +41,7 @@ export const useAppInitialization = () => {
           getClasses(),
         ]);
       } catch (error) {
-        console.error("❌ Failed to initialize app:", error);
+        // Failed to initialize app
         initialized.current = null; // allow retry if initialization fails
       }
     };

@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLessons } from './useLessons';
 import { LESSON_STATUS } from '../../../utils';
-import { useModal } from '@/components/feedback/modal/useModal';
 import { sessionReviewService } from '@/services/sessionReview';
-import { useLocation } from 'react-router-dom';
 
 const STORAGE_KEY = 'sessionRatingModal';
 
@@ -57,8 +55,6 @@ const validateSessionData = (session) => {
 export const useSessionRatingModal = () => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const { items } = useLessons();
-  const { openSessionRatingModal } = useModal();
-  const location = useLocation();
 
   // Get stored rating data for a specific date
   const getStoredRatingData = useCallback((dateString) => {
@@ -70,7 +66,7 @@ export const useSessionRatingModal = () => {
       const stored = localStorage.getItem(storageKey);
       return stored ? JSON.parse(stored) : null;
     } catch (error) {
-      console.warn('Failed to parse stored rating data:', error);
+      // Failed to parse stored rating data
       return null;
     }
   }, []);
@@ -84,7 +80,7 @@ export const useSessionRatingModal = () => {
       const storageKey = `${STORAGE_KEY}_${dateString}`;
       localStorage.setItem(storageKey, JSON.stringify(data));
     } catch (error) {
-      console.warn('Failed to save rating data:', error);
+      // Failed to save rating data
       // Silently handle localStorage errors
     }
   }, []);
@@ -121,16 +117,18 @@ export const useSessionRatingModal = () => {
         return false;
       }
       
-      // Include today's sessions
+      // Only include today's sessions or yesterday's sessions (if not rated)
+      // Do not include sessions older than yesterday
       if (itemDate === todayStr) {
         return true;
       }
       
-      // Include yesterday's sessions if they weren't rated
+      // Include yesterday's sessions only if they weren't rated and we're showing yesterday's sessions
       if (shouldShowYesterdaySessions && itemDate === yesterdayStr) {
         return true;
       }
       
+      // Exclude any sessions older than yesterday
       return false;
     });
   }, [items, getStoredRatingData]);
@@ -370,11 +368,10 @@ export const useSessionRatingModal = () => {
     setShouldShowModal(false);
   }, [saveRatingData, getStoredRatingData]);
 
-  // Check for modal on component mount and when lessons change
+  // Check for modal eligibility on component mount and when lessons change
   useEffect(() => {
-    const checkAndShowModal = () => {
+    const checkModalEligibility = () => {
       const shouldShow = checkShouldShowModal();
-      const eligibleSessions = getEligibleSessions();
       
       // Only update state if it's different to prevent unnecessary re-renders
       setShouldShowModal(prevShouldShow => {
@@ -383,31 +380,18 @@ export const useSessionRatingModal = () => {
         }
         return prevShouldShow;
       });
-      
-      if (shouldShow && eligibleSessions.length > 0) {
-        // Add a small delay to ensure the page is fully loaded
-        const timer = setTimeout(() => {
-          openSessionRatingModal(
-            eligibleSessions,
-            handleSubmitRatings,
-            handleCloseModal
-          );
-        }, 500);
-        
-        return () => clearTimeout(timer);
-      }
     };
 
     // Initial check
-    checkAndShowModal();
+    checkModalEligibility();
 
     // Set up periodic check every 10 minutes to reduce unnecessary API calls
-    const intervalId = setInterval(checkAndShowModal, 10 * 60 * 1000);
+    const intervalId = setInterval(checkModalEligibility, 10 * 60 * 1000);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [items, checkShouldShowModal, openSessionRatingModal, getEligibleSessions, handleSubmitRatings, handleCloseModal, location.pathname]);
+  }, [items, checkShouldShowModal]);
 
   // Memoize eligible sessions to prevent unnecessary re-renders
   const eligibleSessions = useMemo(() => getEligibleSessions(), [items]);

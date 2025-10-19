@@ -245,7 +245,7 @@ const Board = () => {
         try {
           pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
         } catch (error) {
-          console.warn("Failed to configure PDF.js worker:", error);
+          // Failed to configure PDF.js worker
         }
       }
 
@@ -307,9 +307,9 @@ const Board = () => {
         resetHistory();
         saveToHistory([], [], [], initialPageStates);
       }
-    } catch (error) {
-      console.error("Error importing PDF:", error);
-      addError(error, "PDF Import");
+    } catch (_error) {
+      // Error importing PDF
+      addError(_error, "PDF Import");
     }
   };
 
@@ -387,7 +387,7 @@ const Board = () => {
         .replace(/:/g, "-");
       pdf.save(`drawing-board-${timestamp}.pdf`);
     } catch (error) {
-      console.error("Error exporting to PDF:", error);
+      // Error exporting to PDF
       addError(error, "PDF Export");
     }
   };

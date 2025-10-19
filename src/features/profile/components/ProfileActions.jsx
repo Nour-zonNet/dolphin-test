@@ -35,7 +35,7 @@ const ProfileActions = () => {
       });
       setIsDeleteModalOpen(false);
     } catch (error) {
-      console.error("Error while deleting account:", error);
+      // Error while deleting account
     }
   };
 

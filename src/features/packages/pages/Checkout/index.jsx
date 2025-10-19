@@ -17,7 +17,6 @@ export const Checkout = () => {
 
   useEffect(() => {
     // Useful for debugging data coming from selector
-    // console.debug("selectedPackages", selectedPackages);
   }, [selectedPackages]);
 
   const handleSubmitTrial = useCallback(async () => {
@@ -35,9 +34,7 @@ export const Checkout = () => {
         onClose: () => (window.location.href = "/schedule"),
       });
     } catch (error) {
-      console.error("Error creating trial subscription:", error);
-
-
+      // Error creating trial subscription
 
       openStatusModal(MODAL_TYPES.ERROR, {
         title: "حدث خطأ",

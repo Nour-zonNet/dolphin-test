@@ -20,9 +20,9 @@ export const useTransactions = () => {
     try {
       setLocalError('');
       await dispatch(fetchWalletBalance()).unwrap();
-    } catch (err) {
+    } catch (_err) {
       setLocalError('فشل في تحميل المعاملات. حاول مرة أخرى.');
-      console.error('Error loading transactions:', err);
+      // Error loading transactions
     }
   }, [dispatch]);
 

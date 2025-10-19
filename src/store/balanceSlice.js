@@ -26,7 +26,7 @@ export const fetchWalletBalance = createAsyncThunk(
     } catch (error) {
       // Handle 404 error gracefully - endpoint might not be implemented yet
       if (error.response?.status === 404) {
-        console.warn('Wallet balance endpoint not available yet, using cached balance');
+        // Wallet balance endpoint not available yet, using cached balance
         return { balance: getCachedBalance(), transactions: [] }; // Return cached balance instead of rejecting
       }
       return rejectWithValue(error.message);

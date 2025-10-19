@@ -14,7 +14,7 @@ const testSessionReview = async () => {
     };
     
     const response = await sessionReviewService.submitSessionReview(reviewData);
-    console.log('Single review response:', response);
+    
     
     // Test multiple reviews submission
     const multipleReviews = [
@@ -31,10 +31,10 @@ const testSessionReview = async () => {
     ];
     
     const responses = await sessionReviewService.submitSessionReviews({ reviews: multipleReviews });
-    console.log('Multiple reviews response:', responses);
+    
     
   } catch (error) {
-    console.error('Test failed:', error);
+    // Test failed
   }
 };
 

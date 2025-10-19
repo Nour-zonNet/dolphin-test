@@ -192,8 +192,8 @@ const ModalManager = () => {
               if (props.callbackId) {
                 executeCallback(props.callbackId, data);
               }
-            } catch (error) {
-              console.error('Error in SessionRatingModal onSubmit:', error);
+            } catch (_error) {
+              // Error in SessionRatingModal onSubmit
             } finally {
               handleClose();
             }

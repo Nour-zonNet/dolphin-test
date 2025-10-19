@@ -57,8 +57,8 @@ const AddSiblingsPage = () => {
       setFullName("");
       setGradeLevel("");
       resetImage();
-    } catch (error) {
-      console.warn("Failed to save to server, but stored locally", error);
+    } catch (_error) {
+      // Failed to save to server, but stored locally
     } finally {
       setIsSubmitting(false);
     }

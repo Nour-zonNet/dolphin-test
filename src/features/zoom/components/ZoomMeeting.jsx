@@ -28,7 +28,7 @@ function ZoomMeting() {
       const signature = res.signature;
       startMeeting(signature);
     } catch (e) {
-      console.log(e);
+      // Handle error silently
     }
   };
 
@@ -51,9 +51,9 @@ function ZoomMeting() {
         tk: registrantToken,
         zak: zakToken,
       });
-      console.log("تم الانضمام الى الحصة بنجاح");
+      // Successfully joined the meeting
     } catch (error) {
-      console.log(error);
+      // Handle error silently
     }
   }
 

@@ -87,7 +87,7 @@ const PDFPreview = ({
       onLoad();
       
     } catch (err) {
-      console.error("Error loading PDF:", err);
+      // Error loading PDF
       setError(err.message || "Failed to load PDF");
       onError(err);
     } finally {

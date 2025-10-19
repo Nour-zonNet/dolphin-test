@@ -16,8 +16,8 @@ const PreviewScheduleBtn = ({
     try {
       await dispatch(fetchLessons()).unwrap();
       setIsOpen(true);
-    } catch (error) {
-      console.error("Failed to fetch lessons:", error);
+    } catch (_error) {
+      // Failed to fetch lessons
     }
   }, [dispatch]);
 

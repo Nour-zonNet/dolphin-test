@@ -43,8 +43,8 @@ export const useSiblingForm = () => {
         try {
           await addBrother(siblingData).unwrap();
           toast.success("تمت إضافة الأخ بنجاح");
-        } catch (error) {
-          console.warn("Failed to save to server, but stored locally", error);
+        } catch (_error) {
+          // Failed to save to server, but stored locally
           toast.success("تمت إضافة الأخ بنجاح (محلياً)");
         }
 

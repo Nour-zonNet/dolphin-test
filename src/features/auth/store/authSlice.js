@@ -85,7 +85,7 @@ export const updateUserImage = createAsyncThunk(
       await dispatch(fetchCurrentUser());
       return data;
     } catch (err) {
-      console.error("Update user image error:", err);
+      // Update user image error
       const errorMessage = err.response?.data?.message || 
                           err.response?.data?.error || 
                           err.message || 
@@ -154,7 +154,6 @@ export const sendOtpResetPassword = createAsyncThunk(
       const response = await authRepository.sendOtpResetPassword(credentials);
       return response;
     } catch (error) {
-      console.log(error);
       return rejectWithValue(error.response.data.error || "فشل في إرسال رمز إعادة تعيين كلمة المرور");
     }
   }
@@ -166,7 +165,6 @@ export const verifyOtpResetPassword = createAsyncThunk(
       const response = await authRepository.verifyOtpResetPassword(credentials);
       return response;
     } catch (error) {
-      console.log(error);
       return rejectWithValue(error.response.data.error || "فشل في التحقق من رمز إعادة تعيين كلمة المرور");
     }
   }
@@ -179,7 +177,6 @@ export const resetPassword = createAsyncThunk(
       const response = await authRepository.resetPassword(credentials);
       return response;
     } catch (error) {
-      console.log(error);
       return rejectWithValue(error.response.data.error || "فشل في إعادة تعيين كلمة المرور. تأكد من صحة البيانات");
     }
   }
@@ -200,7 +197,6 @@ export const disActiveAccount = createAsyncThunk(
       const result = await authRepository.disActiveAccount();
       return result;
     } catch (error) {
-      console.log(error);
       return rejectWithValue(error.response.data.error || "فشل في إلغاء تفعيل الحساب. تأكد من صحة البيانات");
     }
   }
@@ -308,15 +304,18 @@ const authSlice = createSlice({
       .addCase(updateUserImage.pending, handlePending)
       .addCase(updateUserImage.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("Updated user image:", action.payload);
       })
-      .addCase(updateUserImage.rejected, handleRejected)
+      .addCase(updateUserImage.rejected, (state, _action) => {
+        state.loading = false;
+      })
 
       .addCase(updateUser.pending, handlePending)
       .addCase(updateUser.fulfilled, (state) => {
         state.loading = false;
       })
-      .addCase(updateUser.rejected, handleRejected);
+      .addCase(updateUser.rejected, (state, _action) => {
+        state.loading = false;
+      });
     // send OTP reset password
     builder
       .addCase(sendOtpResetPassword.pending, handlePending)
