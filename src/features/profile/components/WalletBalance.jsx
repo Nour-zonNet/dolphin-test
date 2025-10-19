@@ -1,17 +1,19 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { ProfileButtons, ProfileCard } from '@/components'
 import { useNavigate } from 'react-router-dom'
 import FormatWithCurrency from '@/utils/FormatWithCurrency';
 
 const WalletBalance = () => {
   const navigate = useNavigate();
+  const { currentBalance } = useSelector((state) => state.balance);
   
   return (
       <ProfileCard className="md:h-[178px] flex flex-col items-center justify-center gap-4 p-6">
         <h3 className="flex items-center gap-2 font-semibold text-lg text-[#BA7C28] md:text-3xl lg:text-5xl text-center">
           الرصيد:{" "}
             <FormatWithCurrency 
-              amount={0} 
+              amount={currentBalance} 
               fractionDigits={0} 
               className="flex items-center gap-2"
               symbolFill="#BA7C28"

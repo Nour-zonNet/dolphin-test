@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, DatePicker, SearchTransactions } from "@/utils/icons";
 import highlight from "@/assets/balance/highlight.svg";
 
-const TransactionsFilter = ({ onDateFilter }) => {
+const TransactionsFilter = ({ onDateFilter, onFiltering }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("جميع الأشهر");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [isFiltering, setIsFiltering] = useState(false);
   const dropdownRef = useRef(null);
 
   const monthOptions = [
@@ -36,9 +37,10 @@ const TransactionsFilter = ({ onDateFilter }) => {
     };
   }, [isDropdownOpen]);
 
-  const handleSelectMonth = (month) => {
+  const handleSelectMonth = async (month) => {
     setSelectedMonth(month);
     setIsDropdownOpen(false);
+    setIsFiltering(true);
     
     // تطبيق التصفية حسب الشهر المحدد
     const today = new Date();
@@ -67,8 +69,21 @@ const TransactionsFilter = ({ onDateFilter }) => {
     setToDate(endDate);
     
     if (onDateFilter) {
-      onDateFilter(startDate, endDate);
+      await onDateFilter(startDate, endDate);
     }
+    
+    // Notify parent component about filtering state
+    if (onFiltering) {
+      onFiltering(true);
+    }
+    
+    // Simulate loading time for better UX
+    setTimeout(() => {
+      setIsFiltering(false);
+      if (onFiltering) {
+        onFiltering(false);
+      }
+    }, 500);
   };
 
   const handleDateChange = (type, value) => {
@@ -84,34 +99,40 @@ const TransactionsFilter = ({ onDateFilter }) => {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     // Validate date range
     if (fromDate && toDate && fromDate > toDate) {
       alert("تاريخ البداية يجب أن يكون قبل تاريخ النهاية");
       return;
     }
 
+    setIsFiltering(true);
+    
+    // Notify parent component about filtering state
+    if (onFiltering) {
+      onFiltering(true);
+    }
+
     // If no dates are selected, show all transactions
     if (!fromDate && !toDate) {
       if (onDateFilter) {
-        onDateFilter("", "");
+        await onDateFilter("", "");
       }
-      return;
+    } else {
+      if (onDateFilter) {
+        await onDateFilter(fromDate, toDate);
+      }
     }
-
-    if (onDateFilter) {
-      onDateFilter(fromDate, toDate);
-    }
+    
+    // Simulate loading time for better UX
+    setTimeout(() => {
+      setIsFiltering(false);
+      if (onFiltering) {
+        onFiltering(false);
+      }
+    }, 500);
   };
 
-  // const handleClearFilters = () => {
-  //   setFromDate("");
-  //   setToDate("");
-  //   setSelectedMonth("جميع الأشهر");
-  //   if (onDateFilter) {
-  //     onDateFilter("", "");
-  //   }
-  // };
 
   return (
     <div className="w-[90%] mx-auto mt-10 relative">
@@ -185,12 +206,21 @@ const TransactionsFilter = ({ onDateFilter }) => {
             {/* Search Button */}
             <button
               onClick={handleSearch}
-              className="flex bg-orangedeep hover:bg-btnClicked rounded-tr rounded-tl md:rounded-4xl 
+              disabled={isFiltering}
+              className={`flex rounded-tr rounded-tl md:rounded-4xl 
                         w-full md:w-[140px] h-[50px] md:h-[90px] 
                         items-center justify-center 
-                        cursor-pointer transition-colors duration-300"
+                        transition-colors duration-300 ${
+                          isFiltering 
+                            ? 'bg-gray-400 cursor-not-allowed' 
+                            : 'bg-orangedeep hover:bg-btnClicked cursor-pointer'
+                        }`}
             >
-              <SearchTransactions className="w-5 md:w-6" />
+              {isFiltering ? (
+                <div className="w-5 md:w-6 h-5 md:h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <SearchTransactions className="w-5 md:w-6" />
+              )}
             </button>
           </div>
         </div>

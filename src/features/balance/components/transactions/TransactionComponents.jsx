@@ -1,13 +1,13 @@
 import React from 'react';
 import { getStatusColor, formatCurrency } from '../../utils/transactionUtils';
-import { STATUS_LABELS } from '../../utils/sampleData';
+import { getArabicStatusLabel } from '../../utils/transactionTransform';
 
 /**
  * Transaction status badge component
  */
 export const TransactionStatusBadge = ({ status, className = '' }) => {
   const statusColor = getStatusColor(status);
-  const statusLabel = STATUS_LABELS[status] || status;
+  const statusLabel = getArabicStatusLabel(status);
 
   return (
     <span 

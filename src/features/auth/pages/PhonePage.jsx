@@ -14,7 +14,6 @@ const PhonePage = () => {
 
   const handlePhoneSubmit = async () => {
     const res = await checkPhone({ phone_number: phoneNumber }).unwrap();
-    // console.log(res);
     if (res?.success) {
       if (res?.data?.otp_sent) {
         navigate("/auth/register", { state: { phoneNumber } });

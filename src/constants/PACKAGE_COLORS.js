@@ -65,10 +65,6 @@ export const packageStyles = {
     image: quran,
     bgColor: "#9A8158",
   },
-  // 113: {
-  //   image: tooth,
-  //   bgColor: "#0077B6",
-  // },
   114: {
     image: game,
     bgColor: "#D8D8EB",

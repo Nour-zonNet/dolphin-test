@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Header from "@/components/layout/Header";
 import { LeftArrowFilled, SupportIcon, WalletGray, Retry } from "@/utils/icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
@@ -7,10 +8,11 @@ import warningImg from "@/assets/images/paymentFailed.svg";
 import pendingImg from "@/assets/images/paymentPending.svg";
 import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
+import { addToBalance, setLastTransaction } from "@/store/balanceSlice";
 
 // Order Summary Card Component
 const OrderSummaryCard = () => {
-  const orderItems = [
+  const _orderItems = [
     { name: "باقة الصحة العامة", price: 200 },
     { name: "باقة ركن المسلم", price: 100 },
     { name: "باقة اللغة الانجليزية المستوي الاول", price: 300 },
@@ -19,50 +21,50 @@ const OrderSummaryCard = () => {
   ];
 
   const discount = 500;
-  const subtotal = orderItems.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = _orderItems.reduce((sum, item) => sum + item.price, 0);
   const total = subtotal - discount;
 
-  return (
-    <div className="bg-white border border-[#8C8C8C22] rounded-[24px] p-6 w-full">
-      <h3 className="text-lg md:text-xl font-bold text-black mb-6">ملخص الطلب</h3>
+  // return (
+  //   <div className="bg-white border border-[#8C8C8C22] rounded-[24px] p-6 w-full">
+  //     <h3 className="text-lg md:text-xl font-bold text-black mb-6">ملخص الطلب</h3>
       
-      <div className="space-y-3 mb-4">
-        {orderItems.map((item, index) => (
-          <div key={index} className="flex justify-between gap-6 items-center">
-            <span className="text-[#645C5C] font-medium text-sm md:text-lg">{item.name}</span>
-            <FormatWithCurrency 
-              amount={item.price} 
-              symbolFill="#645C5C" 
-              symbolClass="w-4 h-4 md:w-6 md:h-6"
-              className="text-[#645C5C] font-medium"
-            />
-          </div>
-        ))}
-      </div>
+  //     <div className="space-y-3 mb-4">
+  //       {orderItems.map((item, index) => (
+  //         <div key={index} className="flex justify-between gap-6 items-center">
+  //           <span className="text-[#645C5C] font-medium text-sm md:text-lg">{item.name}</span>
+  //           <FormatWithCurrency 
+  //             amount={item.price} 
+  //             symbolFill="#645C5C" 
+  //             symbolClass="w-4 h-4 md:w-6 md:h-6"
+  //             className="text-[#645C5C] font-medium"
+  //           />
+  //         </div>
+  //       ))}
+  //     </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <span className="text-[#AE7426] font-medium text-sm md:text-lg">الخصم</span>
-        <FormatWithCurrency 
-          amount={-discount}
-          symbolFill="#AE7426" 
-          symbolClass="w-4 h-4 md:w-6 md:h-6"
-          className="text-[#AE7426] font-medium"
-        />
-      </div>
+  //     <div className="flex justify-between items-center mb-4">
+  //       <span className="text-[#AE7426] font-medium text-sm md:text-lg">الخصم</span>
+  //       <FormatWithCurrency 
+  //         amount={-discount}
+  //         symbolFill="#AE7426" 
+  //         symbolClass="w-4 h-4 md:w-6 md:h-6"
+  //         className="text-[#AE7426] font-medium"
+  //       />
+  //     </div>
 
-      <div className="border-t border-dashed border-gray-300 pt-4">
-        <div className="flex justify-between items-center">
-          <span className="text-navyteal font-bold text-base md:text-lg">الإجمالي</span>
-          <FormatWithCurrency 
-            amount={total} 
-            symbolFill="#08233F" 
-            symbolClass="w-4 h-4 md:w-6 md:h-6"
-            className="text-navyteal font-bold text-lg"
-          />
-        </div>
-      </div>
-    </div>
-  );
+  //     <div className="border-t border-dashed border-gray-300 pt-4">
+  //       <div className="flex justify-between items-center">
+  //         <span className="text-navyteal font-bold text-base md:text-lg">الإجمالي</span>
+  //         <FormatWithCurrency 
+  //           amount={total} 
+  //           symbolFill="#08233F" 
+  //           symbolClass="w-4 h-4 md:w-6 md:h-6"
+  //           className="text-navyteal font-bold text-lg"
+  //         />
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
 };
 
 const STATUS_CONFIG = {
@@ -75,14 +77,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "العودة للرئيسية",
-        iconName: "backToHome",
+        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
         variant: "filled",
         onClick: (navigate) => navigate("/"),
       },
       {
         type: "link",
         label: "معاينة الرصيد",
-        iconName: "viewBalance",
+        icon: <WalletGray fill="#0C2D40" />,
         variant: "outline",
         to: "/balance-details",
       },
@@ -97,14 +99,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "حاول مرة أخرى",
-        iconName: "retry",
+        icon: <Retry className="w-4 h-4 md:w-6 md:h-6" />,
         variant: "filled",
         onClick: () => window.history.back(),
       },
       {
         type: "button",
         label: "العودة للرئيسية",
-        iconName: "backToHome",
+        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
@@ -119,14 +121,14 @@ const STATUS_CONFIG = {
       {
         type: "button",
         label: "تواصل مع الدعم",
-        iconName: "support",
+        icon: <SupportIcon />,
         variant: "filled",
         onClick: () => window.history.back(),
       },
       {
         type: "button",
         label: "العودة للرئيسية",
-        iconName: "backToHome",
+        icon: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
         variant: "outline",
         onClick: (navigate) => navigate("/"),
       },
@@ -148,19 +150,58 @@ const buttonClasses = (variant) => {
 
 const PaymentStatus = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { status } = useParams();
+  const [transactionData, setTransactionData] = useState(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  
   const data = STATUS_CONFIG[status];
 
-  // Icon mapping function
-  const getIcon = (iconName) => {
-    const iconMap = {
-      backToHome: <LeftArrowFilled className="w-4 h-4 md:w-6 md:h-6" color="#0C2D40" />,
-      viewBalance: <WalletGray fill="#0C2D40" />,
-      retry: <Retry className="w-4 h-4 md:w-6 md:h-6" />,
-      support: <SupportIcon />,
-    };
-    return iconMap[iconName] || null;
-  };
+  useEffect(() => {
+    // Get transaction data from sessionStorage or localStorage
+    const sessionTransaction = sessionStorage.getItem('currentTransaction');
+    const localTransaction = localStorage.getItem('pendingTransaction');
+    
+    if (sessionTransaction) {
+      setTransactionData(JSON.parse(sessionTransaction));
+    } else if (localTransaction) {
+      setTransactionData(JSON.parse(localTransaction));
+    }
+
+    // Handle different payment statuses
+    if (status === 'success' && transactionData) {
+      // Payment was successful, add balance with bonus
+      const totalAmount = transactionData.amount + (transactionData.bonusAmount || 0);
+      dispatch(addToBalance(totalAmount));
+      
+      // Update transaction status
+      dispatch(setLastTransaction({
+        ...transactionData,
+        status: 'success',
+        verifiedAt: new Date().toISOString(),
+      }));
+      
+      // Clear pending transaction
+      localStorage.removeItem('pendingTransaction');
+      sessionStorage.removeItem('currentTransaction');
+    } else if (status === 'failed' && transactionData) {
+      // Payment failed, update transaction status
+      dispatch(setLastTransaction({
+        ...transactionData,
+        status: 'failed',
+        verifiedAt: new Date().toISOString(),
+      }));
+      
+      // Clear pending transaction
+      localStorage.removeItem('pendingTransaction');
+      sessionStorage.removeItem('currentTransaction');
+    } else if (status === 'pending' && transactionData?.id) {
+      // Payment is pending - in real implementation, this would be handled by webhook or polling
+      // For now, we'll just show the pending status
+      setIsVerifying(true);
+      
+    }
+  }, [status, transactionData?.id, dispatch, navigate]);
 
   if (!data) return <div className="p-6 text-center text-red-500">حالة غير معروفة</div>;
 
@@ -169,32 +210,32 @@ const PaymentStatus = () => {
       <Header title={data.title} onBack="/profile" showBalanceSection={false} showArrow={false} />
 
       <div className="flex flex-col items-center px-4 py-8 gap-6 mt-14 md:mt-20 lg:mt-8">
-        {/* For success status, show image and card side by side */}
-        {status === 'success' ? (
-          <div className="flex flex-col lg:flex-row items-center justify-center w-full lg:gap-60 gap-10">
-            <img src={data.image} alt={data.title} className="w-[40%] md:w-[30%] lg:w-[20%] h-auto" loading="lazy" />
-            <div>
-              <OrderSummaryCard />
-            </div>
-          </div>
-        ) : (
-          <img src={data.image} alt={data.title} className="w-[40%] md:w-[30%] lg:w-[20%] h-auto" loading="lazy" />
-        )}
+        <img src={data.image} alt={data.title} className="w-[40%] md:w-[30%] lg:w-[20%] h-auto" loading="lazy" />
 
         <div className="text-center mb-4 lg:mb-6">
           <h2 className="font-semibold md:text-3xl text-xl text-navyteal">{data.heading}</h2>
           <p className="font-semibold text-navyteal md:text-2xl text-lg mt-4">{data.message}</p>
+          
+          {/* Verification Status */}
+          {isVerifying && (
+            <div className="mt-4 p-4 bg-orange-50 rounded-lg">
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-orangedeep border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-orangedeep font-semibold">جاري التحقق من حالة الدفع...</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {data.actions.map((a, i) =>
           a.type === "link" ? (
             <Link key={i} to={a.to} className={`${buttonClasses(a.variant)} lg:mt-4`}>
-              {getIcon(a.iconName)}
+              {a.icon}
               <span>{a.label}</span>
             </Link>
           ) : (
             <button key={i} onClick={() => a.onClick(navigate)} className={`${buttonClasses(a.variant)} lg:mt-4`}>
-              {getIcon(a.iconName)}
+              {a.icon}
               {a.label}
             </button>
           )

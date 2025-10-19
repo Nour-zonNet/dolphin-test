@@ -56,10 +56,11 @@ const TransactionCard = ({ transaction, className = '' }) => {
 
   const copyTransactionId = async () => {
     try {
-      await navigator.clipboard.writeText(transaction.id);
+      const idToCopy = transaction.reference_id || transaction.id;
+      await navigator.clipboard.writeText(idToCopy.toString());
       // TODO: Add toast notification for successful copy
-    } catch (error) {
-      console.error('Failed to copy transaction ID:', error);
+    } catch (_error) {
+      // Failed to copy transaction ID
       // TODO: Add error notification
     }
   };
@@ -99,14 +100,14 @@ const TransactionCard = ({ transaction, className = '' }) => {
                 {typeLabel}
               </span>
               <span className="text-[#D9D9D9]">|</span>
-              <span className="text-[#686868]">رقم العملية: {transaction.id}</span>
+              <span className="text-[#686868]">رقم العملية: {transaction.reference_id || transaction.id}</span>
               <button 
                 onClick={copyTransactionId}
-                className="flex items-center gap-1 hover:text-blue-600 transition-colors ms-4"
+                className="flex items-center gap-1 hover:text-btnClicked transition-colors ms-4 text-orangedeep cursor-pointer"
                 aria-label="نسخ رقم العملية"
               >
                 <Copy className="w-3 h-3" />
-                <span className="text-[#404040]">نسخ</span>
+                <span>نسخ</span>
               </button>
             </div>
 

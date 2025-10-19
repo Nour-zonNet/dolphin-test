@@ -8,9 +8,12 @@ import SubscriptionSection from "../components/SubscriptionSection";
 import { ProfileActions } from "../components";
 import { useProfile } from "@/features/profile/hooks/useProfile";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
+import { useSelector } from "react-redux";
 
 const ProfilePage = () => {
   const { user } = useProfile();
+  const { currentBalance } = useSelector((state) => state.balance);
+  
   return (
     <div className="min-h-svh bg-white flex flex-col">
       <ProfileHeader title="الملف الشخصي" />
@@ -33,7 +36,7 @@ const ProfilePage = () => {
                 الرصيد:
               </span>
               <FormatWithCurrency
-                amount={0}
+                amount={currentBalance}
                 fractionDigits={0}
                 className="text-navyteal font-bold text-sm md:text-base lg:text-lg"
                 symbolFill="#08233F"

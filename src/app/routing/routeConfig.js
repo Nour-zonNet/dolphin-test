@@ -10,7 +10,6 @@ import SessionPage from "../../features/lessons/pages/SessionPage";
 import GlobalSessionPage from "../../features/lessons/pages/GlobalSession";
 import WeeklySchedule from "../../features/lessons/pages/WeeklySchedule";
 import TeacherProfile from "../../features/teacher/pages/profile";
-import SessionRatingModal from "../../components/feedback/modal/modals/SessionRatingModal";
 import OfflineScreen from "@/components/OfflineScreen";
 // import Board from "../../features/Board/Board";
 import CommunityPage from "@/features/community/CommunityPage";
@@ -289,7 +288,7 @@ export const routes = [
     layout: false,
   },
   {
-    path: "/balance/payment/:status",
+    path: "/payment-status/:status",
     element: PaymentStatus,
     protected: true,
     layout: false,
@@ -356,15 +355,6 @@ export const routes = [
 
     protected: false,
     homeSupportBtn: true,
-    navbar: false,
-    mobileNav: false,
-    layout: false,
-  },
-  {
-    path: "/rating",
-    element: SessionRatingModal,
-    protected: false,
-    homeSupportBtn: false,
     navbar: false,
     mobileNav: false,
     layout: false,

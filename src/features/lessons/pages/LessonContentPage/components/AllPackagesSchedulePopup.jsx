@@ -135,8 +135,8 @@ const AllPackagesSchedulePopup = ({ open, onClose, setOpen, groupInfos }) => {
               }, 500);
             });
           }
-        } catch (error) {
-          console.error('Print failed:', error);
+        } catch (_error) {
+          // Print failed
           // Fallback: try opening in new window
           const printWindow = window.open("/weekly-schedule", "_blank");
           if (printWindow) {

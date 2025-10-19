@@ -6,7 +6,7 @@ import { TRANSACTION_STATUS } from './constants';
  * @param {string} currency - Currency code (default: 'SAR')
  * @returns {string} Formatted currency string
  */
-export const formatCurrency = (amount) => {
+export const formatCurrency = (amount, _currency = 'SAR') => {
   if (typeof amount !== 'number' || isNaN(amount)) {
     return '0.00 ر.س';
   }
@@ -67,15 +67,18 @@ export const filterTransactionsByDate = (transactions, startDate, endDate) => {
   }
 
   return transactions.filter(transaction => {
+    // Handle both timestamp and date fields
     const transactionDate = transaction.timestamp || new Date(transaction.date);
     
     if (startDate) {
       const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0); // Start of day
       if (transactionDate < start) return false;
     }
     
     if (endDate) {
       const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999); // End of day
       if (transactionDate > end) return false;
     }
     

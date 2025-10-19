@@ -52,7 +52,7 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
         confirmChangeGroup
       );
     } catch (error) {
-      console.error("Error fetching groups:", error);
+      // Error fetching groups
     }
   }, [
     groups,

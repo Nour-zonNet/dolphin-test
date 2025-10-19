@@ -4,11 +4,10 @@ import { useLanguageDirection } from "@/hooks/useLanguageDirection";
 import AppProviders from "./AppProviders";
 import AppRoutes from "./AppRoutes";
 import ChatwootInit from "../components/ChatwootInit"
-import MaintenanceScreen from "@/components/MaintenanceScreen";
-
-import GlobalLoader from "@/components/feedback/GlobalLoader";
-import GlobalError from "@/components/feedback/GlobalError";
-import ModalManager from "@/components/feedback/modal/ModalManager";
+// import MaintenanceScreen from "@/components/MaintenanceScreen";
+import { GlobalLoader, GlobalError } from "@/components/feedback";
+import { ModalManager } from "@/components/feedback/modal";
+import SessionRatingInitializer from "@/components/SessionRatingInitializer";
 
 const App = () => {
   useLanguageDirection();
@@ -38,6 +37,7 @@ const App = () => {
         <GlobalLoader />
         <GlobalError />
         <ModalManager />
+        <SessionRatingInitializer />
         <AppRoutes />
       </div>
       <ChatwootInit />

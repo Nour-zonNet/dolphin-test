@@ -39,14 +39,14 @@ export const useLessonHandlers = (
       if (!newWindow) {
         window.location.href = sessionUrl;
       }
-    } catch (error) {
+    } catch (_error) {
       openStatusModal(MODAL_TYPES.ERROR, {
         title: "خطأ غير متوقع",
         message: "حدث خطأ غير متوقع أثناء محاولة فتح الحصة.",
         onConfirm: () => {},
         onClose: () => {},
       });
-      console.error("handleEnterLesson error:", error);
+      // handleEnterLesson error
     }
   }, [dispatch, item.id, item.session_link, openStatusModal]);
 

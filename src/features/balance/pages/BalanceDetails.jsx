@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
 import Divider from '@/components/ui/Divider';
 import { BalanceCard, BalanceActionsButtons } from '../components';
@@ -7,6 +7,7 @@ import { TransactionsList } from '../components/transactions';
 import { useProfile } from '@/features/profile/hooks/useProfile';
 import { useTransactions } from '../hooks/useTransactions';
 import { useTransactionFilter } from '../hooks/useTransactionFilter';
+import { useSelector } from 'react-redux';
 
 /**
  * Enhanced Balance Details Page
@@ -20,16 +21,22 @@ import { useTransactionFilter } from '../hooks/useTransactionFilter';
  */
 const BalanceDetails = () => {
   const { user } = useProfile();
+  const { currentBalance } = useSelector((state) => state.balance);
   const { transactions, loading, error, refreshTransactions } = useTransactions();
   const { 
     filteredTransactions, 
     handleDateFilter, 
-    clearFilters, 
-    hasActiveFilters 
+    _clearFilters, 
+    _hasActiveFilters 
   } = useTransactionFilter(transactions);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const handleRefresh = () => {
     refreshTransactions();
+  };
+
+  const handleFiltering = (filtering) => {
+    setIsFiltering(filtering);
   };
 
   return (
@@ -37,7 +44,7 @@ const BalanceDetails = () => {
       {/* Header */}
       <Header 
         title="تفاصيل الرصيد" 
-        balance={0} 
+        balance={currentBalance} 
         showBalanceSection={false} 
         onBack="/profile" 
       />
@@ -54,15 +61,14 @@ const BalanceDetails = () => {
       {/* Transactions Filter */}
       <TransactionsFilter 
         onDateFilter={handleDateFilter}
-        onClearFilters={clearFilters}
-        hasActiveFilters={hasActiveFilters}
+        onFiltering={handleFiltering}
       />
       
       {/* Transactions List */}
       <TransactionsList 
         transactions={transactions}
         filteredTransactions={filteredTransactions}
-        loading={loading}
+        loading={loading || isFiltering}
         error={error}
         onRefresh={handleRefresh}
       />

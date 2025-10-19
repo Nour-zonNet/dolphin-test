@@ -50,10 +50,7 @@ const HomeSupportBtn = ({ className }) => {
         }
       } catch (e) {
         if (e.name !== "CanceledError") {
-          console.error(
-            "Failed to fetch support number:",
-            e?.response?.data || e?.message || e
-          );
+          // Failed to fetch support number
         }
       } finally {
         setLoadingSupport(false);

@@ -11,14 +11,39 @@ const BalanceActionsButtons = () => {
 
   const handleAddBalance = () => {
     openAddBalanceModal((data) => {
-      console.log('Balance added:', data);
-      // TODO: Handle balance addition logic
+      // After payment initiation, redirect directly to MyFatora
+      if (data && data.invoice_id && data.url) {
+        
+        // Store the transaction data for the status page
+        sessionStorage.setItem('currentTransaction', JSON.stringify({
+          id: data.invoice_id,
+          amount: data.amount,
+          currency: 'SAR',
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          bonusAmount: data.amount * 0.2, // 20% bonus
+        }));
+        localStorage.setItem('pendingTransaction', JSON.stringify({
+          id: data.invoice_id,
+          amount: data.amount,
+          currency: 'SAR',
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          bonusAmount: data.amount * 0.2,
+        }));
+        
+        // Add a small delay to make the network request visible in console
+        setTimeout(() => {
+          window.location.href = data.url;
+        }, 1000); // 1 second delay
+      } else {
+        // Invalid payment data received
+      }
     });
   };
 
   const handleAddCoupon = () => {
     openAddCouponModal((data) => {
-      console.log('Coupon applied:', data);
       // TODO: Handle coupon application logic
     });
   };
@@ -29,8 +54,7 @@ const BalanceActionsButtons = () => {
       <div className="flex flex-col md:flex-row w-[90%] xl:w-[40%] lg:w-[70%] mx-auto gap-[18px] justify-center items-center my-8 md:my-14">
         <button
           onClick={handleAddBalance}
-          disabled={true}
-          className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover transition-colors"
         >
           <Plus className="w-3 md:w-4 lg:w-6" />
           <div className="font-semibold text-sm md:text-2xl">إضافة رصيد</div>

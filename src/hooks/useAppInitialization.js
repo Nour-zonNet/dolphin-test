@@ -7,6 +7,7 @@ import {
 } from "@/features/packages/store/packagesSlice";
 import { fetchSubscriptions } from "@/features/subscription/store/subscriptionSlice";
 import { fetchLessons } from "@/features/lessons/store/lessonsSlice";
+import { fetchWalletBalance } from "@/store/balanceSlice";
 import { useAuth } from "../features/auth/hooks/useAuth";
 import { useClasses } from "./useClasses";
 
@@ -30,16 +31,17 @@ export const useAppInitialization = () => {
         }
 
         // Fetch related data in parallel
-        await Promise.all([
+        await Promise.allSettled([
           dispatch(fetchAllPackages()),
           dispatch(fetchMyPackages()),
           dispatch(fetchLessons()),
           dispatch(fetchSubscriptions()),
+          dispatch(fetchWalletBalance()), // This will handle 404 gracefully
           getBrothers(),
           getClasses(),
         ]);
       } catch (error) {
-        console.error("❌ Failed to initialize app:", error);
+        // Failed to initialize app
         initialized.current = null; // allow retry if initialization fails
       }
     };

@@ -24,7 +24,6 @@ const OtpPage = () => {
       phone_number: phoneNumber,
       otp_code: `${data.otp}`,
     }).unwrap();
-    console.log(res)
     if (res?.success) navigate("/auth/register", { state: { phoneNumber } });
   };
 

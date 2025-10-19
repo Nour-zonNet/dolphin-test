@@ -96,8 +96,8 @@ const ComplaintForm = ({ onClose, onSuccess }) => {
         if (resultAction?.meta?.requestStatus === "fulfilled") {
           onSuccess();
         }
-      } catch (error) {
-        console.error("Error submitting complaint:", error);
+      } catch (_error) {
+        // Error submitting complaint
       }
     },
     [validateForm, submitComplaint, formData, onSuccess]

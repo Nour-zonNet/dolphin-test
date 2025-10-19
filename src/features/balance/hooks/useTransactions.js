@@ -1,33 +1,30 @@
 import { useState, useEffect, useCallback } from 'react';
-import { SAMPLE_TRANSACTIONS } from '../utils/sampleData';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchWalletBalance } from '@/store/balanceSlice';
+import { transformApiTransactions } from '../utils/transactionTransform';
 
 /**
  * Custom hook for managing transaction data
  * @returns {object} Transaction state and handlers
  */
 export const useTransactions = () => {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const { transactions: rawTransactions, isLoading, error } = useSelector((state) => state.balance);
+  const [localError, setLocalError] = useState('');
 
-  // Load transactions (simulated API call)
+  // Transform raw transactions to component format
+  const transactions = transformApiTransactions(rawTransactions);
+
+  // Load transactions from API
   const loadTransactions = useCallback(async () => {
-    setLoading(true);
-    setError('');
-    
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In real implementation, this would be an API call
-      setTransactions(SAMPLE_TRANSACTIONS);
-    } catch (err) {
-      setError('فشل في تحميل المعاملات. حاول مرة أخرى.');
-      console.error('Error loading transactions:', err);
-    } finally {
-      setLoading(false);
+      setLocalError('');
+      await dispatch(fetchWalletBalance()).unwrap();
+    } catch (_err) {
+      setLocalError('فشل في تحميل المعاملات. حاول مرة أخرى.');
+      // Error loading transactions
     }
-  }, []);
+  }, [dispatch]);
 
   // Refresh transactions
   const refreshTransactions = useCallback(() => {
@@ -41,8 +38,8 @@ export const useTransactions = () => {
 
   return {
     transactions,
-    loading,
-    error,
+    loading: isLoading,
+    error: error || localError,
     refreshTransactions,
   };
 };

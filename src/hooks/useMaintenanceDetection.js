@@ -69,7 +69,7 @@ export const useMaintenanceDetection = () => {
             }
           }
         } catch (error) {
-          console.warn('Failed to check maintenance status from API:', error);
+          // Failed to check maintenance status from API
           // Don't enable maintenance mode if API check fails
         }
       }

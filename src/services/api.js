@@ -15,5 +15,32 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Wallet charge API function
+export const chargeWallet = async (amount) => {
+  try {
+    const response = await api.post('/student/wallet/charge', {
+      amount: amount
+    });
+    
+    return response.data;
+  } catch (error) {
+    // Wallet charge error
+    throw new Error(error.response?.data?.message || error.message || 'فشل في شحن المحفظة');
+  }
+};
+
+// Get wallet balance API function
+export const getWalletBalance = async () => {
+  try {
+    const response = await api.get('/student/wallet/balance');
+    
+    return response.data;
+  } catch (error) {
+    // Wallet balance error
+    // Re-throw the error so it can be handled by the calling code
+    throw error;
+  }
+};
+
 export default api;
   
