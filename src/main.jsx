@@ -9,6 +9,17 @@ import { registerSW } from "virtual:pwa-register";
 // (the SW needs its own flag, but setting window helps for some logs)
 window.__WB_DISABLE_DEV_LOGS = true;
 
+// Enhanced error logging for iOS Safari debugging
+window.addEventListener('error', (event) => {
+  console.error('Global error caught:', event.error);
+  console.error('Error message:', event.message);
+  console.error('Error stack:', event.error?.stack);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+});
+
 let updateSW = () => {};
 
 if (import.meta.env.PROD) {

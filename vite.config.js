@@ -158,8 +158,18 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 1000,
-    target: "esnext",
+    // Changed from "esnext" to "es2019" for iOS 13+ compatibility
+    // This ensures the build works on older iOS Safari versions
+    target: ["es2019", "safari13"],
     minify: "esbuild",
+    // Additional optimization for iOS Safari compatibility
+    cssTarget: "safari13",
+  },
+  // Optimize dependencies for iOS compatibility
+  optimizeDeps: {
+    esbuildOptions: {
+      target: "es2019",
+    },
   },
   resolve: {
     alias: {
