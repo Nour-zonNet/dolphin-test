@@ -99,9 +99,9 @@ const formatTransactionDate = (dateString) => {
  */
 export const getArabicStatusLabel = (status) => {
   const statusLabels = {
-    'completed': 'مكتمل',
-    'pending': 'قيد الانتظار',
-    'canceled': 'ملغي'
+    'completed': 'مكتملة',
+    'pending': 'معلقة',
+    'canceled': 'ملغية'
   };
   
   return statusLabels[status] || 'غير محدد';

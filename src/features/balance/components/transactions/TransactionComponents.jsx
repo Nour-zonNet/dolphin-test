@@ -11,7 +11,7 @@ export const TransactionStatusBadge = ({ status, className = '' }) => {
 
   return (
     <span 
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor} ${className}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-medium text-sm md:text-base ${statusColor} ${className}`}
     >
       {statusLabel}
     </span>
@@ -39,7 +39,7 @@ export const TransactionAmount = ({ amount, type, className = '' }) => {
  */
 export const TransactionDate = ({ date, className = '' }) => {
   return (
-    <div className={`text-sm text-gray-500 ${className}`}>
+    <div className={`text-sm md:text-base lg:text-lg text-[#484848] font-semibold ${className}`}>
       {date}
     </div>
   );

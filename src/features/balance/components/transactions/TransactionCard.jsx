@@ -4,6 +4,7 @@ import FormatWithCurrency from '@/utils/FormatWithCurrency';
 import { TransactionStatusBadge, TransactionAmount, TransactionDate, TransactionPaymentMethod } from './TransactionComponents';
 import { TRANSACTION_TYPE_LABELS } from '../../utils/sampleData';
 import { useModal } from '@/components/feedback/modal/useModal';
+import { Book } from '../../../../utils/icons';
 
 /**
  * Enhanced Transaction Card Component
@@ -81,65 +82,80 @@ const TransactionCard = ({ transaction, className = '' }) => {
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-2 md:gap-4 lg:gap-8">
           {/* Status Icon */}
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center">
-              {getStatusIcon(transaction.status)}
-            </div>
-            <TransactionStatusBadge 
-              status={transaction.status} 
-              className="mt-2"
-            />
-          </div>
-
           {/* Transaction Details */}
-          <div className="flex-1">
-            <div className="flex items-start justify-between">
-              <h3 className="text-sm md:text-base lg:text-lg font-bold text-navyteal">
-                {transaction.title}
-              </h3>
-              
-              {/* Amount in mobile view */}
-              <div className="md:hidden items-center gap-4 flex">
-                {formatAmount(transaction.amount, transaction.type)} 
+          <div className="flex items-center gap-4">
+            {/* if transaction.type is 'balance_topup' */}
+            {transaction.type === 'balance_topup' && (
+              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 bg-[#3A880922] rounded-full flex items-center justify-center">
+                <WalletGray className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" />
               </div>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-2 text-sm lg:text-lg text-gray-600 mt-4">
-              <span className={`font-medium ${getTypeColor(transaction.type)}`}>
-                {typeLabel}
-              </span>
-              <span className="text-[#D9D9D9]">|</span>
-              <span className="text-[#686868]">رقم العملية: {transaction.reference_id || transaction.id}</span>
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  copyTransactionId();
-                }}
-                className="flex items-center gap-1 hover:text-btnClicked transition-colors ms-4 text-orangedeep"
-                aria-label="نسخ رقم العملية"
-              >
-                <Copy className="w-3 h-3" />
-                <span>نسخ</span>
-              </button>
-            </div>
-
-            <div className="flex items-center gap-6 mt-4">
-              <div className="flex items-center gap-2">
-                <CalendarGray className="w-3 h-3" />
-                <TransactionDate date={transaction.date} />
+            )}
+            {/* if transaction.type is 'subscription'  */}
+            {transaction.type === 'subscription' && (
+              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 bg-[#E89B3222] rounded-full flex items-center justify-center">
+                <Book className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" fill="#D18C2D"/>
               </div>
+            )}
+            <div>
+              <div className="flex items-start justify-between">
+                <h3 className="text-sm md:text-base lg:text-lg font-bold text-navyteal">
+                  {transaction.title}
+                </h3>
+                
+                {/* Amount in mobile view */}
+                {/* <div className="md:hidden items-center gap-4 flex">
+                  {formatAmount(transaction.amount, transaction.type)} 
+                </div> */}
+              </div>
+          {/*             
+              <div className="flex flex-wrap items-center gap-2 text-sm lg:text-lg text-gray-600 mt-4">
+                <span className={`font-medium ${getTypeColor(transaction.type)}`}>
+                  {typeLabel}
+                </span>
+                <span className="text-[#D9D9D9]">|</span>
+                <span className="text-[#686868]">رقم العملية: {transaction.reference_id || transaction.id}</span>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    copyTransactionId();
+                  }}
+                  className="flex items-center gap-1 hover:text-btnClicked transition-colors ms-4 text-orangedeep"
+                  aria-label="نسخ رقم العملية"
+                >
+                  <Copy className="w-3 h-3" />
+                  <span>نسخ</span>
+                </button>
+              </div> */}
 
-              <div className="flex items-center gap-2">
-                <WalletGray className="w-3 h-3" />
-                <TransactionPaymentMethod paymentMethod={transaction.paymentMethod} />
+              <div className="flex items-center gap-6 mt-4">
+                <div className="flex items-center gap-2">
+                  <CalendarGray className="w-3 h-3" />
+                  <TransactionDate date={transaction.date} />
+                </div>
+
+                {/* <div className="flex items-center gap-2">
+                  <WalletGray className="w-3 h-3" />
+                  <TransactionPaymentMethod paymentMethod={transaction.paymentMethod} />
+                </div> */}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Amount in tablet and desktop */}
-        <div className="md:flex items-center gap-4 hidden">
-          {formatAmount(transaction.amount, transaction.type)} 
+        <div className="flex flex-col items-center gap-4 md:gap-6 ">
+          {/* Amount in tablet and desktop */}
+          <div>
+            {formatAmount(transaction.amount, transaction.type)} 
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 md:w-6 md:h-6 xl:w-8 xl:h-8 rounded-full flex items-center justify-center">
+              {getStatusIcon(transaction.status)}
+            </div>
+            <TransactionStatusBadge 
+              status={transaction.status} 
+              className=""
+            />
+          </div>
         </div>
       </div>
     </div>

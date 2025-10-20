@@ -26,8 +26,10 @@ const BalanceDetails = () => {
   const { 
     filteredTransactions, 
     handleDateFilter, 
-    _clearFilters, 
-    _hasActiveFilters 
+    handleStatusFilter,
+    handleSearch,
+    clearFilters, 
+    hasActiveFilters 
   } = useTransactionFilter(transactions);
   const [isFiltering, setIsFiltering] = useState(false);
 
@@ -61,6 +63,8 @@ const BalanceDetails = () => {
       {/* Transactions Filter */}
       <TransactionsFilter 
         onDateFilter={handleDateFilter}
+        onStatusFilter={handleStatusFilter}
+        onSearch={handleSearch}
         onFiltering={handleFiltering}
       />
       

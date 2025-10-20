@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, DatePicker, SearchTransactions } from "@/utils/icons";
 import highlight from "@/assets/balance/highlight.svg";
-import { Filter, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { SearchFilter } from "../../../utils/icons";
 
-const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch }) => {
+const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch, onStatusFilter }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("جميع الأشهر");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [isFiltering, setIsFiltering] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const dropdownRef = useRef(null);
+  const [selectedStatus, setSelectedStatus] = useState("الكل");
+  const dropdownRefDesktop = useRef(null);
+  const dropdownRefMobile = useRef(null);
 
   const monthOptions = [
     "جميع الأشهر",
@@ -19,13 +22,23 @@ const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch }) => {
     "آخر 3 شهور",
   ];
 
+  const statusOptions = [
+    { value: "الكل", label: "الكل" },
+    { value: "completed", label: "مكتمل" },
+    { value: "canceled", label: "مرفوض" },
+    { value: "pending", label: "معلق" },
+  ];
+
   // Always show all options in the dropdown
   const filteredMonthOptions = monthOptions;
 
   // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      const isDesktopDropdownOpen = dropdownRefDesktop.current && dropdownRefDesktop.current.contains(event.target);
+      const isMobileDropdownOpen = dropdownRefMobile.current && dropdownRefMobile.current.contains(event.target);
+      
+      if (isDropdownOpen && !isDesktopDropdownOpen && !isMobileDropdownOpen) {
         setIsDropdownOpen(false);
       }
     };
@@ -135,6 +148,44 @@ const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch }) => {
     }, 500);
   };
 
+  const handleSearchInput = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    // Call search callback if provided
+    if (onSearch) {
+      onSearch(query);
+    }
+  };
+
+  const handleStatusFilter = (status) => {
+    setSelectedStatus(status);
+    
+    // Call status filter callback if provided
+    if (onStatusFilter) {
+      onStatusFilter(status);
+    }
+  };
+
+  const handleReset = () => {
+    setSelectedMonth("جميع الأشهر");
+    setFromDate("");
+    setToDate("");
+    setSearchQuery("");
+    setSelectedStatus("الكل");
+    
+    // Reset filters
+    if (onDateFilter) {
+      onDateFilter("", "");
+    }
+    if (onSearch) {
+      onSearch("");
+    }
+    if (onStatusFilter) {
+      onStatusFilter("الكل");
+    }
+  };
+
 
   return (
     <div className="w-[90%] mx-auto mt-10 relative">
@@ -149,107 +200,308 @@ const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch }) => {
         />
       </div>
 
-
-      {/* Main filter box */}
-      <div className="flex items-stretch flex-col md:flex-row gap-6 my-12">
-        <div className="flex flex-col md:flex-row items-center justify-between w-full rounded-2xl md:rounded-4xl border-[0.5px] border-[#8C8C8C66] overflow-hidden bg-white relative">
-          <div className="flex flex-col md:flex-row items-center justify-between w-full">
-            {/* From Date */}
-            <div className="flex items-center gap-2 px-4 py-4 lg:py-0 flex-1 lg:border-l-3 md:border-[#165072] w-full border-b md:border-b-0 border-[#D9D9D9]">
-              <div className="flex flex-row md:flex-col items-center gap-8 md:gap-2 ms-0 lg:ms-14 w-full">
-                <span className="text-black font-bold text-[12px] md:text-lg text-nowrap">
-                  من تاريخ:
-                </span>
-                <div className="flex items-center relative">
-                  <DatePicker 
-                    className="w-4 md:w-5 cursor-pointer z-10" 
-                    onClick={() => document.getElementById('fromDateInput').showPicker()}
-                  />
-                  <input
-                    id="fromDateInput"
-                    type="date"
-                    value={fromDate}
-                    onChange={(e) => handleDateChange("from", e.target.value)}
-                    className="w-full h-10 md:h-12 bg-transparent text-sm md:text-base font-bold text-[#8C8C8C] focus:outline-none cursor-pointer"
-                    placeholder="اختر التاريخ"
-                    title="اختر تاريخ البداية"
-                  />
-                </div>
+      {/* Search Input with Filter */}
+      <div className="my-12 relative">
+        <div className="relative">
+          {/* Desktop Layout: Search Input and Status Filters Side by Side */}
+          <div className="hidden md:flex items-center gap-4">
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchInput}
+                placeholder="البحث في المعاملات..."
+                className="w-full h-16 px-16 pr-20 text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orangedeep focus:border-transparent"
+              />
+              
+              {/* Filter Icon (Left) */}
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="فتح خيارات التصفية"
+              >
+                <SearchFilter className="w-5 h-5 text-gray-600" />
+              </button>
+              
+              {/* Search Icon (Right) */}
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                <Search className="w-5 h-5 text-gray-400" />
               </div>
-            </div>
 
-            {/* To Date */}
-            <div className="flex items-center gap-2 px-4 flex-1 w-full py-4 md:py-0 lg:mt-0 border-b md:border-b-0 border-[#D9D9D9]">
-              <div className="flex flex-row md:flex-col items-center gap-8 md:gap-2 ms-0 lg:ms-14 w-full">
-                <span className="text-black font-bold text-[12px] md:text-lg text-nowrap">
-                  إلى تاريخ:
-                </span>
-                <div className="flex items-center relative">
-                  <DatePicker 
-                    className="w-4 md:w-5 cursor-pointer z-10" 
-                    onClick={() => document.getElementById('toDateInput').showPicker()}
-                  />
-                  <input
-                    id="toDateInput"
-                    type="date"
-                    value={toDate}
-                    onChange={(e) => handleDateChange("to", e.target.value)}
-                    className="w-full h-10 md:h-12 bg-transparent text-sm md:text-base font-bold text-[#8C8C8C] focus:outline-none cursor-pointer"
-                    placeholder="اختر التاريخ"
-                    title="اختر تاريخ النهاية"
-                  />
+              {/* Filter Popup - Desktop */}
+              {isDropdownOpen && (
+                <div ref={dropdownRefDesktop} className="absolute top-full mt-4 left-0 right-0 bg-white border border-gray-300 rounded-2xl shadow-lg z-50 p-6">
+                  <div className="relative flex items-center justify-between mb-6">
+                    <button
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors absolute top-0 right-4"
+                      aria-label="إغلاق"
+                    >
+                      <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                    <h3 className="text-lg text-center font-bold text-navyteal w-full">خيارات التصفية</h3>
+                  </div>
+                  <div className="border border-[#D9D9D9] rounded-[16px] p-8 mb-10">
+                    {/* Filter by Months */}
+                    <div className="mb-6">
+                      <h4 className="text-base font-bold text-navyteal mb-4">تصفية بالشهور</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        {monthOptions.map((month) => (
+                          <button
+                            key={month}
+                            onClick={() => handleSelectMonth(month)}
+                            className={`px-4 py-3 rounded-full text-sm font-bold transition-colors ${
+                              selectedMonth === month
+                                ? 'bg-orangedeep text-white'
+                                : 'border border-[#4F4F5066] text-[#3B3B3C] hover:bg-gray-100'
+                            }`}
+                          >
+                            {month}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Filter by Date */}
+                    <div className="mb-6">
+                      <h4 className="text-base font-bold text-navyteal mb-4">تصفية بالتاريخ</h4>
+                      <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">من :</label>
+                          <div className="relative">
+                            <DatePicker 
+                              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer z-10" 
+                              onClick={() => document.getElementById('fromDateInput').showPicker()}
+                            />
+                            <input
+                              id="fromDateInput"
+                              type="date"
+                              value={fromDate}
+                              onChange={(e) => handleDateChange("from", e.target.value)}
+                              className="w-full h-10 md:h-12 pl-10 pr-3 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orangedeep focus:border-transparent"
+                              title="اختر تاريخ البداية"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">إلي :</label>
+                          <div className="relative">
+                            <DatePicker 
+                              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer z-10" 
+                              onClick={() => document.getElementById('toDateInput').showPicker()}
+                            />
+                            <input
+                              id="toDateInput"
+                              type="date"
+                              value={toDate}
+                              onChange={(e) => handleDateChange("to", e.target.value)}
+                              className="w-full h-10 md:h-12 pl-10 pr-3 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orangedeep focus:border-transparent"
+                              title="اختر تاريخ النهاية"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleSearch}
+                      disabled={isFiltering}
+                      className={`flex-1 h-10 md:h-12 rounded-full font-semibold transition-colors cursor-pointer text-sm md:text-base ${
+                        isFiltering 
+                          ? 'bg-orangedeep cursor-not-allowed text-white' 
+                          : 'bg-orangedeep hover:bg-btnClicked text-navyteal'
+                      }`}
+                    >
+                      {isFiltering ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto text-navyteal cursor-pointer"></div>
+                      ) : (
+                        'تصفية'
+                      )}
+                    </button>
+                    <button
+                      onClick={handleReset}
+                      className="flex-1 h-10 md:h-12 rounded-full font-semibold border border-orangedeep text-navyteal hover:bg-orangedeep transition-colors cursor-pointer text-sm md:text-base"
+                    >
+                      اعادة تعيين
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-            {/* Search Button */}
-            <button
-              onClick={handleSearch}
-              disabled={isFiltering}
-              className={`flex rounded-tr rounded-tl md:rounded-4xl 
-                        w-full md:w-[140px] h-[50px] md:h-[90px] 
-                        items-center justify-center 
-                        transition-colors duration-300 ${
-                          isFiltering 
-                            ? 'bg-gray-400 cursor-not-allowed' 
-                            : 'bg-orangedeep hover:bg-btnClicked cursor-pointer'
-                        }`}
-            >
-              {isFiltering ? (
-                <div className="w-5 md:w-6 h-5 md:h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <SearchTransactions className="w-5 md:w-6" />
               )}
-            </button>
-          </div>
-        </div>
+            </div>
 
-         {/* Dropdown */}
-        <div ref={dropdownRef} className="relative h-[50px] md:h-[90px]">
-          <div
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center justify-center gap-4 px-4 min-h-16 md:min-h-23 cursor-pointer min-w-[200px] rounded-2xl md:rounded-4xl border-[0.5px] border-[#8C8C8C66] overflow-hidden bg-white hover:bg-gray-50 transition-colors duration-300"
-          >
-            <span className="text-black font-bold text-base md:text-lg">{selectedMonth}</span>
-            <ChevronDown className={`w-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-          </div>
-
-          {isDropdownOpen && (
-            <div className="absolute top-full mt-4 lg:mt-2 w-full py-4 px-10 bg-white border-[0.5px] border-[#8C8C8C66] rounded-2xl text-center z-10">
-              {filteredMonthOptions.map((month) => (
-                <div
-                  key={month}
-                  onClick={() => handleSelectMonth(month)}
-                  className="px-4 cursor-pointer font-bold text-nowrap text-base md:text-lg text-black border-b border-[#D9D9D9] last:border-b-0 py-4"
+            {/* Status Filter Buttons */}
+            <div className="flex gap-3">
+              {statusOptions.map((status) => (
+                <button
+                  key={status.value}
+                  onClick={() => handleStatusFilter(status.value)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+                    selectedStatus === status.value
+                      ? 'bg-orangedeep text-white'
+                      : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
-                  {month}
-                </div>
+                  {status.label}
+                </button>
               ))}
             </div>
-          )}
+          </div>
+
+          {/* Mobile Layout: Search Input Above, Status Filters Below */}
+          <div className="md:hidden">
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchInput}
+                placeholder="البحث في المعاملات..."
+                className="w-full h-14 px-16 pr-20 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orangedeep focus:border-transparent"
+              />
+              
+              {/* Filter Icon (Left) */}
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="فتح خيارات التصفية"
+              >
+                <SearchFilter className="w-4 h-4 text-gray-600" />
+              </button>
+              
+              {/* Search Icon (Right) */}
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                <Search className="w-5 h-5 text-gray-400" />
+              </div>
+
+              {/* Filter Popup - Mobile */}
+              {isDropdownOpen && (
+                <div ref={dropdownRefMobile} className="absolute top-full mt-4 left-0 right-0 bg-white border border-gray-300 rounded-2xl shadow-lg z-50 p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-bold text-navyteal">خيارات التصفية</h3>
+                    <button
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      aria-label="إغلاق"
+                    >
+                      <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Filter by Months */}
+                  <div className="mb-6">
+                    <h4 className="text-base font-bold text-navyteal mb-4">تصفية بالشهور</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {monthOptions.map((month) => (
+                        <button
+                          key={month}
+                          onClick={() => handleSelectMonth(month)}
+                          className={`px-4 py-3 rounded-full text-sm font-bold transition-colors md:max-w-fit ${
+                            selectedMonth === month
+                              ? 'bg-orangedeep text-white'
+                              : 'border border-[#4F4F5066] text-[#3B3B3C] hover:bg-gray-100'
+                          }`}
+                        >
+                          {month}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Filter by Date */}
+                  <div className="mb-6">
+                    <h4 className="text-base font-bold text-navyteal mb-4">تصفية بالتاريخ</h4>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">من :</label>
+                        <div className="relative">
+                          <DatePicker 
+                            className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer z-10" 
+                            onClick={() => document.getElementById('fromDateInputMobile').showPicker()}
+                          />
+                          <input
+                            id="fromDateInputMobile"
+                            type="date"
+                            value={fromDate}
+                            onChange={(e) => handleDateChange("from", e.target.value)}
+                            className="w-full h-10 md:h-12 pl-10 pr-3 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orangedeep focus:border-transparent"
+                            title="اختر تاريخ البداية"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">إلي :</label>
+                        <div className="relative">
+                          <DatePicker 
+                            className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer z-10" 
+                            onClick={() => document.getElementById('toDateInputMobile').showPicker()}
+                          />
+                          <input
+                            id="toDateInputMobile"
+                            type="date"
+                            value={toDate}
+                            onChange={(e) => handleDateChange("to", e.target.value)}
+                            className="w-full h-10 md:h-12 pl-10 pr-3 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orangedeep focus:border-transparent"
+                            title="اختر تاريخ النهاية"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleSearch}
+                      disabled={isFiltering}
+                      className={`flex-1 h-10 md:h-12 rounded-full font-semibold transition-colors cursor-pointer text-sm md:text-base ${
+                        isFiltering 
+                          ? 'bg-orangedeep cursor-not-allowed text-white' 
+                          : 'bg-orangedeep hover:bg-btnClicked text-navyteal'
+                      }`}
+                    >
+                      {isFiltering ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto text-navyteal cursor-pointer"></div>
+                      ) : (
+                        'تصفية'
+                      )}
+                    </button>
+                    <button
+                      onClick={handleReset}
+                      className="flex-1 h-10 md:h-12 rounded-full font-semibold border border-orangedeep text-navyteal hover:bg-orangedeep transition-colors cursor-pointer text-sm md:text-base"
+                    >
+                      اعادة تعيين
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Status Filter Buttons */}
+            <div className="flex gap-3 mt-4">
+              {statusOptions.map((status) => (
+                <button
+                  key={status.value}
+                  onClick={() => handleStatusFilter(status.value)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    selectedStatus === status.value
+                      ? 'bg-orangedeep text-white'
+                      : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {status.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

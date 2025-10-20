@@ -1,5 +1,11 @@
 import { useState, useMemo, useCallback } from 'react';
-import { filterTransactionsByDate, sortTransactionsByDate, validateDateRange } from '../utils/transactionUtils';
+import { 
+  filterTransactionsByDate, 
+  filterTransactionsByStatus, 
+  filterTransactionsBySearch,
+  sortTransactionsByDate, 
+  validateDateRange 
+} from '../utils/transactionUtils';
 
 /**
  * Custom hook for managing transaction filtering
@@ -11,13 +17,26 @@ export const useTransactionFilter = (transactions = []) => {
     startDate: '', 
     endDate: '' 
   });
+  const [statusFilter, setStatusFilter] = useState('الكل');
+  const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState('');
 
   // Filtered and sorted transactions
   const filteredTransactions = useMemo(() => {
-    const filtered = filterTransactionsByDate(transactions, dateFilter.startDate, dateFilter.endDate);
+    let filtered = transactions;
+    
+    // Apply date filter
+    filtered = filterTransactionsByDate(filtered, dateFilter.startDate, dateFilter.endDate);
+    
+    // Apply status filter
+    filtered = filterTransactionsByStatus(filtered, statusFilter);
+    
+    // Apply search filter
+    filtered = filterTransactionsBySearch(filtered, searchQuery);
+    
+    // Sort by date
     return sortTransactionsByDate(filtered);
-  }, [transactions, dateFilter.startDate, dateFilter.endDate]);
+  }, [transactions, dateFilter.startDate, dateFilter.endDate, statusFilter, searchQuery]);
 
   // Handle date filter changes
   const handleDateFilter = useCallback((startDate, endDate) => {
@@ -33,22 +52,38 @@ export const useTransactionFilter = (transactions = []) => {
     setDateFilter({ startDate, endDate });
   }, []);
 
+  // Handle status filter changes
+  const handleStatusFilter = useCallback((status) => {
+    setStatusFilter(status);
+  }, []);
+
+  // Handle search query changes
+  const handleSearch = useCallback((query) => {
+    setSearchQuery(query);
+  }, []);
+
   // Clear all filters
   const clearFilters = useCallback(() => {
     setDateFilter({ startDate: '', endDate: '' });
+    setStatusFilter('الكل');
+    setSearchQuery('');
     setError('');
   }, []);
 
   // Check if any filters are active
   const hasActiveFilters = useMemo(() => {
-    return !!(dateFilter.startDate || dateFilter.endDate);
-  }, [dateFilter.startDate, dateFilter.endDate]);
+    return !!(dateFilter.startDate || dateFilter.endDate || statusFilter !== 'الكل' || searchQuery.trim() !== '');
+  }, [dateFilter.startDate, dateFilter.endDate, statusFilter, searchQuery]);
 
   return {
     dateFilter,
+    statusFilter,
+    searchQuery,
     filteredTransactions,
     error,
     handleDateFilter,
+    handleStatusFilter,
+    handleSearch,
     clearFilters,
     hasActiveFilters,
   };

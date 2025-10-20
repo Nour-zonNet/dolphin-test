@@ -20,12 +20,12 @@ export const formatCurrency = (amount, _currency = 'SAR') => {
  */
 export const getStatusColor = (status) => {
   const statusColors = {
-    [TRANSACTION_STATUS.COMPLETED]: 'text-green-600 bg-green-100',
-    [TRANSACTION_STATUS.PENDING]: 'text-yellow-600 bg-yellow-100',
-    [TRANSACTION_STATUS.CANCELED]: 'text-red-600 bg-red-100',
+    [TRANSACTION_STATUS.COMPLETED]: 'text-[#2E7D32]',
+    [TRANSACTION_STATUS.PENDING]: 'text-orangedeep',
+    [TRANSACTION_STATUS.CANCELED]: 'text-[#E21B1B]',
   };
   
-  return statusColors[status] || 'text-gray-600 bg-gray-100';
+  return statusColors[status] || 'text-gray-600';
 };
 
 /**
@@ -83,6 +83,64 @@ export const filterTransactionsByDate = (transactions, startDate, endDate) => {
     }
     
     return true;
+  });
+};
+
+/**
+ * Filters transactions by status
+ * @param {Array} transactions - Array of transactions
+ * @param {string} status - Status filter ('الكل', 'completed', 'canceled', 'pending')
+ * @returns {Array} Filtered transactions
+ */
+export const filterTransactionsByStatus = (transactions, status) => {
+  if (!status || status === 'الكل') {
+    return transactions;
+  }
+
+  return transactions.filter(transaction => {
+    return transaction.status === status;
+  });
+};
+
+/**
+ * Filters transactions by search query
+ * @param {Array} transactions - Array of transactions
+ * @param {string} query - Search query
+ * @returns {Array} Filtered transactions
+ */
+export const filterTransactionsBySearch = (transactions, query) => {
+  if (!query || query.trim() === '') {
+    return transactions;
+  }
+
+  const searchTerm = query.toLowerCase().trim();
+  
+  return transactions.filter(transaction => {
+    // Search in transaction ID
+    const transactionId = (transaction.reference_id || transaction.id || '').toString().toLowerCase();
+    if (transactionId.includes(searchTerm)) {
+      return true;
+    }
+
+    // Search in transaction type/operation
+    const operationType = (transaction.type || '').toLowerCase();
+    if (operationType.includes(searchTerm)) {
+      return true;
+    }
+
+    // Search in amount
+    const amount = (transaction.amount || 0).toString();
+    if (amount.includes(searchTerm)) {
+      return true;
+    }
+
+    // Search in status
+    const status = (transaction.status || '').toLowerCase();
+    if (status.includes(searchTerm)) {
+      return true;
+    }
+
+    return false;
   });
 };
 
