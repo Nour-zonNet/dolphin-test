@@ -4,6 +4,7 @@ import FormatWithCurrency from '@/utils/FormatWithCurrency';
 import { TRANSACTION_TYPE_LABELS } from '@/features/balance/utils/sampleData';
 import { X } from "lucide-react";
 import { ExportReceipt } from '@/utils/icons';
+import { formatArabicDate } from '@/utils/dateHelpers';
 import { CheckCircle } from '@/utils/icons';
 /**
  * Transaction Details Modal Component
@@ -188,65 +189,68 @@ const TransactionDetailsModal = ({ transaction, onClose }) => {
     return 'بطاقة ائتمان';
   };
 
-  const formatDate = (transaction) => {
-    // First try to use the already formatted date string
-    if (transaction.date && typeof transaction.date === 'string' && transaction.date !== 'undefined' && transaction.date !== 'NaN') {
-      return transaction.date;
-    }
-    
-    // If no formatted date, try to use timestamp
-    if (transaction.timestamp) {
-      const date = new Date(transaction.timestamp);
-      
-      // Check if date is valid
-      if (!isNaN(date.getTime())) {
-        const months = [
-          'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-          'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
-        ];
-        
-        return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+  const toDateFromTransaction = (transaction) => {
+    const tz = 'Asia/Riyadh';
+    // Prefer raw API source if available to avoid prior mis-parsing
+    let value = transaction?.originalData?.created_at || transaction?.created_at || transaction?.timestamp || transaction?.createdAt || transaction?.date;
+    if (value == null) return null;
+    let date;
+    if (typeof value === 'number') {
+      // Normalize unix seconds to milliseconds
+      const normalized = value < 1e12 ? value * 1000 : value;
+      date = new Date(normalized);
+    } else if (typeof value === 'string') {
+      const numeric = Number(value);
+      if (!Number.isNaN(numeric)) {
+        const normalized = numeric < 1e12 ? numeric * 1000 : numeric;
+        date = new Date(normalized);
+      } else {
+        // If string lacks explicit timezone, treat it as UTC to avoid shifting backwards
+        // Match formats like "YYYY-MM-DD HH:mm[:ss]" or "YYYY-MM-DDTHH:mm[:ss]"
+        const tzLess = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/.exec(value);
+        if (tzLess && !/[zZ]|[+-]\d{2}:?\d{2}$/.test(value)) {
+          const year = Number(tzLess[1]);
+          const monthIdx = Number(tzLess[2]) - 1;
+          const day = Number(tzLess[3]);
+          const hour = Number(tzLess[4]);
+          const minute = Number(tzLess[5]);
+          const second = tzLess[6] ? Number(tzLess[6]) : 0;
+          date = new Date(Date.UTC(year, monthIdx, day, hour, minute, second));
+        } else {
+          date = new Date(value);
+        }
       }
+    } else if (value instanceof Date) {
+      date = value;
     }
-    
-    return 'غير محدد';
+    if (!date || isNaN(date.getTime())) return null;
+    return { date, tz };
+  };
+
+  const formatDate = (transaction) => {
+    const ctx = toDateFromTransaction(transaction);
+    if (!ctx) return 'غير محدد';
+    // Reuse shared helper to ensure Arabic month names and Riyadh TZ
+    return formatArabicDate(ctx.date.toISOString());
   };
 
   const formatTime = (transaction) => {
-    // Try to use timestamp first (it's more reliable for time)
-    if (transaction.timestamp) {
-      const date = new Date(transaction.timestamp);
-      
-      // Check if date is valid
-      if (!isNaN(date.getTime())) {
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const seconds = date.getSeconds();
-        
-        const period = hours >= 12 ? 'م' : 'ص';
-        const displayHours = hours > 12 ? hours - 12 : hours;
-        
-        return `${displayHours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${period}`;
-      }
-    }
-    
-    // If no timestamp, try to use date string
-    if (transaction.date && typeof transaction.date === 'string' && transaction.date !== 'undefined' && transaction.date !== 'NaN') {
-      const date = new Date(transaction.date);
-      
-      if (!isNaN(date.getTime())) {
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const seconds = date.getSeconds();
-        
-        const period = hours >= 12 ? 'م' : 'ص';
-        const displayHours = hours > 12 ? hours - 12 : hours;
-        
-        return `${displayHours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${period}`;
-      }
-    }
-    
-    return 'غير محدد';
+    const ctx = toDateFromTransaction(transaction);
+    if (!ctx) return 'غير محدد';
+    const { date, tz } = ctx;
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    }).formatToParts(date).reduce((acc, p) => {
+      acc[p.type] = p.value;
+      return acc;
+    }, {});
+    const period = parts.dayPeriod === 'PM' ? 'م' : 'ص';
+    const hours12 = String(Number(parts.hour));
+    return `${hours12}:${parts.minute}:${parts.second} ${period}`;
   };
 
   const formatAmount = (amount, type) => {
