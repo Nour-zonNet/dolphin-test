@@ -3,12 +3,18 @@ import { CheckCircle, ClockBalance, XCircle, Copy, CalendarGray, WalletGray } fr
 import FormatWithCurrency from '@/utils/FormatWithCurrency';
 import { TransactionStatusBadge, TransactionAmount, TransactionDate, TransactionPaymentMethod } from './TransactionComponents';
 import { TRANSACTION_TYPE_LABELS } from '../../utils/sampleData';
+import { useModal } from '@/components/feedback/modal/useModal';
 
 /**
  * Enhanced Transaction Card Component
  * Uses modern React patterns and improved structure
  */
 const TransactionCard = ({ transaction, className = '' }) => {
+  const { openTransactionDetailsModal } = useModal();
+
+  const handleCardClick = () => {
+    openTransactionDetailsModal(transaction);
+  };
   const getStatusIcon = (status) => {
     const iconProps = "w-6 h-6 md:w-8 md:h-8 lg:w-12 lg:h-12";
     
@@ -68,7 +74,10 @@ const TransactionCard = ({ transaction, className = '' }) => {
   const typeLabel = TRANSACTION_TYPE_LABELS[transaction.type] || transaction.type;
 
   return (
-    <div className={`bg-white rounded-[24px] border border-[#B3B3B3] md:p-4 mb-6 ${className}`}>
+    <div 
+      className={`bg-white rounded-[24px] border border-[#B3B3B3] md:p-4 mb-6 cursor-pointer hover:shadow-lg transition-shadow ${className}`}
+      onClick={handleCardClick}
+    >
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-2 md:gap-4 lg:gap-8">
           {/* Status Icon */}
@@ -102,8 +111,11 @@ const TransactionCard = ({ transaction, className = '' }) => {
               <span className="text-[#D9D9D9]">|</span>
               <span className="text-[#686868]">رقم العملية: {transaction.reference_id || transaction.id}</span>
               <button 
-                onClick={copyTransactionId}
-                className="flex items-center gap-1 hover:text-btnClicked transition-colors ms-4 text-orangedeep cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  copyTransactionId();
+                }}
+                className="flex items-center gap-1 hover:text-btnClicked transition-colors ms-4 text-orangedeep"
                 aria-label="نسخ رقم العملية"
               >
                 <Copy className="w-3 h-3" />

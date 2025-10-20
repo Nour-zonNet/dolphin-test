@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, DatePicker, SearchTransactions } from "@/utils/icons";
 import highlight from "@/assets/balance/highlight.svg";
+import { Filter, Search } from "lucide-react";
 
-const TransactionsFilter = ({ onDateFilter, onFiltering }) => {
+const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("جميع الأشهر");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [isFiltering, setIsFiltering] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef(null);
 
   const monthOptions = [

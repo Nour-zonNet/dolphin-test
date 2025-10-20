@@ -22,4 +22,6 @@ export const MODAL_TYPES = {
   COMMENTS: "COMMENTS",
   // Performance chart modal
   PERFORMANCE_CHART: "PERFORMANCE_CHART",
+  // Transaction details modal
+  TRANSACTION_DETAILS: "TRANSACTION_DETAILS",
 };

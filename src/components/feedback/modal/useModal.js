@@ -182,6 +182,15 @@ export const useModal = () => {
     );
   };
 
+  const openTransactionDetailsModal = (transaction = {}) => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.TRANSACTION_DETAILS,
+        props: { transaction },
+      })
+    );
+  };
+
   const closeCurrentModal = () => {
     dispatch(closeModal());
   };
@@ -252,6 +261,7 @@ export const useModal = () => {
     openCommentsModal,
     openPerformanceChartModal,
     openSessionRatingModal,
+    openTransactionDetailsModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };
