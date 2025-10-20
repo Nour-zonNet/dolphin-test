@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "@/components/layout/Header";
-import { LeftArrowFilled, SupportIcon, WalletGray, Retry } from "@/utils/icons";
+import { LeftArrowFilled, SupportIcon, WalletStatus, Retry } from "@/utils/icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import successImg from "@/assets/images/successModal.svg";
 import warningImg from "@/assets/images/paymentFailed.svg";
 import pendingImg from "@/assets/images/paymentPending.svg";
 import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
-import FormatWithCurrency from "@/utils/FormatWithCurrency";
 import { addToBalance, setLastTransaction } from "@/store/balanceSlice";
 
 // Order Summary Card Component
@@ -85,7 +84,7 @@ const STATUS_CONFIG = {
       {
         type: "link",
         label: "معاينة الرصيد",
-        iconType: "WalletGray",
+        iconType: "WalletStatus",
         iconProps: { fill: "#0C2D40" },
         variant: "outline",
         to: "/balance-details",
@@ -158,7 +157,7 @@ const buttonClasses = (variant) => {
 const createIcon = (iconType, iconProps = {}) => {
   const iconMap = {
     LeftArrowFilled,
-    WalletGray,
+    WalletStatus,
     Retry,
     SupportIcon,
   };
