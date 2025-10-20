@@ -9,7 +9,7 @@ const SessionRatingInitializer = () => {
   }
 
   // Development-only debugging
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env && import.meta.env.MODE === 'development') {
     window.checkSessionRatingState = () => {
       const todayStr = new Date().toISOString().split('T')[0];
       const yesterdayStr = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];

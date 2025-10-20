@@ -253,7 +253,7 @@ const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch, onStatusFilte
                           <button
                             key={month}
                             onClick={() => handleSelectMonth(month)}
-                            className={`px-4 py-3 rounded-full text-sm font-bold transition-colors ${
+                            className={`px-4 py-3 rounded-full text-xs md:text-sm text-nowrap font-bold transition-colors ${
                               selectedMonth === month
                                 ? 'bg-orangedeep text-white'
                                 : 'border border-[#4F4F5066] text-[#3B3B3C] hover:bg-gray-100'
@@ -403,7 +403,7 @@ const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch, onStatusFilte
                         <button
                           key={month}
                           onClick={() => handleSelectMonth(month)}
-                          className={`px-4 py-3 rounded-full text-sm font-bold transition-colors md:max-w-fit ${
+                          className={`px-4 py-3 rounded-full text-xs md:text-sm text-nowrap font-bold transition-colors md:max-w-fit ${
                             selectedMonth === month
                               ? 'bg-orangedeep text-white'
                               : 'border border-[#4F4F5066] text-[#3B3B3C] hover:bg-gray-100'
@@ -490,7 +490,7 @@ const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch, onStatusFilte
                 <button
                   key={status.value}
                   onClick={() => handleStatusFilter(status.value)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-full text-xs md:text-sm text-nowrap font-medium transition-colors ${
                     selectedStatus === status.value
                       ? 'bg-orangedeep text-white'
                       : 'border border-gray-300 text-gray-700 hover:bg-gray-100'

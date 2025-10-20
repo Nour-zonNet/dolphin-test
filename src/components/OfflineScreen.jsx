@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import offlineDolphin from '@/assets/images/offline-dolphin.svg';
+import offlineDolphin from '@/assets/images/offline-dolphin.svg?inline';
 import { Retry } from '@/utils/icons';
 
 const RefreshIcon = () => (

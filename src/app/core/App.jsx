@@ -1,39 +1,38 @@
 import { useLanguageDirection } from "@/hooks/useLanguageDirection";
-// import { useOfflineDetection } from "@/hooks/useOfflineDetection";
-// import { useMaintenanceDetection } from "@/hooks/useMaintenanceDetection";
+import { useOfflineDetection } from "@/hooks/useOfflineDetection";
 import AppProviders from "./AppProviders";
 import AppRoutes from "./AppRoutes";
 import ChatwootInit from "../components/ChatwootInit"
-// import MaintenanceScreen from "@/components/MaintenanceScreen";
 import { GlobalLoader, GlobalError } from "@/components/feedback";
 import { ModalManager } from "@/components/feedback/modal";
 import SessionRatingInitializer from "@/components/SessionRatingInitializer";
+import OfflineScreen from "@/components/OfflineScreen";
 
 const App = () => {
   useLanguageDirection();
-
-  // Show maintenance screen when maintenance mode is active
-  // if (isMaintenanceMode) {
-  //   return (
-  //     <AppProviders>
-  //       <MaintenanceScreen onGoHome={() => window.location.href = '/'} />
-  //     </AppProviders>
-  //   );
-  // }
+  const isOnline = useOfflineDetection();
 
   // Show offline screen when not connected to internet
-  // if (!isOnline) {
-  //   return (
-  //     <AppProviders>
-  //       <OfflineScreen onRetry={() => window.location.reload()} />
-  //     </AppProviders>
-  //   );
-  // }
+  if (!isOnline) {
+    return (
+      <AppProviders>
+        <OfflineScreen 
+          onRetry={() => {
+            if (navigator.onLine) {
+              window.location.reload();
+            } else {
+              // Optional: Show a toast or message that we're still offline
+              console.log('Still offline - cannot refresh');
+            }
+          }} 
+        />
+      </AppProviders>
+    );
+  }
 
   return (
     <AppProviders>
       <div className="app-container">
-        {/* Global Components */}
         <GlobalLoader />
         <GlobalError />
         <ModalManager />

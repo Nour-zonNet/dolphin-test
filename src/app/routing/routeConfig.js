@@ -296,7 +296,7 @@ export const routes = [
   {
     path: "/offline",
     element: OfflineScreen,
-    protected: true,
+    public: true,
     layout: false,
   },
   {

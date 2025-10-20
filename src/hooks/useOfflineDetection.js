@@ -1,27 +1,23 @@
 import { useState, useEffect } from 'react';
 
-/**
- * Custom hook to detect online/offline status
- * Uses navigator.onLine API and listens to online/offline events
- * @returns {boolean} isOnline - true if online, false if offline
- */
 export const useOfflineDetection = () => {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
   useEffect(() => {
     const handleOnline = () => {
+      console.log('Browser came online');
       setIsOnline(true);
     };
 
     const handleOffline = () => {
+      console.log('Browser went offline');
       setIsOnline(false);
     };
 
-    // Listen to online/offline events
+    // Set up event listeners
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Cleanup event listeners
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -30,7 +26,3 @@ export const useOfflineDetection = () => {
 
   return isOnline;
 };
-
-export default useOfflineDetection;
-
-
