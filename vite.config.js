@@ -49,20 +49,37 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 500 * 1024 * 1024,
         clientsClaim: true,
         skipWaiting: true,
+        // Fix for iOS Safari/Chrome "FetchEvent.respondWith" error
+        // Add error handling for Cache API operations
         runtimeCaching: [
           {
             urlPattern: /\.(?:html)$/,
             handler: "NetworkFirst",
             options: {
               cacheName: "html-cache",
-              networkTimeoutSeconds: 3,
+              networkTimeoutSeconds: 5, // Increased timeout for iOS
+              fetchOptions: {
+                mode: 'cors',
+                credentials: 'same-origin',
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
             },
           },
           {
             urlPattern: /\.(?:js|css)$/,
-            handler: "StaleWhileRevalidate",
+            handler: "NetworkFirst", // Changed from StaleWhileRevalidate for iOS compatibility
             options: {
               cacheName: "static-resources",
+              networkTimeoutSeconds: 5,
+              fetchOptions: {
+                mode: 'cors',
+                credentials: 'same-origin',
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
             },
           },
           {
@@ -70,6 +87,13 @@ export default defineConfig({
             handler: "CacheFirst",
             options: {
               cacheName: "images-cache",
+              fetchOptions: {
+                mode: 'cors',
+                credentials: 'same-origin',
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
               expiration: {
                 maxEntries: 100,
                 maxAgeSeconds: 60 * 60 * 24 * 30,
@@ -81,6 +105,13 @@ export default defineConfig({
             handler: "CacheFirst",
             options: {
               cacheName: "google-fonts-cache",
+              fetchOptions: {
+                mode: 'cors',
+                credentials: 'omit',
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 365,

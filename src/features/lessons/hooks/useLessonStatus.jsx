@@ -31,10 +31,14 @@ export const useLessonStatus = (
     }
 
     if (lessonStatus === "delayed") {
+      // Check if delay data exists before accessing it
+      const delayDay = item?.delay?.day_of_week;
+      const delayText = delayDay
+        ? `تم تأجيل الحصة ليوم ${getArabicDay(delayDay)}`
+        : "تم تأجيل الحصة";
+
       return {
-        statusText: `تم تأجيل الحصة ليوم ${getArabicDay(
-          item.delay.day_of_week
-        )}`,
+        statusText: delayText,
         statusColor: "text-gray-600",
         statusIcon: <TimeCheck  fill={"#111"} className="w-4" />,
       };
