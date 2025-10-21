@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import offlineDolphin from '@/assets/images/offline-dolphin.svg?inline';
 import { Retry } from '@/utils/icons';
+import OptimizedImage from './OptimizedImage';
 
 const RefreshIcon = () => (
   <Retry className="w-4 h-4 md:w-6 md:h-6" />
@@ -16,10 +17,13 @@ const OfflineScreen = ({ onRetry }) => {
       <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
         {/* Offline Dolphin Character */}
         <div className="mb-8">
-          <img 
+          <OptimizedImage 
             src={offlineDolphin} 
             alt="Offline Dolphin" 
             className="w-32 h-auto max-w-full md:w-56"
+            width={224}
+            height={224}
+            loading="eager"
           />
         </div>
 

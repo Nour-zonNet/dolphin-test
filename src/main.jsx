@@ -4,6 +4,10 @@ import "./i18n";
 import App from "./app/core/App";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { registerSW } from "virtual:pwa-register";
+import { performanceMonitor } from "./utils/performanceMonitor";
+
+// Initialize performance monitoring
+performanceMonitor.init();
 
 // Silence Workbox logs if any service worker is still active
 // This flag is respected by Workbox in page and SW contexts
