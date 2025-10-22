@@ -8,6 +8,7 @@ import {
   createTrialSubscription,
   reactivateSubscription,
   fetchGroupsByPackageId,
+  createNewSubscriptionPayment,
 } from "../store/subscriptionSlice";
 
 export const useSubscriptions = () => {
@@ -56,6 +57,11 @@ export const useSubscriptions = () => {
     [dispatch]
   );
 
+  const dispatchCreateNewSubscriptionPayment = useCallback(
+    (packageIds) => dispatch(createNewSubscriptionPayment(packageIds)),
+    [dispatch]
+  );
+
   // Return a stable reference to reduce child re-renders
   return useMemo(
     () => ({
@@ -70,6 +76,7 @@ export const useSubscriptions = () => {
       changeGroupSubscription: dispatchChangeGroup,
       createTrialSubscription: dispatchCreateTrialSub,
       fetchGroupsByPackageId: dispatchFetchGroupsByPackageId,
+      createNewSubscriptionPayment: dispatchCreateNewSubscriptionPayment,
     }),
     [
       items,
@@ -82,6 +89,7 @@ export const useSubscriptions = () => {
       dispatchChangeGroup,
       dispatchCreateTrialSub,
       dispatchFetchGroupsByPackageId,
+      dispatchCreateNewSubscriptionPayment,
     ]
   );
 };

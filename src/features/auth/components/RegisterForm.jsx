@@ -6,8 +6,6 @@ import OTPInput from "../../../components/ui/InputOtp";
 import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
 import { useClasses } from "../../../hooks/useClasses";
-
-import "./style.css";
 const RegisterForm = ({ onSubmit, loading, error }) => {
   const { classes } = useClasses();
   const { t } = useTranslation();

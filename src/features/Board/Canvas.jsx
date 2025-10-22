@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Stage, Layer, Line, Text, Rect, Circle, Arrow, Image as KonvaImage } from "react-konva";
-import "./style.css";
 
 const Canvas = ({
   stageRef,

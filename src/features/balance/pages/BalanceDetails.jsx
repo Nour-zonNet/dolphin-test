@@ -28,8 +28,6 @@ const BalanceDetails = () => {
     handleDateFilter, 
     handleStatusFilter,
     handleSearch,
-    clearFilters, 
-    hasActiveFilters 
   } = useTransactionFilter(transactions);
   const [isFiltering, setIsFiltering] = useState(false);
 

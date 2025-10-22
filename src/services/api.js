@@ -11,9 +11,26 @@ const api = axios.create({
 // Add token if exists
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+    console.log('API Request with token:', config.url, 'Token:', token.substring(0, 20) + '...');
+  } else {
+    console.log('API Request without token:', config.url);
+  }
   return config;
 });
+
+// Response interceptor for debugging
+api.interceptors.response.use(
+  (response) => {
+    console.log('API Response success:', response.config.url, response.status);
+    return response;
+  },
+  (error) => {
+    console.error('API Response error:', error.config?.url, error.response?.status, error.response?.data);
+    return Promise.reject(error);
+  }
+);
 
 // Wallet charge API function
 export const chargeWallet = async (amount) => {
@@ -31,15 +48,9 @@ export const chargeWallet = async (amount) => {
 
 // Get wallet balance API function
 export const getWalletBalance = async () => {
-  try {
-    const response = await api.get('/student/wallet/balance');
-    
-    return response.data;
-  } catch (error) {
-    // Wallet balance error
-    // Re-throw the error so it can be handled by the calling code
-    throw error;
-  }
+  const response = await api.get('/student/wallet/balance');
+  
+  return response.data;
 };
 
 export default api;
