@@ -209,11 +209,6 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
           if (result.success && result.data?.url) {
             // Redirect directly to MyFatoorah payment page in new tab
             window.open(result.data.url, '_blank');
-            
-            // Refresh subscriptions after a delay to catch payment completion
-            setTimeout(() => {
-              handlePaymentCompletion();
-            }, 3000);
           } else {
             console.error('Invalid response structure:', result); // Debug log
             throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
@@ -256,11 +251,6 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
           if (result.success && result.data?.url) {
             // Redirect directly to MyFatoorah payment page in new tab
             window.open(result.data.url, '_blank');
-            
-            // Refresh subscriptions after a delay to catch payment completion
-            setTimeout(() => {
-              handlePaymentCompletion();
-            }, 3000);
           } else {
             console.error('Invalid response structure:', result); // Debug log
             throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
@@ -448,12 +438,6 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
                             >
                               {config.buttonText}
                             </ActionButton>
-                            <button
-                              onClick={handlePaymentCompletion}
-                              className="mt-2 text-sm text-navyteal hover:text-blue-600 underline"
-                            >
-                              تحديث حالة الاشتراك
-                            </button>
                           </div>
                         );
 
@@ -476,12 +460,6 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
                             >
                               {config.buttonText}
                             </ActionButton>
-                            <button
-                              onClick={handlePaymentCompletion}
-                              className="mt-2 text-sm text-navyteal hover:text-blue-600 underline"
-                            >
-                              تحديث حالة الاشتراك
-                            </button>
                           </div>
                         );
 
