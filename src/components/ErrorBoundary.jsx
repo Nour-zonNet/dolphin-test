@@ -11,7 +11,7 @@ class ErrorBoundary extends Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
@@ -76,7 +76,7 @@ ${errorInfo?.componentStack || 'No component stack'}
 
   render() {
     if (this.state.hasError) {
-      const { error, errorInfo, copied } = this.state;
+      const { error, copied } = this.state;
       const isRTL = document.documentElement.dir === 'rtl';
 
       return (

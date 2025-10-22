@@ -108,6 +108,18 @@ export const createTrialSubscription = createAsyncThunk(
   }
 );
 
+export const createNewSubscriptionPayment = createAsyncThunk(
+  "subscriptions/createNewPayment",
+  async (packageIds, thunkAPI) => {
+    try {
+      const res = await subscriptionRepository.createNewSubscriptionPayment(packageIds);
+      return res; // Return the full response object, not just res.data
+    } catch (err) {
+      return handleError(err, thunkAPI);
+    }
+  }
+);
+
 // =================== Slice ===================
 const subscriptionSlice = createSlice({
   name: "subscriptions",
@@ -116,6 +128,7 @@ const subscriptionSlice = createSlice({
     groups: {},
     loading: false,
     error: null,
+    paymentData: null,
   },
   reducers: {
     clearSubscriptionError: (state) => {
@@ -240,7 +253,16 @@ const subscriptionSlice = createSlice({
       .addCase(fetchGroupsByPackageId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
-      });
+      })
+
+      // ===== Create New Subscription Payment =====
+      .addCase(createNewSubscriptionPayment.pending, handlePending)
+      .addCase(createNewSubscriptionPayment.fulfilled, (state, action) => {
+        state.loading = false;
+        // Store payment data for redirect - action.payload is now the full response
+        state.paymentData = action.payload;
+      })
+      .addCase(createNewSubscriptionPayment.rejected, handleRejected);
   },
 });
 

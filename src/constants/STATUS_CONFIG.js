@@ -26,9 +26,9 @@ export const STATUS_CONFIG = {
   expired: {
     color: "bg-[#595959] md:h-9 md:w-32 py-1 md:py-2 px-3 md:px-4 text-white font-semibold px-4",
     label: () => "منتهي",
-    actions: [],
+    actions: ["newSubscription"],
     message:
-      "انتهت صلاحية باقتك، اضغط على زر (تجديد الباقة) لتجديدها ومتابعة استخدام خدماتنا",
+      "انتهت صلاحية باقتك، اضغط على زر (اشتراك جديد) لإنشاء اشتراك جديد ومتابعة استخدام خدماتنا",
     lineColor: "stroke-[#B3261E]",
     fill: "#B3261E",
     bg: "bg-health",

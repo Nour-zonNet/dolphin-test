@@ -25,7 +25,7 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
-  const { cancelSubscription, reactivateSubscription } = useSubscriptions();
+  const { cancelSubscription, reactivateSubscription, createNewSubscriptionPayment, fetchSubscriptions } = useSubscriptions();
   useGroups(item.package_id);
 
   const mappedItem = useMemo(
@@ -138,6 +138,25 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
       ),
     [isOpen]
   );
+  // Function to handle payment completion and refresh data
+  const handlePaymentCompletion = useCallback(() => {
+    // Refresh subscriptions after payment completion
+    fetchSubscriptions();
+  }, [fetchSubscriptions]);
+
+  // Listen for window focus to refresh data when user returns from payment
+  useEffect(() => {
+    const handleFocus = () => {
+      // Small delay to ensure payment processing is complete
+      setTimeout(() => {
+        handlePaymentCompletion();
+      }, 1000);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [handlePaymentCompletion]);
+
   const handleCancelClick = () => {
     openConfirmModal(
       {
@@ -178,30 +197,78 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
       {
         title: "تجديد الاشتراك",
         message: "هل أنت متأكد من رغبتك في تجديد الاشتراك؟",
-        confirmText: "تأكيد التجديد",
-        type: "danger",
+        confirmText: "تأكيد الدفع",
+        type: "primary",
       },
       async () => {
         try {
-          await reactivateSubscription(item.id).unwrap();
-          openStatusModal("SUCCESS", {
-            title: "تم التجديد بنجاح",
-            message: "تم تجديد الاشتراك وسيتم تطبيق التغييرات فوراً.",
-          });
+          const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
+          
+          console.log('Payment response:', result); // Debug log
+          
+          if (result.success && result.data?.url) {
+            // Redirect directly to MyFatoorah payment page in new tab
+            window.open(result.data.url, '_blank');
+          } else {
+            console.error('Invalid response structure:', result); // Debug log
+            throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
+          }
         } catch (error) {
           const getErrorMessage = (err) => {
-            if (!err) return "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+            if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
             if (typeof err === "string") return err;
             if (Array.isArray(err))
-              return err[0] || "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+              return err[0] || "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
             if (err && typeof err === "object") {
               if (err.data && err.data.error) return err.data.error;
               if (err.message) return err.message;
             }
-            return "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+            return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
           };
           openStatusModal("ERROR", {
-            title: "فشل في التجديد",
+            title: "فشل في إنشاء طلب الدفع",
+            message: getErrorMessage(error),
+          });
+        }
+      }
+    );
+  };
+
+  const handleNewSubscriptionClick = () => {
+    openConfirmModal(
+      {
+        title: "إنشاء اشتراك جديد",
+        message: "هل أنت متأكد من رغبتك في إنشاء اشتراك جديد لهذه الباقة؟",
+        confirmText: "تأكيد الدفع",
+        type: "primary",
+      },
+      async () => {
+        try {
+          const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
+          
+          console.log('Payment response:', result); // Debug log
+          
+          if (result.success && result.data?.url) {
+            // Redirect directly to MyFatoorah payment page in new tab
+            window.open(result.data.url, '_blank');
+          } else {
+            console.error('Invalid response structure:', result); // Debug log
+            throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
+          }
+        } catch (error) {
+          const getErrorMessage = (err) => {
+            if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+            if (typeof err === "string") return err;
+            if (Array.isArray(err))
+              return err[0] || "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+            if (err && typeof err === "object") {
+              if (err.data && err.data.error) return err.data.error;
+              if (err.message) return err.message;
+            }
+            return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+          };
+          openStatusModal("ERROR", {
+            title: "فشل في إنشاء طلب الدفع",
             message: getErrorMessage(error),
           });
         }
@@ -367,6 +434,28 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
                               full
                               primary
                               onClick={handleReactivateClick}
+                              icon={<Renew />}
+                            >
+                              {config.buttonText}
+                            </ActionButton>
+                          </div>
+                        );
+
+                      case "newSubscription":
+                        return (
+                          <div
+                            key={action}
+                            className="flex flex-col items-center mt-4 gap-2"
+                          >
+                            {config.message && (
+                              <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
+                                {config.message}
+                              </div>
+                            )}
+                            <ActionButton
+                              full
+                              primary
+                              onClick={handleNewSubscriptionClick}
                               icon={<Renew />}
                             >
                               {config.buttonText}

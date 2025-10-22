@@ -302,7 +302,7 @@ const authSlice = createSlice({
     // profile-related updates owned by auth (keep user in sync)
     builder
       .addCase(updateUserImage.pending, handlePending)
-      .addCase(updateUserImage.fulfilled, (state, action) => {
+      .addCase(updateUserImage.fulfilled, (state, _action) => {
         state.loading = false;
       })
       .addCase(updateUserImage.rejected, (state, _action) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Header from "@/components/layout/Header";
 import { LeftArrowFilled, SupportIcon, WalletStatus, Retry } from "@/utils/icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
@@ -10,61 +10,60 @@ import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
 import { addToBalance, setLastTransaction } from "@/store/balanceSlice";
 
 // Order Summary Card Component
-const OrderSummaryCard = () => {
-  const _orderItems = [
-    { name: "باقة الصحة العامة", price: 200 },
-    { name: "باقة ركن المسلم", price: 100 },
-    { name: "باقة اللغة الانجليزية المستوي الاول", price: 300 },
-    { name: "باقة التميز", price: 400 },
-    { name: "باقة التميز", price: 700 },
-  ];
+// const OrderSummaryCard = () => {
+//   const _orderItems = [
+//     { name: "باقة الصحة العامة", price: 200 },
+//     { name: "باقة ركن المسلم", price: 100 },
+//     { name: "باقة اللغة الانجليزية المستوي الاول", price: 300 },
+//     { name: "باقة التميز", price: 400 },
+//     { name: "باقة التميز", price: 700 },
+//   ];
 
-  const discount = 500;
-  const subtotal = _orderItems.reduce((sum, item) => sum + item.price, 0);
-  const total = subtotal - discount;
+//   const discount = 500;
+//   const subtotal = _orderItems.reduce((sum, item) => sum + item.price, 0);
 
-  // return (
-  //   <div className="bg-white border border-[#8C8C8C22] rounded-[24px] p-6 w-full">
-  //     <h3 className="text-lg md:text-xl font-bold text-black mb-6">ملخص الطلب</h3>
+//   // return (
+//   //   <div className="bg-white border border-[#8C8C8C22] rounded-[24px] p-6 w-full">
+//   //     <h3 className="text-lg md:text-xl font-bold text-black mb-6">ملخص الطلب</h3>
       
-  //     <div className="space-y-3 mb-4">
-  //       {orderItems.map((item, index) => (
-  //         <div key={index} className="flex justify-between gap-6 items-center">
-  //           <span className="text-[#645C5C] font-medium text-sm md:text-lg">{item.name}</span>
-  //           <FormatWithCurrency 
-  //             amount={item.price} 
-  //             symbolFill="#645C5C" 
-  //             symbolClass="w-4 h-4 md:w-6 md:h-6"
-  //             className="text-[#645C5C] font-medium"
-  //           />
-  //         </div>
-  //       ))}
-  //     </div>
+//   //     <div className="space-y-3 mb-4">
+//   //       {orderItems.map((item, index) => (
+//   //         <div key={index} className="flex justify-between gap-6 items-center">
+//   //           <span className="text-[#645C5C] font-medium text-sm md:text-lg">{item.name}</span>
+//   //           <FormatWithCurrency 
+//   //             amount={item.price} 
+//   //             symbolFill="#645C5C" 
+//   //             symbolClass="w-4 h-4 md:w-6 md:h-6"
+//   //             className="text-[#645C5C] font-medium"
+//   //           />
+//   //         </div>
+//   //       ))}
+//   //     </div>
 
-  //     <div className="flex justify-between items-center mb-4">
-  //       <span className="text-[#AE7426] font-medium text-sm md:text-lg">الخصم</span>
-  //       <FormatWithCurrency 
-  //         amount={-discount}
-  //         symbolFill="#AE7426" 
-  //         symbolClass="w-4 h-4 md:w-6 md:h-6"
-  //         className="text-[#AE7426] font-medium"
-  //       />
-  //     </div>
+//   //     <div className="flex justify-between items-center mb-4">
+//   //       <span className="text-[#AE7426] font-medium text-sm md:text-lg">الخصم</span>
+//   //       <FormatWithCurrency 
+//   //         amount={-discount}
+//   //         symbolFill="#AE7426" 
+//   //         symbolClass="w-4 h-4 md:w-6 md:h-6"
+//   //         className="text-[#AE7426] font-medium"
+//   //       />
+//   //     </div>
 
-  //     <div className="border-t border-dashed border-gray-300 pt-4">
-  //       <div className="flex justify-between items-center">
-  //         <span className="text-navyteal font-bold text-base md:text-lg">الإجمالي</span>
-  //         <FormatWithCurrency 
-  //           amount={total} 
-  //           symbolFill="#08233F" 
-  //           symbolClass="w-4 h-4 md:w-6 md:h-6"
-  //           className="text-navyteal font-bold text-lg"
-  //         />
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-};
+//   //     <div className="border-t border-dashed border-gray-300 pt-4">
+//   //       <div className="flex justify-between items-center">
+//   //         <span className="text-navyteal font-bold text-base md:text-lg">الإجمالي</span>
+//   //         <FormatWithCurrency 
+//   //           amount={total} 
+//   //           symbolFill="#08233F" 
+//   //           symbolClass="w-4 h-4 md:w-6 md:h-6"
+//   //           className="text-navyteal font-bold text-lg"
+//   //         />
+//   //       </div>
+//   //     </div>
+//   //   </div>
+//   // );
+// };
 
 const STATUS_CONFIG = {
   success: {
@@ -224,7 +223,7 @@ const PaymentStatus = () => {
       setIsVerifying(true);
       
     }
-  }, [status, transactionData?.id, dispatch, navigate]);
+  }, [status, transactionData, dispatch, navigate]);
 
   if (!data) return <div className="p-6 text-center text-red-500">حالة غير معروفة</div>;
 

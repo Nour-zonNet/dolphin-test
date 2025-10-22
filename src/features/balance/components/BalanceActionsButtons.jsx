@@ -43,7 +43,7 @@ const BalanceActionsButtons = () => {
   };
 
   const handleAddCoupon = () => {
-    openAddCouponModal((data) => {
+    openAddCouponModal(() => {
       // TODO: Handle coupon application logic
     });
   };
