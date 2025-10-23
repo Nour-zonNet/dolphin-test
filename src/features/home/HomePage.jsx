@@ -1,10 +1,11 @@
 import { Navigate } from "react-router-dom";
 import { RightKite } from "../../utils/Illustrations";
+// import { ReactComponent as RightKite } from '@/assets/illustrations/right-kite.svg';
 import { FooterIllustration } from "../auth/components";
 import { useAuth } from "../auth/hooks/useAuth";
 import { Hero, LoginCard, Navbar } from "./components";
 // import { Overlay, Spinner } from "@/components/feedback";
-import { Pin } from "../../utils/icons";
+import { Pin } from "@/utils/icons";
 
 const HomePage = () => {
   const { isFullyAuthenticated } = useAuth();

@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import svgr from "vite-plugin-svgr";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -15,6 +16,11 @@ export default defineConfig({
     }),
     visualizer({ open: true }),
     tailwindcss(),
+    svgr({
+      svgrOptions: {
+        icon: true,
+      },
+    }),
     VitePWA({
       registerType: "autoUpdate",
       devOptions: { 

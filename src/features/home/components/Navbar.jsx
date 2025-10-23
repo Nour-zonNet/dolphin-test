@@ -1,6 +1,5 @@
 import dolphinLogo from "@/assets/logo/dolphinLogo.png";
 import { Books } from "../../../utils/icons";
-import { Link } from "react-router-dom";
 import { t } from "i18next";
 // import LanguageSwitcher from "../../../components/ui/LanguageSwitcher";
 

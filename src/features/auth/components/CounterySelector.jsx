@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import caretDown from "@/assets/authentication/caret-down.svg";
+import caretDown from "@/assets/authentication/caret-down.webp";
 import { COUNTRIES } from "../../../constants/countries";
 
 // -------- Country Selector --------
