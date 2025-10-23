@@ -1,7 +1,6 @@
 import { lazy } from "react";
-import OfflineScreen from "@/components/OfflineScreen";
-
 // Lazy load all heavy components for better performance
+const OfflineScreen = lazy(() => import("@/components/OfflineScreen"));
 const DataPlanSelector = lazy(() => import("../../features/packages/pages/PackagesSelector"));
 const Checkout = lazy(() => import("../../features/packages/pages/Checkout"));
 const LoginSiblings = lazy(() => import("../../features/auth/pages/LoginSiblings"));
@@ -84,6 +83,9 @@ const BalanceDetails = lazy(() =>
 );
 const PaymentStatus = lazy(() =>
   import("@/features/balance/pages/PaymentStatus")
+);
+const RenewalStatus = lazy(() =>
+  import("@/features/subscription/pages/RenewalStatus")
 );
 
 // Route Configuration
@@ -291,6 +293,12 @@ export const routes = [
   {
     path: "/payment-status/:status",
     element: PaymentStatus,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: "/renew-subscription/:status",
+    element: RenewalStatus,
     protected: true,
     layout: false,
   },

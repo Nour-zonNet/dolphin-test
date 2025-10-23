@@ -4,7 +4,7 @@ import FormatWithCurrency from '@/utils/FormatWithCurrency';
 import { TransactionStatusBadge, TransactionAmount, TransactionDate, TransactionPaymentMethod } from './TransactionComponents';
 import { TRANSACTION_TYPE_LABELS } from '../../utils/sampleData';
 import { useModal } from '@/components/feedback/modal/useModal';
-import { Book } from '../../../../utils/icons';
+import { Book } from '@/utils/icons';
 
 /**
  * Enhanced Transaction Card Component
@@ -31,16 +31,16 @@ const TransactionCard = ({ transaction, className = '' }) => {
     }
   };
 
-  // const getTypeColor = (type) => {
-  //   const typeColors = {
-  //     'subscription': 'text-[#1B872C]',
-  //     'balance_topup': 'text-orangedeep',
-  //     'renewal': 'text-[#E21B1B]',
-  //     'refund': 'text-[#2E7D32]',
-  //   };
+  const getTypeColor = (type) => {
+    const typeColors = {
+      'subscription': 'text-[#1B872C]',
+      'balance_topup': 'text-orangedeep',
+      'renewal': 'text-[#E21B1B]',
+      'refund': 'text-[#2E7D32]',
+    };
     
-  //   return typeColors[type] || 'text-green-600';
-  // };
+    return typeColors[type] || 'text-green-600';
+  };
 
   const formatAmount = (amount, type) => {
     const isNegative = type === 'refund';
@@ -61,18 +61,18 @@ const TransactionCard = ({ transaction, className = '' }) => {
     );
   };
 
-  // const copyTransactionId = async () => {
-  //   try {
-  //     const idToCopy = transaction.reference_id || transaction.id;
-  //     await navigator.clipboard.writeText(idToCopy.toString());
-  //     // TODO: Add toast notification for successful copy
-  //   } catch (_error) {
-  //     // Failed to copy transaction ID
-  //     // TODO: Add error notification
-  //   }
-  // };
+  const copyTransactionId = async () => {
+    try {
+      const idToCopy = transaction.reference_id || transaction.id;
+      await navigator.clipboard.writeText(idToCopy.toString());
+      // TODO: Add toast notification for successful copy
+    } catch (_error) {
+      // Failed to copy transaction ID
+      // TODO: Add error notification
+    }
+  };
 
-  // const typeLabel = TRANSACTION_TYPE_LABELS[transaction.type] || transaction.type;
+  const typeLabel = TRANSACTION_TYPE_LABELS[transaction.type] || transaction.type;
 
   return (
     <div 

@@ -24,7 +24,6 @@ const App = () => {
               window.location.reload();
             } else {
               // Optional: Show a toast or message that we're still offline
-              console.log('Still offline - cannot refresh');
             }
           }} 
         />

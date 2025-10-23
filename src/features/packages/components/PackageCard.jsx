@@ -4,7 +4,7 @@ import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import { Calender } from "@/utils/icons";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { CardKite, Star } from "@/utils/Illustrations";
-import * as Icons from "@/utils/icons";
+import { Checked, Experimental, Finished, Canceled } from "@/utils/icons";
 import { usePackages } from "../hooks/usePackages";
 import { useSelector } from "react-redux";
 import {
@@ -69,7 +69,7 @@ const PackageCard = React.memo(
 
     // Status configuration
     const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
-    const Icon = Icons[config.icon];
+    const Icon = { Checked, Experimental, Finished, Canceled }[config.icon];
 
     return (
       <div className="relative w-full mx-auto pl-3 max-w-2xl">

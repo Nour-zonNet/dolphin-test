@@ -83,6 +83,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
         try {
             // Prepare reviews array for the new API structure
             const reviews = [];
+            const processedSessionIds = new Set(); // Track processed session IDs to prevent duplicates
             
             validSessions.forEach((session, index) => {
                 const sessionKey = `session${index + 1}`;
@@ -99,7 +100,8 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                                           session.class_id ||
                                           session.group_id;
                     
-                    if (classSessionId) {
+                    if (classSessionId && !processedSessionIds.has(classSessionId)) {
+                        processedSessionIds.add(classSessionId);
                         reviews.push({
                             class_session_id: parseInt(classSessionId),
                             rating: rating,
@@ -109,10 +111,26 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
                 }
             });
             
+            // Check if there are any reviews to submit
+            if (reviews.length === 0) {
+                // No ratings provided, show a helpful message
+                setTimeout(() => {
+                    dispatch(openModal({
+                        type: MODAL_TYPES.ERROR,
+                        props: {
+                            title: "تنبيه",
+                            message: "يرجى إضافة تقييم قبل الإرسال"
+                        }
+                    }));
+                }, 300);
+                setIsSubmitting(false);
+                return;
+            }
+            
             // Submit the reviews array
             await onSubmit({ reviews });
             
-            // Only show success modal if submission was successful
+            // Only show success modal if submission was successful and reviews were submitted
             // Reset state
             const resetRatings = {};
             const resetComments = {};

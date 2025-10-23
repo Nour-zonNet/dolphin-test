@@ -2,7 +2,7 @@ import React from "react";
 import { Line } from "@/utils/Illustrations";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import defaultImage from "@/assets/packages/default.svg";
-import * as Icons from "@/utils/icons";
+import { Checked, Experimental, Finished, Canceled } from "@/utils/icons";
 
 const SubscriptionCard = ({
   title,
@@ -14,7 +14,19 @@ const SubscriptionCard = ({
   icon,
 }) => {
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
-  const StatusIcon = Icons[config.icon];
+  
+  // Map icon names to actual icon components
+  const getStatusIcon = (iconName) => {
+    const iconMap = {
+      Checked,
+      Experimental,
+      Finished,
+      Canceled
+    };
+    return iconMap[iconName];
+  };
+  
+  const StatusIcon = getStatusIcon(config.icon);
 
   const imgSrc = icon || defaultImage;            
   const accent = accentColor || "#0077B6"; 

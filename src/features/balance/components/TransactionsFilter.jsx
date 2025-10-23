@@ -30,7 +30,7 @@ const TransactionsFilter = ({ onDateFilter, onFiltering, onSearch, onStatusFilte
   ];
 
   // Always show all options in the dropdown
-  // const filteredMonthOptions = monthOptions;
+  const filteredMonthOptions = monthOptions;
 
   // Handle click outside to close dropdown
   useEffect(() => {

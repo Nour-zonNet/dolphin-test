@@ -13,9 +13,6 @@ api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
-    console.log('API Request with token:', config.url, 'Token:', token.substring(0, 20) + '...');
-  } else {
-    console.log('API Request without token:', config.url);
   }
   return config;
 });
@@ -23,11 +20,9 @@ api.interceptors.request.use((config) => {
 // Response interceptor for debugging
 api.interceptors.response.use(
   (response) => {
-    console.log('API Response success:', response.config.url, response.status);
     return response;
   },
   (error) => {
-    console.error('API Response error:', error.config?.url, error.response?.status, error.response?.data);
     return Promise.reject(error);
   }
 );

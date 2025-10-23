@@ -5,8 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { Cancel, ChevronDown, ChevronUp, Copon, Renew } from "@/utils/icons";
-import * as Icons from "@/utils/icons";
+import { Cancel, ChevronDown, ChevronUp, Renew, Checked, Experimental, Finished, Canceled } from "@/utils/icons";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 import useGroups from "../../groups/hooks/useGroups";
@@ -68,7 +67,14 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
     () => STATUS_CONFIG[statusKey] || STATUS_CONFIG.active,
     [statusKey]
   );
-  const Icon = Icons[config.icon];
+  
+  const iconMap = {
+    Checked,
+    Experimental,
+    Finished,
+    Canceled
+  };
+  const Icon = iconMap[config.icon];
 
   // Handle expand/collapse animation
   useEffect(() => {
@@ -204,13 +210,33 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
         try {
           const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
           
-          console.log('Payment response:', result); // Debug log
           
           if (result.success && result.data?.url) {
+            // Store renewal transaction data for status page
+            sessionStorage.setItem('currentTransaction', JSON.stringify({
+              id: result.data.invoice_id || 'renewal_' + Date.now(),
+              amount: result.data.amount || 0,
+              currency: 'SAR',
+              status: 'pending',
+              type: 'renewal',
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              createdAt: new Date().toISOString(),
+            }));
+            localStorage.setItem('pendingTransaction', JSON.stringify({
+              id: result.data.invoice_id || 'renewal_' + Date.now(),
+              amount: result.data.amount || 0,
+              currency: 'SAR',
+              status: 'pending',
+              type: 'renewal',
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              createdAt: new Date().toISOString(),
+            }));
+            
             // Redirect directly to MyFatoorah payment page in new tab
             window.open(result.data.url, '_blank');
           } else {
-            console.error('Invalid response structure:', result); // Debug log
             throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
           }
         } catch (error) {
@@ -246,13 +272,11 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
         try {
           const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
           
-          console.log('Payment response:', result); // Debug log
           
           if (result.success && result.data?.url) {
             // Redirect directly to MyFatoorah payment page in new tab
             window.open(result.data.url, '_blank');
           } else {
-            console.error('Invalid response structure:', result); // Debug log
             throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
           }
         } catch (error) {

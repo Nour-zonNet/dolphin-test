@@ -11,8 +11,6 @@ import { CheckCircle } from '@/utils/icons';
  * Displays transaction receipt in the exact format shown in the image
  */
 const TransactionDetailsModal = ({ transaction, onClose }) => {
-  // Debug: Log transaction data to understand the structure
-  console.log('Transaction data in modal:', transaction);
   const receiptRef = useRef(null);
   
   const copyTransactionId = async () => {
@@ -43,7 +41,6 @@ const TransactionDetailsModal = ({ transaction, onClose }) => {
   //     const html2canvas = await ensureHtml2Canvas();
   //     const target = receiptRef.current;
   //     if (!target) {
-  //       console.error('Receipt element not found');
   //       return;
   //     }
 
@@ -55,8 +52,6 @@ const TransactionDetailsModal = ({ transaction, onClose }) => {
 
   //     // Get the actual dimensions
   //     const rect = target.getBoundingClientRect();
-  //     console.log('Target dimensions:', rect);
-  //     console.log('Target element:', target);
 
   //     // Capture the receipt as canvas with high quality settings
   //     const canvas = await html2canvas(target, {
@@ -110,8 +105,6 @@ const TransactionDetailsModal = ({ transaction, onClose }) => {
   //       throw new Error('Canvas appears to be blank or white');
   //     }
 
-  //     console.log('Canvas captured successfully:', canvas.width, 'x', canvas.height);
-
   //     // Convert canvas to PNG data URL
   //     const dataUrl = canvas.toDataURL('image/png', 1.0);
       
@@ -129,7 +122,6 @@ const TransactionDetailsModal = ({ transaction, onClose }) => {
   //     canvas.remove();
       
   //   } catch (error) {
-  //     console.error('Failed to download receipt:', error);
   //     alert(`فشل في تحميل الإيصال: ${error.message}`);
   //   }
   // };

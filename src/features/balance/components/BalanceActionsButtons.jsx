@@ -1,6 +1,7 @@
 import React from "react";
-import { Gift, Plus } from "@/utils/icons";
+// import { Gift, Plus } from "@/utils/icons";
 import { useModal } from "@/components/feedback/modal/useModal";
+import { Gift, Plus } from "lucide-react";
 
 /**
  * Enhanced Balance Actions Buttons Component

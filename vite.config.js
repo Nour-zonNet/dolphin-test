@@ -233,8 +233,8 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 500,
-    target: "esnext",
     minify: "esbuild",
+    target: "esnext",
     // Enable tree shaking
     treeshake: true,
     // Optimize for production

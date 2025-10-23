@@ -26,20 +26,20 @@ const SchedulePage = () => {
   return (
     <div className="pt-28 md:pt-41">
       <ScheduleSlider />
-      {/* Temporary test button to open Session Rating Modal */}
-      <div className="fixed bottom-30 left-4 z-50 cursor-pointer">
+      
+      {/* Debug button for testing */}
+      <div className="fixed bottom-40 left-4 z-50">
         <button
-          type="button"
-          onClick={() =>
+          onClick={() => {
             openSessionRatingModal(
               eligibleSessions,
               handleSubmitRatings,
               handleCloseModal
-            )
-          }
-          className="px-3 py-2 rounded-md bg-orangedeep text-navyteal text-sm shadow z-50 cursor-pointer"
+            );
+          }}
+          className="px-3 py-2 bg-orangedeep text-navyteal text-sm rounded"
         >
-          إضافة تقييم  
+          إضافة تقييم 
         </button>
       </div>
     </div>

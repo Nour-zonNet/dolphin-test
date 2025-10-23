@@ -1,7 +1,8 @@
-import  { useState, useRef, useEffect } from "react";
-import {  ChangeGroup, Copon } from "../../../utils/icons";
+import { useState, useRef, useEffect } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChangeGroup, Copon } from "../../../utils/icons";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
-import * as Icons from "@/utils/icons";
+import { Checked, Experimental, Finished, Canceled } from "@/utils/icons";
 const ActiveCard = ({
   title,
   // image,
@@ -28,7 +29,19 @@ const ActiveCard = ({
   }, [open]);
 
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
-  const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
+  
+  // Map icon names to actual icon components
+  const getStatusIcon = (iconName) => {
+    const iconMap = {
+      Checked,
+      Experimental,
+      Finished,
+      Canceled
+    };
+    return iconMap[iconName];
+  };
+  
+  const Icon = getStatusIcon(config.icon); // نجيب الأيقونة بالاسم
 
   return (
     <div className="w-full bg-white rounded-2xl border border-gray-300 lg:mb-4 overflow-hidden max-h-[]">

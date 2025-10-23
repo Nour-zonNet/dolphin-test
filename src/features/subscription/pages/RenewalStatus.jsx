@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Header from "@/components/layout/Header";
 import { LeftArrowFilled, SupportIcon, WalletStatus, Retry } from "@/utils/icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
@@ -7,70 +7,13 @@ import successImg from "@/assets/images/successModal.svg";
 import warningImg from "@/assets/images/paymentFailed.svg";
 import pendingImg from "@/assets/images/paymentPending.svg";
 import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
-import { addToBalance, setLastTransaction } from "@/store/balanceSlice";
+import { setLastTransaction } from "@/store/balanceSlice";
 
-// Order Summary Card Component
-const OrderSummaryCard = () => {
-  const _orderItems = [
-    { name: "باقة الصحة العامة", price: 200 },
-    { name: "باقة ركن المسلم", price: 100 },
-    { name: "باقة اللغة الانجليزية المستوي الاول", price: 300 },
-    { name: "باقة التميز", price: 400 },
-    { name: "باقة التميز", price: 700 },
-  ];
-
-  const discount = 500;
-  const subtotal = _orderItems.reduce((sum, item) => sum + item.price, 0);
-  const total = subtotal - discount;
-
-  // return (
-  //   <div className="bg-white border border-[#8C8C8C22] rounded-[24px] p-6 w-full">
-  //     <h3 className="text-lg md:text-xl font-bold text-black mb-6">ملخص الطلب</h3>
-      
-  //     <div className="space-y-3 mb-4">
-  //       {orderItems.map((item, index) => (
-  //         <div key={index} className="flex justify-between gap-6 items-center">
-  //           <span className="text-[#645C5C] font-medium text-sm md:text-lg">{item.name}</span>
-  //           <FormatWithCurrency 
-  //             amount={item.price} 
-  //             symbolFill="#645C5C" 
-  //             symbolClass="w-4 h-4 md:w-6 md:h-6"
-  //             className="text-[#645C5C] font-medium"
-  //           />
-  //         </div>
-  //       ))}
-  //     </div>
-
-  //     <div className="flex justify-between items-center mb-4">
-  //       <span className="text-[#AE7426] font-medium text-sm md:text-lg">الخصم</span>
-  //       <FormatWithCurrency 
-  //         amount={-discount}
-  //         symbolFill="#AE7426" 
-  //         symbolClass="w-4 h-4 md:w-6 md:h-6"
-  //         className="text-[#AE7426] font-medium"
-  //       />
-  //     </div>
-
-  //     <div className="border-t border-dashed border-gray-300 pt-4">
-  //       <div className="flex justify-between items-center">
-  //         <span className="text-navyteal font-bold text-base md:text-lg">الإجمالي</span>
-  //         <FormatWithCurrency 
-  //           amount={total} 
-  //           symbolFill="#08233F" 
-  //           symbolClass="w-4 h-4 md:w-6 md:h-6"
-  //           className="text-navyteal font-bold text-lg"
-  //         />
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-};
-
-const STATUS_CONFIG = {
+const RENEWAL_STATUS_CONFIG = {
   success: {
-    title: "نجاح الدفع",
-    heading: "تمت عملية الإيداع بنجاح",
-    message: "تمت إضافة رصيدك بنجاح إلى المحفظة",
+    title: "نجاح التجديد",
+    heading: "تم تجديد الاشتراك بنجاح",
+    message: "تم تجديد اشتراكك بنجاح ويمكنك الآن الاستمتاع بخدماتنا",
     image: successImg,
     actions: [
       {
@@ -83,18 +26,18 @@ const STATUS_CONFIG = {
       },
       {
         type: "link",
-        label: "معاينة الرصيد",
+        label: "معاينة الاشتراكات",
         iconType: "WalletStatus",
         iconProps: { fill: "#0C2D40" },
         variant: "outline",
-        to: "/balance-details",
+        to: "/manage-subscription",
       },
     ],
   },
   failed: {
-    title: "فشل الدفع",
-    heading: "فشل الدفع",
-    message: "لم نتمكن من معالجة عملية الدفع الخاصة بك",
+    title: "فشل التجديد",
+    heading: "فشل تجديد الاشتراك",
+    message: "لم نتمكن من معالجة عملية تجديد الاشتراك الخاصة بك",
     image: warningImg,
     actions: [
       {
@@ -116,9 +59,9 @@ const STATUS_CONFIG = {
     ],
   },
   pending: {
-    title: "الدفع معلق",
-    heading: "عملية الدفع قيد المعالجة",
-    message: "نحن نتحقق من الدفع، قد يستغرق الأمر بضع دقائق",
+    title: "التجديد معلق",
+    heading: "عملية تجديد الاشتراك قيد المعالجة",
+    message: "نحن نتحقق من عملية التجديد، قد يستغرق الأمر بضع دقائق",
     image: pendingImg,
     actions: [
       {
@@ -128,6 +71,30 @@ const STATUS_CONFIG = {
         iconProps: {},
         variant: "filled",
         onClick: () => window.history.back(),
+      },
+      {
+        type: "button",
+        label: "العودة للرئيسية",
+        iconType: "LeftArrowFilled",
+        iconProps: { className: "w-4 h-4 md:w-6 md:h-6", color: "#0C2D40" },
+        variant: "outline",
+        onClick: (navigate) => navigate("/"),
+      },
+    ],
+  },
+  insufficient_balance: {
+    title: "رصيد غير كافي",
+    heading: "رصيد غير كافي للتجديد",
+    message: "رصيدك الحالي غير كافي لإتمام عملية تجديد الاشتراك",
+    image: warningImg,
+    actions: [
+      {
+        type: "button",
+        label: "إضافة رصيد",
+        iconType: "WalletStatus",
+        iconProps: { className: "w-4 h-4 md:w-6 md:h-6" },
+        variant: "filled",
+        onClick: (navigate) => navigate("/balance-details"),
       },
       {
         type: "button",
@@ -164,21 +131,20 @@ const createIcon = (iconType, iconProps = {}) => {
   
   const IconComponent = iconMap[iconType];
   if (!IconComponent) {
-    console.warn(`Icon component "${iconType}" not found`);
     return null;
   }
   
   return <IconComponent {...iconProps} />;
 };
 
-const PaymentStatus = () => {
+const RenewalStatus = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { status } = useParams();
   const [transactionData, setTransactionData] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
   
-  const data = STATUS_CONFIG[status];
+  const data = RENEWAL_STATUS_CONFIG[status];
 
   useEffect(() => {
     // Get transaction data from sessionStorage or localStorage
@@ -191,17 +157,17 @@ const PaymentStatus = () => {
       setTransactionData(JSON.parse(localTransaction));
     }
 
-    // Handle different payment statuses
+    // Handle different renewal statuses
     if (status === 'success' && transactionData) {
-      // Payment was successful, add balance with bonus
-      const totalAmount = transactionData.amount + (transactionData.bonusAmount || 0);
-      dispatch(addToBalance(totalAmount));
+      // For renewal success, we don't add balance - subscription is renewed
+      // The renewal success is handled by the subscription service
+      // No balance addition needed for subscription renewal
       
       // Update transaction status
       dispatch(setLastTransaction({
         ...transactionData,
         status: 'success',
-        type: 'recharge',
+        type: 'renewal',
         verifiedAt: new Date().toISOString(),
       }));
       
@@ -213,7 +179,7 @@ const PaymentStatus = () => {
       dispatch(setLastTransaction({
         ...transactionData,
         status: 'failed',
-        type: 'recharge',
+        type: 'renewal',
         verifiedAt: new Date().toISOString(),
       }));
       
@@ -224,9 +190,20 @@ const PaymentStatus = () => {
       // Payment is pending - in real implementation, this would be handled by webhook or polling
       // For now, we'll just show the pending status
       setIsVerifying(true);
+    } else if (status === 'insufficient_balance' && transactionData) {
+      // Insufficient balance - update transaction status
+      dispatch(setLastTransaction({
+        ...transactionData,
+        status: 'insufficient_balance',
+        type: 'renewal',
+        verifiedAt: new Date().toISOString(),
+      }));
       
+      // Clear pending transaction
+      localStorage.removeItem('pendingTransaction');
+      sessionStorage.removeItem('currentTransaction');
     }
-  }, [status, transactionData?.id, dispatch, navigate]);
+  }, [status, transactionData, dispatch, navigate]);
 
   if (!data) return <div className="p-6 text-center text-red-500">حالة غير معروفة</div>;
 
@@ -246,7 +223,7 @@ const PaymentStatus = () => {
             <div className="mt-4 p-4 bg-orange-50 rounded-lg">
               <div className="flex items-center justify-center gap-2">
                 <div className="w-4 h-4 border-2 border-orangedeep border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-orangedeep font-semibold">جاري التحقق من حالة الدفع...</span>
+                <span className="text-orangedeep font-semibold">جاري التحقق من حالة التجديد...</span>
               </div>
             </div>
           )}
@@ -271,4 +248,4 @@ const PaymentStatus = () => {
   );
 };
 
-export default PaymentStatus;
+export default RenewalStatus;
