@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { RightArrow } from "@/utils/icons";
 import SearchFilterBar from "../components/SearchFilterBar";
 import { LessonCard } from "../components";
-import dolphinStudy from "@/assets/schedule/dolphin-study.svg";
+import dolphinStudy from "@/assets/schedule/dolphin-study.webp";
 import { useDispatch } from "react-redux";
 import { useLessons } from "../../lessons/hooks/useLessons";
 import { Header } from "@/components/layout";

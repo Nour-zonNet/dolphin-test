@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import offlineDolphin from '@/assets/images/offline-dolphin.svg?inline';
+import offlineDolphin from '@/assets/images/offline-dolphin.webp?inline';
 import { Retry } from '@/utils/icons';
 import OptimizedImage from './OptimizedImage';
 

@@ -3,9 +3,9 @@ import { useDispatch } from "react-redux";
 import Header from "@/components/layout/Header";
 import { LeftArrowFilled, SupportIcon, WalletStatus, Retry } from "@/utils/icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import successImg from "@/assets/images/successModal.svg";
-import warningImg from "@/assets/images/paymentFailed.svg";
-import pendingImg from "@/assets/images/paymentPending.svg";
+import successImg from "@/assets/images/successModal.webp";
+import warningImg from "@/assets/images/paymentFailed.webp";
+import pendingImg from "@/assets/images/paymentPending.webp";
 import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
 import { setLastTransaction } from "@/store/balanceSlice";
 

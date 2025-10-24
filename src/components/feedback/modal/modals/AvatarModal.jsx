@@ -2,18 +2,18 @@ import React, { useRef } from "react";
 import { X } from "lucide-react";
 
 // Import all avatars
-import avatar1 from "@/assets/avatars/avatar1.png";
-import avatar2 from "@/assets/avatars/avatar2.png";
-import avatar3 from "@/assets/avatars/avatar3.png";
-import avatar4 from "@/assets/avatars/avatar4.png";
-import avatar5 from "@/assets/avatars/avatar5.png";
-import avatar6 from "@/assets/avatars/avatar6.png";
-import avatar7 from "@/assets/avatars/avatar7.png";
-import avatar8 from "@/assets/avatars/avatar8.png";
-import avatar9 from "@/assets/avatars/avatar9.png";
-import avatar10 from "@/assets/avatars/avatar10.png";
-import avatar11 from "@/assets/avatars/avatar11.png";
-import imgUpload from "@/assets/avatars/img-upload.png";
+import avatar1 from "@/assets/avatars/avatar1.webp";
+import avatar2 from "@/assets/avatars/avatar2.webp";
+import avatar3 from "@/assets/avatars/avatar3.webp";
+import avatar4 from "@/assets/avatars/avatar4.webp";
+import avatar5 from "@/assets/avatars/avatar5.webp";
+import avatar6 from "@/assets/avatars/avatar6.webp";
+import avatar7 from "@/assets/avatars/avatar7.webp";
+import avatar8 from "@/assets/avatars/avatar8.webp";
+import avatar9 from "@/assets/avatars/avatar9.webp";
+import avatar10 from "@/assets/avatars/avatar10.webp";
+import avatar11 from "@/assets/avatars/avatar11.webp";
+import imgUpload from "@/assets/avatars/img-upload.webp";
 
 const avatars = [
   avatar1,
