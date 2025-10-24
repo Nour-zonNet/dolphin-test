@@ -27,7 +27,7 @@ export default defineConfig({
       },
       includeAssets: [
         "favicon.svg", "robots.txt", "apple-touch-icon.png", 
-        "homeChild.webp", "offline-dolphin.webp"
+        "homeChild.webp", "homeChild.png", "offline-dolphin.webp"
       ],
       manifest: {
         name: "منصة الدلفين التعليمية",
@@ -166,6 +166,7 @@ export default defineConfig({
       }
     }
   },
+  publicDir: "public",
   build: {
     rollupOptions: {
       output: {
