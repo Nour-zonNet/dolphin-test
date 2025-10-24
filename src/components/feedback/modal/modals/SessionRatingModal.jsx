@@ -8,7 +8,7 @@ import { openModal } from '@/store/modalSlice';
 import { MODAL_TYPES } from '@/constants/MODAL_TYPES';
 import { X } from "lucide-react";
 
-const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
+const SessionRatingModal = ({ onClose, onSkip, onSubmit, sessions = [] }) => {
     const [ratings, setRatings] = useState({});
     const [comments, setComments] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -172,7 +172,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     };
 
     const handleSkip = () => {
-        onClose();
+        onSkip(); // ✅ Now calls the correct skip handler
         // Reset state
         const resetRatings = {};
         const resetComments = {};
