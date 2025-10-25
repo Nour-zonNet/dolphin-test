@@ -237,6 +237,23 @@ export const useModal = () => {
     );
   };
 
+  const openEmailRequiredModal = (onNavigateToProfile) => {
+    // Store callback in registry with a unique ID
+    const callbackId = onNavigateToProfile ? Date.now().toString() : null;
+    if (onNavigateToProfile) {
+      callbackRegistry.set(callbackId, onNavigateToProfile);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.EMAIL_REQUIRED,
+        props: {
+          callbackId: callbackId,
+        },
+      })
+    );
+  };
+
   // Function to execute and remove callback from registry
   const executeCallback = (callbackId, ...args) => {
     const callback = callbackRegistry.get(callbackId);
@@ -262,6 +279,7 @@ export const useModal = () => {
     openPerformanceChartModal,
     openSessionRatingModal,
     openTransactionDetailsModal,
+    openEmailRequiredModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

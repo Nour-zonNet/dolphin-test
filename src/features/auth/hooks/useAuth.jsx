@@ -36,6 +36,7 @@ export const useAuth = () => {
     () => Boolean(token && user && !loading),
     [token, user, loading]
   );
+  const hasEmail = useCallback(() => Boolean(user?.email), [user]);
 
   const dispatchLogin = useCallback(
     (credentials) => dispatch(loginUser(credentials)),
@@ -103,12 +104,12 @@ export const useAuth = () => {
     (credentials) => dispatch(verifyOtp(credentials)),
     [dispatch]
   );
-  switchUserAccount;
-  updateUser;
+ 
   return useMemo(
     () => ({
       user,
       token,
+      hasEmail,
       isAuthenticated,
       loading,
       error,
@@ -141,6 +142,7 @@ export const useAuth = () => {
       error,
       isAuthLoading,
       isFullyAuthenticated,
+      hasEmail,
       shouldRedirectToLogin,
       dispatchCheckPhone,
       dispatchRegisterUser,

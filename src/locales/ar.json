@@ -48,6 +48,10 @@
     "fullName": "الاسم الكامل",
     "fullNamePlaceholder": "اكتب اسمك الكامل",
     "fullNameRequired": "الاسم مطلوب",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "أدخل بريدك الإلكتروني",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح",
     "grade": "الصف الدراسي",
     "selectGrade": "اختر الصف الدراسي",
     "gradeRequired": "الصف الدراسي مطلوب",
@@ -196,5 +200,10 @@
     "download": "تحميل",
     "response": "الرد",
     "responseDate": "تاريخ الرد"
+  },
+  "emailRequired": {
+    "title": "تحديث البيانات",
+    "message": "نحتاج إلى تحديث بياناتك. اضغط على الزر وانتقل إلى صفحة الملف الشخصي لإضافة البريد الإلكتروني",
+    "profileButton": "الملف الشخصي"
   }
 }

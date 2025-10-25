@@ -17,6 +17,7 @@ import {
   // AddCouponModal,
   SessionRatingModal,
   TransactionDetailsModal,
+  EmailRequiredModal,
   // CommentsModal,
   // PerformanceChartModal,
 } from "./modals";
@@ -227,6 +228,19 @@ const ModalManager = () => {
         <TransactionDetailsModal
           {...props}
           onClose={handleClose}
+        />
+      );
+      break;
+    case MODAL_TYPES.EMAIL_REQUIRED:
+      ModalContent = (
+        <EmailRequiredModal
+          {...props}
+          onClose={handleClose}
+          onNavigateToProfile={() => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId);
+            }
+          }}
         />
       );
       break;

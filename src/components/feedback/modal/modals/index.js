@@ -10,5 +10,6 @@ export { default as AddBalanceModal } from '@/features/balance/modal/AddBalanceM
 // export { default as AddCouponModal } from '@/features/Balance/modal/AddCouponModal';
 export { default as SessionRatingModal } from './SessionRatingModal';
 export { default as TransactionDetailsModal } from './TransactionDetailsModal';
+export { default as EmailRequiredModal } from './EmailRequiredModal';
 // export { default as CommentsModal } from './CommentsModal';
 // export { default as PerformanceChartModal } from './PerformanceChartModal';

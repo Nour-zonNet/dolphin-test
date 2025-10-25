@@ -1,11 +1,13 @@
 import { useLanguageDirection } from "@/hooks/useLanguageDirection";
 import { useOfflineDetection } from "@/hooks/useOfflineDetection";
+
 import AppProviders from "./AppProviders";
 import AppRoutes from "./AppRoutes";
 import ChatwootInit from "../components/ChatwootInit"
 import { GlobalLoader, GlobalError } from "@/components/feedback";
 import { ModalManager } from "@/components/feedback/modal";
 import SessionRatingInitializer from "@/components/SessionRatingInitializer";
+import EmailCheckInitializer from "@/components/EmailCheckInitializer";
 import OfflineScreen from "@/components/OfflineScreen";
 
 const App = () => {
@@ -37,6 +39,7 @@ const App = () => {
         <GlobalError />
         <ModalManager />
         <SessionRatingInitializer />
+        <EmailCheckInitializer />
         <AppRoutes />
       </div>
       <ChatwootInit />
