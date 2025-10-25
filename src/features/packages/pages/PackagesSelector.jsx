@@ -8,7 +8,7 @@ import { InfoIcon } from "@/utils/icons";
 import { Header } from "@/components/layout";
 import { HomeSupportBtn } from "@/components/layout";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
-import notFoundPackages from "@/assets/images/allPackages.png";
+import notFoundPackages from "@/assets/images/allPackages.webp";
 
 const DataPlanSelector = () => {
   const navigate = useNavigate();

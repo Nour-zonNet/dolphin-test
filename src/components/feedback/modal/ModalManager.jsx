@@ -180,7 +180,26 @@ const ModalManager = () => {
       ModalContent = (
         <SessionRatingModal
           {...props}
-          onClose={handleClose}
+          onClose={() => {
+            // Execute registered onClose callback if provided via props
+            if (props.onCloseId) {
+              const cb = callbackRegistry.get(props.onCloseId);
+              if (cb) {
+                cb();
+              }
+            }
+            handleClose();
+          }}
+          onSkip={() => {
+            // Execute registered onSkip callback if provided via props
+            if (props.onSkipId) {
+              const cb = callbackRegistry.get(props.onSkipId);
+              if (cb) {
+                cb();
+              }
+            }
+            handleClose();
+          }}
           onSubmit={async (data) => {
             try {
               // Execute registered onSubmit callback if provided via props

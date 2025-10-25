@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import dolphinEvaluate from '@/assets/images/dolphin-evaluate.svg';
-import dolphinStars from '@/assets/images/dolphin-stars.svg';
-import sendRateIcon from '@/assets/images/send-rate-icon.svg';
+import dolphinEvaluate from '@/assets/images/dolphin-evaluate.webp';
+import dolphinStars from '@/assets/images/dolphin-stars.webp';
+import sendRateIcon from '@/assets/images/send-rate-icon.webp';
 import { Teacher } from '@/utils/icons';
 import { useDispatch } from 'react-redux';
 import { openModal } from '@/store/modalSlice';
 import { MODAL_TYPES } from '@/constants/MODAL_TYPES';
 import { X } from "lucide-react";
 
-const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
+const SessionRatingModal = ({ onClose, onSkip, onSubmit, sessions = [] }) => {
     const [ratings, setRatings] = useState({});
     const [comments, setComments] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -172,7 +172,7 @@ const SessionRatingModal = ({ onClose, onSubmit, sessions = [] }) => {
     };
 
     const handleSkip = () => {
-        onClose();
+        onSkip(); // ✅ Now calls the correct skip handler
         // Reset state
         const resetRatings = {};
         const resetComments = {};

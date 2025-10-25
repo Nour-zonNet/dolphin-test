@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 const SchedulePage = () => {
   const { openSessionRatingModal } = useModal();
-  const { eligibleSessions, handleSubmitRatings, handleCloseModal, shouldShowModal } = useSessionRatingModal();
+  const { eligibleSessions, handleSubmitRatings, handleCloseModal, handleSkipModal, shouldShowModal } = useSessionRatingModal();
 
   // Handle showing the modal when shouldShowModal becomes true
   useEffect(() => {
@@ -15,13 +15,14 @@ const SchedulePage = () => {
         openSessionRatingModal(
           eligibleSessions,
           handleSubmitRatings,
-          handleCloseModal
+          handleCloseModal,
+          handleSkipModal
         );
       }, 500);
       
       return () => clearTimeout(timer);
     }
-  }, [shouldShowModal, eligibleSessions, openSessionRatingModal, handleSubmitRatings, handleCloseModal]);
+  }, [shouldShowModal, eligibleSessions, openSessionRatingModal, handleSubmitRatings, handleCloseModal, handleSkipModal]);
 
   return (
     <div className="pt-28 md:pt-41">
@@ -34,7 +35,8 @@ const SchedulePage = () => {
             openSessionRatingModal(
               eligibleSessions,
               handleSubmitRatings,
-              handleCloseModal
+              handleCloseModal,
+              handleSkipModal
             );
           }}
           className="px-3 py-2 bg-orangedeep text-navyteal text-sm rounded"

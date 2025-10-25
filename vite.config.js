@@ -4,7 +4,6 @@ import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
-import { visualizer } from "rollup-plugin-visualizer";
 import path from "path";
 
 // https://vite.dev/config/
@@ -14,7 +13,6 @@ export default defineConfig({
       // Enable React optimizations
       fastRefresh: true,
     }),
-    visualizer({ open: true }),
     tailwindcss(),
     svgr({
       svgrOptions: {
@@ -29,7 +27,7 @@ export default defineConfig({
       },
       includeAssets: [
         "favicon.svg", "robots.txt", "apple-touch-icon.png", 
-        "homeChild.png", "offline-dolphin.svg"
+        "homeChild.webp", "homeChild.png", "offline-dolphin.webp"
       ],
       manifest: {
         name: "منصة الدلفين التعليمية",
@@ -41,14 +39,14 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "/homeChild.png",
+            src: "/homeChild.webp",
             sizes: "192x192",
-            type: "image/png"
+            type: "image/webp"
           },
           {
-            src: "/homeChild.png",
+            src: "/homeChild.webp",
             sizes: "512x512",
-            type: "image/png"
+            type: "image/webp"
           }
         ]
       },
@@ -168,6 +166,7 @@ export default defineConfig({
       }
     }
   },
+  publicDir: "public",
   build: {
     rollupOptions: {
       output: {

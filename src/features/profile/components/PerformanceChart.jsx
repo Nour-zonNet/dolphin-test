@@ -1,4 +1,4 @@
-import reportsDolphin from "@/assets/images/reports-dolphin.svg";
+import reportsDolphin from "@/assets/images/reports-dolphin.webp";
 import { Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,

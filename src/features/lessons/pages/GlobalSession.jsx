@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../../assets/logo/dolphinLogo.png";
+import logo from "@/assets/logo/dolphinLogo.webp";
 import { useLessons } from "../hooks/useLessons";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../auth/hooks/useAuth";
 import MyPhone from "../../../components/ui/PhoneInput/PhoneInput";
-import dolphinIcon from "@/assets/images/homeChild.png";
+import dolphinIcon from "@/assets/images/homeChild.webp";
 const GlobalSessionPage = () => {
   const { username } = useParams();
   // = useParams()

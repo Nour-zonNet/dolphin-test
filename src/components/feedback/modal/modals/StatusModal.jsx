@@ -2,8 +2,8 @@ import { MODAL_TYPES } from "../../../../constants/MODAL_TYPES";
 import { CorrectCircle, Cross } from "../../../../utils/icons";
 import { useTranslation } from "react-i18next";
 import Button from "../../../ui/Button";
-import successImg from "../../../../assets/modal/successModal.svg";
-import failImg from "../../../../assets/modal/warningModal.svg";
+import successImg from "../../../../assets/modal/successModal.webp";
+import failImg from "../../../../assets/modal/warningModal.webp";
 
 const StatusModal = ({ type, onConfirm, onClose, title, message }) => {
   const { t } = useTranslation();

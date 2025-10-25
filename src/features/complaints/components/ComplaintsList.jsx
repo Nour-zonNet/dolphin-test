@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import ComplaintItem from './ComplaintItem';
-import notFoundImg from "../../../assets/complaints/notFound.svg";
+import notFoundImg from "../../../assets/complaints/notFound.webp";
 import fileIcon from "../../../assets/schedule/file-icon.svg";
 
 const ComplaintsList = ({ complaints, loading }) => {

@@ -1,4 +1,4 @@
-import dolphinChild from "@/assets/images/homeChild.png";
+import dolphinChild from "@/assets/images/homeChild.webp";
 import { Book } from "../../../utils/Illustrations";
 
 const TopHero = ({text}) => {
