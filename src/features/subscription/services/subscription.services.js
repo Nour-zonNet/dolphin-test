@@ -65,16 +65,22 @@ class SubscriptionRepository {
 
   // Create new subscription payment
   async createNewSubscriptionPayment(packageIds) {
-    // Convert package IDs to the expected format: [{"id": 89}, {"id": 206}]
-    const packages = Array.isArray(packageIds) 
-      ? packageIds.map(id => ({ id: parseInt(id) }))
-      : [{ id: parseInt(packageIds) }];
-    
     try {
-      const response = await api.post('/student/recharge-packages', { packages });
+      // Convert package IDs to query parameter format
+      const packagesParam = Array.isArray(packageIds) 
+        ? packageIds.join(',')
+        : packageIds.toString();
       
+      console.log('API Call - Package IDs:', packageIds);
+      console.log('API Call - Packages Param:', packagesParam);
+      console.log('API Call - Full URL:', `/student/recharge-packages?packages=${packagesParam}`);
+      
+      const response = await api.post(`/student/recharge-packages?packages=${packagesParam}`);
+      
+      console.log('API Response:', response.data);
       return response.data;
     } catch (error) {
+      console.error('API Error:', error);
       throw error;
     }
   }

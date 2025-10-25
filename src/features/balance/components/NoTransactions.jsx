@@ -1,5 +1,5 @@
 import React from 'react'
-import noTransactions from "@/assets/balance/no-transactions.webp"
+import noTransactions from "@/assets/balance/no-transactions.svg"
 const NoTransactions = () => {
   return (
     <div className="my-14 w-[50%] lg:w-[30%] mx-auto flex items-center justify-center">

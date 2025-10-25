@@ -35,7 +35,7 @@ const BalanceActionsButtons = () => {
         
         // Add a small delay to make the network request visible in console
         setTimeout(() => {
-          window.location.href = data.url;
+          window.open(data.url, '_blank');
         }, 1000); // 1 second delay
       } else {
         // Invalid payment data received

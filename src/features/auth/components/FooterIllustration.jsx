@@ -1,4 +1,4 @@
-import FooterDraw from "@/assets/authentication/draw.webp"; 
+import FooterDraw from "@/assets/authentication/draw.svg"; 
 
 const FooterIllustration = () => {
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import card from "@/assets/balance/card.webp";
+import card from "@/assets/balance/card.svg";
 import FormatWithCurrency from '@/utils/FormatWithCurrency';
 
 const BalanceCard = ({ user }) => {

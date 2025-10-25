@@ -8,6 +8,7 @@ import React, {
 import { Cancel, ChevronDown, ChevronUp, Renew, Checked, Experimental, Finished, Canceled } from "@/utils/icons";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import { useSubscriptions } from "../hooks/useSubscriptions";
+import { usePackages } from "@/features/packages/hooks/usePackages";
 import useGroups from "../../groups/hooks/useGroups";
 import ActionButton from "./ActionButton";
 import GroupInfo from "./GroupInfo";
@@ -25,6 +26,7 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
   const { cancelSubscription, reactivateSubscription, createNewSubscriptionPayment, fetchSubscriptions } = useSubscriptions();
+  const { all: allPackages } = usePackages();
   useGroups(item.package_id);
 
   const mappedItem = useMemo(
@@ -208,38 +210,79 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
       },
       async () => {
         try {
+          // Get package price information
+          const packageData = allPackages?.find(pkg => pkg.id === item.package_id);
+          const packagePrice = packageData?.finalPrice || packageData?.originalPrice || 0;
+          
+          console.log('Renewal - Package ID:', item.package_id);
+          console.log('Renewal - Package Data:', packageData);
+          console.log('Renewal - Package Price:', packagePrice);
+          
           const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
           
+          console.log('Renewal - API Response:', result);
           
           if (result.success && result.data?.url) {
+            console.log('Renewal - MyFatoorah URL:', result.data.url);
+            
             // Store renewal transaction data for status page
-            sessionStorage.setItem('currentTransaction', JSON.stringify({
+            const renewalTransactionData = {
               id: result.data.invoice_id || 'renewal_' + Date.now(),
-              amount: result.data.amount || 0,
+              amount: result.data.amount || packagePrice,
               currency: 'SAR',
               status: 'pending',
               type: 'renewal',
               packageId: item.package_id,
               subscriptionId: item.id,
+              packagePrice: packagePrice,
               createdAt: new Date().toISOString(),
-            }));
-            localStorage.setItem('pendingTransaction', JSON.stringify({
-              id: result.data.invoice_id || 'renewal_' + Date.now(),
-              amount: result.data.amount || 0,
-              currency: 'SAR',
-              status: 'pending',
-              type: 'renewal',
+            };
+            
+            sessionStorage.setItem('currentTransaction', JSON.stringify(renewalTransactionData));
+            localStorage.setItem('pendingTransaction', JSON.stringify(renewalTransactionData));
+            
+            // Store additional renewal indicator for fallback detection
+            // Clear any conflicting checkout data first
+            sessionStorage.removeItem('checkoutData');
+            localStorage.removeItem('checkoutData');
+            
+            console.log('Renewal Flow - Storing renewalData:', {
+              timestamp: Date.now(),
               packageId: item.package_id,
               subscriptionId: item.id,
-              createdAt: new Date().toISOString(),
+              source: 'manage-subscription'
+            });
+            
+            sessionStorage.setItem('renewalData', JSON.stringify({
+              timestamp: Date.now(),
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              source: 'manage-subscription'
             }));
             
-            // Redirect directly to MyFatoorah payment page in new tab
-            window.open(result.data.url, '_blank');
+            console.log('Renewal Flow - Stored renewalData:', sessionStorage.getItem('renewalData'));
+            
+            // Redirect to MyFatoorah payment page
+            try {
+              // Try opening in new tab first
+              const newWindow = window.open(result.data.url, '_blank');
+              
+              // If popup was blocked, redirect in same window
+              if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                console.log('Popup blocked, redirecting in same window');
+                window.location.href = result.data.url;
+              }
+            } catch (error) {
+              console.error('Error opening MyFatoorah:', error);
+              // Fallback: redirect in same window
+              window.location.href = result.data.url;
+            }
           } else {
+            console.error('Renewal - Invalid response:', result);
             throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
           }
         } catch (error) {
+          console.error('Renewal Payment Error:', error);
           const getErrorMessage = (err) => {
             if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
             if (typeof err === "string") return err;
@@ -270,16 +313,78 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
       },
       async () => {
         try {
+          // Get package price information
+          const packageData = allPackages?.find(pkg => pkg.id === item.package_id);
+          const packagePrice = packageData?.finalPrice || packageData?.originalPrice || 0;
+          
+          console.log('New Subscription - Package ID:', item.package_id);
+          console.log('New Subscription - Package Data:', packageData);
+          console.log('New Subscription - Package Price:', packagePrice);
+          
           const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
           
+          console.log('New Subscription - API Response:', result);
           
           if (result.success && result.data?.url) {
-            // Redirect directly to MyFatoorah payment page in new tab
-            window.open(result.data.url, '_blank');
+            console.log('New Subscription - MyFatoorah URL:', result.data.url);
+            
+            // Store renewal transaction data for status page
+            const newSubscriptionTransactionData = {
+              id: result.data.invoice_id || 'new_subscription_' + Date.now(),
+              amount: result.data.amount || packagePrice,
+              currency: 'SAR',
+              status: 'pending',
+              type: 'renewal',
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              packagePrice: packagePrice,
+              createdAt: new Date().toISOString(),
+            };
+            
+            sessionStorage.setItem('currentTransaction', JSON.stringify(newSubscriptionTransactionData));
+            localStorage.setItem('pendingTransaction', JSON.stringify(newSubscriptionTransactionData));
+            
+            // Store additional renewal indicator for fallback detection
+            // Clear any conflicting checkout data first
+            sessionStorage.removeItem('checkoutData');
+            localStorage.removeItem('checkoutData');
+            
+            console.log('New Subscription Flow - Storing renewalData:', {
+              timestamp: Date.now(),
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              source: 'manage-subscription'
+            });
+            
+            sessionStorage.setItem('renewalData', JSON.stringify({
+              timestamp: Date.now(),
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              source: 'manage-subscription'
+            }));
+            
+            console.log('New Subscription Flow - Stored renewalData:', sessionStorage.getItem('renewalData'));
+            
+            // Redirect to MyFatoorah payment page
+            try {
+              // Try opening in new tab first
+              const newWindow = window.open(result.data.url, '_blank');
+              
+              // If popup was blocked, redirect in same window
+              if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                console.log('Popup blocked, redirecting in same window');
+                window.location.href = result.data.url;
+              }
+            } catch (error) {
+              console.error('Error opening MyFatoorah:', error);
+              // Fallback: redirect in same window
+              window.location.href = result.data.url;
+            }
           } else {
             throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
           }
         } catch (error) {
+          console.error('New Subscription Payment Error:', error);
           const getErrorMessage = (err) => {
             if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
             if (typeof err === "string") return err;

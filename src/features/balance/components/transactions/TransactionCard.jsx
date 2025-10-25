@@ -35,6 +35,7 @@ const TransactionCard = ({ transaction, className = '' }) => {
     const typeColors = {
       'subscription': 'text-[#1B872C]',
       'balance_topup': 'text-orangedeep',
+      'wallet_payment': 'text-[#3A8809]',
       'renewal': 'text-[#E21B1B]',
       'refund': 'text-[#2E7D32]',
     };
@@ -44,8 +45,9 @@ const TransactionCard = ({ transaction, className = '' }) => {
 
   const formatAmount = (amount, type) => {
     const isNegative = type === 'refund';
-    const sign = isNegative ? '-' : '+';
-    const color = isNegative ? 'text-red-600' : 'text-green-600';
+    const isWalletPayment = type === 'wallet_payment';
+    const sign = isNegative ? '-' : (isWalletPayment ? '-' : '+');
+    const color = isNegative ? 'text-red-600' : (isWalletPayment ? 'text-red-600' : 'text-green-600');
     
     return (
       <div className={`text-lg lg:text-2xl font-bold ${color} flex items-center gap-1`}>
@@ -55,7 +57,7 @@ const TransactionCard = ({ transaction, className = '' }) => {
           showSymbol={true}
           className=""
           symbolClass="w-4 h-4 lg:w-6 lg:h-6"
-          symbolFill={isNegative ? "#E21B1B" : "#2E7D32"}
+          symbolFill={isNegative || isWalletPayment ? "#E21B1B" : "#2E7D32"}
         />
       </div>
     );
@@ -86,6 +88,12 @@ const TransactionCard = ({ transaction, className = '' }) => {
           <div className="flex items-center gap-4">
             {/* if transaction.type is 'balance_topup' */}
             {transaction.type === 'balance_topup' && (
+              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 bg-[#3A880922] rounded-full flex items-center justify-center">
+                <WalletGray className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" />
+              </div>
+            )}
+            {/* if transaction.type is 'wallet_payment' */}
+            {transaction.type === 'wallet_payment' && (
               <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 bg-[#3A880922] rounded-full flex items-center justify-center">
                 <WalletGray className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" />
               </div>

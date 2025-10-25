@@ -303,6 +303,12 @@ export const routes = [
     layout: false,
   },
   {
+    path: "/renewal-status/:status/:type?",
+    element: RenewalStatus,
+    protected: true,
+    layout: false,
+  },
+  {
     path: "/offline",
     element: OfflineScreen,
     public: true,

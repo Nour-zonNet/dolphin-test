@@ -48,5 +48,20 @@ export const getWalletBalance = async () => {
   return response.data;
 };
 
+// Wallet recharge packages API function
+export const rechargePackagesFromWallet = async (packageIds) => {
+  try {
+    const response = await api.post('/student/wallet/recharge-packages', {
+      packageIds: packageIds,
+      subscription_type: "monthly"
+    });
+    
+    return response.data;
+  } catch (error) {
+    // Preserve the original error object so the checkout page can extract detailed error messages
+    throw error;
+  }
+};
+
 export default api;
   
