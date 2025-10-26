@@ -22,12 +22,6 @@ window.__WB_DISABLE_DEV_LOGS = true;
 let errorQueue = [];
 
 window.addEventListener('error', (_event) => {
-  // Suppress Activity-related errors (from Clarity, React, or other sources)
-  if (_event.message && _event.message.includes('Cannot set properties of undefined') && _event.message.includes('Activity')) {
-    _event.preventDefault();
-    return;
-  }
-
   // Store error for display
   errorQueue.push({
     type: 'error',

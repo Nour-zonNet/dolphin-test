@@ -395,25 +395,12 @@ export const routes = [
   {
     path: "/teacher/profile",
     element: TeacherProfile,
-
     protected: false,
     homeSupportBtn: true,
     navbar: false,
     mobileNav: false,
     layout: false,
   },
-
-  {
-    path: "/teacher/profile",
-    element: TeacherProfile,
-
-    protected: false,
-    homeSupportBtn: true,
-    navbar: false,
-    mobileNav: false,
-    layout: false,
-  },
- 
 ];
 
 // Helper function to check if route is public
