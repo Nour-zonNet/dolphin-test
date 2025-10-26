@@ -19,6 +19,7 @@ const RegisterPage = () => {
       phoneNumber: phoneNumber,
       name: data.name,
       grade: data.grade,
+      email: data.email,
       pinCode: data.password,
     });
 
