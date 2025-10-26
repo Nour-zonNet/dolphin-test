@@ -149,9 +149,9 @@ const VideoPlayer = ({ lessonId }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const [current, setCurrent] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const [isHovered, setIsHovered] = useState(false);
   // const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(1);
