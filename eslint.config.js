@@ -28,7 +28,7 @@ export default defineConfig([
         {
           varsIgnorePattern: '^[A-Z_]',
           argsIgnorePattern: '^_',
-          caughtErrors: 'all',
+          caughtErrors: 'none',
           caughtErrorsIgnorePattern: '^_',
         },
       ],

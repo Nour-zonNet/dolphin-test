@@ -11,9 +11,21 @@ const api = axios.create({
 // Add token if exists
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
+
+// Response interceptor for debugging
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Wallet charge API function
 export const chargeWallet = async (amount) => {
@@ -31,15 +43,19 @@ export const chargeWallet = async (amount) => {
 
 // Get wallet balance API function
 export const getWalletBalance = async () => {
-  try {
-    const response = await api.get('/student/wallet/balance');
-    
-    return response.data;
-  } catch (error) {
-    // Wallet balance error
-    // Re-throw the error so it can be handled by the calling code
-    throw error;
-  }
+  const response = await api.get('/student/wallet/balance');
+  
+  return response.data;
+};
+
+// Wallet recharge packages API function
+export const rechargePackagesFromWallet = async (packageIds) => {
+  const response = await api.post('/student/wallet/recharge-packages', {
+    packageIds: packageIds,
+    subscription_type: "monthly"
+  });
+  
+  return response.data;
 };
 
 export default api;

@@ -2,38 +2,42 @@
 // import ZoomMtgEmbedded from "@zoom/meetingsdk/embedded";
 
 function ZoomMeting() {
-  const client = ZoomMtgEmbedded.createClient();
+  // const client = ZoomMtgEmbedded.createClient();
 
-  const authEndpoint = "http://localhost:4000";
-  const meetingNumber = "97372526003"; // real meeting ID
-  const passWord = "j9WTJAoybL9lQPaP9VrjDXhQbHbbWa"; // exact meeting passcode
-  const role = 1; // 0 = participant, 1 = host
-  const userName = "mahmoud";
-  const userEmail = "mahmoud@example.com";
-  const registrantToken = "";
-  const zakToken = "";
+  // const authEndpoint = "http://localhost:4000";
+  // const meetingNumber = "97372526003"; // real meeting ID
+  // const passWord = "j9WTJAoybL9lQPaP9VrjDXhQbHbbWa"; // exact meeting passcode
+  // const role = 1; // 0 = participant, 1 = host
+  // const userName = "mahmoud";
+  // const userEmail = "mahmoud@example.com";
+  // const registrantToken = "";
+  // const zakToken = "";
 
-  const getSignature = async () => {
-    try {
-      const req = await fetch(authEndpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          meetingNumber: meetingNumber,
-          role: role,
-          videoWebRtcMode: 1,
-        }),
-      });
-      const res = await req.json();
-      const signature = res.signature;
-      startMeeting(signature);
-    } catch (e) {
-      // Handle error silently
-    }
-  };
+  // const getSignature = async () => {
+  //   try {
+  //     const req = await fetch(authEndpoint, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         meetingNumber: meetingNumber,
+  //         role: role,
+  //         videoWebRtcMode: 1,
+  //       }),
+  //     });
+  //     const res = await req.json();
+  //     const signature = res.signature;
+  //     startMeeting(signature);
+  //   } catch (e) {
+  //     // Handle error silently
+  //   }
+  // };
 
   async function startMeeting() {
+    // Zoom meeting functionality is currently disabled
+    // Uncomment and configure when ready to use
+    /*
     const meetingSDKElement = document.getElementById("meetingSDKElement");
+    const client = ZoomMtgEmbedded.createClient();
     try {
       await client.init({
         zoomAppRoot: meetingSDKElement,
@@ -55,6 +59,7 @@ function ZoomMeting() {
     } catch (error) {
       // Handle error silently
     }
+    */
   }
 
   return (

@@ -11,8 +11,6 @@ import { CheckCircle } from '@/utils/icons';
  * Displays transaction receipt in the exact format shown in the image
  */
 const TransactionDetailsModal = ({ transaction, onClose }) => {
-  // Debug: Log transaction data to understand the structure
-  console.log('Transaction data in modal:', transaction);
   const receiptRef = useRef(null);
   
   const copyTransactionId = async () => {
@@ -26,113 +24,107 @@ const TransactionDetailsModal = ({ transaction, onClose }) => {
     }
   };
 
-  const downloadReceipt = async () => {
-    // Dynamically load html2canvas if not already loaded
-    const ensureHtml2Canvas = () =>
-      new Promise((resolve, reject) => {
-        if (window.html2canvas) return resolve(window.html2canvas);
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-        script.async = true;
-        script.onload = () => resolve(window.html2canvas);
-        script.onerror = () => reject(new Error('Failed to load html2canvas'));
-        document.body.appendChild(script);
-      });
+  // const downloadReceipt = async () => {
+  //   // Dynamically load html2canvas if not already loaded
+  //   const ensureHtml2Canvas = () =>
+  //     new Promise((resolve, reject) => {
+  //       if (window.html2canvas) return resolve(window.html2canvas);
+  //       const script = document.createElement('script');
+  //       script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+  //       script.async = true;
+  //       script.onload = () => resolve(window.html2canvas);
+  //       script.onerror = () => reject(new Error('Failed to load html2canvas'));
+  //       document.body.appendChild(script);
+  //     });
 
-    try {
-      const html2canvas = await ensureHtml2Canvas();
-      const target = receiptRef.current;
-      if (!target) {
-        console.error('Receipt element not found');
-        return;
-      }
+  //   try {
+  //     const html2canvas = await ensureHtml2Canvas();
+  //     const target = receiptRef.current;
+  //     if (!target) {
+  //       return;
+  //     }
 
-      // Wait a bit to ensure the modal is fully rendered
-      await new Promise(resolve => setTimeout(resolve, 100));
+  //     // Wait a bit to ensure the modal is fully rendered
+  //     await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Force a reflow to ensure all styles are applied
-      target.offsetHeight;
+  //     // Force a reflow to ensure all styles are applied
+  //     target.offsetHeight;
 
-      // Get the actual dimensions
-      const rect = target.getBoundingClientRect();
-      console.log('Target dimensions:', rect);
-      console.log('Target element:', target);
+  //     // Get the actual dimensions
+  //     const rect = target.getBoundingClientRect();
 
-      // Capture the receipt as canvas with high quality settings
-      const canvas = await html2canvas(target, {
-        backgroundColor: '#ffffff',
-        scale: 2, // Fixed scale for consistency
-        useCORS: true,
-        logging: true, // Enable logging to debug
-        allowTaint: true,
-        foreignObjectRendering: true,
-        width: rect.width,
-        height: rect.height,
-        x: 0,
-        y: 0,
-        scrollX: 0,
-        scrollY: 0,
-        // Ensure we capture the visible content
-        ignoreElements: (element) => {
-          // Skip elements that might cause issues
-          return element.classList.contains('modal-backdrop') || 
-                 element.classList.contains('modal-overlay') ||
-                 element.tagName === 'BUTTON'; // Skip buttons
-        }
-      });
+  //     // Capture the receipt as canvas with high quality settings
+  //     const canvas = await html2canvas(target, {
+  //       backgroundColor: '#ffffff',
+  //       scale: 2, // Fixed scale for consistency
+  //       useCORS: true,
+  //       logging: true, // Enable logging to debug
+  //       allowTaint: true,
+  //       foreignObjectRendering: true,
+  //       width: rect.width,
+  //       height: rect.height,
+  //       x: 0,
+  //       y: 0,
+  //       scrollX: 0,
+  //       scrollY: 0,
+  //       // Ensure we capture the visible content
+  //       ignoreElements: (element) => {
+  //         // Skip elements that might cause issues
+  //         return element.classList.contains('modal-backdrop') || 
+  //                element.classList.contains('modal-overlay') ||
+  //                element.tagName === 'BUTTON'; // Skip buttons
+  //       }
+  //     });
 
-      // Check if canvas has content
-      if (canvas.width === 0 || canvas.height === 0) {
-        throw new Error('Canvas is empty');
-      }
+  //     // Check if canvas has content
+  //     if (canvas.width === 0 || canvas.height === 0) {
+  //       throw new Error('Canvas is empty');
+  //     }
 
-      // Check if canvas has actual content (not just white/transparent)
-      const ctx = canvas.getContext('2d');
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-      let hasContent = false;
+  //     // Check if canvas has actual content (not just white/transparent)
+  //     const ctx = canvas.getContext('2d');
+  //     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  //     const data = imageData.data;
+  //     let hasContent = false;
       
-      // Check if there's any non-white content
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
+  //     // Check if there's any non-white content
+  //     for (let i = 0; i < data.length; i += 4) {
+  //       const r = data[i];
+  //       const g = data[i + 1];
+  //       const b = data[i + 2];
+  //       const a = data[i + 3];
         
-        // If pixel is not white/transparent, we have content
-        if (a > 0 && (r < 250 || g < 250 || b < 250)) {
-          hasContent = true;
-          break;
-        }
-      }
+  //       // If pixel is not white/transparent, we have content
+  //       if (a > 0 && (r < 250 || g < 250 || b < 250)) {
+  //         hasContent = true;
+  //         break;
+  //       }
+  //     }
       
-      if (!hasContent) {
-        throw new Error('Canvas appears to be blank or white');
-      }
+  //     if (!hasContent) {
+  //       throw new Error('Canvas appears to be blank or white');
+  //     }
 
-      console.log('Canvas captured successfully:', canvas.width, 'x', canvas.height);
-
-      // Convert canvas to PNG data URL
-      const dataUrl = canvas.toDataURL('image/png', 1.0);
+  //     // Convert canvas to PNG data URL
+  //     const dataUrl = canvas.toDataURL('image/png', 1.0);
       
-      // Create download link
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `ايصال_${transaction.reference_id || transaction.id}_${new Date().toISOString().split('T')[0]}.png`;
+  //     // Create download link
+  //     const link = document.createElement('a');
+  //     link.href = dataUrl;
+  //     link.download = `ايصال_${transaction.reference_id || transaction.id}_${new Date().toISOString().split('T')[0]}.png`;
       
-      // Trigger download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+  //     // Trigger download
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
       
-      // Clean up
-      canvas.remove();
+  //     // Clean up
+  //     canvas.remove();
       
-    } catch (error) {
-      console.error('Failed to download receipt:', error);
-      alert(`فشل في تحميل الإيصال: ${error.message}`);
-    }
-  };
+  //   } catch (error) {
+  //     alert(`فشل في تحميل الإيصال: ${error.message}`);
+  //   }
+  // };
 
   const getStatusText = (status) => {
     const statusLabels = {
@@ -151,7 +143,7 @@ const TransactionDetailsModal = ({ transaction, onClose }) => {
   const getOperationType = (type) => {
     const typeLabels = {
       'subscription': 'اشتراك في باقة',
-      'balance_topup': 'شحن الرصيد',
+      'balance_topup': 'شحن رصيد',
       'renewal': 'تجديد اشتراك',
       'refund': 'استرداد',
     };

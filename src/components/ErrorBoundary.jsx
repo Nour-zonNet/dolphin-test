@@ -11,12 +11,11 @@ class ErrorBoundary extends Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
 
     this.setState({
       error,
@@ -50,8 +49,7 @@ ${errorInfo?.componentStack || 'No component stack'}
       setTimeout(() => {
         this.setState({ copied: false });
       }, 3000);
-    }).catch(err => {
-      console.error('Failed to copy:', err);
+    }).catch(_err => {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = errorText;
@@ -63,8 +61,8 @@ ${errorInfo?.componentStack || 'No component stack'}
         setTimeout(() => {
           this.setState({ copied: false });
         }, 3000);
-      } catch (err) {
-        console.error('Fallback copy failed:', err);
+      } catch (_err2) {
+        // Fallback copy failed
       }
       document.body.removeChild(textArea);
     });
@@ -76,7 +74,7 @@ ${errorInfo?.componentStack || 'No component stack'}
 
   render() {
     if (this.state.hasError) {
-      const { error, errorInfo, copied } = this.state;
+      const { error, copied } = this.state;
       const isRTL = document.documentElement.dir === 'rtl';
 
       return (

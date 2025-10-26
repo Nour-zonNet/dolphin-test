@@ -2,6 +2,7 @@
 export const TRANSACTION_TYPES = {
   SUBSCRIPTION: 'subscription',
   BALANCE_TOPUP: 'balance_topup',
+  WALLET_PAYMENT: 'wallet_payment',
   RENEWAL: 'renewal',
   REFUND: 'refund',
 };

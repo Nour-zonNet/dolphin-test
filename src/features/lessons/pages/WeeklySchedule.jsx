@@ -1,7 +1,6 @@
 import { useLessons } from "../hooks/useLessons";
 import backgroundImage from "@/assets/schedule/background.png";
 import dolphinChild from "@/assets/images/homeChild.png";
-import "./print.css";
 import ticket from "@/assets/images/ticket.png";
 import streamline from "@/assets/images/streamline.png";
 import { useAuth } from "@/features/auth/hooks/useAuth";
@@ -111,7 +110,7 @@ const WeeklySchedule = () => {
         <div className="text-navyteal py-4 text-center">
           <h2 className="text-xl font-bold flex justify-center items-center gap-2">
             <i className="bi bi-calendar-week"></i>
-            الجدول الأسبوعي
+              الجدول الأسبوعي
           </h2>
         </div>
 

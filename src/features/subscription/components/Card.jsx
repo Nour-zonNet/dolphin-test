@@ -5,10 +5,10 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { Cancel, ChevronDown, ChevronUp, Copon, Renew } from "@/utils/icons";
-import * as Icons from "@/utils/icons";
+import { Cancel, ChevronDown, ChevronUp, Renew, Checked, Experimental, Finished, Canceled } from "@/utils/icons";
 import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import { useSubscriptions } from "../hooks/useSubscriptions";
+import { usePackages } from "@/features/packages/hooks/usePackages";
 import useGroups from "../../groups/hooks/useGroups";
 import ActionButton from "./ActionButton";
 import GroupInfo from "./GroupInfo";
@@ -20,12 +20,14 @@ import {
   isPackageStarted,
 } from "../../../utils/dateHelpers";
 import { Calender, SandGlass } from "../../../utils/icons";
+import { rechargePackagesFromWallet } from "@/services/api";
 
 const Card = React.memo(({ item, isOpen, onToggle }) => {
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
-  const { cancelSubscription, reactivateSubscription } = useSubscriptions();
+  const { cancelSubscription, reactivateSubscription: _reactivateSubscription, createNewSubscriptionPayment, fetchSubscriptions } = useSubscriptions();
+  const { all: allPackages } = usePackages();
   useGroups(item.package_id);
 
   const mappedItem = useMemo(
@@ -68,7 +70,14 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
     () => STATUS_CONFIG[statusKey] || STATUS_CONFIG.active,
     [statusKey]
   );
-  const Icon = Icons[config.icon];
+  
+  const iconMap = {
+    Checked,
+    Experimental,
+    Finished,
+    Canceled
+  };
+  const Icon = iconMap[config.icon];
 
   // Handle expand/collapse animation
   useEffect(() => {
@@ -105,10 +114,6 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
       timeZone: tz,
     }).format(d);
 
-    // (اختياري) توحيد الهَمزة لتوافق المثال المطلوب
-    // لو تحب تكتب الشهور بدون همزات (اغسطس/اكتوبر/ابريل)، فعّل السطر التالي:
-    // month = month.replace("أغسطس", "اغسطس").replace("أكتوبر", "اكتوبر").replace("أبريل", "ابريل");
-
     return `${day} ${month} ${year}`;
   }
 
@@ -138,6 +143,25 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
       ),
     [isOpen]
   );
+  // Function to handle payment completion and refresh data
+  const handlePaymentCompletion = useCallback(() => {
+    // Refresh subscriptions after payment completion
+    fetchSubscriptions();
+  }, [fetchSubscriptions]);
+
+  // Listen for window focus to refresh data when user returns from payment
+  useEffect(() => {
+    const handleFocus = () => {
+      // Small delay to ensure payment processing is complete
+      setTimeout(() => {
+        handlePaymentCompletion();
+      }, 1000);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [handlePaymentCompletion]);
+
   const handleCancelClick = () => {
     openConfirmModal(
       {
@@ -178,30 +202,227 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
       {
         title: "تجديد الاشتراك",
         message: "هل أنت متأكد من رغبتك في تجديد الاشتراك؟",
-        confirmText: "تأكيد التجديد",
-        type: "danger",
+        confirmText: "تأكيد الدفع",
+        type: "primary",
       },
       async () => {
         try {
-          await reactivateSubscription(item.id).unwrap();
-          openStatusModal("SUCCESS", {
-            title: "تم التجديد بنجاح",
-            message: "تم تجديد الاشتراك وسيتم تطبيق التغييرات فوراً.",
-          });
+          // Get package price information
+          const packageData = allPackages?.find(pkg => pkg.id === item.package_id);
+          const packagePrice = packageData?.finalPrice || packageData?.originalPrice || 0;
+          
+          const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
+          
+          if (result.success && result.data?.url) {
+            
+            // Store renewal transaction data for status page
+            const renewalTransactionData = {
+              id: result.data.invoice_id || 'renewal_' + Date.now(),
+              amount: result.data.amount || packagePrice,
+              currency: 'SAR',
+              status: 'pending',
+              type: 'renewal',
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              packagePrice: packagePrice,
+              createdAt: new Date().toISOString(),
+            };
+            
+            sessionStorage.setItem('currentTransaction', JSON.stringify(renewalTransactionData));
+            localStorage.setItem('pendingTransaction', JSON.stringify(renewalTransactionData));
+            
+            // Store additional renewal indicator for fallback detection
+            // Clear any conflicting checkout data first
+            sessionStorage.removeItem('checkoutData');
+            localStorage.removeItem('checkoutData');
+            
+            sessionStorage.setItem('renewalData', JSON.stringify({
+              timestamp: Date.now(),
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              source: 'manage-subscription'
+            }));
+            
+            // Redirect to MyFatoorah payment page
+            try {
+              // Try opening in new tab first
+              const newWindow = window.open(result.data.url, '_blank');
+              
+              // If popup was blocked, redirect in same window
+              if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                window.location.href = result.data.url;
+              }
+            } catch (error) {
+              // Fallback: redirect in same window
+              window.location.href = result.data.url;
+            }
+          } else {
+            throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
+          }
         } catch (error) {
           const getErrorMessage = (err) => {
-            if (!err) return "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+            if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
             if (typeof err === "string") return err;
             if (Array.isArray(err))
-              return err[0] || "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+              return err[0] || "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
             if (err && typeof err === "object") {
               if (err.data && err.data.error) return err.data.error;
               if (err.message) return err.message;
             }
-            return "حدث خطأ أثناء تجديد الاشتراك. حاول مرة أخرى.";
+            return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
           };
           openStatusModal("ERROR", {
-            title: "فشل في التجديد",
+            title: "فشل في إنشاء طلب الدفع",
+            message: getErrorMessage(error),
+          });
+        }
+      }
+    );
+  };
+
+  const handleNewSubscriptionClick = () => {
+    openConfirmModal(
+      {
+        title: "إنشاء اشتراك جديد",
+        message: "هل أنت متأكد من رغبتك في إنشاء اشتراك جديد لهذه الباقة؟",
+        confirmText: "تأكيد الدفع",
+        type: "primary",
+        showPaymentMethods: true,
+      },
+      async (data) => {
+        try {
+          const selectedPaymentMethod = data?.paymentMethod || 'myfatoorah';
+          
+          // Get package price information
+          const packageData = allPackages?.find(pkg => pkg.id === item.package_id);
+          const packagePrice = packageData?.finalPrice || packageData?.originalPrice || 0;
+          
+          // Handle wallet payment
+          if (selectedPaymentMethod === 'wallet') {
+            try {
+              const walletResult = await rechargePackagesFromWallet([item.package_id]);
+              
+              const message = walletResult.message || walletResult.data?.message || '';
+              const success = walletResult.success !== undefined ? walletResult.success : (walletResult.data?.success !== undefined ? walletResult.data.success : true);
+              
+              if (success === false) {
+                openStatusModal("ERROR", {
+                  title: "فشل في الدفع",
+                  message: message || "فشل في الدفع من المحفظة. يرجى المحاولة مرة أخرى.",
+                });
+                return;
+              }
+              
+              const paymentTransactionData = {
+                id: walletResult.data?.transaction_id || walletResult.transaction_id || 'wallet_payment_' + Date.now(),
+                amount: walletResult.data?.amount || walletResult.amount || 0,
+                currency: 'SAR',
+                status: success ? 'completed' : 'failed',
+                type: 'wallet_payment',
+                packageIds: [item.package_id],
+                packageId: item.package_id,
+                subscriptionId: item.id,
+                paymentMethod: selectedPaymentMethod,
+                error: success ? null : message,
+                createdAt: new Date().toISOString(),
+              };
+              
+              sessionStorage.setItem('currentTransaction', JSON.stringify(paymentTransactionData));
+              
+              openStatusModal("SUCCESS", {
+                title: "تم الدفع بنجاح",
+                message: message || "تم تفعيل الباقة من المحفظة بنجاح.",
+                onClose: () => {
+                  fetchSubscriptions();
+                },
+              });
+              
+              return;
+              
+            } catch (walletError) {
+              
+              const getWalletErrorMessage = (err) => {
+                if (!err) return "حدث خطأ أثناء الدفع من المحفظة. حاول مرة أخرى.";
+                if (typeof err === "string") return err;
+                if (err.response?.data) {
+                  const errorData = err.response.data;
+                  if (errorData.error && typeof errorData.error === 'string') return errorData.error;
+                  if (errorData.message && typeof errorData.message === 'string') return errorData.message;
+                  if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+                    return errorData.errors[0];
+                  }
+                }
+                if (err.message) return err.message;
+                return "حدث خطأ أثناء الدفع من المحفظة. حاول مرة أخرى.";
+              };
+              
+              openStatusModal("ERROR", {
+                title: "فشل في الدفع من المحفظة",
+                message: getWalletErrorMessage(walletError),
+              });
+              return;
+            }
+          }
+          
+          // Handle MyFatoorah payment
+          const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
+          
+          if (result.success && result.data?.url) {
+            
+            // Store renewal transaction data for status page
+            const newSubscriptionTransactionData = {
+              id: result.data.invoice_id || 'new_subscription_' + Date.now(),
+              amount: result.data.amount || packagePrice,
+              currency: 'SAR',
+              status: 'pending',
+              type: 'renewal',
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              packagePrice: packagePrice,
+              createdAt: new Date().toISOString(),
+            };
+            
+            sessionStorage.setItem('currentTransaction', JSON.stringify(newSubscriptionTransactionData));
+            localStorage.setItem('pendingTransaction', JSON.stringify(newSubscriptionTransactionData));
+            
+            // Clear any conflicting checkout data
+            sessionStorage.removeItem('checkoutData');
+            localStorage.removeItem('checkoutData');
+            
+            sessionStorage.setItem('renewalData', JSON.stringify({
+              timestamp: Date.now(),
+              packageId: item.package_id,
+              subscriptionId: item.id,
+              source: 'manage-subscription'
+            }));
+            
+            // Redirect to MyFatoorah payment page
+            try {
+              const newWindow = window.open(result.data.url, '_blank');
+              
+              if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                window.location.href = result.data.url;
+              }
+            } catch (error) {
+              window.location.href = result.data.url;
+            }
+          } else {
+            throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
+          }
+        } catch (error) {
+          const getErrorMessage = (err) => {
+            if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+            if (typeof err === "string") return err;
+            if (Array.isArray(err))
+              return err[0] || "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+            if (err && typeof err === "object") {
+              if (err.data && err.data.error) return err.data.error;
+              if (err.message) return err.message;
+            }
+            return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+          };
+          openStatusModal("ERROR", {
+            title: "فشل في إنشاء طلب الدفع",
             message: getErrorMessage(error),
           });
         }
@@ -367,6 +588,28 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
                               full
                               primary
                               onClick={handleReactivateClick}
+                              icon={<Renew />}
+                            >
+                              {config.buttonText}
+                            </ActionButton>
+                          </div>
+                        );
+
+                      case "newSubscription":
+                        return (
+                          <div
+                            key={action}
+                            className="flex flex-col items-center mt-4 gap-2"
+                          >
+                            {config.message && (
+                              <div className="bg-[#F9F9F9] w-full text-[#B3261E] border border-[#8C8C8C] rounded-[64px] py-4 px-8 text-sm md:text-[16px] font-semibold">
+                                {config.message}
+                              </div>
+                            )}
+                            <ActionButton
+                              full
+                              primary
+                              onClick={handleNewSubscriptionClick}
                               icon={<Renew />}
                             >
                               {config.buttonText}

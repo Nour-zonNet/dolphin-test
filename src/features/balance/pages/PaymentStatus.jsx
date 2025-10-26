@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Header from "@/components/layout/Header";
 import { LeftArrowFilled, SupportIcon, WalletStatus, Retry } from "@/utils/icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
@@ -19,9 +19,9 @@ const OrderSummaryCard = () => {
     { name: "باقة التميز", price: 700 },
   ];
 
-  const discount = 500;
-  const subtotal = _orderItems.reduce((sum, item) => sum + item.price, 0);
-  const total = subtotal - discount;
+  // const discount = 500;
+  // const subtotal = _orderItems.reduce((sum, item) => sum + item.price, 0);
+  // const total = subtotal - discount;
 
   // return (
   //   <div className="bg-white border border-[#8C8C8C22] rounded-[24px] p-6 w-full">
@@ -164,7 +164,6 @@ const createIcon = (iconType, iconProps = {}) => {
   
   const IconComponent = iconMap[iconType];
   if (!IconComponent) {
-    console.warn(`Icon component "${iconType}" not found`);
     return null;
   }
   
@@ -201,6 +200,7 @@ const PaymentStatus = () => {
       dispatch(setLastTransaction({
         ...transactionData,
         status: 'success',
+        type: 'recharge',
         verifiedAt: new Date().toISOString(),
       }));
       
@@ -212,6 +212,7 @@ const PaymentStatus = () => {
       dispatch(setLastTransaction({
         ...transactionData,
         status: 'failed',
+        type: 'recharge',
         verifiedAt: new Date().toISOString(),
       }));
       
@@ -224,7 +225,7 @@ const PaymentStatus = () => {
       setIsVerifying(true);
       
     }
-  }, [status, transactionData?.id, dispatch, navigate]);
+  }, [status, transactionData, dispatch, navigate]);
 
   if (!data) return <div className="p-6 text-center text-red-500">حالة غير معروفة</div>;
 

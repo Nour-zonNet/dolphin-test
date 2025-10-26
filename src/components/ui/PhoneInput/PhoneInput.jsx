@@ -10,7 +10,6 @@ import { SUPPORTED_COUNTRIES } from "../../../constants/SUPPORTED_COUNTRIES";
 
 // Supported countries configuration - جميع الدول العربية
 
-
 // Filter allowed countries
 const allowedCountries = defaultCountries.filter((country) => {
   const { iso2 } = parseCountry(country);

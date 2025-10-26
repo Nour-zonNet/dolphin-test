@@ -46,9 +46,10 @@ export const SAMPLE_TRANSACTIONS = [
 
 // Transaction type labels
 export const TRANSACTION_TYPE_LABELS = {
-  [TRANSACTION_TYPES.SUBSCRIPTION]: 'اشتراك',
+  [TRANSACTION_TYPES.SUBSCRIPTION]: 'اشتراك في باقة',
   [TRANSACTION_TYPES.BALANCE_TOPUP]: 'شحن رصيد',
-  [TRANSACTION_TYPES.RENEWAL]: 'تجديد',
+  [TRANSACTION_TYPES.WALLET_PAYMENT]: 'دفع من المحفظة',
+  [TRANSACTION_TYPES.RENEWAL]: 'تجديد اشتراك',
   [TRANSACTION_TYPES.REFUND]: 'استرداد',
 };
 

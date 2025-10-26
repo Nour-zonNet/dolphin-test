@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../../assets/logo/dolphinLogo.png";
+import logo from "@/assets/logo/dolphinLogo.png";
 import { useLessons } from "../hooks/useLessons";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../auth/hooks/useAuth";

@@ -213,16 +213,20 @@ export const useModal = () => {
     );
   };
 
-  const openSessionRatingModal = (sessions = [], onSubmit, onClose) => {
+  const openSessionRatingModal = (sessions = [], onSubmit, onClose, onSkip) => {
     // Store callbacks in registry with unique IDs to keep Redux serializable
     const onSubmitId = onSubmit ? Date.now().toString() : null;
     const onCloseId = onClose ? Date.now().toString() + "_close" : null;
+    const onSkipId = onSkip ? Date.now().toString() + "_skip" : null;
     
     if (onSubmitId && onSubmit) {
       callbackRegistry.set(onSubmitId, onSubmit);
     }
     if (onCloseId && onClose) {
       callbackRegistry.set(onCloseId, onClose);
+    }
+    if (onSkipId && onSkip) {
+      callbackRegistry.set(onSkipId, onSkip);
     }
 
     dispatch(
@@ -232,6 +236,7 @@ export const useModal = () => {
           sessions,
           onSubmitId: onSubmitId,
           onCloseId: onCloseId,
+          onSkipId: onSkipId,
         },
       })
     );

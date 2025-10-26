@@ -62,6 +62,19 @@ class SubscriptionRepository {
     });
     return data;
   }
+
+  // Create new subscription payment
+  async createNewSubscriptionPayment(packageIds) {
+    // Convert package IDs to query parameter format
+    const packagesParam = Array.isArray(packageIds) 
+      ? packageIds.join(',')
+      : packageIds.toString();
+    
+    const response = await api.post(`/student/recharge-packages?packages=${packagesParam}`);
+    
+    return response.data;
+  }
+
     async getByGroupsPackageId(packageId) {
       const { data } = await api.post(ENDPOINTS.GROUPS_BY_BACKAGEID, {
         package_id: packageId,

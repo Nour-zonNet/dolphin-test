@@ -5,12 +5,10 @@ export const useOfflineDetection = () => {
 
   useEffect(() => {
     const handleOnline = () => {
-      console.log('Browser came online');
       setIsOnline(true);
     };
 
     const handleOffline = () => {
-      console.log('Browser went offline');
       setIsOnline(false);
     };
 

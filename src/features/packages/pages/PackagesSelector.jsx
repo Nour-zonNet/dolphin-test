@@ -87,16 +87,22 @@ const DataPlanSelector = () => {
     );
   }, [selectedPlanDetails]);
 
-  const handleSubscribe = React.useCallback(() => {
-    // Navigate to checkout with selected packages data
-    navigate("/checkout", {
-      state: {
-        selectedPackages: selectedPlanDetails,
-        totalPrice: totalPrice,
-        selectedCount: selectedPlanIds.length,
-      },
-    });
-  }, [navigate, selectedPlanDetails, totalPrice, selectedPlanIds.length]);
+  // const handleSubscribe = React.useCallback(() => {
+  //   console.log('PackagesSelector - Navigating to checkout with:', {
+  //     selectedPlanIds: selectedPlanIds,
+  //     selectedPlanDetails: selectedPlanDetails,
+  //     totalPrice: totalPrice
+  //   });
+    
+  //   // Navigate to checkout with selected packages data
+  //   navigate("/checkout", {
+  //     state: {
+  //       selectedPackages: selectedPlanDetails,
+  //       totalPrice: totalPrice,
+  //       selectedCount: selectedPlanIds.length,
+  //     },
+  //   });
+  // }, [navigate, selectedPlanDetails, totalPrice, selectedPlanIds.length]);
 
   return (
     <>
@@ -182,7 +188,6 @@ const DataPlanSelector = () => {
         <PlansFooter
           selectedPlanDetails={selectedPlanDetails}
           disabled={selectedPlanIds.length === 0}
-          onSubscribe={handleSubscribe}
           totalPrice={totalPrice}
           selectedCount={selectedPlanIds.length}
         />

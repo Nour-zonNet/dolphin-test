@@ -113,9 +113,8 @@ const ModalExamples = () => {
                     },
                   ],
                 },
-                (groupId) => {
+                (_groupId) => {
                   // Changed to group
-                  console.log('Group changed to:', groupId);
                 }
               )
             }

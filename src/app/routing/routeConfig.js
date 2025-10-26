@@ -1,19 +1,19 @@
 import { lazy } from "react";
-import DataPlanSelector from "../../features/packages/pages/PackagesSelector";
-import Checkout from "../../features/packages/pages/Checkout";
-import LoginSiblings from "../../features/auth/pages/LoginSiblings";
-import AddSiblingsPage from "../../features/auth/pages/AddSibilingPage/AddSiblingsPage";
-import Board from "../../features/Board/Board";
-import PDFViewerPage from "../../features/PDFViewer/PDFViewerPage";
-import PrivacyPolicyPage from "../../features/PrivacyPolicy/PrivacyPolicyPage";
-import SessionPage from "../../features/lessons/pages/SessionPage";
-import GlobalSessionPage from "../../features/lessons/pages/GlobalSession";
-import WeeklySchedule from "../../features/lessons/pages/WeeklySchedule";
-import TeacherProfile from "../../features/teacher/pages/profile";
-import OfflineScreen from "@/components/OfflineScreen";
-// import Board from "../../features/Board/Board";
-import CommunityPage from "@/features/community/CommunityPage";
-import MaintenanceScreen from "@/components/MaintenanceScreen";
+// Lazy load all heavy components for better performance
+const OfflineScreen = lazy(() => import("@/components/OfflineScreen"));
+const DataPlanSelector = lazy(() => import("../../features/packages/pages/PackagesSelector"));
+const Checkout = lazy(() => import("../../features/packages/pages/Checkout"));
+const LoginSiblings = lazy(() => import("../../features/auth/pages/LoginSiblings"));
+const AddSiblingsPage = lazy(() => import("../../features/auth/pages/AddSibilingPage/AddSiblingsPage"));
+const Board = lazy(() => import("../../features/Board/Board"));
+const PDFViewerPage = lazy(() => import("../../features/PDFViewer/PDFViewerPage"));
+const PrivacyPolicyPage = lazy(() => import("../../features/PrivacyPolicy/PrivacyPolicyPage"));
+const SessionPage = lazy(() => import("../../features/lessons/pages/SessionPage"));
+const GlobalSessionPage = lazy(() => import("../../features/lessons/pages/GlobalSession"));
+const WeeklySchedule = lazy(() => import("../../features/lessons/pages/WeeklySchedule"));
+const TeacherProfile = lazy(() => import("../../features/teacher/pages/profile"));
+const CommunityPage = lazy(() => import("@/features/community/CommunityPage"));
+const MaintenanceScreen = lazy(() => import("@/components/MaintenanceScreen"));
 // import Reports from "@/features/profile/pages/Reports";
 // Lazy load components for better performance
 const HomePage = lazy(() => import("@/features/home"));
@@ -83,6 +83,9 @@ const BalanceDetails = lazy(() =>
 );
 const PaymentStatus = lazy(() =>
   import("@/features/balance/pages/PaymentStatus")
+);
+const RenewalStatus = lazy(() =>
+  import("@/features/subscription/pages/RenewalStatus")
 );
 
 // Route Configuration
@@ -290,6 +293,18 @@ export const routes = [
   {
     path: "/payment-status/:status",
     element: PaymentStatus,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: "/renew-subscription/:status",
+    element: RenewalStatus,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: "/renewal-status/:status/:type?",
+    element: RenewalStatus,
     protected: true,
     layout: false,
   },

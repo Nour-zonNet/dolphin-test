@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, startTransition } from "react";
+import { useRef, useState, useEffect, startTransition, useCallback } from "react";
 import Toolbar from "./Toolbar";
 import Canvas from "./Canvas";
 import PageCanvas from "./PageCanvas";
@@ -236,82 +236,100 @@ const Board = () => {
     link.click();
   };
 
-  // PDF Import functionality
-  const handleImportPDF = async (file) => {
+  // PDF Import functionality - optimized for performance
+  const handleImportPDF = useCallback(async (file) => {
     try {
-      // Configure PDF.js worker
-      const pdfjs = await import("pdfjs-dist");
-      if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
-        try {
-          pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
-        } catch (error) {
-          // Failed to configure PDF.js worker
+      // Use startTransition to prevent blocking the main thread
+      startTransition(async () => {
+        // Configure PDF.js worker
+        const pdfjs = await import("pdfjs-dist");
+        if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
+          try {
+            pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+          } catch (error) {
+            // Failed to configure PDF.js worker
+          }
         }
-      }
 
-      const arrayBuffer = await file.arrayBuffer();
-      const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
-      const pdf = await loadingTask.promise;
+        const arrayBuffer = await file.arrayBuffer();
+        const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
 
-      const pages = [];
-      const deviceScale = Math.max(2, (window.devicePixelRatio || 1) * 2);
+        const pages = [];
+        // Reduce scale for better performance
+        const deviceScale = Math.min(2, (window.devicePixelRatio || 1) * 1.5);
 
-      // Check cache first
-      const cacheKey = `pdf_${file.name}_${file.size}`;
-      const cachedPages = getCachedImage(cacheKey);
+        // Check cache first
+        const cacheKey = `pdf_${file.name}_${file.size}`;
+        const cachedPages = getCachedImage(cacheKey);
 
-      if (cachedPages) {
-        setPdfPages(cachedPages);
-        setBackgroundImage(cachedPages[0].dataUrl);
-        const initialPageStates = cachedPages.map(() => ({
-          lines: [],
-          texts: [],
-          shapes: [],
-        }));
-        setPageStates(initialPageStates);
-        pageStageRefs.current = cachedPages.map(() => null);
-        resetHistory();
-        saveToHistory([], [], [], initialPageStates);
-        return;
-      }
+        if (cachedPages) {
+          setPdfPages(cachedPages);
+          setBackgroundImage(cachedPages[0].dataUrl);
+          const initialPageStates = cachedPages.map(() => ({
+            lines: [],
+            texts: [],
+            shapes: [],
+          }));
+          setPageStates(initialPageStates);
+          pageStageRefs.current = cachedPages.map(() => null);
+          resetHistory();
+          saveToHistory([], [], [], initialPageStates);
+          return;
+        }
 
-      // Render pages
-      for (let pageIndex = 1; pageIndex <= pdf.numPages; pageIndex += 1) {
-        const page = await pdf.getPage(pageIndex);
-        const viewport = page.getViewport({ scale: deviceScale });
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        await page.render({ canvasContext: context, viewport }).promise;
-        pages.push({
-          dataUrl: canvas.toDataURL("image/png"),
-          width: viewport.width,
-          height: viewport.height,
-        });
-      }
+        // Render pages with batching to prevent blocking
+        const renderPage = async (pageIndex) => {
+          const page = await pdf.getPage(pageIndex);
+          const viewport = page.getViewport({ scale: deviceScale });
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          await page.render({ canvasContext: context, viewport }).promise;
+          return {
+            dataUrl: canvas.toDataURL("image/jpeg", 0.8), // Use JPEG with compression
+            width: viewport.width,
+            height: viewport.height,
+          };
+        };
 
-      if (pages.length > 0) {
-        // Cache and set pages
-        manageImageCache(cacheKey, pages);
-        setPdfPages(pages);
-        setBackgroundImage(pages[0].dataUrl);
+        // Process pages in batches to prevent blocking
+        const batchSize = 3;
+        for (let i = 1; i <= pdf.numPages; i += batchSize) {
+          const batch = [];
+          for (let j = i; j < Math.min(i + batchSize, pdf.numPages + 1); j++) {
+            batch.push(renderPage(j));
+          }
+          const batchResults = await Promise.all(batch);
+          pages.push(...batchResults);
+          
+          // Yield control to prevent blocking
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
 
-        const initialPageStates = pages.map(() => ({
-          lines: [],
-          texts: [],
-          shapes: [],
-        }));
-        setPageStates(initialPageStates);
-        pageStageRefs.current = pages.map(() => null);
-        resetHistory();
-        saveToHistory([], [], [], initialPageStates);
-      }
+        if (pages.length > 0) {
+          // Cache and set pages
+          manageImageCache(cacheKey, pages);
+          setPdfPages(pages);
+          setBackgroundImage(pages[0].dataUrl);
+
+          const initialPageStates = pages.map(() => ({
+            lines: [],
+            texts: [],
+            shapes: [],
+          }));
+          setPageStates(initialPageStates);
+          pageStageRefs.current = pages.map(() => null);
+          resetHistory();
+          saveToHistory([], [], [], initialPageStates);
+        }
+      });
     } catch (_error) {
       // Error importing PDF
       addError(_error, "PDF Import");
     }
-  };
+  }, [getCachedImage, manageImageCache, resetHistory, saveToHistory, addError]);
 
   // PDF Export functionality
   const exportToPDF = async () => {
@@ -426,6 +444,39 @@ const Board = () => {
 
   const { isDesktop, isMobile, isTablet } = useResponsive();
 
+  // Callbacks for PageCanvas
+  const handleUpdatePageState = useCallback((i, next) => {
+    setPageStates(prev => prev.map((s, k) =>
+      k === i ? next : s
+    ));
+  }, []);
+
+  const getSaveToHistoryCallback = (idx) => {
+    return (newLines, newTexts, newShapes) => {
+      setPageStates(prev => {
+        const newPageStates = prev.map((s, k) =>
+          k === idx
+            ? {
+                ...s,
+                lines: newLines,
+                texts: newTexts,
+                shapes: newShapes,
+              }
+            : s
+        );
+        saveToHistory([], [], [], newPageStates);
+        return newPageStates;
+      });
+    };
+  };
+
+  const getStageRefCallback = (idx) => {
+    return (node) => {
+      if (!node) return;
+      pageStageRefs.current[idx] = node;
+    };
+  };
+
   return (
     <div
       className={`flex w-full h-full ${
@@ -504,7 +555,7 @@ const Board = () => {
             {pdfPages.length > 0 ? (
               pdfPages.map((page, idx) => (
                 <PageCanvas
-                  key={idx}
+                  key={`page-${idx}`}
                   pageIndex={idx}
                   backgroundImage={page.dataUrl}
                   initialWidth={page.width}
@@ -517,30 +568,9 @@ const Board = () => {
                     pageStates[idx] || { lines: [], texts: [], shapes: [] }
                   }
                   isDesktop={isDesktop}
-                  onUpdatePageState={(i, next) => {
-                    const newPageStates = pageStates.map((s, k) =>
-                      k === i ? next : s
-                    );
-                    setPageStates(newPageStates);
-                  }}
-                  saveToHistory={(newLines, newTexts, newShapes) => {
-                    const newPageStates = pageStates.map((s, k) =>
-                      k === idx
-                        ? {
-                            ...s,
-                            lines: newLines,
-                            texts: newTexts,
-                            shapes: newShapes,
-                          }
-                        : s
-                    );
-                    setPageStates(newPageStates);
-                    saveToHistory([], [], [], newPageStates);
-                  }}
-                  stageRef={(node) => {
-                    if (!node) return;
-                    pageStageRefs.current[idx] = node;
-                  }}
+                  onUpdatePageState={handleUpdatePageState}
+                  saveToHistory={getSaveToHistoryCallback(idx)}
+                  stageRef={getStageRefCallback(idx)}
                 />
               ))
             ) : (

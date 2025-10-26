@@ -138,7 +138,7 @@ const VideoPlayer = ({ lessonId }) => {
   const stageRef = useRef(null);
   const videoRef = useRef(null);
   const [videoEl, setVideoEl] = useState(null);
-  const progressTrackRef = useRef(null);
+  // const progressTrackRef = useRef(null);
   const settingsRef = useRef(null);
 
   // Cover: keep poster until user clicks & playback actually starts
@@ -146,13 +146,14 @@ const VideoPlayer = ({ lessonId }) => {
   const [userTriedPlay, setUserTriedPlay] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
 
-  const [isHovered, setIsHovered] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [current, setCurrent] = useState(0);
-  const [bufferedEnd, setBufferedEnd] = useState(0);
-  const [playbackRate, setPlaybackRate] = useState(1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  const [isHovered, setIsHovered] = useState(false);
+  // const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
 
@@ -222,11 +223,7 @@ const VideoPlayer = ({ lessonId }) => {
     const onLoadedMeta = () => setDuration(v.duration || 0);
     const onDur = () => setDuration(v.duration || 0);
     const onProgress = () => {
-      try {
-        if (v.buffered?.length) setBufferedEnd(v.buffered.end(v.buffered.length - 1));
-      } catch {
-    // Ignore URL parsing errors
-  }
+      // Track video progress
     };
 
     if (!isNaN(v.duration)) setDuration(v.duration || 0);
@@ -281,7 +278,6 @@ const VideoPlayer = ({ lessonId }) => {
   // Reset times on src change (native video)
   useEffect(() => {
     if (isIframe) return;
-    setCurrent(0);
     setDuration(0);
     setShowCover(true); // return to poster when video source changes
   }, [source.src, isIframe]);
@@ -323,6 +319,36 @@ const VideoPlayer = ({ lessonId }) => {
   }, [isIframe, showCover]);
 
   // ---------- fullscreen & rotation ----------
+  const lockOrRotateLandscape = async () => {
+    if (!isMobileOrTablet()) return;
+    const canLock =
+      typeof screen !== "undefined" &&
+      screen.orientation &&
+      typeof screen.orientation.lock === "function";
+    if (canLock) {
+      try {
+        await screen.orientation.lock("landscape");
+        setRotateFallback(false);
+        return;
+      } catch {
+        // Ignore orientation lock errors
+      }
+    }
+    // iOS / unsupported → use emulated fullscreen if requested later
+    setRotateFallback(true);
+  };
+
+  const clearOrientation = useCallback(async () => {
+    if (rotateFallback) setRotateFallback(false);
+    if (typeof screen !== "undefined" && screen.orientation && screen.orientation.unlock) {
+      try { 
+        screen.orientation.unlock(); 
+      } catch {
+        // Ignore orientation unlock errors
+      }
+    }
+  }, [rotateFallback]);
+
   const enterIOSNativeFS = () => {
     const v = videoRef.current;
     if (v && v.webkitEnterFullscreen) {
@@ -355,7 +381,6 @@ const VideoPlayer = ({ lessonId }) => {
         // fallback to emulated fullscreen if no native method available
         setIsEmulatedFS((v) => !v);
       }
-      setIsHovered(false);
       setShowSettings(false);
       return;
     }
@@ -381,7 +406,6 @@ const VideoPlayer = ({ lessonId }) => {
         !!document.msFullscreenElement;
 
       setIsFullscreen(fs);
-      setIsHovered(false);
 
       if (fs) lockOrRotateLandscape();
       else clearOrientation();
@@ -403,41 +427,11 @@ const VideoPlayer = ({ lessonId }) => {
     if (!v || !isIOS()) return;
     const onEndFS = () => {
       setIsFullscreen(false);
-      setIsHovered(false);
     };
     v.addEventListener("webkitendfullscreen", onEndFS);
     return () => v.removeEventListener("webkitendfullscreen", onEndFS);
   }, []);
 
-  const lockOrRotateLandscape = async () => {
-    if (!isMobileOrTablet()) return;
-    const canLock =
-      typeof screen !== "undefined" &&
-      screen.orientation &&
-      typeof screen.orientation.lock === "function";
-    if (canLock) {
-      try {
-        await screen.orientation.lock("landscape");
-        setRotateFallback(false);
-        return;
-      } catch {
-    // Ignore URL parsing errors
-  }
-    }
-    // iOS / unsupported → use emulated fullscreen if requested later
-    setRotateFallback(true);
-  };
-
-  const clearOrientation = useCallback(async () => {
-    if (rotateFallback) setRotateFallback(false);
-    if (typeof screen !== "undefined" && screen.orientation && screen.orientation.unlock) {
-      try { 
-        screen.orientation.unlock(); 
-      } catch {
-        // Ignore orientation unlock errors
-      }
-    }
-  }, [rotateFallback]);
 
   // Emulated fullscreen page scroll handling
   useEffect(() => {
@@ -456,9 +450,7 @@ const VideoPlayer = ({ lessonId }) => {
     if (!isFullscreen && !isEmulatedFS) return;
     let t;
     const onMove = () => {
-      setIsHovered(true);
       clearTimeout(t);
-      t = setTimeout(() => setIsHovered(false), 1500);
     };
     window.addEventListener("mousemove", onMove);
     return () => {
@@ -677,8 +669,6 @@ const VideoPlayer = ({ lessonId }) => {
     <div
       ref={stageRef}
       className="relative lg:h-[500px] md:h-[290px] h-[200px] w-full bg-black group overflow-hidden"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="absolute inset-0">
         <div className="relative w-full h-full overflow-hidden">{StageInner}</div>
@@ -699,16 +689,12 @@ const VideoPlayer = ({ lessonId }) => {
               transform: "translate(-50%, -50%) rotate(90deg)",
               transformOrigin: "center center",
             }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
           >
             <div className="relative w-full h-full overflow-hidden">{StageInner}</div>
           </div>
         ) : (
           <div
             className="absolute inset-0"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
           >
             <div className="relative w-full h-full overflow-hidden">{StageInner}</div>
           </div>

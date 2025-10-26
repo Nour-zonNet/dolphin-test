@@ -1,6 +1,7 @@
 import React from "react";
-import { Gift, Plus } from "@/utils/icons";
+// import { Gift, Plus } from "@/utils/icons";
 import { useModal } from "@/components/feedback/modal/useModal";
+import { Gift, Plus } from "lucide-react";
 
 /**
  * Enhanced Balance Actions Buttons Component
@@ -34,7 +35,7 @@ const BalanceActionsButtons = () => {
         
         // Add a small delay to make the network request visible in console
         setTimeout(() => {
-          window.location.href = data.url;
+          window.open(data.url, '_blank');
         }, 1000); // 1 second delay
       } else {
         // Invalid payment data received
@@ -43,7 +44,7 @@ const BalanceActionsButtons = () => {
   };
 
   const handleAddCoupon = () => {
-    openAddCouponModal((data) => {
+    openAddCouponModal(() => {
       // TODO: Handle coupon application logic
     });
   };

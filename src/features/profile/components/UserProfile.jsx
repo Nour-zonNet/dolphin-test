@@ -129,15 +129,21 @@ const UserProfile = () => {
   };
 
   // Handle avatar selection from modal
-  const handleAvatarSelect = async (avatarSrc) => {
+  const handleAvatarSelect = async (avatarSrc, file) => {
     try {
+      let fileToUpload = file;
 
-      const response = await fetch(avatarSrc);
-      const blob = await response.blob();
-      const file = new File([blob], avatarSrc.split('/').pop(), { type: blob.type });
+      // If no file provided, it means a predefined avatar was selected
+      // We need to convert the avatar URL to a File object
+      if (!file) {
+        const response = await fetch(avatarSrc);
+        const blob = await response.blob();
+        const filename = avatarSrc.split('/').pop() || 'avatar.svg';
+        fileToUpload = new File([blob], filename, { type: blob.type });
+      }
       
-      setSelectedImages((prev) => ({ ...prev, [user.id]: file }));
-      await updateUserImage(file);
+      setSelectedImages((prev) => ({ ...prev, [user.id]: fileToUpload }));
+      await updateUserImage(fileToUpload);
     } catch (err) {
       openStatusModal("ERROR", {
         title: "فشل تحديث الصورة",

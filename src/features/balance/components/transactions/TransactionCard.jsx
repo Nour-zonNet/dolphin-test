@@ -4,7 +4,7 @@ import FormatWithCurrency from '@/utils/FormatWithCurrency';
 import { TransactionStatusBadge, TransactionAmount, TransactionDate, TransactionPaymentMethod } from './TransactionComponents';
 import { TRANSACTION_TYPE_LABELS } from '../../utils/sampleData';
 import { useModal } from '@/components/feedback/modal/useModal';
-import { Book } from '../../../../utils/icons';
+import { Book } from '@/utils/icons';
 
 /**
  * Enhanced Transaction Card Component
@@ -31,21 +31,12 @@ const TransactionCard = ({ transaction, className = '' }) => {
     }
   };
 
-  const getTypeColor = (type) => {
-    const typeColors = {
-      'subscription': 'text-[#1B872C]',
-      'balance_topup': 'text-orangedeep',
-      'renewal': 'text-[#E21B1B]',
-      'refund': 'text-[#2E7D32]',
-    };
-    
-    return typeColors[type] || 'text-green-600';
-  };
 
   const formatAmount = (amount, type) => {
     const isNegative = type === 'refund';
-    const sign = isNegative ? '-' : '+';
-    const color = isNegative ? 'text-red-600' : 'text-green-600';
+    const isWalletPayment = type === 'wallet_payment';
+    const sign = isNegative ? '-' : (isWalletPayment ? '-' : '+');
+    const color = isNegative ? 'text-red-600' : (isWalletPayment ? 'text-red-600' : 'text-green-600');
     
     return (
       <div className={`text-lg lg:text-2xl font-bold ${color} flex items-center gap-1`}>
@@ -55,24 +46,13 @@ const TransactionCard = ({ transaction, className = '' }) => {
           showSymbol={true}
           className=""
           symbolClass="w-4 h-4 lg:w-6 lg:h-6"
-          symbolFill={isNegative ? "#E21B1B" : "#2E7D32"}
+          symbolFill={isNegative || isWalletPayment ? "#E21B1B" : "#2E7D32"}
         />
       </div>
     );
   };
 
-  const copyTransactionId = async () => {
-    try {
-      const idToCopy = transaction.reference_id || transaction.id;
-      await navigator.clipboard.writeText(idToCopy.toString());
-      // TODO: Add toast notification for successful copy
-    } catch (_error) {
-      // Failed to copy transaction ID
-      // TODO: Add error notification
-    }
-  };
-
-  const typeLabel = TRANSACTION_TYPE_LABELS[transaction.type] || transaction.type;
+  // const typeLabel = TRANSACTION_TYPE_LABELS[transaction.type] || transaction.type;
 
   return (
     <div 
@@ -90,8 +70,20 @@ const TransactionCard = ({ transaction, className = '' }) => {
                 <WalletGray className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" />
               </div>
             )}
+            {/* if transaction.type is 'wallet_payment' */}
+            {transaction.type === 'wallet_payment' && (
+              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 bg-[#3A880922] rounded-full flex items-center justify-center">
+                <WalletGray className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" />
+              </div>
+            )}
             {/* if transaction.type is 'subscription'  */}
             {transaction.type === 'subscription' && (
+              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 bg-[#E89B3222] rounded-full flex items-center justify-center">
+                <Book className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" fill="#D18C2D"/>
+              </div>
+            )}
+            {/* if transaction.type is 'renewal'  */}
+            {transaction.type === 'renewal' && (
               <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 bg-[#E89B3222] rounded-full flex items-center justify-center">
                 <Book className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" fill="#D18C2D"/>
               </div>

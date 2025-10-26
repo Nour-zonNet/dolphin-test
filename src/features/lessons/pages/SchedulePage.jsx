@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 const SchedulePage = () => {
   const { openSessionRatingModal } = useModal();
-  const { eligibleSessions, handleSubmitRatings, handleCloseModal, shouldShowModal } = useSessionRatingModal();
+  const { eligibleSessions, handleSubmitRatings, handleCloseModal, handleSkipModal, shouldShowModal } = useSessionRatingModal();
 
   // Handle showing the modal when shouldShowModal becomes true
   useEffect(() => {
@@ -15,31 +15,33 @@ const SchedulePage = () => {
         openSessionRatingModal(
           eligibleSessions,
           handleSubmitRatings,
-          handleCloseModal
+          handleCloseModal,
+          handleSkipModal
         );
       }, 500);
       
       return () => clearTimeout(timer);
     }
-  }, [shouldShowModal, eligibleSessions, openSessionRatingModal, handleSubmitRatings, handleCloseModal]);
+  }, [shouldShowModal, eligibleSessions, openSessionRatingModal, handleSubmitRatings, handleCloseModal, handleSkipModal]);
 
   return (
     <div className="pt-28 md:pt-41">
       <ScheduleSlider />
-      {/* Temporary test button to open Session Rating Modal */}
-      <div className="fixed bottom-30 left-4 z-50 cursor-pointer">
+      
+      {/* Debug button for testing */}
+      <div className="fixed bottom-40 left-4 z-50">
         <button
-          type="button"
-          onClick={() =>
+          onClick={() => {
             openSessionRatingModal(
               eligibleSessions,
               handleSubmitRatings,
-              handleCloseModal
-            )
-          }
-          className="px-3 py-2 rounded-md bg-orangedeep text-navyteal text-sm shadow z-50 cursor-pointer"
+              handleCloseModal,
+              handleSkipModal
+            );
+          }}
+          className="px-3 py-2 bg-orangedeep text-navyteal text-sm rounded"
         >
-          إضافة تقييم  
+          إضافة تقييم 
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import svgr from "vite-plugin-svgr";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
@@ -8,8 +9,16 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      // Enable React optimizations
+      fastRefresh: true,
+    }),
     tailwindcss(),
+    svgr({
+      svgrOptions: {
+        icon: true,
+      },
+    }),
     VitePWA({
       registerType: "autoUpdate",
       devOptions: { 
@@ -32,12 +41,12 @@ export default defineConfig({
           {
             src: "/homeChild.png",
             sizes: "192x192",
-            type: "image/png"
+            type: "image/webp"
           },
           {
             src: "/homeChild.png",
             sizes: "512x512",
-            type: "image/png"
+            type: "image/webp"
           }
         ]
       },
@@ -157,49 +166,88 @@ export default defineConfig({
       }
     }
   },
+  publicDir: "public",
   build: {
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Vendor chunks (excluding react/react-dom to avoid multiple React instances)
+          // Core React libraries
           if (id.includes("node_modules")) {
-            if (
-              id.includes("react-router") ||
-              id.includes("@reduxjs") ||
-              id.includes("react-redux") ||
-              id.includes("lucide-react") ||
-              id.includes("html2canvas") ||
-              id.includes("jspdf") ||
-              id.includes("google-libphonenumber")
-            ) {
-              return "vendor";
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "react-core";
             }
-            return "vendor"; // all other node_modules
+            // Heavy libraries in separate chunks
+            if (id.includes("pdfjs-dist") || id.includes("pdf-lib")) {
+              return "pdf-libs";
+            }
+            if (id.includes("chart.js") || id.includes("react-chartjs-2")) {
+              return "chart-libs";
+            }
+            if (id.includes("konva") || id.includes("react-konva")) {
+              return "canvas-libs";
+            }
+            if (id.includes("html2canvas") || id.includes("jspdf")) {
+              return "export-libs";
+            }
+            if (id.includes("swiper")) {
+              return "swiper";
+            }
+            if (id.includes("i18next") || id.includes("react-i18next")) {
+              return "i18n";
+            }
+            if (id.includes("@tanstack/react-query")) {
+              return "query";
+            }
+            if (id.includes("@reduxjs") || id.includes("react-redux")) {
+              return "redux";
+            }
+            if (id.includes("axios")) {
+              return "http";
+            }
+            // All other vendor libraries
+            return "vendor";
           }
 
-          // Feature chunks
+          // Feature chunks with better splitting
           if (id.includes("/src/features/")) {
             const feature = id.split("/src/features/")[1]?.split("/")[0];
-            if (feature) return `feature-${feature}`;
+            if (feature) {
+              // Heavy features get their own chunks
+              if (feature === "Board" || feature === "lessons") {
+                return `feature-${feature}`;
+              }
+              // Group smaller features
+              if (["auth", "profile", "subscription"].includes(feature)) {
+                return "feature-user";
+              }
+              if (["balance", "packages"].includes(feature)) {
+                return "feature-commerce";
+              }
+              return `feature-${feature}`;
+            }
           }
 
-          // Component chunks
-          if (id.includes("/src/components/")) return "components";
+          // Component chunks - split heavy ones
+          if (id.includes("/src/components/")) {
+            if (id.includes("feedback") || id.includes("modal")) {
+              return "components-ui";
+            }
+            return "components";
+          }
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
-    // Changed from "esnext" to "es2019" for iOS 13+ compatibility
-    // This ensures the build works on older iOS Safari versions
-    target: ["es2019", "safari13"],
+    chunkSizeWarningLimit: 500,
     minify: "esbuild",
-    // Additional optimization for iOS Safari compatibility
-    cssTarget: "safari13",
-  },
-  // Optimize dependencies for iOS compatibility
-  optimizeDeps: {
-    esbuildOptions: {
-      target: "es2019",
+    target: "esnext",
+    // Enable tree shaking
+    treeshake: true,
+    // Optimize for production
+    cssCodeSplit: true,
+    sourcemap: false,
+    // CSS optimization
+    css: {
+      devSourcemap: false,
     },
   },
   resolve: {
