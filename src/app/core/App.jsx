@@ -11,6 +11,7 @@ import { ModalManager } from "@/components/feedback/modal";
 import SessionRatingInitializer from "@/components/SessionRatingInitializer";
 import EmailCheckInitializer from "@/components/EmailCheckInitializer";
 import OfflineScreen from "@/components/OfflineScreen";
+import GlobalErrorOverlay from "@/components/GlobalErrorOverlay";
 
 const App = () => {
   useLanguageDirection();
@@ -40,6 +41,7 @@ const App = () => {
       <div className="app-container">
         <GlobalLoader />
         <GlobalError />
+        <GlobalErrorOverlay />
         <ModalManager />
         <SessionRatingInitializer />
         <EmailCheckInitializer />

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import GeneralError from './GeneralError';
 
 class ErrorBoundary extends Component {
@@ -17,6 +17,13 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    console.error('ErrorBoundary caught an error:', error);
+    console.error('Error info:', errorInfo);
+    
+    // Log additional context
+    if (error.message?.includes('Activity')) {
+      console.error('Activity-related error detected. This may be related to react-konva and React 19 compatibility.');
+    }
 
     this.setState({
       error,
@@ -31,18 +38,20 @@ class ErrorBoundary extends Component {
     const { error, errorInfo } = this.state;
 
     const errorText = `
-التطبيق: منصة الدلفين التعليمية
-المتصفح: ${navigator.userAgent}
-التاريخ: ${new Date().toLocaleString('ar-SA')}
+Application: منصة الدلفين التعليمية
+Browser: ${navigator.userAgent}
+Date: ${new Date().toLocaleString('ar-SA')}
 
-الخطأ:
+Error:
 ${error?.toString() || 'Unknown error'}
 
-تفاصيل الخطأ:
+Stack Trace:
 ${error?.stack || 'No stack trace'}
 
-معلومات إضافية:
+Component Stack:
 ${errorInfo?.componentStack || 'No component stack'}
+
+React Version: ${React.version}
     `.trim();
 
     navigator.clipboard.writeText(errorText).then(() => {
@@ -78,6 +87,10 @@ ${errorInfo?.componentStack || 'No component stack'}
       return (
         <GeneralError 
           onRetry={this.reloadPage}
+          onCopyError={this.copyErrorToClipboard}
+          error={this.state.error}
+          errorInfo={this.state.errorInfo}
+          copied={this.state.copied}
         />
       );
     }

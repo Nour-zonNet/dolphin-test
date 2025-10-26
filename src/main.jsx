@@ -29,17 +29,38 @@ window.addEventListener('error', (_event) => {
     stack: _event.error?.stack,
     timestamp: new Date().toISOString()
   });
+  
+  // Log Activity errors in detail
+  if (_event.message?.includes('Activity')) {
+    console.error('🔴 Activity Error Details:', {
+      message: _event.message,
+      source: _event.filename,
+      line: _event.lineno,
+      col: _event.colno,
+      stack: _event.error?.stack
+    });
+  }
 });
 
 window.addEventListener('unhandledrejection', (_event) => {
-
+  const errorMessage = _event.reason?.message || String(_event.reason);
+  
   // Store rejection for display
   errorQueue.push({
     type: 'rejection',
-    message: _event.reason?.message || String(_event.reason),
+    message: errorMessage,
     stack: _event.reason?.stack,
     timestamp: new Date().toISOString()
   });
+  
+  // Log Activity errors in detail
+  if (errorMessage.includes('Activity')) {
+    console.error('🔴 Activity Unhandled Rejection:', {
+      reason: _event.reason,
+      message: errorMessage,
+      stack: _event.reason?.stack
+    });
+  }
 
   // Prevent default to avoid console errors on iOS
   _event.preventDefault();
