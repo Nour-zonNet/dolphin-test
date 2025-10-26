@@ -1,16 +1,15 @@
 // React 19 compatibility shim
-// Ensures React is properly initialized before other modules
+// Ensures React is properly initialized before other modules like react-konva
+
+// Import React immediately to ensure it's available
+import * as React from 'react';
 
 if (typeof window !== 'undefined') {
-  // Wait for DOM to be ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initReactCompat);
-  } else {
-    initReactCompat();
+  // Make React available globally for libraries that need it
+  if (!window.React) {
+    window.React = React;
   }
-}
-
-function initReactCompat() {
+  
   // Ensure window.React exists if needed by third-party libraries
   // This is a shim to prevent "Cannot set properties of undefined" errors
   if (!window.__REACT_19_COMPAT_INITIALIZED__) {
@@ -18,4 +17,4 @@ function initReactCompat() {
   }
 }
 
-export default {};
+export default React;

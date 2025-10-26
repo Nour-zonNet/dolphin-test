@@ -6,6 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -171,10 +172,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Core React libraries
+          // Core React libraries - DO NOT split, keep in main bundle
           if (id.includes("node_modules")) {
-            if (id.includes("react") || id.includes("react-dom")) {
-              return "react-core";
+            if (id.includes("react") || id.includes("react-dom") || id.includes("react/jsx-runtime")) {
+              return undefined; // Force React into main bundle to prevent lazy loading issues
+            }
+            // Don't split Konva/canvas libraries - keep them in vendor
+            if (id.includes("konva") || id.includes("react-konva")) {
+              return undefined; // Keep in vendor to avoid initialization order issues
             }
             // Heavy libraries in separate chunks
             if (id.includes("pdfjs-dist") || id.includes("pdf-lib")) {
@@ -182,9 +187,6 @@ export default defineConfig({
             }
             if (id.includes("chart.js") || id.includes("react-chartjs-2")) {
               return "chart-libs";
-            }
-            if (id.includes("konva") || id.includes("react-konva")) {
-              return "canvas-libs";
             }
             if (id.includes("html2canvas") || id.includes("jspdf")) {
               return "export-libs";
@@ -263,8 +265,10 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ["react", "react-dom", "react/jsx-runtime"],
+    exclude: ["react-konva"], // Exclude react-konva to prevent pre-bundling issues
     esbuildOptions: {
       jsx: 'automatic',
+      jsxDev: false,
     },
   },
 });

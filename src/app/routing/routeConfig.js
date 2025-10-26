@@ -1,90 +1,121 @@
-import { lazy } from "react";
+import React, { lazy } from "react";
+
+// Error pages should NOT be lazy-loaded since they're used in ErrorBoundary
+import OfflineScreen from "@/components/OfflineScreen";
+import Forbidden403 from "@/components/Forbidden403";
+import NotFound404 from "@/components/NotFound404";
+import MaintenanceScreen from "@/components/MaintenanceScreen";
+import GeneralError from "@/components/GeneralError";
+
+// Wrapper to ensure React is initialized before loading lazy components
+// This fixes the "Cannot set properties of undefined (setting 'Children')" error
+const safeLazyImport = (importFn) => {
+  return lazy(async () => {
+    // Ensure React is loaded and initialized
+    await import("react");
+    await import("react-dom/client");
+    
+    try {
+      const module = await importFn();
+      return module;
+    } catch (error) {
+      console.error("❌ Lazy import failed:", error);
+      // Return a fallback component using React.createElement
+      return { 
+        default: () => React.createElement(
+          'div',
+          { style: { padding: '20px', textAlign: 'center' } },
+          React.createElement('p', null, 'Component failed to load. Please refresh the page.')
+        )
+      };
+    }
+  });
+};
+
 // Lazy load all heavy components for better performance
-const OfflineScreen = lazy(() => import("@/components/OfflineScreen"));
-const DataPlanSelector = lazy(() => import("../../features/packages/pages/PackagesSelector"));
-const Checkout = lazy(() => import("../../features/packages/pages/Checkout"));
-const LoginSiblings = lazy(() => import("../../features/auth/pages/LoginSiblings"));
-const AddSiblingsPage = lazy(() => import("../../features/auth/pages/AddSibilingPage/AddSiblingsPage"));
-const Board = lazy(() => import("../../features/Board/Board"));
-const PDFViewerPage = lazy(() => import("../../features/PDFViewer/PDFViewerPage"));
-const PrivacyPolicyPage = lazy(() => import("../../features/PrivacyPolicy/PrivacyPolicyPage"));
-const SessionPage = lazy(() => import("../../features/lessons/pages/SessionPage"));
-const GlobalSessionPage = lazy(() => import("../../features/lessons/pages/GlobalSession"));
-const WeeklySchedule = lazy(() => import("../../features/lessons/pages/WeeklySchedule"));
-const TeacherProfile = lazy(() => import("../../features/teacher/pages/profile"));
-const CommunityPage = lazy(() => import("@/features/community/CommunityPage"));
-const MaintenanceScreen = lazy(() => import("@/components/MaintenanceScreen"));
-// import Reports from "@/features/profile/pages/Reports";
-// Lazy load components for better performance
-const HomePage = lazy(() => import("@/features/home"));
-const SchedulePage = lazy(() => import("@/features/lessons"));
-const Packages = lazy(() => import("@/features/packages"));
-const LessonContentPage = lazy(() =>
+
+const DataPlanSelector = safeLazyImport(() => import("../../features/packages/pages/PackagesSelector"));
+const Checkout = safeLazyImport(() => import("../../features/packages/pages/Checkout"));
+const LoginSiblings = safeLazyImport(() => import("../../features/auth/pages/LoginSiblings"));
+const AddSiblingsPage = safeLazyImport(() => import("../../features/auth/pages/AddSibilingPage/AddSiblingsPage"));
+const Board = safeLazyImport(() => import("../../features/Board/Board"));
+const PDFViewerPage = safeLazyImport(() => import("../../features/PDFViewer/PDFViewerPage"));
+const PrivacyPolicyPage = safeLazyImport(() => import("../../features/PrivacyPolicy/PrivacyPolicyPage"));
+const SessionPage = safeLazyImport(() => import("../../features/lessons/pages/SessionPage"));
+const GlobalSessionPage = safeLazyImport(() => import("../../features/lessons/pages/GlobalSession"));
+const WeeklySchedule = safeLazyImport(() => import("../../features/lessons/pages/WeeklySchedule"));
+const TeacherProfile = safeLazyImport(() => import("../../features/teacher/pages/profile"));
+const CommunityPage = safeLazyImport(() => import("@/features/community/CommunityPage"));
+
+const HomePage = safeLazyImport(() => import("@/features/home"));
+const SchedulePage = safeLazyImport(() => import("@/features/lessons"));
+const Packages = safeLazyImport(() => import("@/features/packages"));
+const LessonContentPage = safeLazyImport(() =>
   import("@/features/lessons/pages/LessonContentPage")
 );
-const ManageSubscription = lazy(() => import("@/features/subscription"));
-const PackagesContent = lazy(() =>
+const ManageSubscription = safeLazyImport(() => import("@/features/subscription"));
+const PackagesContent = safeLazyImport(() =>
   import("@/features/packages/pages/PackagesContent")
 );
-const LessonExercise = lazy(() =>
+const LessonExercise = safeLazyImport(() =>
   import("@/features/lessons/pages/LessonExercise")
 );
-const ShowLessons = lazy(() => import("@/features/packages/pages/ShowLessons"));
+const ShowLessons = safeLazyImport(() => import("@/features/packages/pages/ShowLessons"));
 
 // Auth Pages
-const LoginPage = lazy(() =>
+const LoginPage = safeLazyImport(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.LoginPage,
   }))
 );
-const PhonePage = lazy(() =>
+const PhonePage = safeLazyImport(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.PhonePage,
   }))
 );
-const OtpPage = lazy(() =>
+const OtpPage = safeLazyImport(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.OtpPage,
   }))
 );
-const RegisterPage = lazy(() =>
+const RegisterPage = safeLazyImport(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.RegisterPage,
   }))
 );
-const PasswordPage = lazy(() =>
+const PasswordPage = safeLazyImport(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.PasswordPage,
   }))
 );
-const ForgotPasswordOtpPage = lazy(() =>
+const ForgotPasswordOtpPage = safeLazyImport(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.ForgotPasswordOtpPage,
   }))
 );
-const ForgotPasswordResetPage = lazy(() =>
+const ForgotPasswordResetPage = safeLazyImport(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.ForgotPasswordResetPage,
   }))
 );
-const ForgotPasswordPage = lazy(() =>
+const ForgotPasswordPage = safeLazyImport(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.ForgotPasswordPage,
   }))
 );
-const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
-const Reports = lazy(() => import("@/features/profile/pages/Reports"));
-const ComplaintsPage = lazy(() =>
+const ProfilePage = safeLazyImport(() => import("@/features/profile/pages/ProfilePage"));
+const Reports = safeLazyImport(() => import("@/features/profile/pages/Reports"));
+const ComplaintsPage = safeLazyImport(() =>
   import("@/features/complaints/pages/ComplaintsPage")
 );
 
-const BalanceDetails = lazy(() =>
+const BalanceDetails = safeLazyImport(() =>
   import("@/features/balance/pages/BalanceDetails")
 );
-const PaymentStatus = lazy(() =>
+const PaymentStatus = safeLazyImport(() =>
   import("@/features/balance/pages/PaymentStatus")
 );
-const RenewalStatus = lazy(() =>
+const RenewalStatus = safeLazyImport(() =>
   import("@/features/subscription/pages/RenewalStatus")
 );
 
@@ -320,21 +351,29 @@ export const routes = [
     protected: true,
     layout: false,
   },
-
+  {
+    path: "/403",
+    element: Forbidden403,
+    public: true,
+    layout: false,
+  },
+  {
+    path: "/404",
+    element: NotFound404,
+    public: true,
+    layout: false,
+  },
+  {
+    path: "/error",
+    element: GeneralError,
+    public: true,
+    layout: false,
+  },
   {
     path: "/weekly-schedule",
     element: WeeklySchedule,
     protected: true,
     layout: false,
-  },
-
-  {
-    path: "/complaints",
-    element: ComplaintsPage,
-    protected: true,
-    navbar: false,
-    mobileNav: true,
-    homeSupportBtn: true,
   },
   {
     path: "/complaints",

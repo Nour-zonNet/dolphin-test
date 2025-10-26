@@ -1,3 +1,4 @@
+import React from "react";
 import profileImg from "@/assets/images/profileImage.png";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";

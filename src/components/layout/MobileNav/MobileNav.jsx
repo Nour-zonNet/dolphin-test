@@ -1,3 +1,4 @@
+import React from "react";
 import { Home } from "@/utils/icons"; 
 import { ProfileInfo } from "./components";
 import { useTranslation } from "react-i18next";

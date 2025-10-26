@@ -1,3 +1,4 @@
+import React from "react";
 import { Navbar, MobileNav, HomeSupportBtn } from "./index";
 
 const AppLayout = ({
