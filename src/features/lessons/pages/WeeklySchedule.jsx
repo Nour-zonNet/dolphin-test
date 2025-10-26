@@ -1,6 +1,6 @@
 import { useLessons } from "../hooks/useLessons";
 import backgroundImage from "@/assets/schedule/background.png";
-import dolphinChild from "@/assets/images/homeChild.webp";
+import dolphinChild from "@/assets/images/homeChild.png";
 import ticket from "@/assets/images/ticket.png";
 import streamline from "@/assets/images/streamline.png";
 import { useAuth } from "@/features/auth/hooks/useAuth";

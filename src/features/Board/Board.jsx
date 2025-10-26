@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, startTransition, useMemo, useCallback } from "react";
+import { useRef, useState, useEffect, startTransition, useCallback } from "react";
 import Toolbar from "./Toolbar";
 import Canvas from "./Canvas";
 import PageCanvas from "./PageCanvas";
@@ -444,6 +444,39 @@ const Board = () => {
 
   const { isDesktop, isMobile, isTablet } = useResponsive();
 
+  // Callbacks for PageCanvas
+  const handleUpdatePageState = useCallback((i, next) => {
+    setPageStates(prev => prev.map((s, k) =>
+      k === i ? next : s
+    ));
+  }, []);
+
+  const getSaveToHistoryCallback = (idx) => {
+    return (newLines, newTexts, newShapes) => {
+      setPageStates(prev => {
+        const newPageStates = prev.map((s, k) =>
+          k === idx
+            ? {
+                ...s,
+                lines: newLines,
+                texts: newTexts,
+                shapes: newShapes,
+              }
+            : s
+        );
+        saveToHistory([], [], [], newPageStates);
+        return newPageStates;
+      });
+    };
+  };
+
+  const getStageRefCallback = (idx) => {
+    return (node) => {
+      if (!node) return;
+      pageStageRefs.current[idx] = node;
+    };
+  };
+
   return (
     <div
       className={`flex w-full h-full ${
@@ -535,31 +568,9 @@ const Board = () => {
                     pageStates[idx] || { lines: [], texts: [], shapes: [] }
                   }
                   isDesktop={isDesktop}
-                  onUpdatePageState={useCallback((i, next) => {
-                    setPageStates(prev => prev.map((s, k) =>
-                      k === i ? next : s
-                    ));
-                  }, [])}
-                  saveToHistory={useCallback((newLines, newTexts, newShapes) => {
-                    setPageStates(prev => {
-                      const newPageStates = prev.map((s, k) =>
-                        k === idx
-                          ? {
-                              ...s,
-                              lines: newLines,
-                              texts: newTexts,
-                              shapes: newShapes,
-                            }
-                          : s
-                      );
-                      saveToHistory([], [], [], newPageStates);
-                      return newPageStates;
-                    });
-                  }, [idx, saveToHistory])}
-                  stageRef={useCallback((node) => {
-                    if (!node) return;
-                    pageStageRefs.current[idx] = node;
-                  }, [idx])}
+                  onUpdatePageState={handleUpdatePageState}
+                  saveToHistory={getSaveToHistoryCallback(idx)}
+                  stageRef={getStageRefCallback(idx)}
                 />
               ))
             ) : (

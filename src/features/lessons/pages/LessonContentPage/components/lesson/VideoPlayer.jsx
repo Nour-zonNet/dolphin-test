@@ -149,6 +149,10 @@ const VideoPlayer = ({ lessonId }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  const [current, setCurrent] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  const [isHovered, setIsHovered] = useState(false);
   // const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
@@ -219,10 +223,7 @@ const VideoPlayer = ({ lessonId }) => {
     const onLoadedMeta = () => setDuration(v.duration || 0);
     const onDur = () => setDuration(v.duration || 0);
     const onProgress = () => {
-      try {
-      } catch {
-    // Ignore URL parsing errors
-  }
+      // Track video progress
     };
 
     if (!isNaN(v.duration)) setDuration(v.duration || 0);
@@ -318,6 +319,36 @@ const VideoPlayer = ({ lessonId }) => {
   }, [isIframe, showCover]);
 
   // ---------- fullscreen & rotation ----------
+  const lockOrRotateLandscape = async () => {
+    if (!isMobileOrTablet()) return;
+    const canLock =
+      typeof screen !== "undefined" &&
+      screen.orientation &&
+      typeof screen.orientation.lock === "function";
+    if (canLock) {
+      try {
+        await screen.orientation.lock("landscape");
+        setRotateFallback(false);
+        return;
+      } catch {
+        // Ignore orientation lock errors
+      }
+    }
+    // iOS / unsupported → use emulated fullscreen if requested later
+    setRotateFallback(true);
+  };
+
+  const clearOrientation = useCallback(async () => {
+    if (rotateFallback) setRotateFallback(false);
+    if (typeof screen !== "undefined" && screen.orientation && screen.orientation.unlock) {
+      try { 
+        screen.orientation.unlock(); 
+      } catch {
+        // Ignore orientation unlock errors
+      }
+    }
+  }, [rotateFallback]);
+
   const enterIOSNativeFS = () => {
     const v = videoRef.current;
     if (v && v.webkitEnterFullscreen) {
@@ -401,35 +432,6 @@ const VideoPlayer = ({ lessonId }) => {
     return () => v.removeEventListener("webkitendfullscreen", onEndFS);
   }, []);
 
-  const lockOrRotateLandscape = async () => {
-    if (!isMobileOrTablet()) return;
-    const canLock =
-      typeof screen !== "undefined" &&
-      screen.orientation &&
-      typeof screen.orientation.lock === "function";
-    if (canLock) {
-      try {
-        await screen.orientation.lock("landscape");
-        setRotateFallback(false);
-        return;
-      } catch {
-    // Ignore URL parsing errors
-  }
-    }
-    // iOS / unsupported → use emulated fullscreen if requested later
-    setRotateFallback(true);
-  };
-
-  const clearOrientation = useCallback(async () => {
-    if (rotateFallback) setRotateFallback(false);
-    if (typeof screen !== "undefined" && screen.orientation && screen.orientation.unlock) {
-      try { 
-        screen.orientation.unlock(); 
-      } catch {
-        // Ignore orientation unlock errors
-      }
-    }
-  }, [rotateFallback]);
 
   // Emulated fullscreen page scroll handling
   useEffect(() => {

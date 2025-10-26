@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import maintenanceDolphin from '@/assets/images/maintenance-dolphin.webp';
+import maintenanceDolphin from '@/assets/images/maintenance-dolphin.svg';
 import { LeftArrowFilled } from '@/utils/icons';
 import HomeSupportBtn from './layout/HomeSupportBtn';
 

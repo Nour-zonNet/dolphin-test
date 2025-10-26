@@ -143,7 +143,7 @@ const TransactionDetailsModal = ({ transaction, onClose }) => {
   const getOperationType = (type) => {
     const typeLabels = {
       'subscription': 'اشتراك في باقة',
-      'balance_topup': 'شحن الرصيد',
+      'balance_topup': 'شحن رصيد',
       'renewal': 'تجديد اشتراك',
       'refund': 'استرداد',
     };

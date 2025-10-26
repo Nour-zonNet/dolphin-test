@@ -23,8 +23,8 @@ export const usePerformanceOptimizations = () => {
     // Preload critical images
     const preloadImages = () => {
       const criticalImages = [
-        '/homeChild.webp',
-        '/dolphinLogo.webp',
+        '/homeChild.png',
+        '/dolphinLogo.png',
       ];
       
       criticalImages.forEach(src => {

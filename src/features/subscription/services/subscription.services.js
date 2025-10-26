@@ -65,24 +65,14 @@ class SubscriptionRepository {
 
   // Create new subscription payment
   async createNewSubscriptionPayment(packageIds) {
-    try {
-      // Convert package IDs to query parameter format
-      const packagesParam = Array.isArray(packageIds) 
-        ? packageIds.join(',')
-        : packageIds.toString();
-      
-      console.log('API Call - Package IDs:', packageIds);
-      console.log('API Call - Packages Param:', packagesParam);
-      console.log('API Call - Full URL:', `/student/recharge-packages?packages=${packagesParam}`);
-      
-      const response = await api.post(`/student/recharge-packages?packages=${packagesParam}`);
-      
-      console.log('API Response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('API Error:', error);
-      throw error;
-    }
+    // Convert package IDs to query parameter format
+    const packagesParam = Array.isArray(packageIds) 
+      ? packageIds.join(',')
+      : packageIds.toString();
+    
+    const response = await api.post(`/student/recharge-packages?packages=${packagesParam}`);
+    
+    return response.data;
   }
 
     async getByGroupsPackageId(packageId) {

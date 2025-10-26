@@ -5,8 +5,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-import notFoundImage from "@/assets/images/notFoundLessons.webp";
-import nationalDayBanner from "@/assets/images/national-day.webp";
+import notFoundImage from "@/assets/images/notFoundLessons.png";
+import nationalDayBanner from "@/assets/images/national-day.svg";
 import { getSevenDaysBeforeAndAfter, todayDate } from "@/utils/dateHelpers";
 import PreviewScheduleBtn from "@/components/ui/PreviewScheduleBtn";
 

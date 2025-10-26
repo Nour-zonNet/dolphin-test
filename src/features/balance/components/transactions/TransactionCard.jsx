@@ -31,17 +31,6 @@ const TransactionCard = ({ transaction, className = '' }) => {
     }
   };
 
-  const getTypeColor = (type) => {
-    const typeColors = {
-      'subscription': 'text-[#1B872C]',
-      'balance_topup': 'text-orangedeep',
-      'wallet_payment': 'text-[#3A8809]',
-      'renewal': 'text-[#E21B1B]',
-      'refund': 'text-[#2E7D32]',
-    };
-    
-    return typeColors[type] || 'text-green-600';
-  };
 
   const formatAmount = (amount, type) => {
     const isNegative = type === 'refund';
@@ -63,18 +52,7 @@ const TransactionCard = ({ transaction, className = '' }) => {
     );
   };
 
-  const copyTransactionId = async () => {
-    try {
-      const idToCopy = transaction.reference_id || transaction.id;
-      await navigator.clipboard.writeText(idToCopy.toString());
-      // TODO: Add toast notification for successful copy
-    } catch (_error) {
-      // Failed to copy transaction ID
-      // TODO: Add error notification
-    }
-  };
-
-  const typeLabel = TRANSACTION_TYPE_LABELS[transaction.type] || transaction.type;
+  // const typeLabel = TRANSACTION_TYPE_LABELS[transaction.type] || transaction.type;
 
   return (
     <div 
@@ -100,6 +78,12 @@ const TransactionCard = ({ transaction, className = '' }) => {
             )}
             {/* if transaction.type is 'subscription'  */}
             {transaction.type === 'subscription' && (
+              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 bg-[#E89B3222] rounded-full flex items-center justify-center">
+                <Book className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" fill="#D18C2D"/>
+              </div>
+            )}
+            {/* if transaction.type is 'renewal'  */}
+            {transaction.type === 'renewal' && (
               <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 bg-[#E89B3222] rounded-full flex items-center justify-center">
                 <Book className="w-4 h-4 md:w-6 md:h-6 lg:w-7 lg:h-7" fill="#D18C2D"/>
               </div>

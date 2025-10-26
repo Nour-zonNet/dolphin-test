@@ -1,4 +1,4 @@
-import addPackageDolphin from "@/assets/images/add-packages-dolphin.webp";
+import addPackageDolphin from "@/assets/images/add-packages-dolphin.svg";
 
 const NAVBAR_HEIGHT = 64;
 const MOBILE_BAR_HEIGHT = 56;

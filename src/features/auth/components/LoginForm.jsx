@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { ArrowNext } from "../../../utils/icons";
 import Button from "../../../components/ui/Button";
-import dolphinChild from "@/assets/images/homeChild.webp";
+import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
 import PhoneField from "./PhoneField";
 import { validatePhone } from "../../../utils/phoneValidation";

@@ -27,7 +27,7 @@ export default defineConfig({
       },
       includeAssets: [
         "favicon.svg", "robots.txt", "apple-touch-icon.png", 
-        "homeChild.webp", "homeChild.png", "offline-dolphin.webp"
+        "homeChild.png", "offline-dolphin.svg"
       ],
       manifest: {
         name: "منصة الدلفين التعليمية",
@@ -39,12 +39,12 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "/homeChild.webp",
+            src: "/homeChild.png",
             sizes: "192x192",
             type: "image/webp"
           },
           {
-            src: "/homeChild.webp",
+            src: "/homeChild.png",
             sizes: "512x512",
             type: "image/webp"
           }

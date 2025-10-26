@@ -3,9 +3,9 @@ import { useDispatch } from "react-redux";
 import Header from "@/components/layout/Header";
 import { LeftArrowFilled, SupportIcon, WalletStatus, Retry } from "@/utils/icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import successImg from "@/assets/images/successModal.webp";
-import warningImg from "@/assets/images/paymentFailed.webp";
-import pendingImg from "@/assets/images/paymentPending.webp";
+import successImg from "@/assets/images/successModal.svg";
+import warningImg from "@/assets/images/paymentFailed.svg";
+import pendingImg from "@/assets/images/paymentPending.svg";
 import HomeSupportBtn from "@/components/layout/HomeSupportBtn";
 import { setLastTransaction } from "@/store/balanceSlice";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
@@ -244,7 +244,7 @@ const createIcon = (iconType, iconProps = {}) => {
 };
 
 // Package Summary Component
-const PackageSummary = ({ packages, totalAmount, discount = 0 }) => {
+const PackageSummary = ({ packages, totalAmount: _totalAmount, discount = 0 }) => {
   const subtotal = packages.reduce((sum, pkg) => sum + (pkg.finalPrice || 0), 0);
   const finalTotal = subtotal - discount;
 
@@ -312,6 +312,7 @@ const RenewalStatus = () => {
   const { all: allPackages } = usePackages();
   const [transactionData, setTransactionData] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [packageData, setPackageData] = useState([]);
   
   // Determine transaction type and get appropriate config
@@ -380,17 +381,7 @@ const RenewalStatus = () => {
   const transactionType = getTransactionType(transactionData, type);
   const data = RENEWAL_STATUS_CONFIG[status]?.[transactionType];
 
-  // Debug: Check what's happening with detection (can be removed in production)
-  useEffect(() => {
-    console.log('RenewalStatus Debug:', {
-      urlType: type,
-      hasTransactionData: !!transactionData,
-      detectedType: transactionType,
-      finalConfig: data?.title,
-      packageDataLength: packageData.length,
-      allPackagesLength: allPackages?.length
-    });
-  }, [transactionData, transactionType, data, packageData, allPackages]);
+  // Debug: Check what's happening with detection (removed in production)
 
   useEffect(() => {
     // Get transaction data from sessionStorage or localStorage
@@ -406,7 +397,7 @@ const RenewalStatus = () => {
         parsedTransaction = JSON.parse(localTransaction);
       }
     } catch (error) {
-      console.error('Error parsing transaction data:', error);
+      // Error parsing transaction data
     }
     
     if (parsedTransaction) {
@@ -440,7 +431,7 @@ const RenewalStatus = () => {
             packageIds = parsed.packageIds;
           }
         } catch (e) {
-          console.error('Error parsing checkout data:', e);
+          // Error parsing checkout data
         }
       } else if (renewalData) {
         try {
@@ -449,7 +440,7 @@ const RenewalStatus = () => {
             packageIds = [parsed.packageId];
           }
         } catch (e) {
-          console.error('Error parsing renewal data:', e);
+          // Error parsing renewal data
         }
       }
     }
@@ -458,24 +449,14 @@ const RenewalStatus = () => {
        // Find packages in allPackages
        if (allPackages?.length > 0) {
          const numericPackageIds = packageIds.map(id => Number(id));
-         console.log('Searching for packages:', {
-           packageIds: packageIds,
-           numericPackageIds: numericPackageIds,
-           allPackagesCount: allPackages.length,
-           allPackagesIds: allPackages.map(pkg => pkg.id)
-         });
          
          packages = allPackages.filter(pkg => 
            numericPackageIds.includes(Number(pkg.id))
          );
-         
-         console.log('Found packages:', packages);
-         console.log('Package names:', packages.map(pkg => ({ id: pkg.id, name: pkg.name, price: pkg.finalPrice })));
        }
        
        // If packages not found, create fallback with real names if possible
        if (packages.length === 0) {
-         console.warn('Packages not found, creating fallback for IDs:', packageIds);
          
          const transactionAmount = transactionData?.amount || 0;
          const pricePerPackage = transactionAmount > 0 && packageIds.length > 0 
@@ -495,7 +476,6 @@ const RenewalStatus = () => {
          });
        }
       
-      console.log('Final packageData being set:', packages);
       setPackageData(packages);
     } else {
       setPackageData([]);

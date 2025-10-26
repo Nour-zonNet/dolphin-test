@@ -139,9 +139,9 @@ const ModalManager = () => {
         <AvatarModal
           {...props}
           onClose={handleClose}
-          onSelect={(avatarSrc) => {
+          onSelect={(avatarSrc, file) => {
             if (props.callbackId) {
-              executeCallback(props.callbackId, avatarSrc);
+              executeCallback(props.callbackId, avatarSrc, file);
             }
             handleClose();
           }}

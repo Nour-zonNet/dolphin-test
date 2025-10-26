@@ -20,12 +20,13 @@ import {
   isPackageStarted,
 } from "../../../utils/dateHelpers";
 import { Calender, SandGlass } from "../../../utils/icons";
+import { rechargePackagesFromWallet } from "@/services/api";
 
 const Card = React.memo(({ item, isOpen, onToggle }) => {
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
-  const { cancelSubscription, reactivateSubscription, createNewSubscriptionPayment, fetchSubscriptions } = useSubscriptions();
+  const { cancelSubscription, reactivateSubscription: _reactivateSubscription, createNewSubscriptionPayment, fetchSubscriptions } = useSubscriptions();
   const { all: allPackages } = usePackages();
   useGroups(item.package_id);
 
@@ -112,10 +113,6 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
       month: "long",
       timeZone: tz,
     }).format(d);
-
-    // (اختياري) توحيد الهَمزة لتوافق المثال المطلوب
-    // لو تحب تكتب الشهور بدون همزات (اغسطس/اكتوبر/ابريل)، فعّل السطر التالي:
-    // month = month.replace("أغسطس", "اغسطس").replace("أكتوبر", "اكتوبر").replace("أبريل", "ابريل");
 
     return `${day} ${month} ${year}`;
   }
@@ -214,16 +211,9 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
           const packageData = allPackages?.find(pkg => pkg.id === item.package_id);
           const packagePrice = packageData?.finalPrice || packageData?.originalPrice || 0;
           
-          console.log('Renewal - Package ID:', item.package_id);
-          console.log('Renewal - Package Data:', packageData);
-          console.log('Renewal - Package Price:', packagePrice);
-          
           const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
           
-          console.log('Renewal - API Response:', result);
-          
           if (result.success && result.data?.url) {
-            console.log('Renewal - MyFatoorah URL:', result.data.url);
             
             // Store renewal transaction data for status page
             const renewalTransactionData = {
@@ -246,21 +236,12 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
             sessionStorage.removeItem('checkoutData');
             localStorage.removeItem('checkoutData');
             
-            console.log('Renewal Flow - Storing renewalData:', {
-              timestamp: Date.now(),
-              packageId: item.package_id,
-              subscriptionId: item.id,
-              source: 'manage-subscription'
-            });
-            
             sessionStorage.setItem('renewalData', JSON.stringify({
               timestamp: Date.now(),
               packageId: item.package_id,
               subscriptionId: item.id,
               source: 'manage-subscription'
             }));
-            
-            console.log('Renewal Flow - Stored renewalData:', sessionStorage.getItem('renewalData'));
             
             // Redirect to MyFatoorah payment page
             try {
@@ -269,20 +250,16 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
               
               // If popup was blocked, redirect in same window
               if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                console.log('Popup blocked, redirecting in same window');
                 window.location.href = result.data.url;
               }
             } catch (error) {
-              console.error('Error opening MyFatoorah:', error);
               // Fallback: redirect in same window
               window.location.href = result.data.url;
             }
           } else {
-            console.error('Renewal - Invalid response:', result);
             throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
           }
         } catch (error) {
-          console.error('Renewal Payment Error:', error);
           const getErrorMessage = (err) => {
             if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
             if (typeof err === "string") return err;
@@ -310,23 +287,87 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
         message: "هل أنت متأكد من رغبتك في إنشاء اشتراك جديد لهذه الباقة؟",
         confirmText: "تأكيد الدفع",
         type: "primary",
+        showPaymentMethods: true,
       },
-      async () => {
+      async (data) => {
         try {
+          const selectedPaymentMethod = data?.paymentMethod || 'myfatoorah';
+          
           // Get package price information
           const packageData = allPackages?.find(pkg => pkg.id === item.package_id);
           const packagePrice = packageData?.finalPrice || packageData?.originalPrice || 0;
           
-          console.log('New Subscription - Package ID:', item.package_id);
-          console.log('New Subscription - Package Data:', packageData);
-          console.log('New Subscription - Package Price:', packagePrice);
+          // Handle wallet payment
+          if (selectedPaymentMethod === 'wallet') {
+            try {
+              const walletResult = await rechargePackagesFromWallet([item.package_id]);
+              
+              const message = walletResult.message || walletResult.data?.message || '';
+              const success = walletResult.success !== undefined ? walletResult.success : (walletResult.data?.success !== undefined ? walletResult.data.success : true);
+              
+              if (success === false) {
+                openStatusModal("ERROR", {
+                  title: "فشل في الدفع",
+                  message: message || "فشل في الدفع من المحفظة. يرجى المحاولة مرة أخرى.",
+                });
+                return;
+              }
+              
+              const paymentTransactionData = {
+                id: walletResult.data?.transaction_id || walletResult.transaction_id || 'wallet_payment_' + Date.now(),
+                amount: walletResult.data?.amount || walletResult.amount || 0,
+                currency: 'SAR',
+                status: success ? 'completed' : 'failed',
+                type: 'wallet_payment',
+                packageIds: [item.package_id],
+                packageId: item.package_id,
+                subscriptionId: item.id,
+                paymentMethod: selectedPaymentMethod,
+                error: success ? null : message,
+                createdAt: new Date().toISOString(),
+              };
+              
+              sessionStorage.setItem('currentTransaction', JSON.stringify(paymentTransactionData));
+              
+              openStatusModal("SUCCESS", {
+                title: "تم الدفع بنجاح",
+                message: message || "تم تفعيل الباقة من المحفظة بنجاح.",
+                onClose: () => {
+                  fetchSubscriptions();
+                },
+              });
+              
+              return;
+              
+            } catch (walletError) {
+              
+              const getWalletErrorMessage = (err) => {
+                if (!err) return "حدث خطأ أثناء الدفع من المحفظة. حاول مرة أخرى.";
+                if (typeof err === "string") return err;
+                if (err.response?.data) {
+                  const errorData = err.response.data;
+                  if (errorData.error && typeof errorData.error === 'string') return errorData.error;
+                  if (errorData.message && typeof errorData.message === 'string') return errorData.message;
+                  if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+                    return errorData.errors[0];
+                  }
+                }
+                if (err.message) return err.message;
+                return "حدث خطأ أثناء الدفع من المحفظة. حاول مرة أخرى.";
+              };
+              
+              openStatusModal("ERROR", {
+                title: "فشل في الدفع من المحفظة",
+                message: getWalletErrorMessage(walletError),
+              });
+              return;
+            }
+          }
           
+          // Handle MyFatoorah payment
           const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
           
-          console.log('New Subscription - API Response:', result);
-          
           if (result.success && result.data?.url) {
-            console.log('New Subscription - MyFatoorah URL:', result.data.url);
             
             // Store renewal transaction data for status page
             const newSubscriptionTransactionData = {
@@ -344,17 +385,9 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
             sessionStorage.setItem('currentTransaction', JSON.stringify(newSubscriptionTransactionData));
             localStorage.setItem('pendingTransaction', JSON.stringify(newSubscriptionTransactionData));
             
-            // Store additional renewal indicator for fallback detection
-            // Clear any conflicting checkout data first
+            // Clear any conflicting checkout data
             sessionStorage.removeItem('checkoutData');
             localStorage.removeItem('checkoutData');
-            
-            console.log('New Subscription Flow - Storing renewalData:', {
-              timestamp: Date.now(),
-              packageId: item.package_id,
-              subscriptionId: item.id,
-              source: 'manage-subscription'
-            });
             
             sessionStorage.setItem('renewalData', JSON.stringify({
               timestamp: Date.now(),
@@ -363,28 +396,20 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
               source: 'manage-subscription'
             }));
             
-            console.log('New Subscription Flow - Stored renewalData:', sessionStorage.getItem('renewalData'));
-            
             // Redirect to MyFatoorah payment page
             try {
-              // Try opening in new tab first
               const newWindow = window.open(result.data.url, '_blank');
               
-              // If popup was blocked, redirect in same window
               if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                console.log('Popup blocked, redirecting in same window');
                 window.location.href = result.data.url;
               }
             } catch (error) {
-              console.error('Error opening MyFatoorah:', error);
-              // Fallback: redirect in same window
               window.location.href = result.data.url;
             }
           } else {
             throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
           }
         } catch (error) {
-          console.error('New Subscription Payment Error:', error);
           const getErrorMessage = (err) => {
             if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
             if (typeof err === "string") return err;

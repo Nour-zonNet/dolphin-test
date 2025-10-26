@@ -113,7 +113,7 @@ const ModalExamples = () => {
                     },
                   ],
                 },
-                (groupId) => {
+                (_groupId) => {
                   // Changed to group
                 }
               )

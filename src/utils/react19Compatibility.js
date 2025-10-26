@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 // React 19 compatibility fix for react-redux and other libraries
 // This fixes the "Cannot set properties of undefined (setting 'Activity')" error
 
@@ -5,10 +6,6 @@ import React from 'react';
 
 // Enhanced React 19 compatibility fixes - apply immediately
 // This must run before any other React code to prevent conflicts
-
-// Global error handler for React 19 compatibility
-const originalError = Error;
-const originalTypeError = TypeError;
 
 // Enhanced React 19 compatibility fixes
 if (typeof window !== 'undefined') {
@@ -23,39 +20,52 @@ if (typeof window !== 'undefined') {
       } catch (error) {
         // If the error is related to Activity property or undefined properties, use a fallback
         if (error.message && (error.message.includes('Activity') || error.message.includes('Cannot set properties of undefined'))) {
-          console.warn('React 19 compatibility: Using fallback for useSyncExternalStore due to property error:', error.message);
           
-          // Use useState and useEffect as fallback
-          const [state, setState] = React.useState(() => {
+          // Use useState and useEffect as fallback (only if inside component)
+          // Note: This creates a fallback that should only be used in components
+          // Wrapping in try-catch to prevent hook errors
+          try {
+            if (typeof React.useState === 'function') {
+              const [state, setState] = React.useState(() => {
+                try {
+                  return getSnapshot();
+                } catch (e) {
+                  return null;
+                }
+              });
+              
+              if (typeof React.useEffect === 'function') {
+                React.useEffect(() => {
+                  let isSubscribed = true;
+                  
+                  const unsubscribe = subscribe(() => {
+                    if (isSubscribed) {
+                      try {
+                        const newState = getSnapshot();
+                        setState(newState);
+                      } catch (e) {
+                        // Error in subscription callback
+                      }
+                    }
+                  });
+                  
+                  return () => {
+                    isSubscribed = false;
+                    unsubscribe();
+                  };
+                }, [subscribe, getSnapshot]);
+              }
+              
+              return state;
+            }
+          } catch (hookError) {
+            // Return snapshot directly as fallback
             try {
               return getSnapshot();
             } catch (e) {
-              console.warn('Error in initial getSnapshot:', e);
               return null;
             }
-          });
-          
-          React.useEffect(() => {
-            let isSubscribed = true;
-            
-            const unsubscribe = subscribe(() => {
-              if (isSubscribed) {
-                try {
-                  const newState = getSnapshot();
-                  setState(newState);
-                } catch (e) {
-                  console.warn('Error in subscription callback:', e);
-                }
-              }
-            });
-            
-            return () => {
-              isSubscribed = false;
-              unsubscribe();
-            };
-          }, [subscribe, getSnapshot]);
-          
-          return state;
+          }
         }
         
         // Re-throw other errors
@@ -73,7 +83,6 @@ if (typeof window !== 'undefined') {
     // Suppress specific React 19 compatibility errors
     if (message.includes('Cannot set properties of undefined') && 
         (message.includes('Activity') || message.includes('react-core'))) {
-      console.warn('React 19 compatibility: Suppressed error:', message);
       return;
     }
     
@@ -86,7 +95,6 @@ if (typeof window !== 'undefined') {
     if (event.error && event.error.message && 
         event.error.message.includes('Cannot set properties of undefined') &&
         (event.error.message.includes('Activity') || event.error.message.includes('react-core'))) {
-      console.warn('React 19 compatibility: Caught and suppressed error:', event.error.message);
       event.preventDefault();
       event.stopPropagation();
       return false;

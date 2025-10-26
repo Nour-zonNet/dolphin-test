@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import dolphinCallCenter from "@/assets/images/dolphin-call-center.webp";
-import whatsapp from "@/assets/images/whatsapp.webp";
-import youtube from "@/assets/images/youtube.webp";
-import snapchat from "@/assets/images/snapchat.webp";
-import LifeChat from "@/assets/images/message.webp";
-import support from "@/assets/images/support.webp";
+import dolphinCallCenter from "@/assets/images/dolphin-call-center.svg";
+import whatsapp from "@/assets/images/whatsapp.svg";
+import youtube from "@/assets/images/youtube.svg";
+import snapchat from "@/assets/images/snapchat.svg";
+import LifeChat from "@/assets/images/message.svg";
+import support from "@/assets/images/support.svg";
 import { X } from "lucide-react";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useNavigate } from "react-router-dom";

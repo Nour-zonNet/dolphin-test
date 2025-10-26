@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Lock } from "../../../utils/icons";
 import OTPInput from "../../../components/ui/InputOtp";
-import dolphinChild from "@/assets/images/homeChild.webp";
+import dolphinChild from "@/assets/images/homeChild.png";
 import FormTitle from "./FormTitle";
 import { useClasses } from "../../../hooks/useClasses";
 const RegisterForm = ({ onSubmit, loading, error }) => {

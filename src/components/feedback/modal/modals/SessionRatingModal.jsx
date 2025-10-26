@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import dolphinEvaluate from '@/assets/images/dolphin-evaluate.webp';
-import dolphinStars from '@/assets/images/dolphin-stars.webp';
-import sendRateIcon from '@/assets/images/send-rate-icon.webp';
+import dolphinEvaluate from '@/assets/images/dolphin-evaluate.svg';
+import dolphinStars from '@/assets/images/dolphin-stars.svg';
+import sendRateIcon from '@/assets/images/send-rate-icon.svg';
 import { Teacher } from '@/utils/icons';
 import { useDispatch } from 'react-redux';
 import { openModal } from '@/store/modalSlice';

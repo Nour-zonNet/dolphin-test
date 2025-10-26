@@ -13,13 +13,11 @@
   Object.defineProperty = function(obj, prop, descriptor) {
     // Prevent setting Activity property on undefined/null objects
     if (prop === 'Activity' && (obj === undefined || obj === null)) {
-      console.warn('React 19 compatibility: Preventing Activity property on undefined object');
       return obj || {};
     }
     
     // Ensure object exists before defining property
     if (obj === undefined || obj === null) {
-      console.warn('React 19 compatibility: Preventing property definition on undefined object');
       return obj || {};
     }
     
@@ -29,7 +27,6 @@
   // Patch Object.setPrototypeOf to prevent prototype errors
   Object.setPrototypeOf = function(obj, prototype) {
     if (obj === undefined || obj === null) {
-      console.warn('React 19 compatibility: Preventing prototype setting on undefined object');
       return obj || {};
     }
     
@@ -40,9 +37,8 @@
   if (typeof window !== 'undefined') {
     window.addEventListener('error', function(event) {
       if (event.error && event.error.message && 
-          event.error.message.includes('Cannot set properties of undefined') &&
-          event.error.message.includes('Activity')) {
-        console.warn('React 19 compatibility: Suppressed Activity property error');
+        event.error.message.includes('Cannot set properties of undefined') &&
+        event.error.message.includes('Activity')) {
         event.preventDefault();
         event.stopPropagation();
         return false;
@@ -57,7 +53,6 @@
       // Suppress specific React 19 compatibility errors
       if (message.includes('Cannot set properties of undefined') && 
           message.includes('Activity')) {
-        console.warn('React 19 compatibility: Suppressed error:', message);
         return;
       }
       
@@ -67,6 +62,7 @@
   }
   
   // Fix for CommonJS module system
+  /* eslint-disable no-undef */
   if (typeof module !== 'undefined' && module.exports) {
     const originalExports = module.exports;
     
@@ -74,7 +70,6 @@
     const safeExports = new Proxy(originalExports, {
       set(target, property, value) {
         if (property === 'Activity' && (target === undefined || target === null)) {
-          console.warn('React 19 compatibility: Preventing Activity export on undefined module');
           return true;
         }
         if (target && typeof target === 'object') {

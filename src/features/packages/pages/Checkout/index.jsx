@@ -77,7 +77,6 @@ export const Checkout = () => {
             // Handle wallet payment with comprehensive status handling
             try {
               const walletResult = await rechargePackagesFromWallet(packageIds);
-              console.log('Checkout - Wallet payment response:', walletResult);
               
               // Handle different status responses
               const handleWalletPaymentStatus = (result) => {
@@ -115,7 +114,6 @@ export const Checkout = () => {
                   status: success ? 'completed' : 'failed',
                   success: success
                 };
-                console.log('Checkout - Storing checkout data:', checkoutData);
                 sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
                 
                 setIsProcessingPayment(false);
@@ -172,10 +170,6 @@ export const Checkout = () => {
               
             } catch (walletError) {
               setIsProcessingPayment(false);
-              console.error('Checkout - Wallet payment error:', walletError);
-              console.error('Checkout - Error response data:', walletError.response?.data);
-              console.error('Checkout - Error response status:', walletError.response?.status);
-              console.error('Checkout - Full error object keys:', Object.keys(walletError));
               
               // Handle network/API errors
               const getWalletErrorMessage = (err) => {
@@ -188,7 +182,6 @@ export const Checkout = () => {
                 if (err.response?.data) {
                   // Try different possible error message locations in the response
                   const errorData = err.response.data;
-                  console.log('Checkout - Extracting from errorData:', errorData);
                   
                   // Check for error message in various possible locations
                   if (errorData.error && typeof errorData.error === 'string') return errorData.error;
@@ -254,7 +247,6 @@ export const Checkout = () => {
           const result = await createNewSubscriptionPayment(packageIds).unwrap();
           
           if (result.success && result.data?.url) {
-            console.log('Checkout - MyFatoorah URL:', result.data.url);
             
             // Store payment transaction data for status page
             const paymentTransactionData = {
@@ -282,7 +274,6 @@ export const Checkout = () => {
               paymentMethod: selectedPaymentMethod,
               source: 'checkout'
             };
-            console.log('Checkout - Storing checkout data:', checkoutData);
             sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
             
             // Redirect to MyFatoorah payment page
@@ -292,16 +283,13 @@ export const Checkout = () => {
               
               // If popup was blocked, redirect in same window
               if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                console.log('Popup blocked, redirecting in same window');
                 window.location.href = result.data.url;
               }
             } catch (error) {
-              console.error('Error opening MyFatoorah:', error);
               // Fallback: redirect in same window
               window.location.href = result.data.url;
             }
           } else {
-            console.error('Checkout - Invalid response:', result);
             throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
           }
         } catch (error) {
@@ -650,7 +638,7 @@ const PaymentMethodSelector = ({ selectedPaymentMethod, onPaymentMethodChange })
   </div>
 );
 
-const Actions = ({ onSubmitTrial, onPay, isProcessingPayment, selectedPaymentMethod, onPaymentMethodChange }) => (
+const Actions = ({ onSubmitTrial: _onSubmitTrial, onPay, isProcessingPayment, selectedPaymentMethod, onPaymentMethodChange }) => (
   <div className="flex flex-col items-center justify-center gap-4 md:gap-6 lg:gap-8 mt-8">
     <PaymentMethodSelector 
       selectedPaymentMethod={selectedPaymentMethod}

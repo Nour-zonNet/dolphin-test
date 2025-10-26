@@ -49,7 +49,7 @@ ${errorInfo?.componentStack || 'No component stack'}
       setTimeout(() => {
         this.setState({ copied: false });
       }, 3000);
-    }).catch(err => {
+    }).catch(_err => {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = errorText;
@@ -61,7 +61,7 @@ ${errorInfo?.componentStack || 'No component stack'}
         setTimeout(() => {
           this.setState({ copied: false });
         }, 3000);
-      } catch (err) {
+      } catch (_err2) {
         // Fallback copy failed
       }
       document.body.removeChild(textArea);

@@ -17,29 +17,29 @@ window.__WB_DISABLE_DEV_LOGS = true;
 // Enhanced error logging for iOS Safari debugging
 let errorQueue = [];
 
-window.addEventListener('error', (event) => {
+window.addEventListener('error', (_event) => {
 
   // Store error for display
   errorQueue.push({
     type: 'error',
-    message: event.message,
-    stack: event.error?.stack,
+    message: _event.message,
+    stack: _event.error?.stack,
     timestamp: new Date().toISOString()
   });
 });
 
-window.addEventListener('unhandledrejection', (event) => {
+window.addEventListener('unhandledrejection', (_event) => {
 
   // Store rejection for display
   errorQueue.push({
     type: 'rejection',
-    message: event.reason?.message || String(event.reason),
-    stack: event.reason?.stack,
+    message: _event.reason?.message || String(_event.reason),
+    stack: _event.reason?.stack,
     timestamp: new Date().toISOString()
   });
 
   // Prevent default to avoid console errors on iOS
-  event.preventDefault();
+  _event.preventDefault();
 });
 
 // Make error queue accessible globally for debugging
@@ -64,7 +64,7 @@ if (import.meta.env.PROD) {
         setInterval(() => {
           try {
             registration.update();
-          } catch (error) {
+          } catch (_error) {
             // SW update check failed
           }
         }, 60 * 60 * 1000);
@@ -74,7 +74,7 @@ if (import.meta.env.PROD) {
           updateSW(true); // Force reload
         }
       },
-      onRegisterError(error) {
+      onRegisterError(_error) {
         // SW registration error - Don't block app if SW fails - critical for iOS
       }
     });
@@ -86,7 +86,7 @@ if (import.meta.env.PROD) {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then((regs) => {
       regs.forEach((reg) => reg.unregister());
-    }).catch((error) => {
+    }).catch((_error) => {
       // Failed to unregister service workers
     });
   }

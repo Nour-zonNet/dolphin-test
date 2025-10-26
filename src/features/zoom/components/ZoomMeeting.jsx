@@ -5,13 +5,13 @@ function ZoomMeting() {
   // const client = ZoomMtgEmbedded.createClient();
 
   // const authEndpoint = "http://localhost:4000";
-  const meetingNumber = "97372526003"; // real meeting ID
-  const passWord = "j9WTJAoybL9lQPaP9VrjDXhQbHbbWa"; // exact meeting passcode
+  // const meetingNumber = "97372526003"; // real meeting ID
+  // const passWord = "j9WTJAoybL9lQPaP9VrjDXhQbHbbWa"; // exact meeting passcode
   // const role = 1; // 0 = participant, 1 = host
-  const userName = "mahmoud";
-  const userEmail = "mahmoud@example.com";
-  const registrantToken = "";
-  const zakToken = "";
+  // const userName = "mahmoud";
+  // const userEmail = "mahmoud@example.com";
+  // const registrantToken = "";
+  // const zakToken = "";
 
   // const getSignature = async () => {
   //   try {
@@ -33,7 +33,11 @@ function ZoomMeting() {
   // };
 
   async function startMeeting() {
+    // Zoom meeting functionality is currently disabled
+    // Uncomment and configure when ready to use
+    /*
     const meetingSDKElement = document.getElementById("meetingSDKElement");
+    const client = ZoomMtgEmbedded.createClient();
     try {
       await client.init({
         zoomAppRoot: meetingSDKElement,
@@ -55,6 +59,7 @@ function ZoomMeting() {
     } catch (error) {
       // Handle error silently
     }
+    */
   }
 
   return (

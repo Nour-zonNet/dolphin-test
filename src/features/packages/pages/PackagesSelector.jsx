@@ -8,17 +8,11 @@ import { InfoIcon } from "@/utils/icons";
 import { Header } from "@/components/layout";
 import { HomeSupportBtn } from "@/components/layout";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
-import notFoundPackages from "@/assets/images/allPackages.webp";
+import notFoundPackages from "@/assets/images/allPackages.png";
 
 const DataPlanSelector = () => {
   const navigate = useNavigate();
   const { all } = usePackages();
-  
-  // Debug: Log available packages
-  React.useEffect(() => {
-    console.log('PackagesSelector - Available packages:', all);
-    console.log('PackagesSelector - Package IDs:', all?.map(pkg => pkg.id));
-  }, [all]);
 
   const [selectedPlanIds, setSelectedPlanIds] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -70,18 +64,13 @@ const DataPlanSelector = () => {
   }, [all, searchQuery]);
 
   const handlePlanSelect = React.useCallback((planId) => {
-    console.log('PackagesSelector - Selecting package ID:', planId);
     setSelectedPlanIds((current) => {
       if (current.includes(planId)) {
         // Remove if already selected
-        const newSelection = current.filter((id) => id !== planId);
-        console.log('PackagesSelector - Removed from selection:', newSelection);
-        return newSelection;
+        return current.filter((id) => id !== planId);
       } else {
         // Add to selection
-        const newSelection = [...current, planId];
-        console.log('PackagesSelector - Added to selection:', newSelection);
-        return newSelection;
+        return [...current, planId];
       }
     });
   }, []);
@@ -98,22 +87,22 @@ const DataPlanSelector = () => {
     );
   }, [selectedPlanDetails]);
 
-  const handleSubscribe = React.useCallback(() => {
-    console.log('PackagesSelector - Navigating to checkout with:', {
-      selectedPlanIds: selectedPlanIds,
-      selectedPlanDetails: selectedPlanDetails,
-      totalPrice: totalPrice
-    });
+  // const handleSubscribe = React.useCallback(() => {
+  //   console.log('PackagesSelector - Navigating to checkout with:', {
+  //     selectedPlanIds: selectedPlanIds,
+  //     selectedPlanDetails: selectedPlanDetails,
+  //     totalPrice: totalPrice
+  //   });
     
-    // Navigate to checkout with selected packages data
-    navigate("/checkout", {
-      state: {
-        selectedPackages: selectedPlanDetails,
-        totalPrice: totalPrice,
-        selectedCount: selectedPlanIds.length,
-      },
-    });
-  }, [navigate, selectedPlanDetails, totalPrice, selectedPlanIds.length]);
+  //   // Navigate to checkout with selected packages data
+  //   navigate("/checkout", {
+  //     state: {
+  //       selectedPackages: selectedPlanDetails,
+  //       totalPrice: totalPrice,
+  //       selectedCount: selectedPlanIds.length,
+  //     },
+  //   });
+  // }, [navigate, selectedPlanDetails, totalPrice, selectedPlanIds.length]);
 
   return (
     <>

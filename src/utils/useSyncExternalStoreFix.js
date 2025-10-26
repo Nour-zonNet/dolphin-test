@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // Fix for use-sync-external-store-with-selector React 19 compatibility
 // This specifically addresses the "Cannot set properties of undefined (setting 'Activity')" error
 
@@ -14,13 +15,11 @@
   Object.defineProperty = function(obj, prop, descriptor) {
     // Prevent setting Activity property on undefined objects
     if (prop === 'Activity' && (obj === undefined || obj === null)) {
-      console.warn('React 19 compatibility: Preventing Activity property on undefined object');
       return obj || {};
     }
     
     // Ensure obj is not undefined before defining property
     if (obj === undefined || obj === null) {
-      console.warn('React 19 compatibility: Preventing property definition on undefined object');
       return obj || {};
     }
     
@@ -33,7 +32,6 @@
   // Patch Object.setPrototypeOf to handle undefined objects
   Object.setPrototypeOf = function(obj, prototype) {
     if (obj === undefined || obj === null) {
-      console.warn('React 19 compatibility: Preventing prototype setting on undefined object');
       return obj || {};
     }
     
@@ -42,10 +40,9 @@
   
   // Global error handler for React 19 compatibility
   window.addEventListener('error', function(event) {
-    if (event.error && event.error.message && 
+      if (event.error && event.error.message && 
         event.error.message.includes('Cannot set properties of undefined') &&
         event.error.message.includes('Activity')) {
-      console.warn('React 19 compatibility: Caught and suppressed Activity property error');
       event.preventDefault();
       event.stopPropagation();
       return false;
@@ -60,7 +57,6 @@
     const safeExports = new Proxy(originalExports, {
       set(target, property, value) {
         if (property === 'Activity' && (target === undefined || target === null)) {
-          console.warn('React 19 compatibility: Preventing Activity export on undefined module');
           return true;
         }
         if (target && typeof target === 'object') {
