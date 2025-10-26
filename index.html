@@ -1,6 +1,32 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
+    <!-- CRITICAL: This MUST run first to suppress Activity-related errors -->
+    <script>
+      (function() {
+        // Wrap console.error immediately
+        var originalError = console.error;
+        console.error = function() {
+          var errorMessage = arguments[0];
+          // Suppress Activity-related errors (from Clarity, React, or other sources)
+          if (typeof errorMessage === 'string' && errorMessage.includes('Cannot set properties of undefined') && errorMessage.includes('Activity')) {
+            return; // Silently ignore this error
+          }
+          originalError.apply(console, arguments);
+        };
+        
+        // Also catch window errors with capture phase
+        window.addEventListener('error', function(e) {
+          if (e.message && e.message.includes('Cannot set properties of undefined') && e.message.includes('Activity')) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+          }
+        }, true);
+      })();
+    </script>
+    
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/homeChild.png" />
     <meta
@@ -20,23 +46,6 @@
       rel="stylesheet"
     />
    
-    <!-- Suppress Microsoft Clarity Activity Error -->
-    <script>
-      (function() {
-        var originalError = console.error;
-        console.error = function() {
-          var errorMessage = arguments[0];
-          // Suppress Microsoft Clarity Activity error
-          if (typeof errorMessage === 'string' && 
-              (errorMessage.includes('Cannot set properties of undefined (setting \'Activity\')') ||
-               errorMessage.includes('Cannot set properties') && errorMessage.includes('Activity'))) {
-            return; // Silently ignore this error
-          }
-          originalError.apply(console, arguments);
-        };
-      })();
-    </script>
-
     <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
