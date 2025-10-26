@@ -22,6 +22,11 @@ window.__WB_DISABLE_DEV_LOGS = true;
 let errorQueue = [];
 
 window.addEventListener('error', (_event) => {
+  // Suppress Microsoft Clarity Activity error
+  if (_event.message && _event.message.includes('Activity') && _event.message.includes('Cannot set properties of undefined')) {
+    _event.preventDefault();
+    return;
+  }
 
   // Store error for display
   errorQueue.push({

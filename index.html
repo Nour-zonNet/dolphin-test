@@ -20,6 +20,23 @@
       rel="stylesheet"
     />
    
+    <!-- Suppress Microsoft Clarity Activity Error -->
+    <script>
+      (function() {
+        var originalError = console.error;
+        console.error = function() {
+          var errorMessage = arguments[0];
+          // Suppress Microsoft Clarity Activity error
+          if (typeof errorMessage === 'string' && 
+              (errorMessage.includes('Cannot set properties of undefined (setting \'Activity\')') ||
+               errorMessage.includes('Cannot set properties') && errorMessage.includes('Activity'))) {
+            return; // Silently ignore this error
+          }
+          originalError.apply(console, arguments);
+        };
+      })();
+    </script>
+
     <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
