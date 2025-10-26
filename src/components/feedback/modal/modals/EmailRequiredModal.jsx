@@ -1,9 +1,34 @@
 import { useTranslation } from "react-i18next";
 import { Cross } from "../../../../utils/icons";
-import Button from "../../../ui/Button";
+import { useState } from "react";
 
 const EmailRequiredModal = ({ onClose, onNavigateToProfile }) => {
   const { t } = useTranslation();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Basic email validation
+    if (!email.trim()) {
+      setError("يرجى إدخال البريد الإلكتروني");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("صيغة البريد الإلكتروني غير صحيحة");
+      return;
+    }
+
+    setError("");
+
+    // If you need to navigate or save email
+    if (onNavigateToProfile) {
+      onNavigateToProfile(email);
+    }
+
+    onClose();
+  };
 
   return (
     <div className="relative w-screen max-w-md bg-white rounded-2xl p-6 shadow-lg z-50">
@@ -22,7 +47,7 @@ const EmailRequiredModal = ({ onClose, onNavigateToProfile }) => {
         </h2>
       </div>
 
-      {/* Separator line */}
+      {/* Separator */}
       <div className="mt-4 border-t border-dashed border-gray-300"></div>
 
       {/* Message */}
@@ -32,32 +57,37 @@ const EmailRequiredModal = ({ onClose, onNavigateToProfile }) => {
         </p>
       </div>
 
-      {/* Profile Button */}
-      <div className="flex justify-center items-center mt-8">
-        <button
-          onClick={() => {
-            if (onNavigateToProfile) {
-              onNavigateToProfile();
-            }
-            onClose();
-          }}
-          className="w-full bg-orangedeep hover:cursor-pointer text-navyteal font-bold py-3 px-6 rounded-full transition-all duration-200 flex items-center justify-center gap-2"
-        >
-          {/* <svg
-            className="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-4 w-full mt-4">
+        <div>
+          <label className="font-semibold text-lg text-navyteall">
+            البريد الإلكتروني
+          </label>
+        </div>
+
+        <div className="relative w-full h-[50px] rounded-[100px] border-[0.5px] border-solid border-[#aaaaaa] overflow-hidden">
+          <input
+            value={email}
+            type="email"
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full h-full px-10 text-[12px] md:text-lg text-[#5d6062] bg-transparent outline-none disabled:bg-gray-50"
+          />
+        </div>
+
+        {error && (
+          <p className="text-red-500 text-sm text-center font-cairo">{error}</p>
+        )}
+
+        {/* Submit Button */}
+        <div className="flex justify-center items-center mt-8">
+          <button
+            type="submit"
+            className="w-full bg-orangedeep hover:cursor-pointer text-navyteal font-bold py-3 px-6 rounded-full transition-all duration-200 flex items-center justify-center gap-2"
           >
-            <path
-              fillRule="evenodd"
-              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              clipRule="evenodd"
-            />
-          </svg> */}
-          <span className="text-navyteal font-bold font-cairo">الملف الشخصي</span>
-        </button>
-      </div>
+            <span className="text-navyteal font-bold font-cairo">تحديث</span>
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

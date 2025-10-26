@@ -255,9 +255,9 @@ const ModalManager = () => {
         <EmailRequiredModal
           {...props}
           onClose={handleClose}
-          onNavigateToProfile={() => {
+          onNavigateToProfile={(email) => {
             if (props.callbackId) {
-              executeCallback(props.callbackId);
+              executeCallback(props.callbackId, email);
             }
           }}
         />

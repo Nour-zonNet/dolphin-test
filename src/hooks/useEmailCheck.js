@@ -8,7 +8,7 @@ export const useEmailCheck = () => {
   const { openEmailRequiredModal } = useModal();
   const navigate = useNavigate();
   const hasShownModal = useRef(false);
-
+  const { updateUser } = useAuth();
   useEffect(() => {
     // Only check if user is fully authenticated and we haven't shown the modal yet
     if (isFullyAuthenticated() && user && !hasShownModal.current) {
@@ -17,12 +17,17 @@ export const useEmailCheck = () => {
         hasShownModal.current = true;
         
         // Show the email required modal with navigation callback
-        openEmailRequiredModal(() => {
-          navigate('/profile');
+        openEmailRequiredModal(async (email) => {
+          await updateUser({
+            email: email,
+            name: user.name,
+            grade: user.grade,
+            _method: "PATCH",
+          });
         });
       }
     }
-  }, [user, isFullyAuthenticated, hasEmail, openEmailRequiredModal, navigate]);
+  }, [user, isFullyAuthenticated, hasEmail, openEmailRequiredModal, navigate, updateUser]);
 
   // Reset the modal flag when user changes (e.g., logout/login)
   useEffect(() => {
