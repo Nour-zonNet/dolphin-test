@@ -312,7 +312,7 @@ const RenewalStatus = () => {
   const { all: allPackages } = usePackages();
   const [transactionData, setTransactionData] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const [packageData, setPackageData] = useState([]);
   
   // Determine transaction type and get appropriate config

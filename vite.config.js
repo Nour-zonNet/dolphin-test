@@ -256,7 +256,15 @@ export default defineConfig({
       "@components": path.resolve(__dirname, "./src/components"),
       "@features": path.resolve(__dirname, "./src/features"),
       "@utils": path.resolve(__dirname, "./src/utils"),
-      // removed explicit react/react-dom alias to avoid duplicate React instances
+      // Ensure single React instance to prevent React 19 errors
+      "react": path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
+    },
+  },
+  optimizeDeps: {
+    include: ["react", "react-dom", "react/jsx-runtime"],
+    esbuildOptions: {
+      jsx: 'automatic',
     },
   },
 });
