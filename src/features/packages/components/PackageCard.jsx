@@ -4,7 +4,7 @@ import { STATUS_CONFIG } from "@/constants/STATUS_CONFIG";
 import { Calender } from "@/utils/icons";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { CardKite, Star } from "@/utils/Illustrations";
-import * as Icons from "@/utils/icons";
+import { Checked, Experimental, Finished, Canceled } from "@/utils/icons";
 import { usePackages } from "../hooks/usePackages";
 import { useSelector } from "react-redux";
 import {
@@ -18,7 +18,7 @@ const PackageCard = React.memo(
   ({ item, color, image, status, daysRemaining }) => {
     const { t } = useTranslation();
     const { openWeeklyScheduleModal, openStatusModal } = useModal();
-    const { getSchedule } = usePackages();
+    const { fetchScheduleById } = usePackages();
     const schedules = useSelector((state) => state.packages.schedules);
     const { group_id, package_name, group_name, name } = item;
 
@@ -50,18 +50,11 @@ const PackageCard = React.memo(
         return;
       }
 
-      try {
-        const { groupId, schedule } = await getSchedule(group_id).unwrap();
+      const { groupId, schedule } = await fetchScheduleById(group_id).unwrap();
 
-        openWeeklyScheduleModal({
-          data: { groupId, packageName: package_name, schedule, image, color },
-        });
-      } catch (err) {
-        showError(
-          "الجدول غير متاح",
-          err?.message ?? "حدث خطأ أثناء محاولة جلب الجدول."
-        );
-      }
+      openWeeklyScheduleModal({
+        data: { groupId, packageName: package_name, schedule, image, color },
+      });
     }, [
       status,
       existingSchedule,
@@ -71,12 +64,12 @@ const PackageCard = React.memo(
       openWeeklyScheduleModal,
       image,
       color,
-      getSchedule,
+      fetchScheduleById,
     ]);
 
     // Status configuration
     const config = STATUS_CONFIG[status] || STATUS_CONFIG.active;
-    const Icon = Icons[config.icon];
+    const Icon = { Checked, Experimental, Finished, Canceled }[config.icon];
 
     return (
       <div className="relative w-full mx-auto pl-3 max-w-2xl">

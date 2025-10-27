@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { Header } from "../../../components/layout";
 import { Book, Group, Teacher } from "../../../utils/icons";
 import { Card } from "../components/Card";
@@ -10,7 +9,6 @@ import { packageFactoryWithTitle } from "../factory/packageFactory";
 const PackageContent = () => {
   const [filteredPackages, setFilteredPackages] = useState([]);
   const { mine } = usePackages();
-  const navigate = useNavigate();
 
   // Sync packages when mine changes
   useEffect(() => {
@@ -88,7 +86,7 @@ const PackageContent = () => {
         </Card>
       );
     });
-  }, [filteredPackages, navigate]); // recompute only when data changes
+  }, [filteredPackages]); // recompute only when data changes
 
   return (
     <div className="min-h-screen bg-white flex flex-col mb-10">

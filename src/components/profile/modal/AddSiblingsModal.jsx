@@ -6,7 +6,7 @@ import camera from '@/assets/images/camera.svg';
 const AddSiblingsModal = ({ isOpen, onClose, onSubmit, loading }) => {
   const [fullName, setFullName] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
-  const { items, loadingClasses } = useClasses();
+  const { classes, loadingClasses } = useClasses();
 
   const [profileImage, setProfileImage] = useState(null);     
   const [preview, setPreview] = useState("");                  
@@ -137,7 +137,7 @@ const handleSubmit = async (e) => {
                 >
                   <option value="">اختر الصف الدراسي الجديد</option>
                   {loadingClasses && <option disabled>جاري تحميل الصفوف...</option>}
-                  {items?.map((cls) => (
+                  {classes?.map((cls) => (
                     <option key={cls.id} value={cls.id}>{cls.name}</option>
                   ))}
                 </select>

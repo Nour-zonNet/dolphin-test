@@ -22,7 +22,7 @@ export async function detectUserCountry() {
       }
     }
   } catch (err) {
-    console.warn("IP detection failed:", err);
+    // IP detection failed
   }
 
   // 2️⃣ Fallback: Browser language
@@ -33,7 +33,7 @@ export async function detectUserCountry() {
       const code = lang?.split("-")[1]?.toLowerCase();
       if (code) country = code;
     } catch (err) {
-      console.warn("Language detection failed:", err);
+      // Language detection failed
     }
   }
 

@@ -1,23 +1,23 @@
-import * as React from "react";
+import React, { memo, useState, useMemo, useCallback } from "react";
 import { XIcon } from "lucide-react";
 import { FilterIcon, Search } from "../../../utils/icons";
 
-const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = "استكشف .." }) => {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isFiltersVisible, setIsFiltersVisible] = React.useState(false);
-  const [activeFilters, setActiveFilters] = React.useState({ instructor: "", group: "" });
+const SearchFilterBar = memo(({ packages, onFilterChange, placeholder = "استكشف .." }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({ instructor: "", group: "" });
 
-  const instructors = React.useMemo(
+  const instructors = useMemo(
     () => Array.from(new Set(packages?.map((pkg) => pkg.instructor))).filter(Boolean),
     [packages]
   );
 
-  const groups = React.useMemo(
+  const groups = useMemo(
     () => Array.from(new Set(packages.map((pkg) => pkg.group_name))).filter(Boolean),
     [packages]
   );
 
-  const applyFilters = React.useCallback(
+  const applyFilters = useCallback(
     (queryValue, filtersValue) => {
       const normalizedQuery = queryValue.trim().toLowerCase();
       let filtered = packages;
@@ -48,7 +48,7 @@ const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = 
     [packages, onFilterChange]
   );
 
-  const handleSearchChange = React.useCallback(
+  const handleSearchChange = useCallback(
     (event) => {
       const value = event.target.value;
       setSearchQuery(value);
@@ -57,7 +57,7 @@ const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = 
     [activeFilters, applyFilters]
   );
 
-  const handleFilterChange = React.useCallback(
+  const handleFilterChange = useCallback(
     (filterKey, value) => {
       setActiveFilters((previous) => {
         const next = { ...previous, [filterKey]: value };
@@ -68,7 +68,7 @@ const   SearchFilterBar = React.memo(({ packages, onFilterChange, placeholder = 
     [searchQuery, applyFilters]
   );
 
-  const clearFilters = React.useCallback(() => {
+  const clearFilters = useCallback(() => {
     setActiveFilters({ instructor: "", group: "" });
     setSearchQuery("");
     applyFilters("", { instructor: "", group: "" });

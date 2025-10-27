@@ -4,7 +4,14 @@ import groupIcon from "@/assets/schedule/group.svg";
 import timeIcon from "@/assets/schedule/time.svg";
 import { formatArabicTime } from "@/utils/dateHelpers";
 
-export const LessonInfo = ({ item, color, image, statusIcon, statusText, statusColor }) => {
+export const LessonInfo = ({
+  item,
+  color,
+  image,
+  statusIcon,
+  statusText,
+  statusColor,
+}) => {
   const { t } = useTranslation();
 
   return (
@@ -35,7 +42,7 @@ export const LessonInfo = ({ item, color, image, statusIcon, statusText, statusC
       </div>
 
       {/* Teacher & Group */}
-      <div className="flex flex-wrap items-center gap-3 mt-4 xs:mt-6 px-2 relative z-10">
+      <div className="flex  items-center  space-x-3 mt-4 xs:mt-6 px-2 relative z-10">
         <div className="font-semibold flex items-center gap-2">
           <img
             src={teacherIcon}
@@ -43,7 +50,7 @@ export const LessonInfo = ({ item, color, image, statusIcon, statusText, statusC
             loading="lazy"
             className="w-4 h-4 xs:w-6 xs:h-6"
           />
-          <span className="text-status text-xs md:text-base">
+          <span className="text-status text-nowrap text-xs md:text-base">
             {item.teacher_name ?? t("lessons.defaultTeacher")}
           </span>
         </div>
@@ -54,7 +61,7 @@ export const LessonInfo = ({ item, color, image, statusIcon, statusText, statusC
             loading="lazy"
             className="w-4 h-4 xs:w-6 xs:h-6"
           />
-          <span className="text-status text-xs xs:text-base md:text-lg">
+          <span className="text-status text-nowrap text-xs xs:text-base md:text-lg">
             {item.group}
           </span>
         </div>

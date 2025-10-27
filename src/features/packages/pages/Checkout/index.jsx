@@ -7,17 +7,22 @@ import { getPackageIcon } from "./utils";
 import { Header } from "../../../../components/layout";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
 import { getFormattedDate } from "../../../../utils/dateHelpers";
+import { rechargePackagesFromWallet } from "@/services/api";
+import myFatoorahIcon from "@/assets/packages/myfatoorah.png";
+import { WalletGray } from "@/utils/icons";
+
 export const Checkout = () => {
   const location = useLocation();
   const [discountApplied] = useState(false);
-  const { createTrialSubscription } = useSubscriptions();
-  const { openStatusModal } = useModal();
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('myfatoorah'); // 'myfatoorah' or 'wallet'
+  const { createTrialSubscription, createNewSubscriptionPayment } = useSubscriptions();
+  const { openStatusModal, openConfirmModal } = useModal();
 
   const { selectedPackages = [] } = location.state || {};
 
   useEffect(() => {
     // Useful for debugging data coming from selector
-    // console.debug("selectedPackages", selectedPackages);
   }, [selectedPackages]);
 
   const handleSubmitTrial = useCallback(async () => {
@@ -35,9 +40,7 @@ export const Checkout = () => {
         onClose: () => (window.location.href = "/schedule"),
       });
     } catch (error) {
-      console.error("Error creating trial subscription:", error);
-
-
+      // Error creating trial subscription
 
       openStatusModal(MODAL_TYPES.ERROR, {
         title: "حدث خطأ",
@@ -47,12 +50,281 @@ export const Checkout = () => {
   }, [createTrialSubscription, openStatusModal, selectedPackages]);
 
   const handlePay = useCallback(() => {
-    openStatusModal(MODAL_TYPES.SUCCESS, {
-      title: "تم الدفع بنجاح",
-      message: "شكراً لك! تم تأكيد عملية الدفع وسيتم تفعيل الباقات المختارة.",
-      onClose: () => (window.location.href = "/schedule"),
-    });
-  }, [openStatusModal]);
+    if (!selectedPackages || selectedPackages.length === 0) {
+      openStatusModal(MODAL_TYPES.ERROR, {
+        title: "خطأ في البيانات",
+        message: "لم يتم اختيار أي باقات للدفع.",
+      });
+      return;
+    }
+
+    const paymentMethodText = selectedPaymentMethod === 'wallet' ? 'المحفظة' : 'ماي فاتورة';
+    
+    openConfirmModal(
+      {
+        title: "تأكيد الدفع",
+        message: `هل أنت متأكد من رغبتك في المتابعة مع الدفع للباقات المختارة عبر ${paymentMethodText}؟`,
+        confirmText: "تأكيد الدفع",
+        type: "primary",
+      },
+      async () => {
+        setIsProcessingPayment(true);
+        
+        try {
+          const packageIds = selectedPackages.map(pkg => pkg.id);
+          
+          if (selectedPaymentMethod === 'wallet') {
+            // Handle wallet payment with comprehensive status handling
+            try {
+              const walletResult = await rechargePackagesFromWallet(packageIds);
+              console.log('Checkout - Wallet payment response:', walletResult);
+              
+              // Handle different status responses
+              const handleWalletPaymentStatus = (result) => {
+                // Extract status and message from various possible locations
+                const status = result.status || result.data?.status || 'unknown';
+                const message = result.message || result.data?.message || result.error || result.data?.error || '';
+                const success = result.success !== undefined ? result.success : (result.data?.success !== undefined ? result.data.success : true);
+                
+                // Store transaction data based on status
+                const paymentTransactionData = {
+                  id: result.data?.transaction_id || result.transaction_id || 'wallet_payment_' + Date.now(),
+                  amount: result.data?.amount || result.amount || 0,
+                  currency: 'SAR',
+                  status: success ? 'completed' : 'failed',
+                  type: 'wallet_payment',
+                  packageIds: packageIds,
+                  paymentMethod: selectedPaymentMethod,
+                  error: success ? null : message,
+                  createdAt: new Date().toISOString(),
+                };
+                
+                // Store transaction data
+                sessionStorage.setItem('currentTransaction', JSON.stringify(paymentTransactionData));
+                localStorage.setItem('pendingTransaction', JSON.stringify(paymentTransactionData));
+                
+                // Clear any conflicting renewal data
+                sessionStorage.removeItem('renewalData');
+                localStorage.removeItem('renewalData');
+                
+                const checkoutData = {
+                  timestamp: Date.now(),
+                  packageIds: packageIds,
+                  paymentMethod: selectedPaymentMethod,
+                  source: 'checkout',
+                  status: success ? 'completed' : 'failed',
+                  success: success
+                };
+                console.log('Checkout - Storing checkout data:', checkoutData);
+                sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+                
+                setIsProcessingPayment(false);
+                
+                // Handle success/failure first, then specific status cases
+                if (success === false) {
+                  // Handle failure cases with backend error message
+                  openStatusModal(MODAL_TYPES.ERROR, {
+                    title: "فشل في الدفع",
+                    message: message || "فشل في الدفع من المحفظة. يرجى المحاولة مرة أخرى.",
+                  });
+                  return;
+                }
+                
+                // Handle different success status cases
+                switch (status.toLowerCase()) {
+                  case 'success':
+                  case 'completed':
+                  case 'paid':
+                    openStatusModal(MODAL_TYPES.SUCCESS, {
+                      title: "تم الدفع بنجاح",
+                      message: message || "تم تفعيل الباقات المختارة من المحفظة بنجاح.",
+                      onClose: () => (window.location.href = "/schedule"),
+                    });
+                    break;
+                    
+                  case 'pending':
+                  case 'processing':
+                    openStatusModal(MODAL_TYPES.SUCCESS, {
+                      title: "جاري المعالجة",
+                      message: message || "تم إرسال طلب الدفع بنجاح. سيتم معالجة الطلب قريباً.",
+                    });
+                    break;
+                    
+                  case 'refunded':
+                    openStatusModal(MODAL_TYPES.SUCCESS, {
+                      title: "تم استرداد المبلغ",
+                      message: message || "تم استرداد المبلغ إلى المحفظة بنجاح.",
+                    });
+                    break;
+                    
+                  default:
+                    // Default success case
+                    openStatusModal(MODAL_TYPES.SUCCESS, {
+                      title: "تم الدفع بنجاح",
+                      message: message || "تم تفعيل الباقات المختارة من المحفظة بنجاح.",
+                      onClose: () => (window.location.href = "/schedule"),
+                    });
+                }
+              };
+              
+              handleWalletPaymentStatus(walletResult);
+              return;
+              
+            } catch (walletError) {
+              setIsProcessingPayment(false);
+              console.error('Checkout - Wallet payment error:', walletError);
+              console.error('Checkout - Error response data:', walletError.response?.data);
+              console.error('Checkout - Error response status:', walletError.response?.status);
+              console.error('Checkout - Full error object keys:', Object.keys(walletError));
+              
+              // Handle network/API errors
+              const getWalletErrorMessage = (err) => {
+                if (!err) return "حدث خطأ أثناء الدفع من المحفظة. حاول مرة أخرى.";
+                
+                // Handle string errors
+                if (typeof err === "string") return err;
+                
+                // Handle axios error responses (HTTP 400, 500, etc.)
+                if (err.response?.data) {
+                  // Try different possible error message locations in the response
+                  const errorData = err.response.data;
+                  console.log('Checkout - Extracting from errorData:', errorData);
+                  
+                  // Check for error message in various possible locations
+                  if (errorData.error && typeof errorData.error === 'string') return errorData.error;
+                  if (errorData.message && typeof errorData.message === 'string') return errorData.message;
+                  if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+                    return errorData.errors[0];
+                  }
+                  if (errorData.details && typeof errorData.details === 'string') return errorData.details;
+                  
+                  // Check for nested error structures
+                  if (errorData.data && typeof errorData.data === 'object') {
+                    if (errorData.data.error) return errorData.data.error;
+                    if (errorData.data.message) return errorData.data.message;
+                  }
+                  
+                  // If response has a specific structure, try to extract meaningful message
+                  if (typeof errorData === 'object') {
+                    const errorKeys = Object.keys(errorData);
+                    for (const key of errorKeys) {
+                      if (typeof errorData[key] === 'string' && errorData[key].length > 0 && !key.includes('code')) {
+                        return errorData[key];
+                      }
+                    }
+                  }
+                }
+                
+                // Handle error message property
+                if (err.message) {
+                  // If it's a generic axios message, try to extract more specific info
+                  if (err.message.includes('Request failed with status code')) {
+                    return "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى.";
+                  }
+                  return err.message;
+                }
+                
+                return "حدث خطأ أثناء الدفع من المحفظة. حاول مرة أخرى.";
+              };
+              
+              // Store failed transaction data
+              const failedTransactionData = {
+                id: 'failed_wallet_payment_' + Date.now(),
+                amount: 0,
+                currency: 'SAR',
+                status: 'failed',
+                type: 'wallet_payment',
+                packageIds: packageIds,
+                paymentMethod: selectedPaymentMethod,
+                error: getWalletErrorMessage(walletError),
+                createdAt: new Date().toISOString(),
+              };
+              
+              sessionStorage.setItem('currentTransaction', JSON.stringify(failedTransactionData));
+              
+              openStatusModal(MODAL_TYPES.ERROR, {
+                title: "فشل في الدفع من المحفظة",
+                message: getWalletErrorMessage(walletError),
+              });
+              return;
+            }
+          }
+          
+          // Handle MyFatoorah payment (existing logic)
+          const result = await createNewSubscriptionPayment(packageIds).unwrap();
+          
+          if (result.success && result.data?.url) {
+            console.log('Checkout - MyFatoorah URL:', result.data.url);
+            
+            // Store payment transaction data for status page
+            const paymentTransactionData = {
+              id: result.data.invoice_id || 'payment_' + Date.now(),
+              amount: result.data.amount || 0,
+              currency: 'SAR',
+              status: 'pending',
+              type: 'payment',
+              packageIds: packageIds,
+              paymentMethod: selectedPaymentMethod,
+              createdAt: new Date().toISOString(),
+            };
+            
+            sessionStorage.setItem('currentTransaction', JSON.stringify(paymentTransactionData));
+            localStorage.setItem('pendingTransaction', JSON.stringify(paymentTransactionData));
+            
+            // Store additional checkout indicator for fallback detection
+            // Clear any conflicting renewal data first
+            sessionStorage.removeItem('renewalData');
+            localStorage.removeItem('renewalData');
+            
+            const checkoutData = {
+              timestamp: Date.now(),
+              packageIds: packageIds,
+              paymentMethod: selectedPaymentMethod,
+              source: 'checkout'
+            };
+            console.log('Checkout - Storing checkout data:', checkoutData);
+            sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+            
+            // Redirect to MyFatoorah payment page
+            try {
+              // Try opening in new tab first
+              const newWindow = window.open(result.data.url, '_blank');
+              
+              // If popup was blocked, redirect in same window
+              if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                console.log('Popup blocked, redirecting in same window');
+                window.location.href = result.data.url;
+              }
+            } catch (error) {
+              console.error('Error opening MyFatoorah:', error);
+              // Fallback: redirect in same window
+              window.location.href = result.data.url;
+            }
+          } else {
+            console.error('Checkout - Invalid response:', result);
+            throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
+          }
+        } catch (error) {
+          setIsProcessingPayment(false);
+          const getErrorMessage = (err) => {
+            if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+            if (typeof err === "string") return err;
+            if (Array.isArray(err))
+              return err[0] || "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+            if (err && typeof err === "object") {
+              if (err.data && err.data.error) return err.data.error;
+              if (err.message) return err.message;
+            }
+            return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+          };
+          openStatusModal(MODAL_TYPES.ERROR, {
+            title: "فشل في إنشاء طلب الدفع",
+            message: getErrorMessage(error),
+          });
+        }
+      }
+    );
+  }, [createNewSubscriptionPayment, openStatusModal, openConfirmModal, selectedPackages, selectedPaymentMethod]);
 
   return (
     <div className="relative min-h-screen bg-white">
@@ -65,11 +337,17 @@ export const Checkout = () => {
           totalPrice={totalPrice}
           onApply={() => setDiscountApplied(true)}
         /> */}
-        <Actions onSubmitTrial={handleSubmitTrial} onPay={handlePay} />
+        <Actions 
+          onSubmitTrial={handleSubmitTrial} 
+          onPay={handlePay} 
+          isProcessingPayment={isProcessingPayment}
+          selectedPaymentMethod={selectedPaymentMethod}
+          onPaymentMethodChange={setSelectedPaymentMethod}
+        />
       </main>
 
       {discountApplied && (
-        <div className="fixed bottom-20 right-4 md:right-8 bg-green-100 text-green-800 px-4 py-2 rounded-lg font-cairo text-sm md:text-base text-center z-40">
+        <div className="fixed bottom-20 right-4 md:right-8 bg-green-100 text-green-800 px-4 py-2 rounded-lg  text-sm md:text-base text-center z-40">
           تم تفعيل كود الخصم بنجاح
         </div>
       )}
@@ -88,10 +366,10 @@ const BalanceSummary = () => (
         />
       </div>
       <div className="relative z-10">
-        <div className="text-lg md:text-xl text-center md:text-right font-semibold text-black font-cairo mb-2">
+        <div className="text-lg md:text-xl text-center md:text-right font-semibold text-black  mb-2">
           رصيد محفظتك
         </div>
-        <div className="text-2xl md:text-3xl text-center  font-semibold text-subtext font-cairo">
+        <div className="text-2xl md:text-3xl text-center  font-semibold text-subtext ">
           <FormatWithCurrency
             amount={1000}
             fractionDigits={0}
@@ -111,7 +389,7 @@ const BalanceSummary = () => (
           alt="Info"
           src="https://c.animaapp.com/mf3u5boioWZVpp/img/frame-1.svg"
         />
-        <div className="text-lg md:text-xl font-semibold text-normalblue font-cairo">
+        <div className="text-lg md:text-xl font-semibold text-normalblue ">
           رصيدك الحالي متاح للاستخدام
         </div>
       </div>
@@ -121,7 +399,7 @@ const BalanceSummary = () => (
           alt="Group"
           src="https://c.animaapp.com/mf3u5boioWZVpp/img/group-1.png"
         />
-        <p className="text-base md:text-lg font-semibold text-gray-500 font-cairo">
+        <p className="text-base md:text-lg font-semibold text-gray-500 ">
           مدة الفترة التجريبية: 1 أيام تجريبية مجانية
         </p>
       </div>
@@ -135,17 +413,17 @@ const SelectedPackages = ({ selectedPackages }) => {
     return (
       <div className="w-full bg-gray-50 rounded-2xl md:rounded-3xl overflow-hidden border border-gray-200  relative">
         <div className="p-4 md:p-6 border-b border-gray-200">
-          <h2 className="text-lg md:text-2xl font-semibold text-normalblue  font-cairo text-center">
+          <h2 className="text-lg md:text-2xl font-semibold text-normalblue   text-center">
             الباقات المختارة
           </h2>
         </div>
         <div className="p-8 text-center">
-          <p className="text-gray-500 font-cairo text-lg">
+          <p className="text-gray-500  text-lg">
             لم يتم اختيار أي باقات. يرجى العودة لاختيار الباقات.
           </p>
           <button
             onClick={() => navigate("/main-packages")}
-            className="mt-4 px-6 py-2 bg-orangedeep text-white rounded-full hover:bg-blue-700 transition-colors font-cairo"
+            className="mt-4 px-6 py-2 bg-orangedeep text-white rounded-full hover:bg-blue-700 transition-colors "
           >
             العودة لاختيار الباقات
           </button>
@@ -157,7 +435,7 @@ const SelectedPackages = ({ selectedPackages }) => {
   return (
     <div className="w-full bg-gray-50 rounded-2xl md:rounded-3xl overflow-hidden border border-gray-200 relative">
       <div className="p-4 md:p-6 ">
-        <h2 className="text-lg md:text-2xl font-semibold text-normalblue  font-cairo text-center">
+        <h2 className="text-lg md:text-2xl font-semibold text-normalblue   text-center">
           الباقات المختارة ({selectedPackages.length})
         </h2>
       </div>
@@ -197,7 +475,7 @@ const SelectedPackages = ({ selectedPackages }) => {
   );
 };
 
-const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
+const PackageItem = ({ title, icon, showDatePicker, status, price }) => (
   <div className="flex flex-col items-start justify-between gap-4">
     <div className="w-full flex flex-col  gap-3 justify-between ">
       <div className=" flex items-center gap-3 justify-start lg:justify-start">
@@ -209,22 +487,22 @@ const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
           />
         </div>
         <div className=" lg:text-left">
-          <div className="font-cairo font-semibold text-base text-gray-800">
+          <div className=" font-semibold text-base text-gray-800">
             {title}
           </div>
         </div>
       </div>
       <div className="flex  gap-2">
-        {/* <p className="font-cairo font-semibold text-normalblue  text-md flex">
+        <p className=" font-semibold text-normalblue  text-md flex">
           <span className="ml-2"> سعر الباقة: </span>{" "}
           <span className="text-md">{price}</span>
-        </p> */}
+        </p>
       </div>
     </div>
     <div className="w-full lg:w-auto">
       {showDatePicker ? (
         <div className="flex flex-col   gap-4">
-          <div className="font-cairo font-semibold text-gray-800 text-sm md:text-base">
+          <div className=" font-semibold text-gray-800 text-sm md:text-base">
             موعد بداية الباقة:
           </div>
           <div className="flex-1 flex items-center gap-2 p-3 border border-gray-400 rounded-full">
@@ -233,7 +511,7 @@ const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
               alt="Calendar"
               src="https://c.animaapp.com/mf3u5boioWZVpp/img/frame-1410117192.svg"
             />
-            <span className="font-cairo text-sm text-gray-700 flex-1 ">
+            <span className=" text-sm text-gray-700 flex-1 ">
               {getFormattedDate()}
               {/* السبت 09 -08 - 2025 */}
             </span>
@@ -241,11 +519,11 @@ const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
         </div>
       ) : (
         <div className="flex items-center gap-4">
-          <div className="font-cairo font-semibold text-gray-800 text-sm md:text-base">
+          <div className=" font-semibold text-gray-800 text-sm md:text-base">
             اختر موعد بداية الباقة:
           </div>
           <div className="flex items-center gap-2 p-3 border border-gray-400 rounded-full">
-            <span className="font-cairo text-sm text-orange-600">{status}</span>
+            <span className=" text-sm text-orange-600">{status}</span>
             <img
               className="w-5 h-5 md:w-6 md:h-6"
               alt="Calendar"
@@ -261,7 +539,7 @@ const PackageItem = ({ title, price, icon, showDatePicker, status }) => (
 const DiscountBar = ({ totalPrice, onApply }) => (
   <div className="flex flex-col lg:flex-row items-center justify-between gap-6 bg-white rounded-xl ">
     <div className="w-full">
-      <div className="text-lg md:text-xl font-semibold text-gray-800 font-cairo mb-4">
+      <div className="text-lg md:text-xl font-semibold text-gray-800  mb-4">
         هل لديك كود خصم؟
       </div>
       <div className="flex flex-col lg:flex-row items-center gap-4">
@@ -275,7 +553,7 @@ const DiscountBar = ({ totalPrice, onApply }) => (
             <input
               type="text"
               placeholder="أدخل كود الخصم"
-              className="flex-1 font-cairo outline-none bg-transparent"
+              className="flex-1  outline-none bg-transparent"
               defaultValue="hggg76789e"
             />
             <button
@@ -290,7 +568,7 @@ const DiscountBar = ({ totalPrice, onApply }) => (
             </button>
           </div>
         </div>
-        <div className="text-xl md:text-2xl flex gap-2 font-bold text-subtext font-cairo">
+        <div className="text-xl md:text-2xl flex gap-2 font-bold text-subtext ">
           {" "}
           <span>الاجمالى : </span>
           <FormatWithCurrency
@@ -307,9 +585,100 @@ const DiscountBar = ({ totalPrice, onApply }) => (
   </div>
 );
 
-const Actions = ({ onSubmitTrial, onPay }) => (
-  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 lg:gap-8 mt-8">
+const PaymentMethodSelector = ({ selectedPaymentMethod, onPaymentMethodChange }) => (
+  <div className="w-full mb-6">
+    {/* <div className="text-lg md:text-xl font-semibold text-gray-800 mb-4 text-center">
+      اختر طريقة الدفع
+    </div> */}
+    <div className="flex flex-col md:flex-row gap-4 items-center justify-center w-full md:w-[70%] mx-auto mt-10">
+      {/* Wallet Payment Option */}
+      <div 
+        className={`flex items-center p-4 rounded-full border-2 cursor-pointer transition-all flex-1 w-full ${
+          selectedPaymentMethod === 'wallet' 
+            ? 'border-orangedeep' 
+            : 'border-gray-200 bg-white hover:border-gray-300'
+        }`}
+        onClick={() => onPaymentMethodChange('wallet')}
+      >
+        <div className={`w-5 h-5 rounded-full border-2 me-2 ${
+          selectedPaymentMethod === 'wallet' 
+            ? 'border-orangedeep bg-orangedeep' 
+            : 'border-gray-300'
+        }`}>
+          {selectedPaymentMethod === 'wallet' && (
+            <div className="w-full h-full rounded-full bg-white scale-50"></div>
+          )}
+        </div>
+        <div className="flex items-center gap-3 flex-1">
+          <span className="text-base font-medium text-gray-800">
+            الدفع من خلال المحفظة
+          </span>
+        </div>
+        <WalletGray className="md:w-8 md:h-8 w-6 h-6" fill="#1B648E" />
+      </div>
+
+      {/* MyFatoorah Payment Option */}
+      <div 
+        className={`flex items-center p-4 rounded-full border-2 cursor-pointer transition-all flex-1 w-full ${
+          selectedPaymentMethod === 'myfatoorah' 
+            ? 'border-orangedeep' 
+            : 'border-gray-200 bg-white hover:border-gray-300'
+        }`}
+        onClick={() => onPaymentMethodChange('myfatoorah')}
+      >
+        <div className={`w-5 h-5 rounded-full border-2 me-2 ${
+          selectedPaymentMethod === 'myfatoorah' 
+            ? 'border-orangedeep bg-orangedeep' 
+            : 'border-gray-300'
+        }`}>
+          {selectedPaymentMethod === 'myfatoorah' && (
+            <div className="w-full h-full rounded-full bg-white scale-50"></div>
+          )}
+        </div>
+        <div className="flex items-center gap-3 flex-1">
+          <span className="text-base font-medium text-gray-800">
+            الدفع من خلال ماي فاتورة
+          </span>
+        </div>
+        <img
+          className="w-16"
+          alt="Icon"
+          src={myFatoorahIcon}
+        />
+      </div>
+    </div>
+  </div>
+);
+
+const Actions = ({ onSubmitTrial, onPay, isProcessingPayment, selectedPaymentMethod, onPaymentMethodChange }) => (
+  <div className="flex flex-col items-center justify-center gap-4 md:gap-6 lg:gap-8 mt-8">
+    <PaymentMethodSelector 
+      selectedPaymentMethod={selectedPaymentMethod}
+      onPaymentMethodChange={onPaymentMethodChange}
+    />
     <button
+      onClick={onPay}
+      disabled={isProcessingPayment}
+      className={`flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-2 rounded-full text-navyteal font-semibold transition-colors cursor-pointer min-w-50 ${
+        isProcessingPayment 
+          ? 'bg-gray-400 cursor-not-allowed' 
+          : 'bg-orangedeep hover:bg-btnClicked'
+      }`}
+    >
+      {isProcessingPayment ? (
+        <div className="w-5 h-5 md:w-6 md:h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+      ) : (
+        <img
+          className="w-5 h-5 md:w-6 md:h-6"
+          alt="Icon"
+          src="https://c.animaapp.com/mf3u5boioWZVpp/img/left-2.png"
+        />
+      )}
+      <span className=" text-base md:text-lg">
+        {isProcessingPayment ? 'جاري المعالجة...' : 'ادفع الان'}
+      </span>
+    </button>
+    {/* <button
       onClick={onSubmitTrial}
       className="flex items-center hover:cursor-pointer justify-center gap-2 w-full sm:w-auto px-6 py-2 border-2 border-orangedeep rounded-full text-deepbg-orangedeep font-semibold hover:bg-orange-50 transition-colors"
     >
@@ -318,20 +687,9 @@ const Actions = ({ onSubmitTrial, onPay }) => (
         alt="Icon"
         src="https://c.animaapp.com/mf3u5boioWZVpp/img/frame.svg"
       />
-      <span className="font-cairo text-base md:text-lg">
+      <span className=" text-base md:text-lg">
         بدء الفترة التجريبية
       </span>
-    </button>
-    {/* <button
-      onClick={onPay}
-      className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-2 bg-orangedeep rounded-full text-white font-semibold hover:bg-orange-600 transition-colors"
-    >
-      <img
-        className="w-5 h-5 md:w-6 md:h-6"
-        alt="Icon"
-        src="https://c.animaapp.com/mf3u5boioWZVpp/img/left-2.png"
-      />
-      <span className="font-cairo text-base md:text-lg">ادفع الان</span>
     </button> */}
   </div>
 );

@@ -2,6 +2,7 @@ import { FileIcon, SessionIcon } from "@/utils/icons";
 import books from "@/assets/schedule/books.svg";
 import sandGlass from "@/assets/schedule/sandGlass.svg";
 import clock from "@/assets/schedule/clock.svg";
+import cancelled from "@/assets/schedule/cancelled.svg";
 import delay from "@/assets/schedule/delay.svg";
 import { LESSON_STATUS } from "../../../utils";
 
@@ -40,19 +41,29 @@ export const LessonButton = ({
     return (
       <>
         <div className="flex justify-center items-center">
+          <img loading="lazy" src={delay} alt="delayed" className="w-20" />
+        </div>
+      </>
+    );
+  }
+
+  if (lessonStatus === LESSON_STATUS.CANCELLED) {
+    return (
+      <>
+        <div className="flex justify-center items-center">
           <img
             loading="lazy"
-            src={delay}
-            alt="delayed"
-            className="w-20 "
+            src={cancelled}
+            alt="cancelled"
+            className="w-20"
           />
         </div>
         {/* <button
           disabled
           aria-disabled
-          className="px-4 py-2 text-nowrap text-xs md:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 rounded-3xl bg-blue-200 text-blue-800 cursor-not-allowed"
+          className="px-4 py-2 text-nowrap text-xs md:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 rounded-3xl bg-blue-200 text-red-800 cursor-not-allowed"
         >
-          الحصة مؤجلة
+          الحصة ملغية
         </button> */}
       </>
     );

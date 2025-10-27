@@ -1,47 +1,79 @@
-import React, { useState } from 'react'
-import { Gift, Plus } from '@/utils/icons'
-import { AddBalanceModal } from '@/components/profile/modal';
-import { AddCouponModal } from '@/components/profile/modal';
+import React from "react";
+// import { Gift, Plus } from "@/utils/icons";
+import { useModal } from "@/components/feedback/modal/useModal";
+import { Gift, Plus } from "lucide-react";
 
+/**
+ * Enhanced Balance Actions Buttons Component
+ * Uses the centralized modal system for better state management
+ */
 const BalanceActionsButtons = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAddBalanceModalOpen, setIsAddBalanceModalOpen] = useState(false);
+  const { openAddBalanceModal, openAddCouponModal } = useModal();
+
+  const handleAddBalance = () => {
+    openAddBalanceModal((data) => {
+      // After payment initiation, redirect directly to MyFatora
+      if (data && data.invoice_id && data.url) {
+        
+        // Store the transaction data for the status page
+        sessionStorage.setItem('currentTransaction', JSON.stringify({
+          id: data.invoice_id,
+          amount: data.amount,
+          currency: 'SAR',
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          bonusAmount: data.amount * 0.2, // 20% bonus
+        }));
+        localStorage.setItem('pendingTransaction', JSON.stringify({
+          id: data.invoice_id,
+          amount: data.amount,
+          currency: 'SAR',
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          bonusAmount: data.amount * 0.2,
+        }));
+        
+        // Add a small delay to make the network request visible in console
+        setTimeout(() => {
+          window.open(data.url, '_blank');
+        }, 1000); // 1 second delay
+      } else {
+        // Invalid payment data received
+      }
+    });
+  };
+
+  const handleAddCoupon = () => {
+    openAddCouponModal(() => {
+      // TODO: Handle coupon application logic
+    });
+  };
+
   return (
     <div>
-        {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row w-[90%] lg:w-[60%] mx-auto gap-[18px] justify-center items-center my-8 md:my-14">
-            <button
-            onClick={() => setIsAddBalanceModalOpen(true)} 
-            disabled
-            className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover disabled:cursor-not-allowed"
-            >
-            <Plus className="w-3 md:w-4 lg:w-6" />
-            <div className="font-semibold text-sm md:text-2xl">
-                إضافة رصيد
-            </div>
-            </button>
-            <button
-            onClick={() => setIsModalOpen(true)} 
-            disabled
-            className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 border border-orangedeep cursor-pointer rounded-[32px] disabled:cursor-not-allowed"
-            >
-            <Gift className="w-4 lg:w-6" />
-            <div className="font-semibold text-sm md:text-2xl">
-                كوبون لإضافة رصيد 
-            </div>
-            </button>
-        </div>
+      {/* Action Buttons */}
+      <div className="flex flex-col md:flex-row w-[90%] xl:w-[40%] lg:w-[70%] mx-auto gap-[18px] justify-center items-center my-8 md:my-14">
+        <button
+          onClick={handleAddBalance}
+          className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 bg-orangedeep cursor-pointer rounded-[32px] hover:bg-foundationorangenormal-hover transition-colors"
+        >
+          <Plus className="w-3 md:w-4 lg:w-6" />
+          <div className="font-semibold text-sm md:text-2xl">إضافة رصيد</div>
+        </button>
         
-        <AddCouponModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
-        <AddBalanceModal
-          isOpen={isAddBalanceModalOpen}
-          onClose={() => setIsAddBalanceModalOpen(false)}
-        />
+        <button
+          onClick={handleAddCoupon}
+          disabled={true}
+          className="flex w-full h-[45px] md:h-[65px] lg:h-[70px] items-center justify-center gap-2 px-4 py-2 border border-orangedeep cursor-pointer rounded-[32px] hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Gift className="w-4 lg:w-6" />
+          <div className="font-semibold text-sm md:text-2xl">
+            كوبون لإضافة رصيد
+          </div>
+        </button>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default BalanceActionsButtons
+export default BalanceActionsButtons;

@@ -29,7 +29,7 @@ const ImportPDFFromURL = ({ onLoadPDFFromURL, onClose }) => {
       await onLoadPDFFromURL(url);
       onClose();
     } catch (error) {
-      console.error("PDF import error:", error);
+      // PDF import error
       if (error.message.includes('CORS') || error.message.includes('fetch')) {
         setError("Unable to access this PDF due to CORS restrictions. Please try a different URL or download and upload the PDF file instead.");
       } else if (error.message.includes('HTTP error')) {

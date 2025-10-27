@@ -12,4 +12,16 @@ export const MODAL_TYPES = {
   REACTIVATE: "REACTIVATE",
   EXTEND_PACKAGE: "EXTEND_PACKAGE",
   WEEKLY_SCHEDULE: "WEEKLY_SCHEDULE",
+  AVATAR_MODAL: "AVATAR_MODAL",
+  // Balance-related modals
+  ADD_BALANCE: "ADD_BALANCE",
+  ADD_COUPON: "ADD_COUPON",
+  // Session rating modal
+  SESSION_RATING: "SESSION_RATING",
+  // Comments modal
+  COMMENTS: "COMMENTS",
+  // Performance chart modal
+  PERFORMANCE_CHART: "PERFORMANCE_CHART",
+  // Transaction details modal
+  TRANSACTION_DETAILS: "TRANSACTION_DETAILS",
 };

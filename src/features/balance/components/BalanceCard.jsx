@@ -1,8 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import card from "@/assets/balance/card.svg";
 import FormatWithCurrency from '@/utils/FormatWithCurrency';
 
 const BalanceCard = ({ user }) => {
+  const { currentBalance } = useSelector((state) => state.balance);
+  
   return (
     <div className="flex items-center justify-center w-[90%] md:w-[60%] xl:w-[35%] mx-auto mb-10">
         <div className="relative inline-block mt-6 md:mt-12 px-4 mx-auto">
@@ -20,7 +23,7 @@ const BalanceCard = ({ user }) => {
             <h2 className="text-base md:text-lg lg:text-2xl font-semibold text-white">الرصيد الحالي</h2>
             <h2 className="text-base md:text-lg lg:text-[32px] font-bold text-orangedeep mt-0 md:mt-2 flex gap-2 md:gap-4 items-center">
               <FormatWithCurrency
-                amount={0}
+                amount={currentBalance}
                 fractionDigits={0}
                 className="flex items-center gap-2"
                 symbolFill="#e89b32"

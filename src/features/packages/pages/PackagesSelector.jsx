@@ -8,11 +8,17 @@ import { InfoIcon } from "@/utils/icons";
 import { Header } from "@/components/layout";
 import { HomeSupportBtn } from "@/components/layout";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
-import notFoundPackages from "@/assets/images/allPackages.png";
+import notFoundPackages from "@/assets/images/allPackages.webp";
 
 const DataPlanSelector = () => {
   const navigate = useNavigate();
   const { all } = usePackages();
+  
+  // Debug: Log available packages
+  React.useEffect(() => {
+    console.log('PackagesSelector - Available packages:', all);
+    console.log('PackagesSelector - Package IDs:', all?.map(pkg => pkg.id));
+  }, [all]);
 
   const [selectedPlanIds, setSelectedPlanIds] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -64,13 +70,18 @@ const DataPlanSelector = () => {
   }, [all, searchQuery]);
 
   const handlePlanSelect = React.useCallback((planId) => {
+    console.log('PackagesSelector - Selecting package ID:', planId);
     setSelectedPlanIds((current) => {
       if (current.includes(planId)) {
         // Remove if already selected
-        return current.filter((id) => id !== planId);
+        const newSelection = current.filter((id) => id !== planId);
+        console.log('PackagesSelector - Removed from selection:', newSelection);
+        return newSelection;
       } else {
         // Add to selection
-        return [...current, planId];
+        const newSelection = [...current, planId];
+        console.log('PackagesSelector - Added to selection:', newSelection);
+        return newSelection;
       }
     });
   }, []);
@@ -88,6 +99,12 @@ const DataPlanSelector = () => {
   }, [selectedPlanDetails]);
 
   const handleSubscribe = React.useCallback(() => {
+    console.log('PackagesSelector - Navigating to checkout with:', {
+      selectedPlanIds: selectedPlanIds,
+      selectedPlanDetails: selectedPlanDetails,
+      totalPrice: totalPrice
+    });
+    
     // Navigate to checkout with selected packages data
     navigate("/checkout", {
       state: {
@@ -182,7 +199,6 @@ const DataPlanSelector = () => {
         <PlansFooter
           selectedPlanDetails={selectedPlanDetails}
           disabled={selectedPlanIds.length === 0}
-          onSubscribe={handleSubscribe}
           totalPrice={totalPrice}
           selectedCount={selectedPlanIds.length}
         />

@@ -3,13 +3,11 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Lock } from "../../../utils/icons";
 import OTPInput from "../../../components/ui/InputOtp";
-import dolphinChild from "@/assets/images/homeChild.png";
+import dolphinChild from "@/assets/images/homeChild.webp";
 import FormTitle from "./FormTitle";
 import { useClasses } from "../../../hooks/useClasses";
-
-import "./style.css";
 const RegisterForm = ({ onSubmit, loading, error }) => {
-  const { items } = useClasses();
+  const { classes } = useClasses();
   const { t } = useTranslation();
   const {
     control,
@@ -99,7 +97,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
                   <option className="!text-xs" value="">
                     {t("auth.selectGrade")}
                   </option>
-                  {items?.map((cls) => (
+                  {classes?.map((cls) => (
                     <option key={cls.id} value={String(cls.id)}>
                       {cls.name}
                     </option>

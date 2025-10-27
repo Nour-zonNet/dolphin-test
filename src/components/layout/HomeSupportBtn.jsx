@@ -1,15 +1,18 @@
-import { useEffect, useState, useMemo, useRef } from "react";
-import dolphinCallCenter from "@/assets/images/dolphin-call-center.svg";
-import whatsapp from "@/assets/images/whatsapp.svg";
-import youtube from "@/assets/images/youtube.svg";
-import snapchat from "@/assets/images/snapchat.svg";
-import LifeChat from "@/assets/images/message.svg";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import dolphinCallCenter from "@/assets/images/dolphin-call-center.webp";
+import whatsapp from "@/assets/images/whatsapp.webp";
+import youtube from "@/assets/images/youtube.webp";
+import snapchat from "@/assets/images/snapchat.webp";
+import LifeChat from "@/assets/images/message.webp";
+import support from "@/assets/images/support.webp";
 import { X } from "lucide-react";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
 const HomeSupportBtn = ({ className }) => {
   const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
   const [radius, setRadius] = useState(70);
@@ -21,13 +24,13 @@ const HomeSupportBtn = ({ className }) => {
 
   const wrapperRef = useRef(null);
 
-  const closeAll = () => {
+  const closeAll = useCallback(() => {
     setIsOpen(false);
     if (isChatOpen && window.$chatwoot) {
       window.$chatwoot.hide?.() || window.$chatwoot.toggle?.();
       setIsChatOpen(false);
     }
-  };
+  }, [isChatOpen]);
 
   // Fetch support number
   useEffect(() => {
@@ -47,10 +50,7 @@ const HomeSupportBtn = ({ className }) => {
         }
       } catch (e) {
         if (e.name !== "CanceledError") {
-          console.error(
-            "Failed to fetch support number:",
-            e?.response?.data || e?.message || e
-          );
+          // Failed to fetch support number
         }
       } finally {
         setLoadingSupport(false);
@@ -78,20 +78,25 @@ const HomeSupportBtn = ({ className }) => {
     return `https://wa.me/${supportNumber}?text=${defaultWAString}`;
   }, [supportNumber, defaultWAString]);
 
-  const openWhatsApp = () => {
+  const openWhatsApp = useCallback(() => {
     if (!supportNumber) {
       alert("تعذر جلب رقم الدعم الآن. حاول مرة أخرى لاحقًا.");
       return;
     }
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     setIsOpen(false);
-  };
+  }, [supportNumber, whatsappUrl]);
 
   const toggleChatwoot = () => {
     if (!window.$chatwoot) return;
     window.$chatwoot.show?.() || window.$chatwoot.toggle?.();
     setIsChatOpen((prev) => !prev);
   };
+
+  const openComplaints = useCallback(() => {
+    navigate("/complaints");
+    setIsOpen(false);
+  }, [navigate]);
 
   // Close on outside click or Escape
   useEffect(() => {
@@ -112,7 +117,7 @@ const HomeSupportBtn = ({ className }) => {
       document.removeEventListener("touchstart", handlePointerDown, true);
       document.removeEventListener("keydown", handleKeyDown, true);
     };
-  }, [isChatOpen]);
+  }, [closeAll]);
 
   // Update radius on resize
   useEffect(() => {
@@ -129,7 +134,13 @@ const HomeSupportBtn = ({ className }) => {
   const buttons = useMemo(() => {
     if (isAuthenticated)
       return [
-        { icon: whatsapp, angle: -40, alt: "WhatsApp", onClick: openWhatsApp },
+        { icon: whatsapp, angle: -90, alt: "WhatsApp", onClick: openWhatsApp },
+        {
+          icon: support,
+          angle: -40,
+          alt: "Support",
+          onClick: openComplaints,
+        },
         {
           icon: LifeChat,
           angle: 10,
@@ -163,7 +174,7 @@ const HomeSupportBtn = ({ className }) => {
           ),
       },
     ];
-  }, [isAuthenticated, supportNumber, defaultWAString]);
+  }, [isAuthenticated, openWhatsApp, openComplaints]);
 
   return (
     <div

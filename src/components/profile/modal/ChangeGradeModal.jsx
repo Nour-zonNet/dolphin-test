@@ -10,33 +10,33 @@ const ChangeGradeModal = ({
   currentGradeId,
   setCurrentGradeId,
 }) => {
-  const { items, loadingClasses } = useClasses();
+  const { classes, loadingClasses } = useClasses();
   const [isLoading, setIsLoading] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
-    if (isOpen && !loadingClasses && items?.length > 0) {
+    if (isOpen && !loadingClasses && classes?.length > 0) {
       // إذا لم يكن هناك gradeId محدد، أو إذا كان القيمة فارغة، نتأكد من تحديد الصف الحالي
       if (!currentGradeId || currentGradeId === "") {
         // البحث عن الصف الحالي للمستخدم من البيانات المرسلة
         const userCurrentGrade =
-          items.find((cls) => cls.current === true) || items[0];
+          classes.find((cls) => cls.current === true) || classes[0];
         if (userCurrentGrade) {
           setCurrentGradeId(userCurrentGrade.id);
         }
       } else {
         // التأكد من أن الصف المحدد موجود في القائمة
-        const match = items.find((cls) => cls.id === Number(currentGradeId));
+        const match = classes.find((cls) => cls.id === Number(currentGradeId));
         if (match) {
           setCurrentGradeId(match.id);
         }
       }
     }
-  }, [isOpen, loadingClasses, items, currentGradeId, setCurrentGradeId]);
+  }, [isOpen, loadingClasses, classes, currentGradeId, setCurrentGradeId]);
 
   const handleConfirm = async () => {
     if (!currentGradeId) return;
-    const selectedClass = items.find(
+    const selectedClass = classes.find(
       (cls) => cls.id === Number(currentGradeId)
     );
     if (!selectedClass) return;
@@ -107,7 +107,7 @@ const ChangeGradeModal = ({
                   {loadingClasses
                     ? "جاري تحميل الصفوف..."
                     : currentGradeId
-                    ? items?.find((cls) => cls.id === Number(currentGradeId))
+                    ? classes?.find((cls) => cls.id === Number(currentGradeId))
                         ?.name || "اختر الصف الدراسي"
                     : "اختر الصف الدراسي الجديد"}
                 </span>
@@ -121,7 +121,7 @@ const ChangeGradeModal = ({
               {/* Custom Dropdown */}
               {isDropdownOpen && !loadingClasses && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-2xl shadow-xl z-50 max-h-60 overflow-y-auto">
-                  {items?.map((cls) => (
+                  {classes?.map((cls) => (
                     <div
                       key={cls.id}
                       onClick={() => {

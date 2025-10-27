@@ -1,7 +1,8 @@
 import { useMemo } from "react";
-import { formatArabicTime } from "@/utils/dateHelpers";
 import { NotifyIcon, SandGlass, TimeCheck } from "@/utils/icons";
 import { getArabicDay } from "../../../utils/dateHelpers";
+import { Cross } from "lucide-react";
+import { Cancel } from "../../../utils/icons";
 
 export const useLessonStatus = (
   item,
@@ -21,21 +22,33 @@ export const useLessonStatus = (
       start.getDate()
     );
 
-    if (lessonStatus === "delayed") {
+    if (lessonStatus === "canceled") {
       return {
-        statusText: `تم تأجيل الحصة ليوم ${getArabicDay(
-          item.delay.day_of_week
-        )}`,
+        statusText: "الحصة ملغية",
+        statusColor: "text-red-500",
+        statusIcon: <Cancel className="w-4 fill-red-500 text-red-500" fill="red" />,
+      };
+    }
+
+    if (lessonStatus === "delayed") {
+      // Check if delay data exists before accessing it
+      const delayDay = item?.delay?.day_of_week;
+      const delayText = delayDay
+        ? `تم تأجيل الحصة ليوم ${getArabicDay(delayDay)}`
+        : "تم تأجيل الحصة";
+
+      return {
+        statusText: delayText,
         statusColor: "text-gray-600",
-        statusIcon: <TimeCheck fill={"#111"} className="w-4" />,
+        statusIcon: <TimeCheck  fill={"#111"} className="w-4" />,
       };
     }
 
     if (lessonDay < today) {
       return {
         statusText: "انتهت الحصة",
-        statusColor: "text-red-500",
-        statusIcon: <TimeCheck className="w-4" />,
+        statusColor: "text-[#4193C3]",
+        statusIcon: <TimeCheck fill={"#4193C3"} className="w-4" />,
       };
     }
 
@@ -60,9 +73,7 @@ export const useLessonStatus = (
       });
 
       return {
-        statusText: `الحصة يوم ${weekdayName} ${dayNum} ${monthName} - ${formatArabicTime(
-          item.start_time
-        )}`,
+        statusText: `الحصة يوم ${weekdayName} ${dayNum} ${monthName} `,
         statusColor: "text-[#ba7c28]",
         statusIcon: <SandGlass className="w-4" />,
       };
@@ -111,12 +122,5 @@ export const useLessonStatus = (
           statusIcon: <TimeCheck className="w-4" />,
         };
     }
-  }, [
-    lessonStatus,
-    timeRemaining,
-    canEnterLesson,
-    isExpired,
-    item.start_time,
-    start,
-  ]);
+  }, [start, lessonStatus, item?.delay?.day_of_week, timeRemaining, isExpired, canEnterLesson]);
 };

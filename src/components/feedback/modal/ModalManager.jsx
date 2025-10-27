@@ -12,6 +12,13 @@ import {
   ChangeGroupModal,
   ReactivateModal,
   WeeklyScheduleModal,
+  AvatarModal,
+  AddBalanceModal,
+  // AddCouponModal,
+  SessionRatingModal,
+  TransactionDetailsModal,
+  // CommentsModal,
+  // PerformanceChartModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -126,6 +133,121 @@ const ModalManager = () => {
       break;
     case MODAL_TYPES.WEEKLY_SCHEDULE:
       ModalContent = <WeeklyScheduleModal {...props} onClose={handleClose} />;
+      break;
+    case MODAL_TYPES.AVATAR_MODAL:
+      ModalContent = (
+        <AvatarModal
+          {...props}
+          onClose={handleClose}
+          onSelect={(avatarSrc) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, avatarSrc);
+            }
+            handleClose();
+          }}
+        />
+      );
+      break;
+    // case MODAL_TYPES.ADD_BALANCE:
+    //   ModalContent = (
+    //     <AddBalanceModal
+    //       {...props}
+    //       onClose={handleClose}
+    //       onSubmit={(data) => {
+    //         if (props.callbackId) {
+    //           executeCallback(props.callbackId, data);
+    //         }
+    //         handleClose();
+    //       }}
+    //     />
+    //   );
+    //   break;
+    // case MODAL_TYPES.ADD_COUPON:
+    //   ModalContent = (
+    //     <AddCouponModal
+    //       {...props}
+    //       onClose={handleClose}
+    //       onSubmit={(data) => {
+    //         if (props.callbackId) {
+    //           executeCallback(props.callbackId, data);
+    //         }
+    //         handleClose();
+    //       }}
+    //     />
+    //   );
+    //   break;
+    case MODAL_TYPES.SESSION_RATING:
+      ModalContent = (
+        <SessionRatingModal
+          {...props}
+          onClose={() => {
+            // Execute registered onClose callback if provided via props
+            if (props.onCloseId) {
+              const cb = callbackRegistry.get(props.onCloseId);
+              if (cb) {
+                cb();
+              }
+            }
+            handleClose();
+          }}
+          onSkip={() => {
+            // Execute registered onSkip callback if provided via props
+            if (props.onSkipId) {
+              const cb = callbackRegistry.get(props.onSkipId);
+              if (cb) {
+                cb();
+              }
+            }
+            handleClose();
+          }}
+          onSubmit={async (data) => {
+            try {
+              // Execute registered onSubmit callback if provided via props
+              if (props.onSubmitId) {
+                const cb = callbackRegistry.get(props.onSubmitId);
+                if (cb) {
+                  await cb(data);
+                }
+              }
+              if (props.callbackId) {
+                executeCallback(props.callbackId, data);
+              }
+            } catch (_error) {
+              // Error in SessionRatingModal onSubmit
+            } finally {
+              handleClose();
+            }
+          }}
+        />
+      );
+      break;
+    case MODAL_TYPES.ADD_BALANCE:
+      ModalContent = (
+        <AddBalanceModal
+          {...props}
+          onClose={handleClose}
+          onSubmit={(data) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, data);
+            }
+            handleClose();
+          }}
+        />
+      );
+      break;
+    // case MODAL_TYPES.COMMENTS:
+    //   ModalContent = <CommentsModal {...props} onClose={handleClose} />;
+    //   break;
+    // case MODAL_TYPES.PERFORMANCE_CHART:
+    //   ModalContent = <PerformanceChartModal {...props} onClose={handleClose} />;
+    //   break;
+    case MODAL_TYPES.TRANSACTION_DETAILS:
+      ModalContent = (
+        <TransactionDetailsModal
+          {...props}
+          onClose={handleClose}
+        />
+      );
       break;
     default:
       return null;

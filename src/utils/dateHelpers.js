@@ -1,3 +1,11 @@
+// Today in Riyadh (YYYY-MM-DD)
+export const todayDate = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Riyadh",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(new Date());
+
 export const getNext7Days = () => {
   const days = [];
   const tz = "Asia/Riyadh";
@@ -70,7 +78,7 @@ export const getWeekFromLastSaturday = (tz = "Asia/Riyadh") => {
   const dayOfWeek = today.getDay(); // 0: Sunday ... 6: Saturday
 
   // نحسب السبت اللي فات (أو النهاردة لو هو سبت)
-  const diff = (dayOfWeek - 6 + 7) % 7; 
+  const diff = (dayOfWeek - 6 + 7) % 7;
   const lastSaturday = new Date(today);
   lastSaturday.setDate(today.getDate() - diff);
 
@@ -86,7 +94,7 @@ export const getWeekFromLastSaturday = (tz = "Asia/Riyadh") => {
     }).format(current);
 
     days.push({
-      label: current.toLocaleDateString("ar-SA", optionsAR),   // اليوم بالعربي
+      label: current.toLocaleDateString("ar-SA", optionsAR), // اليوم بالعربي
       dayEn: current.toLocaleDateString("en-US", optionsEN).toLowerCase(), // بالإنجليزي
       date: iso, // YYYY-MM-DD مضبوط
     });
@@ -389,3 +397,16 @@ export const formatDateWithEnglishDay = (d, lang = "ar") => {
   });
   return { dayNum, monthName, weekdayName };
 };
+
+export function formatDayAndDate(dateString) {
+  const date = new Date(dateString);
+
+  const options = {
+    weekday: "long", 
+    day: "numeric", 
+    month: "long", 
+    year: "numeric", 
+  };
+
+  return date.toLocaleDateString("ar-EG", options);
+}

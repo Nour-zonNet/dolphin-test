@@ -57,14 +57,34 @@ class SubscriptionRepository {
 
   // Create trial subscription
   async createTrialSubscription(packageIds) {
-    // console.log({
-    //   packageIds: packageIds,
-    // });
     const { data } = await api.post(ENDPOINTS.CREATE_TRIAL_SUBSCRIPTION, {
       packageIds: packageIds,
     });
     return data;
   }
+
+  // Create new subscription payment
+  async createNewSubscriptionPayment(packageIds) {
+    try {
+      // Convert package IDs to query parameter format
+      const packagesParam = Array.isArray(packageIds) 
+        ? packageIds.join(',')
+        : packageIds.toString();
+      
+      console.log('API Call - Package IDs:', packageIds);
+      console.log('API Call - Packages Param:', packagesParam);
+      console.log('API Call - Full URL:', `/student/recharge-packages?packages=${packagesParam}`);
+      
+      const response = await api.post(`/student/recharge-packages?packages=${packagesParam}`);
+      
+      console.log('API Response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
+
     async getByGroupsPackageId(packageId) {
       const { data } = await api.post(ENDPOINTS.GROUPS_BY_BACKAGEID, {
         package_id: packageId,

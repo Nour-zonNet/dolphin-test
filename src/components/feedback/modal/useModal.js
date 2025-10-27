@@ -131,8 +131,115 @@ export const useModal = () => {
     );
   };
 
+  const openAvatarModal = (onSelect) => {
+    // Store callback in registry with a unique ID
+    const callbackId = Date.now().toString();
+    if (onSelect) {
+      callbackRegistry.set(callbackId, onSelect);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.AVATAR_MODAL,
+        props: {
+          callbackId: onSelect ? callbackId : null,
+        },
+      })
+    );
+  };
+
+  const openAddBalanceModal = (onSubmit) => {
+    // Store callback in registry with a unique ID
+    const callbackId = Date.now().toString();
+    if (onSubmit) {
+      callbackRegistry.set(callbackId, onSubmit);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.ADD_BALANCE,
+        props: {
+          callbackId: onSubmit ? callbackId : null,
+        },
+      })
+    );
+  };
+
+  const openAddCouponModal = (onSubmit) => {
+    // Store callback in registry with a unique ID
+    const callbackId = Date.now().toString();
+    if (onSubmit) {
+      callbackRegistry.set(callbackId, onSubmit);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.ADD_COUPON,
+        props: {
+          callbackId: onSubmit ? callbackId : null,
+        },
+      })
+    );
+  };
+
+  const openTransactionDetailsModal = (transaction = {}) => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.TRANSACTION_DETAILS,
+        props: { transaction },
+      })
+    );
+  };
+
   const closeCurrentModal = () => {
     dispatch(closeModal());
+  };
+
+  const openCommentsModal = (subject = {}) => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.COMMENTS,
+        props: { subject },
+      })
+    );
+  };
+
+  const openPerformanceChartModal = (subject = {}, period = "month") => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.PERFORMANCE_CHART,
+        props: { subject, period },
+      })
+    );
+  };
+
+  const openSessionRatingModal = (sessions = [], onSubmit, onClose, onSkip) => {
+    // Store callbacks in registry with unique IDs to keep Redux serializable
+    const onSubmitId = onSubmit ? Date.now().toString() : null;
+    const onCloseId = onClose ? Date.now().toString() + "_close" : null;
+    const onSkipId = onSkip ? Date.now().toString() + "_skip" : null;
+    
+    if (onSubmitId && onSubmit) {
+      callbackRegistry.set(onSubmitId, onSubmit);
+    }
+    if (onCloseId && onClose) {
+      callbackRegistry.set(onCloseId, onClose);
+    }
+    if (onSkipId && onSkip) {
+      callbackRegistry.set(onSkipId, onSkip);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.SESSION_RATING,
+        props: {
+          sessions,
+          onSubmitId: onSubmitId,
+          onCloseId: onCloseId,
+          onSkipId: onSkipId,
+        },
+      })
+    );
   };
 
   // Function to execute and remove callback from registry
@@ -153,6 +260,13 @@ export const useModal = () => {
     openExtendPackageModal,
     openStatusModal,
     openWeeklyScheduleModal,
+    openAvatarModal,
+    openAddBalanceModal,
+    openAddCouponModal,
+    openCommentsModal,
+    openPerformanceChartModal,
+    openSessionRatingModal,
+    openTransactionDetailsModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

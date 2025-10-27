@@ -26,4 +26,12 @@ export const ENDPOINTS = {
   DIS_ACTIVE_ACCOUNT: "/student/delete/account",
   CLASSES: "/student/classes",
   LESSONS_OF_PACKAGE: "/student/lessons/package/",
+  GET_CONTENTS_BY_SESSION_ID: "/student/contents/",
+  COMPLAINTS_SUBMIT: "/student/complaints",
+  COMPLAINTS_LIST: "/student/complaints",
+  GET_GLOBAL_SESSION_BY_TEACHER_ID: "/teacher/",
+  JOIN_GLOBAL_SESSION: "/teacher",
+  SESSION_REVIEW: "/student/review/session",
+  CHARGE_WALLET: "/student/wallet/charge",
+  GET_WALLET_BALANCE: "/student/wallet/balance",
 };

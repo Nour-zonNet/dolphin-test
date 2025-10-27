@@ -99,6 +99,10 @@ export const useAuth = () => {
     (bro) => dispatch(disActiveAccount(bro)),
     [dispatch]
   );
+  const dispatchVerifyOtp = useCallback(
+    (credentials) => dispatch(verifyOtp(credentials)),
+    [dispatch]
+  );
   switchUserAccount;
   updateUser;
   return useMemo(
@@ -114,7 +118,7 @@ export const useAuth = () => {
       loginUser,
       checkPhone: dispatchCheckPhone,
       registerUser: dispatchRegisterUser,
-      verifyOtp,
+      verifyOtp: dispatchVerifyOtp,
       brothers,
       login: dispatchLogin,
       logout: dispatchLogout,
@@ -140,6 +144,7 @@ export const useAuth = () => {
       shouldRedirectToLogin,
       dispatchCheckPhone,
       dispatchRegisterUser,
+      dispatchVerifyOtp,
       brothers,
       dispatchLogin,
       dispatchLogout,

@@ -12,7 +12,7 @@ export const DEFAULT_AVATAR =
 const UserProfile = () => {
   const dispatch = useDispatch();
   const { updateUserImage, switchUserAccount, brothers, user } = useAuth();
-  const { openStatusModal } = useModal();
+  const { openStatusModal, openAvatarModal } = useModal();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -128,19 +128,27 @@ const UserProfile = () => {
     }
   };
 
-  // Update profile image
-  const handleImageChange = async (e, userId) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setSelectedImages((prev) => ({ ...prev, [userId]: file }));
+  // Handle avatar selection from modal
+  const handleAvatarSelect = async (avatarSrc) => {
     try {
+
+      const response = await fetch(avatarSrc);
+      const blob = await response.blob();
+      const file = new File([blob], avatarSrc.split('/').pop(), { type: blob.type });
+      
+      setSelectedImages((prev) => ({ ...prev, [user.id]: file }));
       await updateUserImage(file);
     } catch (err) {
       openStatusModal("ERROR", {
-        title: "فشل رفع الصورة",
-        message: err?.message || "تعذر رفع الصورة. حاول مرة أخرى.",
+        title: "فشل تحديث الصورة",
+        message: err?.message || "تعذر تحديث الصورة. حاول مرة أخرى.",
       });
     }
+  };
+
+  // Open avatar modal
+  const handleOpenAvatarModal = () => {
+    openAvatarModal(handleAvatarSelect);
   };
 
   // Switch account
@@ -174,19 +182,16 @@ const UserProfile = () => {
             }
             onError={handleImgError}
           />
-          <label className="absolute bottom-0 lg:bottom-2.5 left-0 lg:left-2.5 cursor-pointer">
+          <button 
+            className="absolute bottom-0 lg:bottom-2.5 left-0 lg:left-2.5 cursor-pointer"
+            onClick={handleOpenAvatarModal}
+          >
             <img
               className="w-6 md:w-8 h-6 md:h-8"
               alt="Edit"
               src="https://c.animaapp.com/mf29nm7vjLRxgE/img/frame-1.svg"
             />
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => handleImageChange(e, user.id)}
-            />
-          </label>
+          </button>
         </div>
 
         {/* Name & Grade + Dropdown */}
@@ -287,19 +292,16 @@ const UserProfile = () => {
                   </div>
 
                   {bro.id === user.id && (
-                    <label className="cursor-pointer">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => handleImageChange(e, bro.id)}
-                      />
+                    <button 
+                      className="cursor-pointer"
+                      onClick={handleOpenAvatarModal}
+                    >
                       <img
                         className="w-5 h-5 md:w-6 md:h-6"
                         alt="Edit"
                         src="https://c.animaapp.com/mf29nm7vjLRxgE/img/frame-1.svg"
                       />
-                    </label>
+                    </button>
                   )}
                 </div>
               ))}

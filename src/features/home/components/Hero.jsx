@@ -1,4 +1,4 @@
-import dolphinChild from "@/assets/images/homeChild.png";
+import dolphinChild from "@/assets/images/homeChild.webp";
 import flash from "@/assets/home/flash.svg";
 import { useTranslation } from "react-i18next";
 

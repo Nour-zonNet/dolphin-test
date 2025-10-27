@@ -14,30 +14,25 @@ const ImportPDFButton = ({ onLoadPDF }) => {
   };
 
   const handleURLImport = async (url) => {
+    // Try direct fetch first
+    let response;
     try {
-      // Try direct fetch first
-      let response;
-      try {
-        response = await fetch(url);
-      } catch {
-        console.log("Direct fetch failed due to CORS, trying with proxy...");
-        // Use CORS proxy as fallback
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-        response = await fetch(proxyUrl);
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const arrayBuffer = await response.arrayBuffer();
-      const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
-      const file = new File([blob], 'imported.pdf', { type: 'application/pdf' });
-      onLoadPDF(file);
-    } catch (error) {
-      console.error("Error loading PDF from URL:", error);
-      throw error;
+      response = await fetch(url);
+    } catch {
+      // Direct fetch failed due to CORS, trying with proxy...
+      // Use CORS proxy as fallback
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+      response = await fetch(proxyUrl);
     }
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+    const file = new File([blob], 'imported.pdf', { type: 'application/pdf' });
+    onLoadPDF(file);
   };
 
   return (

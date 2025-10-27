@@ -1,15 +1,22 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { performLogout } from "@/features/auth/store/authSlice";
 import { ProfileButtons } from "@/components";
 import { DeleteAccountModal } from "@/components/profile/modal";
 import { LogoutModal } from "@/components/profile/modal";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useModal } from "@/components/feedback/modal/useModal";
+import { MODAL_TYPES } from "@/constants/MODAL_TYPES";
+import { useTranslation } from "react-i18next";
 
 const ProfileActions = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { openStatusModal } = useModal();
   const { disActiveAccount } = useAuth();
   // Logout modal handlers
   const handleCloseLogoutModal = () => setIsLogoutModalOpen(false);
@@ -19,18 +26,33 @@ const ProfileActions = () => {
   };
   const handleConfirmDelete = async () => {
     try {
-      const result = await disActiveAccount(); 
-      console.log(result);
+      await disActiveAccount().unwrap();
 
-      dispatch(performLogout());
+      openStatusModal(MODAL_TYPES.SUCCESS, {
+        title: "تم التعطيل",
+        message: "تم تعطيل الحساب بنجاح.",
+        onClose: () => dispatch(performLogout()),
+      });
       setIsDeleteModalOpen(false);
     } catch (error) {
-      console.error("Error while deleting account:", error);
+      // Error while deleting account
     }
   };
 
   return (
     <div className="flex flex-col md:flex-row items-center gap-8 md:py-8 mb-20">
+      {/* Complaints Button */}
+      <ProfileButtons
+        variant="primary"
+        size=""
+        className="w-full cursor-pointer py-3 lg:py-4   bg-orangedeep "
+        onClick={() => navigate("/complaints")}
+      >
+        <span className="text-white font-semibold text-base md:text-xl">
+          {t("complaints.title")}
+        </span>
+      </ProfileButtons>
+
       {/* Logout Button */}
       <ProfileButtons
         variant="secondary"

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { subscriptionRepository } from "../services/subscription.services";
 
 // ===== Helper for error extraction =====
- const handleError = async (error, thunkAPI) => {
+const handleError = async (error, thunkAPI) => {
   if (error.response && error.response.data) {
     return thunkAPI.rejectWithValue(
       error.response.data.error || "Server error"
@@ -86,17 +86,34 @@ export const changeGroupSubscription = createAsyncThunk(
 
 export const fetchGroupsByPackageId = createAsyncThunk(
   "groups/fetchByPackageId",
-  async (packageId) => {
-    const res = await subscriptionRepository.getByGroupsPackageId(packageId);
-    return { packageId, groups: res.data };
+  async (packageId, thunkAPI) => {
+    try {
+      const res = await subscriptionRepository.getByGroupsPackageId(packageId);
+      return { packageId, groups: res.data };
+    } catch (err) {
+      return handleError(err, thunkAPI);
+    }
   }
 );
+
 export const createTrialSubscription = createAsyncThunk(
   "subscriptions/createTrial",
   async (ids, thunkAPI) => {
     try {
       const res = await subscriptionRepository.createTrialSubscription(ids);
       return res.data;
+    } catch (err) {
+      return handleError(err, thunkAPI);
+    }
+  }
+);
+
+export const createNewSubscriptionPayment = createAsyncThunk(
+  "subscriptions/createNewPayment",
+  async (packageIds, thunkAPI) => {
+    try {
+      const res = await subscriptionRepository.createNewSubscriptionPayment(packageIds);
+      return res; // Return the full response object, not just res.data
     } catch (err) {
       return handleError(err, thunkAPI);
     }
@@ -111,6 +128,7 @@ const subscriptionSlice = createSlice({
     groups: {},
     loading: false,
     error: null,
+    paymentData: null,
   },
   reducers: {
     clearSubscriptionError: (state) => {
@@ -210,7 +228,10 @@ const subscriptionSlice = createSlice({
         state.loading = false;
         state.groups = action.payload;
       })
-      .addCase(getGroupsByPackageId.rejected, handleRejected)
+      .addCase(getGroupsByPackageId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.error || action.error.message;
+      })
 
       // =====  Create Trial =====
       .addCase(createTrialSubscription.pending, handlePending)
@@ -227,12 +248,21 @@ const subscriptionSlice = createSlice({
       .addCase(fetchGroupsByPackageId.fulfilled, (state, action) => {
         state.loading = false;
         const { packageId, groups } = action.payload;
-        state.groups[packageId] = groups; // ✅ works now
+        state.groups[packageId] = groups;
       })
       .addCase(fetchGroupsByPackageId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
-      });
+      })
+
+      // ===== Create New Subscription Payment =====
+      .addCase(createNewSubscriptionPayment.pending, handlePending)
+      .addCase(createNewSubscriptionPayment.fulfilled, (state, action) => {
+        state.loading = false;
+        // Store payment data for redirect - action.payload is now the full response
+        state.paymentData = action.payload;
+      })
+      .addCase(createNewSubscriptionPayment.rejected, handleRejected);
   },
 });
 

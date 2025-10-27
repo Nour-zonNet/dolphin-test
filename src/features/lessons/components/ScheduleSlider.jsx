@@ -1,41 +1,33 @@
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-import notFoundImage from "@/assets/images/notFoundLessons.png";
-import nationalDayBanner from "@/assets/images/national-day.svg"; 
-import { getSevenDaysBeforeAndAfter } from "@/utils/dateHelpers";
+import notFoundImage from "@/assets/images/notFoundLessons.webp";
+import nationalDayBanner from "@/assets/images/national-day.webp";
+import { getSevenDaysBeforeAndAfter, todayDate } from "@/utils/dateHelpers";
+import PreviewScheduleBtn from "@/components/ui/PreviewScheduleBtn";
 
 import LessonCard from "./LessonCard";
 import SliderHeader from "./SliderHeader";
 import { useLessons } from "../hooks/useLessons";
 import { subjectFactory } from "../factory/subjectFactory";
-import NationalDayCard from "./NationalDayCard";
 
 const ScheduleSlider = () => {
-  const { items, loading } = useLessons();
+  const { items } = useLessons();
   const days = getSevenDaysBeforeAndAfter();
-
-  // Today in Riyadh (YYYY-MM-DD)
-  const todayDate = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Riyadh",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
 
   // Index of today
   const todayIndex = days.findIndex((d) => d.date === todayDate);
-  const [activeIndex, setActiveIndex] = useState(todayIndex !== -1 ? todayIndex : 0);
+  const [activeIndex, setActiveIndex] = useState(
+    todayIndex !== -1 ? todayIndex : 0
+  );
 
   const NAVBAR_HEIGHT = 64;
   const MOBILE_BAR_HEIGHT = 56;
 
-  if (loading) return null;
 
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-10">
@@ -43,8 +35,11 @@ const ScheduleSlider = () => {
         dayLabel={days[activeIndex].label}
         dayDate={days[activeIndex].date}
       />
+      <div className="lg:hidden block ">
+        <PreviewScheduleBtn />
+      </div>
 
-      <div className="slider py-6">
+      <div className="slider py-6 pb-20">
         <Swiper
           key={todayIndex}
           modules={[Navigation, Pagination]}
@@ -56,25 +51,35 @@ const ScheduleSlider = () => {
         >
           {days.map((day) => {
             const lessonsForDay = items.filter((item) => {
-              if (item.session_date) {
-                return item.session_date === day.date;
-              } else {
-                return day.dayEn.toLowerCase() === item.day_of_week.toLowerCase();
+              if (item.date) {
+                const itemDate = new Date(item.date)
+                  .toISOString()
+                  .split("T")[0];
+                return itemDate === day.date;
               }
             });
-            const isSept23 = day.date.slice(5) === "09-23";
-            const showSpecialDesign = day.date === todayDate && isSept23;
 
             return (
               <SwiperSlide key={day.date}>
-                {showSpecialDesign ? (
+                {"2025-09-23" === day.date ? (
                   <div
-                    className="flex items-center justify-center"
+                    className="flex flex-col justify-center items-center mt-12  "
                     style={{
-                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                      height: `calc(60svh - ${
+                        NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT
+                      }px)`,
                     }}
                   >
-                    <NationalDayCard src={nationalDayBanner} />
+                    <img
+                      src={nationalDayBanner}
+                      loading="lazy"
+                      alt="No lessons found"
+                      className="max-h-full w-auto object-cover  "
+                    />
+                    <p className="text-[#155274] font-semibold text-lg md:text-3xl lg:text-2xl text-center mt-4 mb-4 md:mb-0">
+                      لا توجد دروس اليوم بمناسبة اليوم <br /> الوطني السعودي
+                      استمتعوا بإجازتكم
+                    </p>
                   </div>
                 ) : lessonsForDay.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
@@ -95,7 +100,9 @@ const ScheduleSlider = () => {
                   <div
                     className="flex justify-center items-center"
                     style={{
-                      height: `calc(70svh - ${NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT}px)`,
+                      height: `calc(70svh - ${
+                        NAVBAR_HEIGHT + MOBILE_BAR_HEIGHT
+                      }px)`,
                     }}
                   >
                     <img
@@ -111,6 +118,8 @@ const ScheduleSlider = () => {
           })}
         </Swiper>
       </div>
+
+
     </div>
   );
 };

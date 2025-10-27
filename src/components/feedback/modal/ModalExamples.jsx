@@ -74,7 +74,7 @@ const ModalExamples = () => {
                   confirmText: "حذف",
                   type: "danger",
                 },
-                () => console.log("Confirmed deletion")
+                () => {} // Confirmed deletion
               )
             }
             className="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
@@ -113,7 +113,9 @@ const ModalExamples = () => {
                     },
                   ],
                 },
-                (groupId) => console.log("Changed to group:", groupId)
+                (groupId) => {
+                  // Changed to group
+                }
               )
             }
             className="w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
@@ -134,7 +136,7 @@ const ModalExamples = () => {
                 {
                   packageName: "باقة الصحة العامة",
                 },
-                () => console.log("Subscription reactivation requested")
+                () => {} // Subscription reactivation requested
               )
             }
             className="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
@@ -155,7 +157,7 @@ const ModalExamples = () => {
                 {
                   packageName: "باقة الصحة العامة",
                 },
-                () => console.log("Package extension requested")
+                () => {} // Package extension requested
               )
             }
             className="w-full px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"

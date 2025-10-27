@@ -10,14 +10,13 @@ import { SUPPORTED_COUNTRIES } from "../../../constants/SUPPORTED_COUNTRIES";
 
 // Supported countries configuration - جميع الدول العربية
 
-
 // Filter allowed countries
 const allowedCountries = defaultCountries.filter((country) => {
   const { iso2 } = parseCountry(country);
   return SUPPORTED_COUNTRIES.includes(iso2);
 });
 
-export default function MyPhone({ value, onChange }) {
+export default function MyPhone({ value, onChange, disabled = false, readOnly = false }) {
   const [defaultCountry, setDefaultCountry] = useState(null); // null → wait for detection
 
   useEffect(() => {
@@ -61,6 +60,8 @@ export default function MyPhone({ value, onChange }) {
         defaultCountry={defaultCountry}
         preferredCountries={["sa", "ae", "kw", "qa", "bh", "om"]}
         forceDialCode
+        disabled={disabled}
+        inputProps={{ readOnly }}
         inputClassName="border-0! w-full text-base! rounded-none focus:outline-0! focus:ring-0! !focus:outline-orangedeep"
         countrySelectorStyleProps={{
           flagClassName: "border-0! w-7 h-7 bg-none!",

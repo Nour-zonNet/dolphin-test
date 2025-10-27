@@ -1,7 +1,6 @@
 import SliderNavButton from "./SliderNavButton";
 import { useTranslation } from "react-i18next";
 import { LeftArrow, RightArrow } from "@/utils/icons";
-import { PreviewScheduleBtn } from "@/components/ui";
 
 const SliderHeader = ({ dayLabel, dayDate }) => {
   const { i18n } = useTranslation();
@@ -41,9 +40,6 @@ const SliderHeader = ({ dayLabel, dayDate }) => {
         >
           <LeftArrow size={22} className="w-4 sm:w-5" />
         </SliderNavButton>
-      </div>
-      <div className="lg:hidden block w-full">
-        <PreviewScheduleBtn />
       </div>
     </div>
   );

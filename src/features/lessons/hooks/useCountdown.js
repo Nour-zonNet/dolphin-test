@@ -50,8 +50,8 @@ export const useCountdown = (targetTime, lessonDate) => {
       }
 
       setTimeRemaining(result);
-    } catch (error) {
-      console.error('Error calculating countdown:', error);
+    } catch (_error) {
+      // Error calculating countdown
       setTimeRemaining('');
       setIsExpired(false);
       setCanEnterLesson(false);
@@ -73,7 +73,7 @@ export const useCountdown = (targetTime, lessonDate) => {
         intervalRef.current = null;
       }
     };
-  }, [calculateTimeRemaining]);
+  }, [calculateTimeRemaining, lessonDate, targetTime]);
 
 
   return { timeRemaining, isExpired, canEnterLesson };

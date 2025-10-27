@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Line } from "../../../utils/Illustrations";
 import { STATUS_CONFIG } from "../../../constants/STATUS_CONFIG";
-import * as Icons from "@/utils/icons";
+import { Checked, Experimental, Finished, Canceled } from "@/utils/icons";
 
 const StatusCard = ({
   title,
@@ -30,7 +30,19 @@ const StatusCard = ({
   }, [open]);
 
   const config = STATUS_CONFIG[status] || STATUS_CONFIG["فعالة"];
-  const Icon = Icons[config.icon]; // نجيب الأيقونة بالاسم
+  
+  // Map icon names to actual icon components
+  const getStatusIcon = (iconName) => {
+    const iconMap = {
+      Checked,
+      Experimental,
+      Finished,
+      Canceled
+    };
+    return iconMap[iconName];
+  };
+  
+  const Icon = getStatusIcon(config.icon); // نجيب الأيقونة بالاسم
 
 
   const handleAction = () => {

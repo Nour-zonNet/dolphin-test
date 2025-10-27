@@ -1,34 +1,43 @@
 import { useLanguageDirection } from "@/hooks/useLanguageDirection";
-// App Components
+import { useOfflineDetection } from "@/hooks/useOfflineDetection";
+import { usePerformanceOptimizations } from "@/hooks/usePerformanceOptimizations";
 import AppProviders from "./AppProviders";
 import AppRoutes from "./AppRoutes";
 import ChatwootInit from "../components/ChatwootInit"
-
-// Global Components
-import GlobalLoader from "@/components/feedback/GlobalLoader";
-import ModalManager from "@/components/feedback/modal/ModalManager";
-// import { useModal } from "@/components/feedback/modal/useModal";
+import { GlobalLoader, GlobalError } from "@/components/feedback";
+import { ModalManager } from "@/components/feedback/modal";
+import SessionRatingInitializer from "@/components/SessionRatingInitializer";
+import OfflineScreen from "@/components/OfflineScreen";
 
 const App = () => {
-  // Initialize language direction
   useLanguageDirection();
+  usePerformanceOptimizations(); // Apply performance optimizations
+  const isOnline = useOfflineDetection();
 
-  // Modal hook for examples
-  // const {
-  //   openBuyPackageModal,
-  //   openDetailsModal,
-  //   openConfirmModal,
-  //   openChangeGroupModal,
-  //   openReactivateModal,
-  //   openExtendPackageModal,
-  // } = useModal();
+  // Show offline screen when not connected to internet
+  if (!isOnline) {
+    return (
+      <AppProviders>
+        <OfflineScreen 
+          onRetry={() => {
+            if (navigator.onLine) {
+              window.location.reload();
+            } else {
+              // Optional: Show a toast or message that we're still offline
+            }
+          }} 
+        />
+      </AppProviders>
+    );
+  }
 
   return (
     <AppProviders>
       <div className="app-container">
-        {/* Global Components */}
         <GlobalLoader />
+        <GlobalError />
         <ModalManager />
+        <SessionRatingInitializer />
         <AppRoutes />
       </div>
       <ChatwootInit />

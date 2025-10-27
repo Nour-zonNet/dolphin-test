@@ -1,31 +1,81 @@
-import React, { useState } from 'react'
-import Header from '@/components/layout/Header'
-import { BalanceCard } from '../components'
-import Divider from "@/components/ui/Divider"
-import TransactionsFilter from '../components/TransactionsFilter'
-import NoTransactions from '../components/NoTransactions'
-import { useProfile } from "@/features/profile/hooks/useProfile"
+import React, { useState } from 'react';
+import Header from '@/components/layout/Header';
+import Divider from '@/components/ui/Divider';
+import { BalanceCard, BalanceActionsButtons } from '../components';
+import { TransactionsFilter } from '../components';
+import { TransactionsList } from '../components/transactions';
+import { useProfile } from '@/features/profile/hooks/useProfile';
+import { useTransactions } from '../hooks/useTransactions';
+import { useTransactionFilter } from '../hooks/useTransactionFilter';
+import { useSelector } from 'react-redux';
 
+/**
+ * Enhanced Balance Details Page
+ * 
+ * Features:
+ * - Clean separation of concerns
+ * - Custom hooks for data management
+ * - Proper error handling and loading states
+ * - Reusable components
+ * - Modern React patterns
+ */
 const BalanceDetails = () => {
   const { user } = useProfile();
-  const [, setDateFilter] = useState({ startDate: "", endDate: "" });
+  const { currentBalance } = useSelector((state) => state.balance);
+  const { transactions, loading, error, refreshTransactions } = useTransactions();
+  const { 
+    filteredTransactions, 
+    handleDateFilter, 
+    handleStatusFilter,
+    handleSearch,
+  } = useTransactionFilter(transactions);
+  const [isFiltering, setIsFiltering] = useState(false);
 
-  const handleDateFilter = (startDate, endDate) => {
-    setDateFilter({ startDate, endDate });
-    // هنا يمكن إضافة منطق جلب المعاملات المفلترة
-    console.log('تصفية التواريخ:', { startDate, endDate });
+  const handleRefresh = () => {
+    refreshTransactions();
+  };
+
+  const handleFiltering = (filtering) => {
+    setIsFiltering(filtering);
   };
 
   return (
-    <div>
-        <Header  title="تفاصيل الرصيد" balance={0} showBalanceSection={false} onBack={"/profile"} />
-        <BalanceCard user={user}/>
-        {/* <BalanceActionsButtons /> */}
-        <Divider />
-        <TransactionsFilter onDateFilter={handleDateFilter} />
-        <NoTransactions />
+    <div className="min-h-screen ">
+      {/* Header */}
+      <Header 
+        title="تفاصيل الرصيد" 
+        balance={currentBalance} 
+        showBalanceSection={false} 
+        onBack="/profile" 
+      />
+      
+      {/* Balance Card */}
+      <BalanceCard user={user} />
+      
+      {/* Action Buttons */}
+      <BalanceActionsButtons />
+      
+      {/* Divider */}
+      <Divider />
+      
+      {/* Transactions Filter */}
+      <TransactionsFilter 
+        onDateFilter={handleDateFilter}
+        onStatusFilter={handleStatusFilter}
+        onSearch={handleSearch}
+        onFiltering={handleFiltering}
+      />
+      
+      {/* Transactions List */}
+      <TransactionsList 
+        transactions={transactions}
+        filteredTransactions={filteredTransactions}
+        loading={loading || isFiltering}
+        error={error}
+        onRefresh={handleRefresh}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default BalanceDetails
+export default BalanceDetails;

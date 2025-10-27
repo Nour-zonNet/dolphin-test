@@ -14,6 +14,16 @@
     "yes": "Yes",
     "no": "No"
   },
+  "offline": {
+    "title": "You are not connected to the internet",
+    "description": "Please check your network connection and try again",
+    "retry": "Try Again"
+  },
+  "maintenance": {
+    "title": "Site Under Maintenance",
+    "description": "We are currently performing development and maintenance work to improve your experience",
+    "goHome": "Return to Homepage"
+  },
   "navigation": {
     "schedule": "Study Schedule",
     "subscriptions": "Subscribed Packages",
@@ -118,6 +128,69 @@
   "mobileNavigation": {
     "home": "Home",
     "content": "Content",
-    "profile": "My Account"
+    "profile": "My Account",
+    "community": "Community"
+  },
+  "lesson_content": {
+    "exam": "Lesson Exam",
+    "title": "Lesson Content",
+    "lesson": "Lesson",
+    "summary": "Lesson Summary",
+    "exercises": "Lesson Exercises",
+    "watch_recorded": "Watch Recorded Lesson",
+    "attachments": "Files and Attachments",
+    "open_file": "Open File",
+    "download_file": "Download File",
+    "start_quiz": "Start Quiz",
+    "quiz_intro": "Start this short quiz to test your understanding level"
+  },
+  "complaints": {
+    "title": "Complaints and Suggestions",
+    "description": "We welcome your feedback and suggestions to improve your educational experience",
+    "addComplaint": "Add New Complaint",
+    "myComplaints": "My Complaints",
+    "noComplaints": "No complaints yet",
+    "noComplaintsSubtext": "You can add a new complaint by clicking the button above",
+    "submit": "Submit Complaint",
+    "categories": {
+      "technical": "Technical Issue",
+      "content": "Lesson Content",
+      "teacher": "Teacher",
+      "schedule": "Study Schedule",
+      "payment": "Payment & Subscription",
+      "other": "Other"
+    },
+    "form": {
+      "title": "Complaint Title",
+      "titlePlaceholder": "Write a brief title for your complaint",
+      "category": "Complaint Type",
+      "description": "Problem Description",
+      "descriptionPlaceholder": "Describe the problem you're facing...",
+      "attachments": "Attachments",
+      "attachmentsHelp": "You can upload images, videos, or PDF files to clarify the problem"
+    },
+    "validation": {
+      "titleRequired": "Complaint title is required",
+      "descriptionRequired": "Problem description is required",
+      "descriptionMinLength": "Problem description must be at least 10 characters"
+    },
+    "status": {
+      "pending": "Under Review",
+      "inProgress": "In Progress",
+      "resolved": "Resolved"
+    },
+    "dragDropFiles": "Drag files here",
+    "orClickToSelect": "or click to select",
+    "supportedFormats": "Supported formats",
+    "maxFiles": "Maximum files",
+    "maxSize": "Maximum size",
+    "selectedFiles": "Selected files",
+    "removeFile": "Remove file",
+    "fileSizeError": "File size is too large (maximum 10MB)",
+    "fileTypeError": "File type not supported",
+    "maxFilesError": "Maximum number of files reached",
+    "download": "Download",
+    "response": "Response",
+    "responseDate": "Response date"
   }
 }

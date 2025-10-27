@@ -10,7 +10,7 @@ const handlePending = (state) => {
 
 const handleRejected = (state, action) => {
   state.loading = false;
-  state.error = action.payload || action.error?.message || "Unknown error";
+  state.error = action.payload || action.error?.message || "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى";
 };
 
 export const fetchCurrentUser = createAsyncThunk(
@@ -21,7 +21,7 @@ export const fetchCurrentUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.error || "Failed to fetch user"
+        error.response?.data?.error || "فشل في تحميل بيانات المستخدم من الخادم"
       );
     }
   }
@@ -58,7 +58,7 @@ export const loginUser = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.error || "Login failed. Please try again."
+        error.response?.data?.error || "فشل في تسجيل الدخول. تحقق من البيانات المدخلة وحاول مرة أخرى"
       );
     }
   }
@@ -72,7 +72,7 @@ export const switchUserAccount = createAsyncThunk(
 
       return result;
     } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
+      return rejectWithValue(err.response?.data || "فشل في تبديل الحساب. تأكد من صحة معرف الطالب");
     }
   }
 );
@@ -85,7 +85,12 @@ export const updateUserImage = createAsyncThunk(
       await dispatch(fetchCurrentUser());
       return data;
     } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
+      // Update user image error
+      const errorMessage = err.response?.data?.message || 
+                          err.response?.data?.error || 
+                          err.message || 
+                          "فشل في تحديث صورة المستخدم. تأكد من صحة الملف";
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -98,7 +103,7 @@ export const updateUser = createAsyncThunk(
       await dispatch(fetchCurrentUser());
       return result;
     } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
+      return rejectWithValue(err.response?.data || "فشل في تحديث بيانات المستخدم. تحقق من البيانات المدخلة");
     }
   }
 );
@@ -111,7 +116,7 @@ export const registerUser = createAsyncThunk(
 
       return response.data; // هترجع بيانات المستخدم + token
     } catch (err) {
-      return rejectWithValue(err.response.data.error || "Server error");
+      return rejectWithValue(err.response.data.error || "فشل في إنشاء الحساب. تحقق من البيانات المدخلة");
     }
   }
 );
@@ -125,7 +130,7 @@ export const checkPhone = createAsyncThunk(
       return response;
     } catch (error) {
       error.response?.data?.errors[0];
-      return rejectWithValue(error.response?.data?.errors[0] || "Server error");
+      return rejectWithValue(error.response?.data?.errors[0] || "فشل في التحقق من رقم الهاتف. تأكد من صحة الرقم");
     }
   }
 );
@@ -137,7 +142,7 @@ export const verifyOtp = createAsyncThunk(
       const response = await authRepository.verifyOtp(data);
       return response;
     } catch (error) {
-      return rejectWithValue(error.response.data.error || "Server error");
+      return rejectWithValue(error.response.data.error || "فشل في التحقق من رمز OTP. تأكد من صحة الرمز المدخل");
     }
   }
 );
@@ -149,8 +154,7 @@ export const sendOtpResetPassword = createAsyncThunk(
       const response = await authRepository.sendOtpResetPassword(credentials);
       return response;
     } catch (error) {
-      console.log(error);
-      return rejectWithValue(error.response.data.error || "Server error");
+      return rejectWithValue(error.response.data.error || "فشل في إرسال رمز إعادة تعيين كلمة المرور");
     }
   }
 );
@@ -161,8 +165,7 @@ export const verifyOtpResetPassword = createAsyncThunk(
       const response = await authRepository.verifyOtpResetPassword(credentials);
       return response;
     } catch (error) {
-      console.log(error);
-      return rejectWithValue(error.response.data.error || "Server error");
+      return rejectWithValue(error.response.data.error || "فشل في التحقق من رمز إعادة تعيين كلمة المرور");
     }
   }
 );
@@ -174,8 +177,7 @@ export const resetPassword = createAsyncThunk(
       const response = await authRepository.resetPassword(credentials);
       return response;
     } catch (error) {
-      console.log(error);
-      return rejectWithValue(error.response.data.error || "Server error");
+      return rejectWithValue(error.response.data.error || "فشل في إعادة تعيين كلمة المرور. تأكد من صحة البيانات");
     }
   }
 );
@@ -195,8 +197,7 @@ export const disActiveAccount = createAsyncThunk(
       const result = await authRepository.disActiveAccount();
       return result;
     } catch (error) {
-      console.log(error);
-      return rejectWithValue(error.response.data.error || "Server error");
+      return rejectWithValue(error.response.data.error || "فشل في إلغاء تفعيل الحساب. تأكد من صحة البيانات");
     }
   }
 );
@@ -275,9 +276,9 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload; // هنا بيرجع user من الـ API
       })
-      .addCase(fetchCurrentUser.rejected, (state, action) => {
+      .addCase(fetchCurrentUser.rejected, (state) => {
         state.loading = false;
-        state.error = action.payload || action.error.message;
+        // state.error = action.payload || action.error.message;
         state.user = null;
         state.token = null; // ممكن تمسح التوكن لو API رجع unauthorized
         localStorage.removeItem("token");
@@ -301,17 +302,20 @@ const authSlice = createSlice({
     // profile-related updates owned by auth (keep user in sync)
     builder
       .addCase(updateUserImage.pending, handlePending)
-      .addCase(updateUserImage.fulfilled, (state, action) => {
+      .addCase(updateUserImage.fulfilled, (state, _action) => {
         state.loading = false;
-        console.log("Updated user image:", action.payload);
       })
-      .addCase(updateUserImage.rejected, handleRejected)
+      .addCase(updateUserImage.rejected, (state, _action) => {
+        state.loading = false;
+      })
 
       .addCase(updateUser.pending, handlePending)
       .addCase(updateUser.fulfilled, (state) => {
         state.loading = false;
       })
-      .addCase(updateUser.rejected, handleRejected);
+      .addCase(updateUser.rejected, (state, _action) => {
+        state.loading = false;
+      });
     // send OTP reset password
     builder
       .addCase(sendOtpResetPassword.pending, handlePending)
