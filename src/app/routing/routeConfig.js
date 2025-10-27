@@ -12,8 +12,16 @@ import GeneralError from "@/components/GeneralError";
 const safeLazyImport = (importFn) => {
   return lazy(async () => {
     // Ensure React is loaded and initialized
-    await import("react");
+    const ReactModule = await import("react");
     await import("react-dom/client");
+    
+    // CRITICAL: Ensure React.Activity is set before react-konva loads
+    // This fixes "Cannot set properties of undefined (setting 'Activity')" error
+    if (!ReactModule.default.Activity) {
+      ReactModule.default.Activity = {
+        __polyfill: true
+      };
+    }
     
     try {
       const module = await importFn();

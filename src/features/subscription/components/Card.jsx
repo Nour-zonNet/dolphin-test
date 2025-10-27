@@ -204,13 +204,84 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
         message: "هل أنت متأكد من رغبتك في تجديد الاشتراك؟",
         confirmText: "تأكيد الدفع",
         type: "primary",
+        showPaymentMethods: true,
       },
-      async () => {
+      async (data) => {
         try {
+          const selectedPaymentMethod = data?.paymentMethod || 'myfatoorah';
+          
           // Get package price information
           const packageData = allPackages?.find(pkg => pkg.id === item.package_id);
           const packagePrice = packageData?.finalPrice || packageData?.originalPrice || 0;
           
+          // Handle wallet payment
+          if (selectedPaymentMethod === 'wallet') {
+            try {
+              const walletResult = await rechargePackagesFromWallet([item.package_id]);
+              
+              const message = walletResult.message || walletResult.data?.message || '';
+              const success = walletResult.success !== undefined ? walletResult.success : (walletResult.data?.success !== undefined ? walletResult.data.success : true);
+              
+              if (success === false) {
+                openStatusModal("ERROR", {
+                  title: "فشل في الدفع",
+                  message: message || "فشل في الدفع من المحفظة. يرجى المحاولة مرة أخرى.",
+                });
+                return;
+              }
+              
+              const paymentTransactionData = {
+                id: walletResult.data?.transaction_id || walletResult.transaction_id || 'wallet_payment_' + Date.now(),
+                amount: walletResult.data?.amount || walletResult.amount || 0,
+                currency: 'SAR',
+                status: success ? 'completed' : 'failed',
+                type: 'wallet_payment',
+                packageIds: [item.package_id],
+                packageId: item.package_id,
+                subscriptionId: item.id,
+                paymentMethod: selectedPaymentMethod,
+                error: success ? null : message,
+                createdAt: new Date().toISOString(),
+              };
+              
+              sessionStorage.setItem('currentTransaction', JSON.stringify(paymentTransactionData));
+              
+              openStatusModal("SUCCESS", {
+                title: "تم الدفع بنجاح",
+                message: message || "تم تفعيل الباقة من المحفظة بنجاح.",
+                onClose: () => {
+                  fetchSubscriptions();
+                },
+              });
+              
+              return;
+              
+            } catch (walletError) {
+              
+              const getWalletErrorMessage = (err) => {
+                if (!err) return "حدث خطأ أثناء الدفع من المحفظة. حاول مرة أخرى.";
+                if (typeof err === "string") return err;
+                if (err.response?.data) {
+                  const errorData = err.response.data;
+                  if (errorData.error && typeof errorData.error === 'string') return errorData.error;
+                  if (errorData.message && typeof errorData.message === 'string') return errorData.message;
+                  if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+                    return errorData.errors[0];
+                  }
+                }
+                if (err.message) return err.message;
+                return "حدث خطأ أثناء الدفع من المحفظة. حاول مرة أخرى.";
+              };
+              
+              openStatusModal("ERROR", {
+                title: "فشل في الدفع من المحفظة",
+                message: getWalletErrorMessage(walletError),
+              });
+              return;
+            }
+          }
+          
+          // Handle MyFatoorah payment
           const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
           
           if (result.success && result.data?.url) {
@@ -245,15 +316,12 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
             
             // Redirect to MyFatoorah payment page
             try {
-              // Try opening in new tab first
               const newWindow = window.open(result.data.url, '_blank');
               
-              // If popup was blocked, redirect in same window
               if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
                 window.location.href = result.data.url;
               }
             } catch (error) {
-              // Fallback: redirect in same window
               window.location.href = result.data.url;
             }
           } else {

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import "@/utils/react-konva-patch"; // CRITICAL: Must be imported before react-konva
 import { Stage, Layer, Line, Text, Rect, Circle, Arrow, Image as KonvaImage } from "react-konva";
 
 const Canvas = ({

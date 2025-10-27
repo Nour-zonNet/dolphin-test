@@ -188,22 +188,22 @@ const PerformanceChartModal = ({ subject, period, onClose }) => {
     {/* Separator */}
     <div className="border-t border-dashed border-gray-300 mb-4"></div>
 
-      {/* Period Selector */}
-      <div className="mb-6">
-        <div className="relative">
-          <select
-            value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-orangedeep focus:border-transparent text-center"
-          >
-            <option value="month">شهري</option>
-            <option value="quarter">فصلي</option>
-          </select>
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <ChevronDown className="w-4 h-4 text-navyteal" />
-        </div>
+    {/* Period Selector */}
+    <div className="mb-6">
+      <div className="relative">
+        <select
+          value={selectedPeriod}
+          onChange={(e) => setSelectedPeriod(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-orangedeep focus:border-transparent text-center"
+        >
+          <option value="month">شهري</option>
+          <option value="quarter">فصلي</option>
+        </select>
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <ChevronDown className="w-4 h-4 text-navyteal" />
         </div>
       </div>
+    </div>
 
       {/* Chart */}
       <div className="h-80">
