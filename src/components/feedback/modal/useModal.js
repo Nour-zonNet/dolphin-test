@@ -268,6 +268,7 @@ export const useModal = () => {
     }
   };
 
+  
   return {
     openBuyPackageModal,
     openDetailsModal,

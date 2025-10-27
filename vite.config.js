@@ -246,7 +246,7 @@ export default defineConfig({
     treeshake: true,
     // Optimize for production
     cssCodeSplit: true,
-    sourcemap: false,
+    sourcemap: true,
     // CSS optimization
     css: {
       devSourcemap: false,
