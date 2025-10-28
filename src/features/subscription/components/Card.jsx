@@ -21,6 +21,8 @@ import {
 } from "../../../utils/dateHelpers";
 import { Calender, SandGlass } from "../../../utils/icons";
 import { rechargePackagesFromWallet } from "@/services/api";
+import { initiateEmbeddedPayment, executeEmbeddedPayment } from "../services/paymentEmbedded";
+import EmbeddedPaymentModal from "@/components/feedback/modal/modals/EmbeddedPaymentModal";
 
 const Card = React.memo(({ item, isOpen, onToggle }) => {
   const [contentHeight, setContentHeight] = useState("0px");
@@ -29,6 +31,14 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
   const { cancelSubscription, reactivateSubscription: _reactivateSubscription, createNewSubscriptionPayment, fetchSubscriptions } = useSubscriptions();
   const { all: allPackages } = usePackages();
   useGroups(item.package_id);
+
+  // Embedded payment modal state
+  const [embeddedPaymentModal, setEmbeddedPaymentModal] = useState({
+    open: false,
+    paymentUrl: null,
+    invoiceId: null,
+    packageName: item.package_name,
+  });
 
   const mappedItem = useMemo(
     () => ({
@@ -148,6 +158,103 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
     // Refresh subscriptions after payment completion
     fetchSubscriptions();
   }, [fetchSubscriptions]);
+
+  // Handle embedded payment completion
+  const handleEmbeddedPaymentComplete = useCallback(({ success, invoiceId, data, cancelled }) => {
+    setEmbeddedPaymentModal(prev => ({ ...prev, open: false }));
+    
+    if (cancelled) {
+      return; // User cancelled, no action needed
+    }
+    
+    if (success) {
+      openStatusModal("SUCCESS", {
+        title: "تم الدفع بنجاح",
+        message: "تم تفعيل الباقة بنجاح.",
+        onClose: () => {
+          fetchSubscriptions();
+        },
+      });
+    } else {
+      openStatusModal("ERROR", {
+        title: "فشل في الدفع",
+        message: "فشل في إتمام عملية الدفع. يرجى المحاولة مرة أخرى.",
+      });
+    }
+  }, [openStatusModal, fetchSubscriptions]);
+
+  // Handle embedded payment initiation
+  const handleEmbeddedPayment = useCallback(async (packageIds, paymentType = 'renewal') => {
+    try {
+      // Step 1: Initiate payment session
+      const initiateResult = await initiateEmbeddedPayment(packageIds);
+      
+      if (!initiateResult.success || !initiateResult.data?.session_id) {
+        throw new Error(initiateResult.message || "فشل في بدء جلسة الدفع");
+      }
+
+      const { session_id, amount, currency } = initiateResult.data;
+
+      // Step 2: Execute payment (get payment URL)
+      const executeResult = await executeEmbeddedPayment({
+        packages: packageIds,
+        SessionId: session_id,
+        PaymentMethodId: 1, // Default payment method, can be made configurable
+      });
+
+      if (!executeResult.success || !executeResult.data?.url) {
+        throw new Error(executeResult.message || "فشل في إنشاء رابط الدفع");
+      }
+
+      const { url, invoice_id } = executeResult.data;
+
+      // Store transaction data
+      const transactionData = {
+        id: invoice_id || `${paymentType}_${Date.now()}`,
+        amount: amount,
+        currency: currency || 'SAR',
+        status: 'pending',
+        type: paymentType,
+        packageId: packageIds[0],
+        packageIds: packageIds,
+        subscriptionId: item.id,
+        paymentMethod: 'myfatoorah_embedded',
+        createdAt: new Date().toISOString(),
+      };
+
+      sessionStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+      localStorage.setItem('pendingTransaction', JSON.stringify(transactionData));
+
+      // Open embedded payment modal
+      setEmbeddedPaymentModal({
+        open: true,
+        paymentUrl: url,
+        invoiceId: invoice_id,
+        packageName: item.package_name,
+      });
+
+    } catch (error) {
+      const getErrorMessage = (err) => {
+        if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+        if (typeof err === "string") return err;
+        if (err.response?.data) {
+          const errorData = err.response.data;
+          if (errorData.error && typeof errorData.error === 'string') return errorData.error;
+          if (errorData.message && typeof errorData.message === 'string') return errorData.message;
+          if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+            return errorData.errors[0];
+          }
+        }
+        if (err.message) return err.message;
+        return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+      };
+
+      openStatusModal("ERROR", {
+        title: "فشل في إنشاء طلب الدفع",
+        message: getErrorMessage(error),
+      });
+    }
+  }, [item.package_name, item.id, openStatusModal]);
 
   // Listen for window focus to refresh data when user returns from payment
   useEffect(() => {
@@ -281,52 +388,8 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
             }
           }
           
-          // Handle MyFatoorah payment
-          const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
-          
-          if (result.success && result.data?.url) {
-            
-            // Store renewal transaction data for status page
-            const renewalTransactionData = {
-              id: result.data.invoice_id || 'renewal_' + Date.now(),
-              amount: result.data.amount || packagePrice,
-              currency: 'SAR',
-              status: 'pending',
-              type: 'renewal',
-              packageId: item.package_id,
-              subscriptionId: item.id,
-              packagePrice: packagePrice,
-              createdAt: new Date().toISOString(),
-            };
-            
-            sessionStorage.setItem('currentTransaction', JSON.stringify(renewalTransactionData));
-            localStorage.setItem('pendingTransaction', JSON.stringify(renewalTransactionData));
-            
-            // Store additional renewal indicator for fallback detection
-            // Clear any conflicting checkout data first
-            sessionStorage.removeItem('checkoutData');
-            localStorage.removeItem('checkoutData');
-            
-            sessionStorage.setItem('renewalData', JSON.stringify({
-              timestamp: Date.now(),
-              packageId: item.package_id,
-              subscriptionId: item.id,
-              source: 'manage-subscription'
-            }));
-            
-            // Redirect to MyFatoorah payment page
-            try {
-              const newWindow = window.open(result.data.url, '_blank');
-              
-              if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                window.location.href = result.data.url;
-              }
-            } catch (error) {
-              window.location.href = result.data.url;
-            }
-          } else {
-            throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
-          }
+          // Handle MyFatoorah embedded payment
+          await handleEmbeddedPayment([item.package_id], 'renewal');
         } catch (error) {
           const getErrorMessage = (err) => {
             if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
@@ -432,51 +495,8 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
             }
           }
           
-          // Handle MyFatoorah payment
-          const result = await createNewSubscriptionPayment([item.package_id]).unwrap();
-          
-          if (result.success && result.data?.url) {
-            
-            // Store renewal transaction data for status page
-            const newSubscriptionTransactionData = {
-              id: result.data.invoice_id || 'new_subscription_' + Date.now(),
-              amount: result.data.amount || packagePrice,
-              currency: 'SAR',
-              status: 'pending',
-              type: 'renewal',
-              packageId: item.package_id,
-              subscriptionId: item.id,
-              packagePrice: packagePrice,
-              createdAt: new Date().toISOString(),
-            };
-            
-            sessionStorage.setItem('currentTransaction', JSON.stringify(newSubscriptionTransactionData));
-            localStorage.setItem('pendingTransaction', JSON.stringify(newSubscriptionTransactionData));
-            
-            // Clear any conflicting checkout data
-            sessionStorage.removeItem('checkoutData');
-            localStorage.removeItem('checkoutData');
-            
-            sessionStorage.setItem('renewalData', JSON.stringify({
-              timestamp: Date.now(),
-              packageId: item.package_id,
-              subscriptionId: item.id,
-              source: 'manage-subscription'
-            }));
-            
-            // Redirect to MyFatoorah payment page
-            try {
-              const newWindow = window.open(result.data.url, '_blank');
-              
-              if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                window.location.href = result.data.url;
-              }
-            } catch (error) {
-              window.location.href = result.data.url;
-            }
-          } else {
-            throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
-          }
+          // Handle MyFatoorah embedded payment
+          await handleEmbeddedPayment([item.package_id], 'new_subscription');
         } catch (error) {
           const getErrorMessage = (err) => {
             if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
@@ -501,12 +521,13 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
 
   // Renew flow is currently not wired in the UI
   return (
-    <div className="relative w-full mx-auto max-w-3xl h-full">
-      <div className="relative w-full transition-transform duration-300 pr-0 h-full">
-        <div
-          style={{ borderColor: bgColor }}
-          className="relative rounded-xl border bg-foundblue w-full overflow-hidden transform p-1 pb-0 pr-0 z-10 transition-all h-full"
-        >
+    <>
+      <div className="relative w-full mx-auto max-w-3xl h-full">
+        <div className="relative w-full transition-transform duration-300 pr-0 h-full">
+          <div
+            style={{ borderColor: bgColor }}
+            className="relative rounded-xl border bg-foundblue w-full overflow-hidden transform p-1 pb-0 pr-0 z-10 transition-all h-full"
+          >
           {/* Header Desktop Layout */}
           <div
             className="flex flex-row min-h-[110px] md:min-h-0 xs:items-center gap-2 relative z-10 text-white px-3 py-4 cursor-pointer"
@@ -717,7 +738,17 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+      
+      {/* Embedded Payment Modal */}
+      <EmbeddedPaymentModal
+        open={embeddedPaymentModal.open}
+        onClose={handleEmbeddedPaymentComplete}
+        paymentUrl={embeddedPaymentModal.paymentUrl}
+        invoiceId={embeddedPaymentModal.invoiceId}
+        packageName={embeddedPaymentModal.packageName}
+      />
+    </>
   );
 });
 

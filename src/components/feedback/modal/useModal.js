@@ -191,10 +191,6 @@ export const useModal = () => {
     );
   };
 
-  const closeCurrentModal = () => {
-    dispatch(closeModal());
-  };
-
   const openCommentsModal = (subject = {}) => {
     dispatch(
       openModal({
@@ -268,7 +264,10 @@ export const useModal = () => {
     }
   };
 
-  
+  const closeCurrentModal = () => {
+    dispatch(closeModal());
+  };
+
   return {
     openBuyPackageModal,
     openDetailsModal,
@@ -281,10 +280,10 @@ export const useModal = () => {
     openAvatarModal,
     openAddBalanceModal,
     openAddCouponModal,
+    openTransactionDetailsModal,
     openCommentsModal,
     openPerformanceChartModal,
     openSessionRatingModal,
-    openTransactionDetailsModal,
     openEmailRequiredModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager

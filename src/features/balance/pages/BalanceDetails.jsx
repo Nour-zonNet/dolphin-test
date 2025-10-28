@@ -9,16 +9,6 @@ import { useTransactions } from '../hooks/useTransactions';
 import { useTransactionFilter } from '../hooks/useTransactionFilter';
 import { useSelector } from 'react-redux';
 
-/**
- * Enhanced Balance Details Page
- * 
- * Features:
- * - Clean separation of concerns
- * - Custom hooks for data management
- * - Proper error handling and loading states
- * - Reusable components
- * - Modern React patterns
- */
 const BalanceDetails = () => {
   const { user } = useProfile();
   const { currentBalance } = useSelector((state) => state.balance);
