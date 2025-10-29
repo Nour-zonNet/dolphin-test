@@ -255,6 +255,15 @@ export const useModal = () => {
     );
   };
 
+  const openGroupCompletionModal = () => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.GROUP_COMPLETION,
+        props: {},
+      })
+    );
+  };
+
   // Function to execute and remove callback from registry
   const executeCallback = (callbackId, ...args) => {
     const callback = callbackRegistry.get(callbackId);
@@ -285,6 +294,7 @@ export const useModal = () => {
     openPerformanceChartModal,
     openSessionRatingModal,
     openEmailRequiredModal,
+    openGroupCompletionModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

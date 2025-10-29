@@ -26,4 +26,6 @@ export const MODAL_TYPES = {
   TRANSACTION_DETAILS: "TRANSACTION_DETAILS",
   // Email required modal
   EMAIL_REQUIRED: "EMAIL_REQUIRED",
+  // Group completion modal
+  GROUP_COMPLETION: "GROUP_COMPLETION",
 };

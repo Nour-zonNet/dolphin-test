@@ -622,6 +622,7 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
                       group={group}
                       packageId={item.package_id}
                       subscriptionId={item.id}
+                      groupStatus={item.group_status}
                     />
                   )}
 

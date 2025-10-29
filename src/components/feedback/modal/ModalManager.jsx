@@ -20,6 +20,7 @@ import {
   EmailRequiredModal,
   CommentsModal,
   PerformanceChartModal,
+  GroupCompletionModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -276,6 +277,15 @@ const ModalManager = () => {
       case MODAL_TYPES.PERFORMANCE_CHART:
         ModalContent = (
           <PerformanceChartModal
+            {...props}
+            onClose={handleClose}
+          />
+        );
+        break;
+        
+      case MODAL_TYPES.GROUP_COMPLETION:
+        ModalContent = (
+          <GroupCompletionModal
             {...props}
             onClose={handleClose}
           />
