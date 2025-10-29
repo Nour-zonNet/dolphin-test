@@ -134,8 +134,7 @@ const EmbeddedPaymentModal = ({
           handlePaymentCallback(response);
         },
         containerId,
-        // Keep only Card to ensure card inputs render; other methods can be added later
-        paymentOptions: ["Card"],
+        paymentOptions: ["ApplePay", "GooglePay", "Card"],
         supportedNetworks: ["visa", "masterCard", "mada"],
         language: 'ar',
         settings: {
@@ -206,13 +205,38 @@ const EmbeddedPaymentModal = ({
 
   const handlePaymentCallback = (response) => {
     console.log('MyFatoorah payment callback:', response);
-    // Per docs: after customer fills data, you must ExecutePayment with SessionId
-    if (response && (response.isSuccess === true || response.success === true)) {
+    
+    // Check if payment method was selected (not completed yet)
+    if (response && response.paymentType) {
+      console.log('Payment method selected:', response.paymentType);
+      // Call execute to get payment URL for 3DS/OTP
       executePaymentWithSession(sessionData?.session_id, sessionData?.amount);
       return;
     }
-    // If user canceled
+    
+    // Check if payment was actually completed
+    if (response && response.isSuccess === true) {
+      console.log('Payment completed successfully');
+      onClose({ 
+        success: true, 
+        cancelled: false,
+        sessionId: sessionData?.session_id,
+        paymentData: response
+      });
+      return;
+    }
+    
+    // Check if payment failed
+    if (response && response.isSuccess === false) {
+      console.log('Payment failed');
+      setError(response.message || 'فشل في إتمام عملية الدفع');
+      setLoading(false);
+      return;
+    }
+    
+    // Check if user cancelled
     if (response && (response.status === 'cancelled' || response.cancelled === true)) {
+      console.log('Payment cancelled by user');
       onClose({ success: false, cancelled: true, sessionId: sessionData?.session_id });
       return;
     }
@@ -221,6 +245,8 @@ const EmbeddedPaymentModal = ({
   const executePaymentWithSession = async (sessionId, invoiceValue) => {
     try {
       setLoading(true);
+      console.log('Calling execute with:', { SessionId: sessionId, InvoiceValue: invoiceValue, packages: packageIds });
+      
       const baseURL = import.meta.env.VITE_API_URL || "https://admin.learnadolphin.com/api";
       const res = await fetch(`${baseURL}/student/embedded-payment/execute`, {
         method: 'POST',
@@ -234,12 +260,18 @@ const EmbeddedPaymentModal = ({
           packages: packageIds,
         })
       });
+      
       const data = await res.json();
+      console.log('Execute response:', data);
+      
       // API could return { data: { url } } or { Data: { PaymentURL } }
       const paymentUrl = data?.data?.url || data?.Data?.PaymentURL;
       if (!paymentUrl) {
+        console.error('No payment URL in response:', data);
         throw new Error(data?.message || 'لم يتم استلام رابط الدفع من الخادم');
       }
+      
+      console.log('Payment URL received:', paymentUrl);
       mountOtpIframe(paymentUrl);
     } catch (err) {
       console.error('ExecutePayment error:', err);
@@ -280,8 +312,6 @@ const EmbeddedPaymentModal = ({
     window.addEventListener('message', onMessage);
     setLoading(false);
   };
-
-  // Removed showPaymentFallback and showPaymentIframe - using MyFatoorah native form only
 
   const handleClose = () => {
     // Reset all state
@@ -355,8 +385,8 @@ const EmbeddedPaymentModal = ({
         {!loading && !error && sessionData?.session_id && (
           <div className="flex-1 relative">
             <div id={containerId} className="w-full h-full" />
-          </div>
-        )}
+            </div>
+          )}
 
         {/* Footer */}
         <div className="p-4 border-t bg-gray-50 text-center rounded-b-lg">
