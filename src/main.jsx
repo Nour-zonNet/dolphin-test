@@ -1,3 +1,8 @@
+// IMPORTANT: Import React first to ensure it's available globally before any other imports
+import React from "react";
+import "./utils/reactActivityPolyfill"; // Load Activity polyfill before anything else
+import "./utils/react19Compatibility";
+
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import "./i18n";
@@ -18,7 +23,6 @@ window.__WB_DISABLE_DEV_LOGS = true;
 let errorQueue = [];
 
 window.addEventListener('error', (_event) => {
-
   // Store error for display
   errorQueue.push({
     type: 'error',
@@ -26,17 +30,38 @@ window.addEventListener('error', (_event) => {
     stack: _event.error?.stack,
     timestamp: new Date().toISOString()
   });
+  
+  // Log Activity errors in detail
+  if (_event.message?.includes('Activity')) {
+    console.error('🔴 Activity Error Details:', {
+      message: _event.message,
+      source: _event.filename,
+      line: _event.lineno,
+      col: _event.colno,
+      stack: _event.error?.stack
+    });
+  }
 });
 
 window.addEventListener('unhandledrejection', (_event) => {
-
+  const errorMessage = _event.reason?.message || String(_event.reason);
+  
   // Store rejection for display
   errorQueue.push({
     type: 'rejection',
-    message: _event.reason?.message || String(_event.reason),
+    message: errorMessage,
     stack: _event.reason?.stack,
     timestamp: new Date().toISOString()
   });
+  
+  // Log Activity errors in detail
+  if (errorMessage.includes('Activity')) {
+    console.error('🔴 Activity Unhandled Rejection:', {
+      reason: _event.reason,
+      message: errorMessage,
+      stack: _event.reason?.stack
+    });
+  }
 
   // Prevent default to avoid console errors on iOS
   _event.preventDefault();

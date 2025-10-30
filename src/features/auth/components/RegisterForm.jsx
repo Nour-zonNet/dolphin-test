@@ -17,6 +17,7 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
   } = useForm({
     defaultValues: {
       name: "",
+      email: "",
       grade: "",
       password: "",
       confirmPassword: "",
@@ -76,6 +77,38 @@ const RegisterForm = ({ onSubmit, loading, error }) => {
             {errors.name && (
               <p className="text-[#BA7C28] font-semibold text-sm pr-3">
                 {errors.name.message}
+              </p>
+            )}
+          </div>
+
+          {/* البريد الإلكتروني */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[#144B6B] font-semibold text-base sm:text-base md:text-2xl">
+              {t("auth.email")}
+            </label>
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: t("auth.emailRequired"),
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: t("auth.emailInvalid"),
+                },
+              }}
+              render={({ field }) => (
+                <input
+                  type="email"
+                  placeholder={t("auth.emailPlaceholder")}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  className="focus:outline-orangedeep placeholder:text-xs placeholder:md:text-lg border placeholder:text-bordercolor rounded-full border-graycustom/50 px-4 py-2 md:py-4"
+                />
+              )}
+            />
+            {errors.email && (
+              <p className="text-[#BA7C28] font-semibold text-sm pr-3">
+                {errors.email.message}
               </p>
             )}
           </div>

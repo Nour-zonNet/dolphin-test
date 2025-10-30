@@ -312,7 +312,7 @@ const RenewalStatus = () => {
   const { all: allPackages } = usePackages();
   const [transactionData, setTransactionData] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const [packageData, setPackageData] = useState([]);
   
   // Determine transaction type and get appropriate config
@@ -553,7 +553,7 @@ const RenewalStatus = () => {
       <div className="flex flex-col items-center px-4 py-8 gap-6 mt-14 md:mt-20 lg:mt-8">
        <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-20 w-full max-w-6xl mx-auto">
          <div className="flex-shrink-0">
-           <img src={data.image} alt={data.title} className="w-full md:w-[50%] lg:w-[300px] h-auto mx-auto w-1/2 lg:w-1/2" loading="lazy" />
+           <img src={data.image} alt={data.title} className="w-full mx-auto" loading="lazy" />
          </div>
          
          {/* Package Summary for Both Payment and Renewal Transactions */}

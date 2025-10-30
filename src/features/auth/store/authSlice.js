@@ -305,6 +305,7 @@ const authSlice = createSlice({
       .addCase(updateUserImage.fulfilled, (state, _action) => {
         state.loading = false;
       })
+
       .addCase(updateUserImage.rejected, (state, _action) => {
         state.loading = false;
       })
@@ -313,8 +314,10 @@ const authSlice = createSlice({
       .addCase(updateUser.fulfilled, (state) => {
         state.loading = false;
       })
-      .addCase(updateUser.rejected, (state, _action) => {
+      .addCase(updateUser.rejected, (state, action) => {
         state.loading = false;
+        console.log(action.payload);
+        state.error = action.payload.errors[0] || action.payload.error;
       });
     // send OTP reset password
     builder

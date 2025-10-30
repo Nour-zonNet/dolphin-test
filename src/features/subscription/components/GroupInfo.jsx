@@ -6,7 +6,7 @@ import { useSubscriptions } from "../hooks/useSubscriptions";
 import { useLessons } from "../../lessons/hooks/useLessons";
 import { usePackages } from "../../packages/hooks/usePackages";
 
-const GroupInfo = ({ group, packageId, subscriptionId }) => {
+const GroupInfo = ({ group, packageId, subscriptionId, groupStatus }) => {
   const { openChangeGroupModal, openStatusModal } = useModal();
   const { changeGroupSubscription, fetchGroupsByPackageId, groups } =
     useSubscriptions();
@@ -72,6 +72,11 @@ const GroupInfo = ({ group, packageId, subscriptionId }) => {
         <span className="text-status font-bold text-sm md:text-base break-words overflow-hidden">
           {group?.group_name || "لا توجد مجموعة"}
         </span>
+        {groupStatus === "completed" && (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-sm font-semibold bg-green-100 text-green-700 whitespace-nowrap">
+            مكتملة
+          </span>
+        )}
       </div>
       <div className="flex-shrink-0">
         <ActionButton

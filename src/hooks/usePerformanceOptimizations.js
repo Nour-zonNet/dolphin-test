@@ -4,39 +4,24 @@ import { useEffect, useCallback, useState, useRef } from 'react';
 export const usePerformanceOptimizations = () => {
   // Preload critical resources
   useEffect(() => {
-    // Preload critical fonts
-    const preloadFonts = () => {
-      const fontLinks = [
-        'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
-      ];
-      
-      fontLinks.forEach(href => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'style';
-        link.href = href;
-        link.crossOrigin = 'anonymous';
-        document.head.appendChild(link);
-      });
-    };
-
-    // Preload critical images
+    // Preload only critical images that are immediately visible
+    // Using prefetch instead of preload for resources that might not be used immediately
     const preloadImages = () => {
-      const criticalImages = [
+      // Only prefetch these images as they may not be used immediately on all pages
+      const imagesToPrefetch = [
         '/homeChild.png',
         '/dolphinLogo.png',
       ];
       
-      criticalImages.forEach(src => {
+      imagesToPrefetch.forEach(src => {
         const link = document.createElement('link');
-        link.rel = 'preload';
+        link.rel = 'prefetch';
         link.as = 'image';
         link.href = src;
         document.head.appendChild(link);
       });
     };
 
-    preloadFonts();
     preloadImages();
   }, []);
 

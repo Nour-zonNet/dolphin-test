@@ -10,6 +10,7 @@ import profileReducer from "@/features/profile/store/profileSlice";
 import classesReducer from "./classesSlice";
 import complaintsReducer from "@/features/complaints/store/complaintsSlice";
 import balanceReducer from "./balanceSlice";
+import studentReportsReducer from "./studentReportsSlice";
 
 const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ const store = configureStore({
     classes: classesReducer,
     complaints: complaintsReducer,
     balance: balanceReducer,
+    studentReports: studentReportsReducer,
   },
 });
 export default store;

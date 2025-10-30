@@ -29,7 +29,7 @@ const SchedulePage = () => {
       <ScheduleSlider />
       
       {/* Debug button for testing */}
-      <div className="fixed bottom-40 left-4 z-50">
+      {/* <div className="fixed bottom-40 left-4 z-50">
         <button
           onClick={() => {
             openSessionRatingModal(
@@ -43,7 +43,7 @@ const SchedulePage = () => {
         >
           إضافة تقييم 
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

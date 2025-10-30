@@ -191,10 +191,6 @@ export const useModal = () => {
     );
   };
 
-  const closeCurrentModal = () => {
-    dispatch(closeModal());
-  };
-
   const openCommentsModal = (subject = {}) => {
     dispatch(
       openModal({
@@ -242,6 +238,32 @@ export const useModal = () => {
     );
   };
 
+  const openEmailRequiredModal = (onNavigateToProfile) => {
+    // Store callback in registry with a unique ID
+    const callbackId = onNavigateToProfile ? Date.now().toString() : null;
+    if (onNavigateToProfile) {
+      callbackRegistry.set(callbackId, onNavigateToProfile);
+    }
+
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.EMAIL_REQUIRED,
+        props: {
+          callbackId: callbackId,
+        },
+      })
+    );
+  };
+
+  const openGroupCompletionModal = () => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.GROUP_COMPLETION,
+        props: {},
+      })
+    );
+  };
+
   // Function to execute and remove callback from registry
   const executeCallback = (callbackId, ...args) => {
     const callback = callbackRegistry.get(callbackId);
@@ -249,6 +271,10 @@ export const useModal = () => {
       callback(...args);
       callbackRegistry.delete(callbackId);
     }
+  };
+
+  const closeCurrentModal = () => {
+    dispatch(closeModal());
   };
 
   return {
@@ -263,10 +289,12 @@ export const useModal = () => {
     openAvatarModal,
     openAddBalanceModal,
     openAddCouponModal,
+    openTransactionDetailsModal,
     openCommentsModal,
     openPerformanceChartModal,
     openSessionRatingModal,
-    openTransactionDetailsModal,
+    openEmailRequiredModal,
+    openGroupCompletionModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

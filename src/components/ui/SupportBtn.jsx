@@ -1,3 +1,4 @@
+import React from "react";
 import { Headphones } from "../../utils/icons";
 
 const SupportBtn = () => {

@@ -33,12 +33,35 @@ const SubjectCard = ({ subject, period, hasScroll = false }) => {
   };
 
   const handleCommentsClick = useCallback(() => {
-    openCommentsModal(subject);
+    // Pass the actual API data including all reviews and teachers
+    openCommentsModal({
+      ...subject,
+      // Include all teachers from API
+      // teachers: subject.apiData?.teachers || [],
+      // // Include all reviews from API
+      // reviews: subject.apiData?.reviews || []
+      apiData: subject.apiData
+    });
   }, [openCommentsModal, subject]);
 
+  // const handlePerformanceClick = useCallback(() => {
+  //   openPerformanceChartModal(subject, period);
+  // }, [openPerformanceChartModal, subject, period]);
+
   const handlePerformanceClick = useCallback(() => {
-    openPerformanceChartModal(subject, period);
+    // Pass the API data to PerformanceChartModal similar to CommentsModal
+    openPerformanceChartModal({
+      ...subject,
+      apiData: subject.apiData // Make sure API data is passed
+    }, period);
   }, [openPerformanceChartModal, subject, period]);
+  
+  // Generate PDF report (mock function)
+  const handlePdfDownload = useCallback(() => {
+    // This would typically call an API to generate a PDF
+    console.log("Generating PDF report for:", subject.name);
+    // Implement actual PDF generation logic here
+  }, [subject]);
 
   return (
     <div 
@@ -59,7 +82,11 @@ const SubjectCard = ({ subject, period, hasScroll = false }) => {
             <h3 className="text-navyteal text-lg font-semibold">{subject.name}</h3>
             <div className="flex items-center gap-2 text-navyteal">
               <Teacher className="w-4 h-4 md:w-6 md:h-6" />
-              <span className="font-semibold text-sm md:text-base text-navyteal">{subject.instructor}</span>
+              <span className="font-semibold text-sm md:text-base text-navyteal">
+                {subject.instructor}
+                {subject.apiData?.teachers && subject.apiData.teachers.length > 1 && 
+                  ` +${subject.apiData.teachers.length - 1} مدرس آخر`}
+              </span>
             </div>
           </div>
         </div>
@@ -97,12 +124,14 @@ const SubjectCard = ({ subject, period, hasScroll = false }) => {
           onClick={handleCommentsClick}
           className="flex items-center gap-2 px-6 py-2 border border-orangedeep text-orangedeep rounded-full hover:bg-orangedeep hover:text-white transition-colors cursor-pointer"
         >
-          {/* <Eye /> */}
-          <span>التعليقات</span>
+          <span>التعليقات ({subject.apiData?.reviews?.length || 0})</span>
         </button>
         <div className="flex items-center gap-3">
           {/* PDF Download Button */}
-          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-[#C4D6E1] hover:bg-[#BEDCEF] transition-colors cursor-pointer">
+          <button 
+            onClick={handlePdfDownload}
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-[#C4D6E1] hover:bg-[#BEDCEF] transition-colors cursor-pointer"
+          >
             <PdfDownload className="w-5 h-5" />
           </button>
           {/* Statistics Button */}

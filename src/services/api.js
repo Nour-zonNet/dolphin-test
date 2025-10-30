@@ -17,12 +17,22 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor for debugging
+// Response interceptor for handling errors
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
+    const status = error.response?.status;
+    
+    // Handle 403 Forbidden errors
+    if (status === 403) {
+      // Store the error in localStorage to trigger 403 error screen
+      localStorage.setItem('403_error', 'true');
+      // Optionally navigate to 403 page
+      // window.location.href = '/403';
+    }
+    
     return Promise.reject(error);
   }
 );

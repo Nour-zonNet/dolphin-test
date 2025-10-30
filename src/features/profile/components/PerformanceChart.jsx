@@ -9,15 +9,45 @@ import {
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PerformanceChart = ({ percentage, rating }) => {
+const PerformanceChart = ({ percentage, rating, overallData }) => {
+  const calculatePerformanceFromData = (apiData) => {
+    if (!apiData?.subjects?.length) {
+      return { percentage: 0, rating: "لا توجد بيانات" };
+    }
+
+    // Calculate overall average from all subjects
+    const totalAverage = apiData.overall_student_average;
+    const percentage = Math.round(totalAverage * 20); // Convert 5-star to percentage
+    
+    const getRatingCategory = (rating) => {
+      if (rating >= 4.5) return "ممتاز";
+      if (rating >= 4) return "جيد جدا";
+      if (rating >= 3) return "جيد";
+      if (rating >= 2) return "مقبول";
+      return "يحتاج تحسين";
+    };
+
+    return {
+      percentage: percentage,
+      rating: getRatingCategory(totalAverage)
+    };
+  };
+
+  const performanceData = overallData 
+    ? calculatePerformanceFromData(overallData)
+    : { percentage, rating };
+
+  const finalPercentage = performanceData.percentage;
+  const finalRating = performanceData.rating;
+
   const data = {
     datasets: [
       {
-        data: [percentage, 100 - percentage],
+        data: [finalPercentage, 100 - finalPercentage],
         backgroundColor: ['#E89B32', '#E89B3244'],
         borderWidth: 0,
         cutout: '85%',
-        borderRadius: percentage > 0 ? [8, 0] : [0, 0],
+        borderRadius: finalPercentage > 0 ? [8, 0] : [0, 0],
         borderSkipped: false,
       },
     ],
@@ -42,12 +72,13 @@ const PerformanceChart = ({ percentage, rating }) => {
       "جيد جدا": { color: "bg-[#27C840]" },
       "جيد": { color: "bg-[#27C840]" },
       "مقبول": { color: "bg-orangedeep" },
-      "يحتاج تحسين": { color: "bg-[#7A8085]" }
+      "يحتاج تحسين": { color: "bg-[#7A8085]" },
+      "لا توجد بيانات": { color: "bg-gray-400" }
     };
     return configs[rating] || configs["مقبول"];
   };
 
-  const performanceConfig = getPerformanceConfig(rating);
+  const performanceConfig = getPerformanceConfig(finalRating);
 
   return (
     <div className="border border-[#E8E8E8] rounded-xl p-6">
@@ -64,13 +95,13 @@ const PerformanceChart = ({ percentage, rating }) => {
           <div className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40">
             <Doughnut data={data} options={options} />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-orangedeep text-lg font-bold">{percentage}%</span>
+              <span className="text-orangedeep text-lg font-bold">{finalPercentage}%</span>
             </div>
           </div>
           
           <div>
             <span className={`px-6 md:px-10 py-1 rounded-full text-white text-sm font-medium min-w-[80px] md:min-w-[120px] text-center ${performanceConfig.color}`}>
-              {rating}
+              {finalRating}
             </span>
           </div>
         </div>

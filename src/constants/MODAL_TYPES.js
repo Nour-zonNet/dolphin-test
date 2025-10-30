@@ -24,4 +24,8 @@ export const MODAL_TYPES = {
   PERFORMANCE_CHART: "PERFORMANCE_CHART",
   // Transaction details modal
   TRANSACTION_DETAILS: "TRANSACTION_DETAILS",
+  // Email required modal
+  EMAIL_REQUIRED: "EMAIL_REQUIRED",
+  // Group completion modal
+  GROUP_COMPLETION: "GROUP_COMPLETION",
 };

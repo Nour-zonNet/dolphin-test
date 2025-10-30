@@ -1,6 +1,114 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
+    <!-- Early Error Handler for Activity Errors -->
+    <script>
+      (function() {
+        // Track errors before React loads
+        window.__EARLY_ERRORS__ = [];
+        
+        function showErrorModal(error) {
+          // Wait for body to exist
+          function tryAppend() {
+            if (!document.body) {
+              setTimeout(tryAppend, 50);
+              return;
+            }
+            
+            // Check if already shown
+            if (document.getElementById('early-activity-error')) {
+              return;
+            }
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'early-activity-error';
+            errorDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:99999;font-family:monospace;padding:20px;';
+            
+            errorDiv.innerHTML = `
+              <div style="background:red;color:white;padding:30px;border-radius:10px;max-width:800px;max-height:90vh;overflow:auto;">
+                <h2 style="margin:0 0 15px 0;font-size:24px;">🔴 CRITICAL: Activity Error Detected</h2>
+                <p style="margin:10px 0;font-size:16px;"><strong>Message:</strong> ${error.message || error.message}</p>
+                <p style="margin:10px 0;"><strong>Source:</strong> ${error.filename || 'Unknown'}:${error.line || '?'}:${error.col || '?'}</p>
+                ${error.stack ? `
+                <details style="margin-top:15px;">
+                  <summary style="cursor:pointer;font-size:16px;font-weight:bold;">📋 Full Stack Trace</summary>
+                  <pre style="background:#000;padding:10px;overflow:auto;max-height:300px;font-size:12px;">${error.stack}</pre>
+                </details>
+                ` : ''}
+                <button onclick="document.getElementById('early-activity-error').remove()" style="margin-top:20px;padding:12px 24px;background:white;color:red;border:none;cursor:pointer;font-weight:bold;font-size:16px;">Close</button>
+              </div>
+            `;
+            document.body.appendChild(errorDiv);
+          }
+          
+          tryAppend();
+        }
+        
+        // Override console.error to catch errors before they appear
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+          const message = args[0];
+          if (typeof message === 'string' && message.includes('Activity')) {
+            console.log('🎯 Activity error caught via console.error!');
+            window.__EARLY_ERRORS__.push({
+              type: 'Activity Error (console)',
+              message: message,
+              args: args
+            });
+            
+            showErrorModal({
+              message: message,
+              filename: 'console.error',
+              line: 'N/A',
+              col: 'N/A',
+              stack: args[1] || 'No stack trace'
+            });
+          }
+          return originalConsoleError.apply(console, args);
+        };
+        
+        window.addEventListener('error', function(e) {
+          console.log('Error caught:', e.message, e.filename, e.lineno);
+          
+          if (e.message && e.message.includes('Activity')) {
+            console.log('Activity error detected!');
+            window.__EARLY_ERRORS__.push({
+              type: 'Activity Error',
+              message: e.message,
+              source: e.filename,
+              line: e.lineno,
+              col: e.colno,
+              stack: e.error?.stack
+            });
+            
+            showErrorModal({
+              message: e.message,
+              filename: e.filename,
+              line: e.lineno,
+              col: e.colno,
+              stack: e.error?.stack
+            });
+          }
+        }, true); // Use capture phase
+        
+        window.addEventListener('unhandledrejection', function(e) {
+          const errorMessage = e.reason?.message || String(e.reason);
+          if (errorMessage.includes('Activity')) {
+            window.__EARLY_ERRORS__.push({
+              type: 'Activity Rejection',
+              message: errorMessage,
+              stack: e.reason?.stack
+            });
+            
+            showErrorModal({
+              message: errorMessage,
+              filename: 'promise',
+              stack: e.reason?.stack
+            });
+          }
+        });
+      })();
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/homeChild.png" />
     <meta
@@ -8,7 +116,7 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <!-- iOS Safari specific meta tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="description" content="Learn at Dolphin - interactive classes with expert teachers." />
     <meta name="format-detection" content="telephone=no" />
@@ -64,7 +172,7 @@
         width="0"
         style="display: none; visibility: hidden"
       ></iframe
-    ></noscript>
+    >    </noscript>
     <!-- End Google Tag Manager (noscript) -->
     <script type="module" src="/src/main.jsx"></script>
   </body>

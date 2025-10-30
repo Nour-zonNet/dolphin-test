@@ -11,13 +11,14 @@ import {
   formatPackageStartDate,
   getRemainingDate,
   isPackageStarted,
+  formatArabicDate,
 } from "../../../utils/dateHelpers";
 import { SandGlass } from "@/utils/icons";
 
 const PackageCard = React.memo(
   ({ item, color, image, status, daysRemaining }) => {
     const { t } = useTranslation();
-    const { openWeeklyScheduleModal, openStatusModal } = useModal();
+    const { openWeeklyScheduleModal, openStatusModal, openGroupCompletionModal } = useModal();
     const { fetchScheduleById } = usePackages();
     const schedules = useSelector((state) => state.packages.schedules);
     const { group_id, package_name, group_name, name } = item;
@@ -27,6 +28,22 @@ const PackageCard = React.memo(
       [schedules, group_id]
     );
 
+    // Check if group start date is in the future
+    const isGroupStartDateInFuture = useMemo(() => {
+      if (!item.group_start_date) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const groupStartDate = new Date(item.group_start_date);
+      groupStartDate.setHours(0, 0, 0, 0);
+      return groupStartDate > today;
+    }, [item.group_start_date]);
+
+    // Format group start date for display
+    const formattedGroupStartDate = useMemo(() => {
+      if (!item.group_start_date) return "";
+      return formatArabicDate(item.group_start_date);
+    }, [item.group_start_date]);
+
     const handleOpenSchedule = useCallback(async () => {
       const showError = (title, message) => {
         openStatusModal("ERROR", { title, message });
@@ -34,6 +51,12 @@ const PackageCard = React.memo(
 
       if (status === "expired") {
         showError("الجدول غير متاح", "لا يمكن عرض الجدول للباقات المنتهية.");
+        return;
+      }
+
+      // Check if group status is completed
+      if (item.group_status === "completed") {
+        openGroupCompletionModal();
         return;
       }
 
@@ -57,11 +80,13 @@ const PackageCard = React.memo(
       });
     }, [
       status,
+      item.group_status,
       existingSchedule,
       group_id,
       package_name,
       openStatusModal,
       openWeeklyScheduleModal,
+      openGroupCompletionModal,
       image,
       color,
       fetchScheduleById,
@@ -130,7 +155,7 @@ const PackageCard = React.memo(
 
             {/* Schedule Button */}
             {isPackageStarted(item.package_start_date) ? (
-              <div className="flex flex-row items-center justify-between gap-4 px-4 py-5 relative z-10">
+              <div className="flex flex-col gap-2 px-4 py-5 relative z-10">
                 {status?.toLowerCase() !== "waiting" && (
                   <button
                     type="button"
@@ -142,13 +167,20 @@ const PackageCard = React.memo(
                     <span>{t("packages.previewWeeklySchedule")}</span>
                   </button>
                 )}
+                {/* Group start date text */}
+                {isGroupStartDateInFuture && (
+                  <p className="text-navyteal text-sm font-semibold text-center">
+                    {/* <Calender className="w-4 h-4" /> */}
+                    المجموعة ستبدأ: {formattedGroupStartDate}
+                  </p>
+                )}
               </div>
             ) : (
               <div className="px-4  py-5 ">
-                <span className="text-[#ba7c28]  font-semibold">
+                <span className="text-[#ba7c28] font-semibold">
                   الباقة لم تبداء بعد
                 </span>
-                <div className="flex flex-row items-center   relative z-10">
+                <div className="flex flex-row items-center relative z-10">
                   <Calender className="w-4 h-4" />
 
                   <span className="py-4 text-navyteal px-2">

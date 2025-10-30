@@ -18,6 +18,7 @@ const AccountInfo = ({ user }) => {
   // const [isUpdatingGrade, setIsUpdatingGrade] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phoneNumber || "");
+  const [email, setEmail] = useState(user?.email || "");
   const [grade, setGrade] = useState(user?.gradeName || "");
   const [gradeId, setGradeId] = useState(user?.grade || null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,6 +33,7 @@ const AccountInfo = ({ user }) => {
     try {
       await updateUser({
         name,
+        email,
         grade: gradeId,
         _method: "PATCH",
       });
@@ -54,6 +56,7 @@ const AccountInfo = ({ user }) => {
     if (user) {
       setName(user.name || "");
       setPhone(user.phoneNumber || "");
+      setEmail(user.email || "");
       setGrade(user.gradeName || "");
       setGradeId(user.grade || null);
     }
@@ -65,20 +68,17 @@ const AccountInfo = ({ user }) => {
 
   const handleSave = async () => {
     setIsSaving(true);
-
     try {
       await updateUser({
         name,
+        email,
         grade: gradeId,
         _method: "PATCH",
       });
 
       setIsSaving(false);
 
-      openStatusModal("SUCCESS", {
-        title: "تم حفظ التغييرات",
-        message: "تم حفظ بيانات الحساب بنجاح",
-      });
+
     } catch (err) {
       openStatusModal("ERROR", {
         title: "فشل في الحفظ",
@@ -135,6 +135,19 @@ const AccountInfo = ({ user }) => {
             </div>
 
             <div className="space-y-4">
+            <div className="space-y-4 w-full">
+                <div className="flex items-center gap-2">
+                  <label className="font-semibold text-lg text-navyteall lg:ms-10">
+                    البريد الإلكتروني
+                  </label>
+                </div>
+                <ProfileInputs
+                  value={email}
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="border-orangedeep border-[0.5px]"
+                />
+              </div>
               <div className="space-y-2 flex flex-col lg:flex-row lg:items-center justify-between">
                 <label className="font-semibold text-lg text-navyteal lg:ms-10">
                   الصف الدراسي الحالي

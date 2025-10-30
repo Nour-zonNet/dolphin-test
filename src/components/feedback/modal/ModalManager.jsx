@@ -17,8 +17,10 @@ import {
   // AddCouponModal,
   SessionRatingModal,
   TransactionDetailsModal,
-  // CommentsModal,
-  // PerformanceChartModal,
+  EmailRequiredModal,
+  CommentsModal,
+  PerformanceChartModal,
+  GroupCompletionModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -235,12 +237,12 @@ const ModalManager = () => {
         />
       );
       break;
-    // case MODAL_TYPES.COMMENTS:
-    //   ModalContent = <CommentsModal {...props} onClose={handleClose} />;
-    //   break;
-    // case MODAL_TYPES.PERFORMANCE_CHART:
-    //   ModalContent = <PerformanceChartModal {...props} onClose={handleClose} />;
-    //   break;
+    case MODAL_TYPES.COMMENTS:
+      ModalContent = <CommentsModal {...props} onClose={handleClose} />;
+      break;
+    case MODAL_TYPES.PERFORMANCE_CHART:
+      ModalContent = <PerformanceChartModal {...props} onClose={handleClose} />;
+      break;
     case MODAL_TYPES.TRANSACTION_DETAILS:
       ModalContent = (
         <TransactionDetailsModal
@@ -249,8 +251,49 @@ const ModalManager = () => {
         />
       );
       break;
-    default:
-      return null;
+    case MODAL_TYPES.EMAIL_REQUIRED:
+      ModalContent = (
+        <EmailRequiredModal
+          {...props}
+          onClose={handleClose}
+          onNavigateToProfile={(email) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, email);
+            }
+          }}
+        />
+      );
+      break;
+        // ADD THESE NEW CASES:
+      case MODAL_TYPES.COMMENTS:
+        ModalContent = (
+          <CommentsModal
+            {...props}
+            onClose={handleClose}
+          />
+        );
+        break;
+      
+      case MODAL_TYPES.PERFORMANCE_CHART:
+        ModalContent = (
+          <PerformanceChartModal
+            {...props}
+            onClose={handleClose}
+          />
+        );
+        break;
+        
+      case MODAL_TYPES.GROUP_COMPLETION:
+        ModalContent = (
+          <GroupCompletionModal
+            {...props}
+            onClose={handleClose}
+          />
+        );
+        break;
+        
+        default:
+          return null;
   }
 
   return (
