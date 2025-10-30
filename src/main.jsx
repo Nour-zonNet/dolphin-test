@@ -1,8 +1,5 @@
 // IMPORTANT: Import React first to ensure it's available globally before any other imports
 import React from "react";
-import "./utils/reactActivityPolyfill"; // Load Activity polyfill before anything else
-import "./utils/react19Compatibility";
-
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import "./i18n";

@@ -46,7 +46,8 @@ const studentReportsSlice = createSlice({
       .addCase(fetchStudentReports.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload.data;
-        state.filter = action.payload.data.filter;
+        // Persist the requested filter from the thunk argument, not Array.prototype.filter on data
+        state.filter = action.meta?.arg ?? state.filter;
       })
       .addCase(fetchStudentReports.rejected, (state, action) => {
         state.loading = false;
