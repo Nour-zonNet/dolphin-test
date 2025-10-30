@@ -1,105 +1,49 @@
-// export const packageColorMap = {
-//   114: {
-//     borderColor: "#2E7D32",
-//     starFill: "#2E7D32",
-//     kiteStroke: "#2E7D32",
-//   },
-//   135: {
-//     borderColor: "#9A8158",
-//     starFill: "#9A8158",
-//     kiteStroke: "#9A8158"
-//   },
-//   153: {
-//     borderColor: "#2E7D32",
-//     starFill: "#2E7D32",
-//     kiteStroke: "#2E7D32"
-//   },
-//   162: {
-//     borderColor: "#0077B6",
-//     starFill: "#0077B6",
-//     kiteStroke: "#0077B6"
-//   },
-//   113: {
-//     borderColor: "#0077B6",
-//     starFill: "#0077B6",
-//     kiteStroke: "#0077B6"
-//   },
-//   175: {
-//     borderColor: "#0077B6",
-//     starFill: "#0077B6",
-//     kiteStroke: "#0077B6"
-//   },
-//   184: {
-//     borderColor: "#0077B6",
-//     starFill: "#0077B6",
-//     kiteStroke: "#0077B6"
-//   },
-//   193: {
-//     borderColor: "#0077B6",
-//     starFill: "#0077B6",
-//     kiteStroke: "#0077B6"
-//   },
-//   196: {
-//     borderColor: "#0077B6",
-//     starFill: "#0077B6",
-//     kiteStroke: "#0077B6"
-//   },
-
-// };
-
-import quran from "@/assets/packages/quran.svg";
-import game from "@/assets/packages/game.svg";
-import english from "@/assets/packages/english.svg";
-import math from "@/assets/packages/math.svg";
-import skratch from "@/assets/packages/skratch.svg";
-import special from "@/assets/packages/special.svg";
-import science from "@/assets/packages/science.svg";
-import arabic from "@/assets/packages/arabic.svg";
+// Package styles configuration
+// Using asset paths instead of imports to avoid temporal dead zone (TDZ) errors
 
 export const packageStyles = {
   75: {
-    image: quran,
+    image: "/assets/quran-wTJyMwMt.svg",
     bgColor: "#9A8158",
   },
   121: {
-    image: quran,
+    image: "/assets/quran-wTJyMwMt.svg",
     bgColor: "#9A8158",
   },
   114: {
-    image: game,
+    image: "/assets/game-B3LLq5k1.svg",
     bgColor: "#D8D8EB",
   },
   135: {
-    image: math,
+    image: "/assets/math-BzO7Tf9l.svg",
     bgColor: "#DFBE37",
   },
   153: {
-    image: english,
+    image: "/assets/english-DP87fMQ_.svg",
     bgColor: "#8441BF",
   },
   162: {
-    image: quran,
+    image: "/assets/quran-wTJyMwMt.svg",
     bgColor: "#2E7D32",
   },
   113: {
-    image: skratch,
+    image: "/assets/skratch-NIAsUvij.svg",
     bgColor: "#D47C7C",
   },
   175: {
-    image: english,
+    image: "/assets/english-DP87fMQ_.svg",
     bgColor: "#BCA7F5",
   },
   184: {
-    image: special,
+    image: "/assets/special-DWCVuv92.svg",
     bgColor: "#CD6036",
   },
   193: {
-    image: science,
+    image: "/assets/science-D5Rt_R7k.svg",
     bgColor: "#FF6F00",
   },
   196: {
-    image: arabic,
+    image: "/assets/arabic-vXBP_uQW.svg",
     bgColor: "#C51162",
   },
 };
-

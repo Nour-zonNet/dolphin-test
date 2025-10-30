@@ -7,125 +7,98 @@ import NotFound404 from "@/components/NotFound404";
 import MaintenanceScreen from "@/components/MaintenanceScreen";
 import GeneralError from "@/components/GeneralError";
 
-// Wrapper to ensure React is initialized before loading lazy components
-// This fixes the "Cannot set properties of undefined (setting 'Children')" error
-const safeLazyImport = (importFn) => {
+// Simple error boundary for lazy components
+const withLazyErrorBoundary = (importFn, fallback = null) => {
   return lazy(async () => {
-    // Ensure React is loaded and initialized
-    const ReactModule = await import("react");
-    await import("react-dom/client");
-    
-    // CRITICAL: Ensure React.Activity is set before react-konva loads
-    // This fixes "Cannot set properties of undefined (setting 'Activity')" error
-    if (!ReactModule.default.Activity) {
-      ReactModule.default.Activity = {
-        __polyfill: true
-      };
-    }
-    
     try {
-      const module = await importFn();
-      return module;
+      return await importFn();
     } catch (error) {
-      console.error("❌ Lazy import failed:", error);
-      // Return a fallback component using React.createElement
-      return { 
-        default: () => React.createElement(
-          'div',
-          { style: { padding: '20px', textAlign: 'center' } },
-          React.createElement('p', null, 'Component failed to load. Please refresh the page.')
-        )
+      console.error("Lazy import failed:", error);
+      return {
+        default:
+          fallback ||
+          (() =>
+            React.createElement(
+              'div',
+              { style: { padding: '20px', textAlign: 'center' } },
+              React.createElement('p', null, 'Component failed to load. Please refresh the page.')
+            )),
       };
     }
   });
 };
 
 // Lazy load all heavy components for better performance
+const DataPlanSelector = lazy(() => import("../../features/packages/pages/PackagesSelector"));
+const Checkout = lazy(() => import("../../features/packages/pages/Checkout"));
+const LoginSiblings = lazy(() => import("../../features/auth/pages/LoginSiblings"));
+const AddSiblingsPage = lazy(() => import("../../features/auth/pages/AddSibilingPage/AddSiblingsPage"));
+// const Board = lazy(() => import("../../features/Board/Board"));
+const PDFViewerPage = lazy(() => import("../../features/PDFViewer/PDFViewerPage"));
+const PrivacyPolicyPage = lazy(() => import("../../features/PrivacyPolicy/PrivacyPolicyPage"));
+const SessionPage = lazy(() => import("../../features/lessons/pages/SessionPage"));
+const GlobalSessionPage = lazy(() => import("../../features/lessons/pages/GlobalSession"));
+const WeeklySchedule = lazy(() => import("../../features/lessons/pages/WeeklySchedule"));
+const TeacherProfile = lazy(() => import("../../features/teacher/pages/profile"));
+const CommunityPage = lazy(() => import("@/features/community/CommunityPage"));
 
-const DataPlanSelector = safeLazyImport(() => import("../../features/packages/pages/PackagesSelector"));
-const Checkout = safeLazyImport(() => import("../../features/packages/pages/Checkout"));
-const LoginSiblings = safeLazyImport(() => import("../../features/auth/pages/LoginSiblings"));
-const AddSiblingsPage = safeLazyImport(() => import("../../features/auth/pages/AddSibilingPage/AddSiblingsPage"));
-const Board = safeLazyImport(() => import("../../features/Board/Board"));
-const PDFViewerPage = safeLazyImport(() => import("../../features/PDFViewer/PDFViewerPage"));
-const PrivacyPolicyPage = safeLazyImport(() => import("../../features/PrivacyPolicy/PrivacyPolicyPage"));
-const SessionPage = safeLazyImport(() => import("../../features/lessons/pages/SessionPage"));
-const GlobalSessionPage = safeLazyImport(() => import("../../features/lessons/pages/GlobalSession"));
-const WeeklySchedule = safeLazyImport(() => import("../../features/lessons/pages/WeeklySchedule"));
-const TeacherProfile = safeLazyImport(() => import("../../features/teacher/pages/profile"));
-const CommunityPage = safeLazyImport(() => import("@/features/community/CommunityPage"));
-
-const HomePage = safeLazyImport(() => import("@/features/home"));
-const SchedulePage = safeLazyImport(() => import("@/features/lessons"));
-const Packages = safeLazyImport(() => import("@/features/packages"));
-const LessonContentPage = safeLazyImport(() =>
-  import("@/features/lessons/pages/LessonContentPage")
-);
-const ManageSubscription = safeLazyImport(() => import("@/features/subscription"));
-const PackagesContent = safeLazyImport(() =>
-  import("@/features/packages/pages/PackagesContent")
-);
-const LessonExercise = safeLazyImport(() =>
-  import("@/features/lessons/pages/LessonExercise")
-);
-const ShowLessons = safeLazyImport(() => import("@/features/packages/pages/ShowLessons"));
+const HomePage = lazy(() => import("@/features/home"));
+const SchedulePage = lazy(() => import("@/features/lessons"));
+const Packages = lazy(() => import("@/features/packages"));
+const LessonContentPage = lazy(() => import("@/features/lessons/pages/LessonContentPage"));
+const ManageSubscription = lazy(() => import("@/features/subscription"));
+const PackagesContent = lazy(() => import("@/features/packages/pages/PackagesContent"));
+const LessonExercise = lazy(() => import("@/features/lessons/pages/LessonExercise"));
+const ShowLessons = lazy(() => import("@/features/packages/pages/ShowLessons"));
 
 // Auth Pages
-const LoginPage = safeLazyImport(() =>
+const LoginPage = lazy(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.LoginPage,
   }))
 );
-const PhonePage = safeLazyImport(() =>
+const PhonePage = lazy(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.PhonePage,
   }))
 );
-const OtpPage = safeLazyImport(() =>
+const OtpPage = lazy(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.OtpPage,
   }))
 );
-const RegisterPage = safeLazyImport(() =>
+const RegisterPage = lazy(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.RegisterPage,
   }))
 );
-const PasswordPage = safeLazyImport(() =>
+const PasswordPage = lazy(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.PasswordPage,
   }))
 );
-const ForgotPasswordOtpPage = safeLazyImport(() =>
+const ForgotPasswordOtpPage = lazy(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.ForgotPasswordOtpPage,
   }))
 );
-const ForgotPasswordResetPage = safeLazyImport(() =>
+const ForgotPasswordResetPage = lazy(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.ForgotPasswordResetPage,
   }))
 );
-const ForgotPasswordPage = safeLazyImport(() =>
+const ForgotPasswordPage = lazy(() =>
   import("@/features/auth/pages").then((module) => ({
     default: module.ForgotPasswordPage,
   }))
 );
-const ProfilePage = safeLazyImport(() => import("@/features/profile/pages/ProfilePage"));
-const Reports = safeLazyImport(() => import("@/features/profile/pages/Reports"));
-const ComplaintsPage = safeLazyImport(() =>
-  import("@/features/complaints/pages/ComplaintsPage")
-);
+const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
+const Reports = lazy(() => import("@/features/profile/pages/Reports"));
+const ComplaintsPage = lazy(() => import("@/features/complaints/pages/ComplaintsPage"));
 
-const BalanceDetails = safeLazyImport(() =>
-  import("@/features/balance/pages/BalanceDetails")
-);
-const PaymentStatus = safeLazyImport(() =>
-  import("@/features/balance/pages/PaymentStatus")
-);
-const RenewalStatus = safeLazyImport(() =>
-  import("@/features/subscription/pages/RenewalStatus")
-);
+const BalanceDetails = lazy(() => import("@/features/balance/pages/BalanceDetails"));
+const PaymentStatus = lazy(() => import("@/features/balance/pages/PaymentStatus"));
+const RenewalStatus = lazy(() => import("@/features/subscription/pages/RenewalStatus"));
 
 // Route Configuration
 export const routes = [
@@ -145,12 +118,12 @@ export const routes = [
     public: true,
     layout: false, // Auth pages don't need AppLayout
   },
-  {
-    path: "/pdf",
-    element: Board,
-    public: true,
-    layout: false, // Auth pages don't need AppLayout
-  },
+  // {
+  //   path: "/pdf",
+  //   element: Board,
+  //   public: true,
+  //   layout: false, // Auth pages don't need AppLayout
+  // },
   {
     path: "/privacy-policy",
     element: PrivacyPolicyPage,
@@ -165,7 +138,6 @@ export const routes = [
   },
   {
     path: "/auth",
-
     children: [
       {
         path: "phone",
@@ -252,7 +224,6 @@ export const routes = [
   {
     path: "/main-packages",
     element: DataPlanSelector,
-
     protected: true,
     layout: false, // Packages selector has its own layout
   },
@@ -437,3 +408,20 @@ export const requiresLayout = (path) => {
     return false;
   });
 };
+
+// Export a function to get route by path (useful for routing logic)
+export const getRouteByPath = (path) => {
+  for (const route of routes) {
+    if (route.path === path) return route;
+    
+    if (route.children) {
+      for (const child of route.children) {
+        const fullPath = `${route.path}/${child.path}`;
+        if (fullPath === path) return child;
+      }
+    }
+  }
+  return null;
+};
+
+export default routes;

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import "@/utils/reactActivityPolyfill"; // CRITICAL: Must be imported before react-konva
 import { Stage, Layer, Line, Text, Rect, Circle, Arrow, Image as KonvaImage } from "react-konva";
+import "./style.css";
 
 const Canvas = ({
   stageRef,

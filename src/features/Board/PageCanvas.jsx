@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import "@/utils/reactActivityPolyfill"; // CRITICAL: Must be imported before react-konva
 import { Stage, Layer, Line, Text, Rect, Circle, Arrow, Image as KonvaImage } from "react-konva";
 import { useCanvasDrawing } from "./hooks";
 import TextInputOverlay from "./TextInputOverlay";
@@ -312,5 +311,4 @@ const PageCanvas = ({
 };
 
 export default PageCanvas;
-
 

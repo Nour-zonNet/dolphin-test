@@ -1,25 +1,15 @@
 /* eslint-disable no-undef */
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import svgr from "vite-plugin-svgr";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 
-
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react({
-      // Enable React optimizations
-      fastRefresh: true,
-    }),
+    react(),
     tailwindcss(),
-    svgr({
-      svgrOptions: {
-        icon: true,
-      },
-    }),
     VitePWA({
       registerType: "autoUpdate",
       devOptions: { 
@@ -42,12 +32,12 @@ export default defineConfig({
           {
             src: "/homeChild.png",
             sizes: "192x192",
-            type: "image/webp"
+            type: "image/png"
           },
           {
             src: "/homeChild.png",
             sizes: "512x512",
-            type: "image/webp"
+            type: "image/png"
           }
         ]
       },
@@ -167,90 +157,71 @@ export default defineConfig({
       }
     }
   },
-  publicDir: "public",
   build: {
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Core React libraries - DO NOT split, keep in main bundle
+          // CRITICAL: Keep ALL React and Redux in ONE chunk to prevent multiple instances
           if (id.includes("node_modules")) {
-            if (id.includes("react") || id.includes("react-dom") || id.includes("react/jsx-runtime")) {
-              return undefined; // Force React into main bundle to prevent lazy loading issues
+            // ALL React/Redux code MUST be in the same chunk
+            if (
+              id.includes("react") || 
+              id.includes("react-dom") || 
+              id.includes("react/jsx-runtime") ||
+              id.includes("react-redux") ||
+              id.includes("@reduxjs") ||
+              id.includes("redux")
+            ) {
+              return "vendor"; // Put all in vendor
             }
-            // Don't split Konva/canvas libraries - keep them in vendor
-            if (id.includes("konva") || id.includes("react-konva")) {
-              return undefined; // Keep in vendor to avoid initialization order issues
+
+            // Heavy PDF libraries
+            if (
+              id.includes("pdfjs-dist") || 
+              id.includes("pdf-lib") ||
+              id.includes("react-pdf")
+            ) {
+              return "pdf";
             }
-            // Heavy libraries in separate chunks
-            if (id.includes("pdfjs-dist") || id.includes("pdf-lib")) {
-              return "pdf-libs";
+
+            // Chart libraries
+            if (id.includes("chart.js") || id.includes("react-chartjs")) {
+              return "charts";
             }
-            if (id.includes("chart.js") || id.includes("react-chartjs-2")) {
-              return "chart-libs";
-            }
-            if (id.includes("html2canvas") || id.includes("jspdf")) {
-              return "export-libs";
-            }
-            if (id.includes("swiper")) {
-              return "swiper";
-            }
-            if (id.includes("i18next") || id.includes("react-i18next")) {
-              return "i18n";
-            }
-            if (id.includes("@tanstack/react-query")) {
-              return "query";
-            }
-            if (id.includes("@reduxjs") || id.includes("react-redux")) {
-              return "redux";
-            }
-            if (id.includes("axios")) {
-              return "http";
-            }
+
             // All other vendor libraries
             return "vendor";
           }
 
-          // Feature chunks with better splitting
+          // Feature chunks
           if (id.includes("/src/features/")) {
             const feature = id.split("/src/features/")[1]?.split("/")[0];
-            if (feature) {
-              // Heavy features get their own chunks
-              if (feature === "Board" || feature === "lessons") {
-                return `feature-${feature}`;
-              }
-              // Group smaller features
-              if (["auth", "profile", "subscription"].includes(feature)) {
-                return "feature-user";
-              }
-              if (["balance", "packages"].includes(feature)) {
-                return "feature-commerce";
-              }
-              return `feature-${feature}`;
-            }
+            if (feature) return `feature-${feature}`;
           }
 
-          // Component chunks - split heavy ones
-          if (id.includes("/src/components/")) {
-            if (id.includes("feedback") || id.includes("modal")) {
-              return "components-ui";
-            }
-            return "components";
-          }
+          // Component chunks
+          if (id.includes("/src/components/")) return "components";
         },
       },
     },
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 1000,
+    target: ["es2019", "safari13"],
     minify: "esbuild",
-    target: "esnext",
-    // Enable tree shaking
-    treeshake: true,
-    // Optimize for production
-    cssCodeSplit: true,
-    sourcemap: true,
-    // CSS optimization
-    css: {
-      devSourcemap: false,
+    cssTarget: "safari13",
+  },
+  optimizeDeps: {
+    include: [
+      "react", 
+      "react-dom", 
+      "react/jsx-runtime",
+      "react-redux",
+      "@reduxjs/toolkit"
+    ],
+    exclude: ["react-konva"], // Exclude react-konva to prevent pre-bundling issues
+    esbuildOptions: {
+      target: "es2019",
     },
+    force: true, // Force re-optimization
   },
   resolve: {
     alias: {
@@ -258,16 +229,10 @@ export default defineConfig({
       "@components": path.resolve(__dirname, "./src/components"),
       "@features": path.resolve(__dirname, "./src/features"),
       "@utils": path.resolve(__dirname, "./src/utils"),
-      // Polyfill for react-reconciler constants to support react-konva
-      "react-reconciler/constants.js": path.resolve(__dirname, "./src/utils/reactReconcilerPolyfill.js"),
+      // Force single React instance in production builds
+      "react": path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
     },
-  },
-  optimizeDeps: {
-    include: ["react", "react-dom", "react/jsx-runtime"],
-    exclude: ["react-konva"], // Exclude react-konva to prevent pre-bundling issues
-    esbuildOptions: {
-      jsx: 'automatic',
-      jsxDev: false,
-    },
+    dedupe: ["react", "react-dom"],
   },
 });
