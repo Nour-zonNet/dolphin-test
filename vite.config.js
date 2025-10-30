@@ -258,9 +258,6 @@ export default defineConfig({
       "@components": path.resolve(__dirname, "./src/components"),
       "@features": path.resolve(__dirname, "./src/features"),
       "@utils": path.resolve(__dirname, "./src/utils"),
-      // Ensure single React instance to prevent React 19 errors
-      "react": path.resolve(__dirname, "./node_modules/react"),
-      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
       // Polyfill for react-reconciler constants to support react-konva
       "react-reconciler/constants.js": path.resolve(__dirname, "./src/utils/reactReconcilerPolyfill.js"),
     },
