@@ -21,14 +21,12 @@ import {
 } from "../../../utils/dateHelpers";
 import { Calender, SandGlass } from "../../../utils/icons";
 import { rechargePackagesFromWallet } from "@/services/api";
-import { initiateEmbeddedPayment, executeEmbeddedPayment } from "../services/paymentEmbedded";
-import EmbeddedPaymentModal from "@/components/feedback/modal/modals/EmbeddedPaymentModal";
 
 const Card = React.memo(({ item, isOpen, onToggle }) => {
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
   const { openConfirmModal, openStatusModal } = useModal();
-  const { cancelSubscription, fetchSubscriptions } = useSubscriptions();
+  const { cancelSubscription, fetchSubscriptions, createNewSubscriptionPayment } = useSubscriptions();
   const { all: allPackages } = usePackages();
   useGroups(item.package_id);
 
@@ -153,37 +151,7 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
     fetchSubscriptions();
   }, [fetchSubscriptions]);
 
-  // New embedded payment completion (aligned with paymentFlow)
-  const handleEmbeddedPaymentComplete = useCallback((result) => {
-    setPaymentFlow({
-      showEmbedded: false,
-      sessionData: null,
-      packageIds: null,
-      packageName: item.package_name,
-      loading: false,
-    });
-
-    if (result.cancelled) {
-      return;
-    }
-    
-    if (result.success) {
-      openStatusModal("SUCCESS", {
-        title: "تم الدفع بنجاح",
-        message: "تم تفعيل الباقة بنجاح.",
-        onClose: () => {
-          fetchSubscriptions();
-        },
-      });
-    } else {
-      openStatusModal("ERROR", {
-        title: "فشل في الدفع",
-        message: result.error || "فشل في إتمام عملية الدفع. يرجى المحاولة مرة أخرى.",
-      });
-    }
-  }, [openStatusModal, fetchSubscriptions, item.package_name]);
-
-  // (legacy handleEmbeddedPayment removed in favor of paymentFlow version below)
+  // Remove embedded payment completion handler and state
 
   // Listen for window focus to refresh data when user returns from payment
   useEffect(() => {
@@ -234,6 +202,41 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
     );
   };
   // (legacy handleReactivateClick removed)
+
+  const openMyFatoorahInNewTab = async (packageIds, paymentMethod) => {
+    // Create payment and open URL in new tab similar to checkout and balance
+    const result = await createNewSubscriptionPayment(packageIds).unwrap();
+
+    if (result?.success && result.data?.url) {
+      const paymentTransactionData = {
+        id: result.data.invoice_id || 'payment_' + Date.now(),
+        amount: result.data.amount || 0,
+        currency: 'SAR',
+        status: 'pending',
+        type: 'payment',
+        packageIds: packageIds,
+        paymentMethod: paymentMethod || 'myfatoorah',
+        createdAt: new Date().toISOString(),
+      };
+
+      sessionStorage.setItem('currentTransaction', JSON.stringify(paymentTransactionData));
+      localStorage.setItem('pendingTransaction', JSON.stringify(paymentTransactionData));
+
+      try {
+        const newWindow = window.open(result.data.url, '_blank');
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+          window.location.href = result.data.url;
+        }
+      } catch (e) {
+        window.location.href = result.data.url;
+      }
+    } else {
+      openStatusModal("ERROR", {
+        title: "فشل في إنشاء طلب الدفع",
+        message: result?.message || "تعذر إنشاء رابط الدفع. حاول لاحقًا.",
+      });
+    }
+  };
 
   const handleNewSubscriptionClick = () => {
     openConfirmModal(
@@ -319,8 +322,8 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
             }
           }
           
-          // Handle MyFatoorah embedded payment
-          await handleEmbeddedPayment([item.package_id], 'new_subscription');
+          // Handle MyFatoorah: open in new tab
+          await openMyFatoorahInNewTab([item.package_id], selectedPaymentMethod);
         } catch (error) {
           const getErrorMessage = (err) => {
             if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
@@ -343,76 +346,7 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
   };
   const { image, bgColor } = packageFactoryWithTitle(item.package_name);
 
-  // Embedded payment state
-  const [paymentFlow, setPaymentFlow] = useState({
-    showEmbedded: false,
-    sessionData: null,
-    packageIds: null,
-    packageName: item.package_name,
-    loading: false,
-  });
-
-  // Handle embedded payment initiation
-  const handleEmbeddedPayment = useCallback(async (packageIds, paymentType = 'renewal') => {
-    try {
-      setPaymentFlow(prev => ({ ...prev, loading: true }));
-
-      // Step 1: Initiate payment session
-      const initiateResult = await initiateEmbeddedPayment(packageIds);
-      
-      if (!initiateResult.success || !initiateResult.data?.session_id) {
-        throw new Error(initiateResult.message || "فشل في بدء جلسة الدفع");
-      }
-
-      // Store transaction data
-      const transactionData = {
-        id: `session_${initiateResult.data.session_id}`,
-        amount: initiateResult.data.amount,
-        currency: initiateResult.data.currency,
-        status: 'pending',
-        type: paymentType,
-        packageId: item.package_id,
-        subscriptionId: item.id,
-        paymentMethod: 'myfatoorah_embedded',
-        sessionId: initiateResult.data.session_id,
-        createdAt: new Date().toISOString(),
-      };
-      
-      sessionStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-
-      // Open embedded payment directly
-      setPaymentFlow({
-        showEmbedded: true,
-        sessionData: initiateResult.data,
-        packageIds,
-        packageName: item.package_name,
-        loading: false,
-      });
-
-    } catch (error) {
-      setPaymentFlow(prev => ({ ...prev, loading: false }));
-      
-      const getErrorMessage = (err) => {
-        if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
-        if (typeof err === "string") return err;
-        if (err.response?.data) {
-          const errorData = err.response.data;
-          if (errorData.error && typeof errorData.error === 'string') return errorData.error;
-          if (errorData.message && typeof errorData.message === 'string') return errorData.message;
-          if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
-            return errorData.errors[0];
-          }
-        }
-        if (err.message) return err.message;
-        return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
-      };
-
-      openStatusModal("ERROR", {
-        title: "فشل في إنشاء طلب الدفع",
-        message: getErrorMessage(error),
-      });
-    }
-  }, [item.package_name, item.package_id, item.id, openStatusModal]);
+  // Remove embedded payment state and handlers
 
   // Wallet payment handler extracted from previous inline logic
   const handleWalletPayment = async (packageIds) => {
@@ -495,8 +429,8 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
           // Handle wallet payment (existing code)
           await handleWalletPayment([item.package_id]);
         } else {
-          // Handle MyFatoorah embedded payment
-          await handleEmbeddedPayment([item.package_id], 'renewal');
+          // MyFatoorah in new tab
+          await openMyFatoorahInNewTab([item.package_id], selectedPaymentMethod);
         }
       }
     );
@@ -723,14 +657,7 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
       </div>
       </div>
       
-      {/* Embedded Payment Modal */}
-      <EmbeddedPaymentModal
-        open={paymentFlow.showEmbedded}
-        onClose={handleEmbeddedPaymentComplete}
-        sessionData={paymentFlow.sessionData}
-        packageIds={paymentFlow.packageIds}
-        packageName={paymentFlow.packageName}
-      />
+      {/* Embedded Payment Modal removed */}
 
       {/* Unified Embedded Payment removed */}
     </>
