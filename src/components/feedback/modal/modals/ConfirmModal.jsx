@@ -73,9 +73,10 @@ const ConfirmModal = ({ onClose, onConfirm, modalData = {} }) => {
                   <div className="w-2 h-2 rounded-full bg-white"></div>
                 )}
               </div>
-              <span className="text-sm font-medium text-gray-800 flex-1">
+              {/* <span className="text-sm font-medium text-gray-800 flex-1">
                 الدفع من خلال ماي فاتورة
-              </span>
+              </span> */}
+              <span className="text-sm font-medium text-gray-800 flex-1">ادفع الآن</span>
               <img
                 className="w-12 h-6 object-contain me-2"
                 alt="MyFatoorah"

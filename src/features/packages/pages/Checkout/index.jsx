@@ -10,14 +10,26 @@ import { getFormattedDate } from "../../../../utils/dateHelpers";
 import { rechargePackagesFromWallet } from "@/services/api";
 import myFatoorahIcon from "@/assets/packages/myfatoorah.png";
 import { WalletGray } from "@/utils/icons";
+import { initiateEmbeddedPayment } from "@/features/subscription/services/paymentEmbedded";
+import EmbeddedPaymentModal from "@/components/feedback/modal/modals/EmbeddedPaymentModal";
 
 export const Checkout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [discountApplied] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('myfatoorah'); // 'myfatoorah' or 'wallet'
-  const { createTrialSubscription, createNewSubscriptionPayment } = useSubscriptions();
+  const { createTrialSubscription, fetchSubscriptions } = useSubscriptions();
   const { openStatusModal, openConfirmModal } = useModal();
+
+  // Embedded payment state
+  const [paymentFlow, setPaymentFlow] = useState({
+    showEmbedded: false,
+    sessionData: null,
+    packageIds: null,
+    packageName: null,
+    loading: false,
+  });
 
   const { selectedPackages = [] } = location.state || {};
 
@@ -243,55 +255,9 @@ export const Checkout = () => {
             }
           }
           
-          // Handle MyFatoorah payment (existing logic)
-          const result = await createNewSubscriptionPayment(packageIds).unwrap();
-          
-          if (result.success && result.data?.url) {
-            
-            // Store payment transaction data for status page
-            const paymentTransactionData = {
-              id: result.data.invoice_id || 'payment_' + Date.now(),
-              amount: result.data.amount || 0,
-              currency: 'SAR',
-              status: 'pending',
-              type: 'payment',
-              packageIds: packageIds,
-              paymentMethod: selectedPaymentMethod,
-              createdAt: new Date().toISOString(),
-            };
-            
-            sessionStorage.setItem('currentTransaction', JSON.stringify(paymentTransactionData));
-            localStorage.setItem('pendingTransaction', JSON.stringify(paymentTransactionData));
-            
-            // Store additional checkout indicator for fallback detection
-            // Clear any conflicting renewal data first
-            sessionStorage.removeItem('renewalData');
-            localStorage.removeItem('renewalData');
-            
-            const checkoutData = {
-              timestamp: Date.now(),
-              packageIds: packageIds,
-              paymentMethod: selectedPaymentMethod,
-              source: 'checkout'
-            };
-            sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
-            
-            // Redirect to MyFatoorah payment page
-            try {
-              // Try opening in new tab first
-              const newWindow = window.open(result.data.url, '_blank');
-              
-              // If popup was blocked, redirect in same window
-              if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                window.location.href = result.data.url;
-              }
-            } catch (error) {
-              // Fallback: redirect in same window
-              window.location.href = result.data.url;
-            }
-          } else {
-            throw new Error("فشل في إنشاء طلب الدفع - استجابة غير صحيحة");
-          }
+          // Handle MyFatoorah embedded payment
+          setIsProcessingPayment(false);
+          await handleEmbeddedPayment(packageIds);
         } catch (error) {
           setIsProcessingPayment(false);
           const getErrorMessage = (err) => {
@@ -312,7 +278,124 @@ export const Checkout = () => {
         }
       }
     );
-  }, [createNewSubscriptionPayment, openStatusModal, openConfirmModal, selectedPackages, selectedPaymentMethod]);
+  }, [openStatusModal, openConfirmModal, selectedPackages, selectedPaymentMethod]);
+
+  // Handle embedded payment initiation
+  const handleEmbeddedPayment = useCallback(async (packageIds) => {
+    try {
+      setPaymentFlow(prev => ({ ...prev, loading: true }));
+
+      // Step 1: Initiate payment session
+      const initiateResult = await initiateEmbeddedPayment(packageIds);
+      
+      if (!initiateResult.success || !initiateResult.data?.session_id) {
+        throw new Error(initiateResult.message || "فشل في بدء جلسة الدفع");
+      }
+
+      // Get package names for display
+      const packageNames = selectedPackages
+        .filter(pkg => packageIds.includes(pkg.id))
+        .map(pkg => pkg.name || pkg.package_name)
+        .join(', ');
+
+      // Store transaction data
+      const transactionData = {
+        id: `session_${initiateResult.data.session_id}`,
+        amount: initiateResult.data.amount,
+        currency: initiateResult.data.currency,
+        status: 'pending',
+        type: 'checkout',
+        packageIds: packageIds,
+        paymentMethod: 'myfatoorah_embedded',
+        sessionId: initiateResult.data.session_id,
+        createdAt: new Date().toISOString(),
+      };
+      
+      sessionStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+      
+      const checkoutData = {
+        timestamp: Date.now(),
+        packageIds: packageIds,
+        paymentMethod: selectedPaymentMethod,
+        source: 'checkout'
+      };
+      sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+
+      // Open embedded payment modal
+      setPaymentFlow({
+        showEmbedded: true,
+        sessionData: initiateResult.data,
+        packageIds,
+        packageName: packageNames || 'الباقات المختارة',
+        loading: false,
+      });
+
+    } catch (error) {
+      setPaymentFlow(prev => ({ ...prev, loading: false }));
+      
+      const getErrorMessage = (err) => {
+        if (!err) return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+        if (typeof err === "string") return err;
+        if (err.response?.data) {
+          const errorData = err.response.data;
+          if (errorData.error && typeof errorData.error === 'string') return errorData.error;
+          if (errorData.message && typeof errorData.message === 'string') return errorData.message;
+          if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+            return errorData.errors[0];
+          }
+        }
+        if (err.message) return err.message;
+        return "حدث خطأ أثناء إنشاء طلب الدفع. حاول مرة أخرى.";
+      };
+
+      openStatusModal(MODAL_TYPES.ERROR, {
+        title: "فشل في إنشاء طلب الدفع",
+        message: getErrorMessage(error),
+      });
+    }
+  }, [selectedPackages, selectedPaymentMethod, openStatusModal]);
+
+  // Handle embedded payment completion
+  const handleEmbeddedPaymentComplete = useCallback(async (result) => {
+    setPaymentFlow({
+      showEmbedded: false,
+      sessionData: null,
+      packageIds: null,
+      packageName: null,
+      loading: false,
+    });
+
+    if (result.cancelled) {
+      return;
+    }
+    
+    if (result.success) {
+      // Fetch subscriptions to check if packages were updated
+      await fetchSubscriptions();
+      
+      // Give backend time to process, then fetch again
+      setTimeout(async () => {
+        await fetchSubscriptions();
+      }, 2000);
+      
+      openStatusModal(MODAL_TYPES.SUCCESS, {
+        title: "تم الدفع بنجاح",
+        message: result.verified !== false 
+          ? "تم تفعيل الباقات المختارة بنجاح." 
+          : "تم إتمام عملية الدفع. جاري تحديث حالة الاشتراك...",
+        onClose: async () => {
+          // Final refresh after user closes modal
+          await fetchSubscriptions();
+          navigate('/schedule');
+        },
+      });
+    } else {
+      openStatusModal(MODAL_TYPES.ERROR, {
+        title: "فشل في الدفع",
+        message: result.error || "فشل في إتمام عملية الدفع. يرجى المحاولة مرة أخرى.",
+      });
+    }
+  }, [openStatusModal, fetchSubscriptions, navigate]);
 
   return (
     <div className="relative min-h-screen bg-white">
@@ -339,6 +422,15 @@ export const Checkout = () => {
           تم تفعيل كود الخصم بنجاح
         </div>
       )}
+
+      {/* Embedded Payment Modal */}
+      <EmbeddedPaymentModal
+        open={paymentFlow.showEmbedded}
+        onClose={handleEmbeddedPaymentComplete}
+        sessionData={paymentFlow.sessionData}
+        packageIds={paymentFlow.packageIds}
+        packageName={paymentFlow.packageName || 'الباقات المختارة'}
+      />
     </div>
   );
 };
@@ -602,12 +694,12 @@ const PaymentMethodSelector = ({ selectedPaymentMethod, onPaymentMethodChange })
             الدفع من خلال المحفظة
           </span>
         </div>
-        <WalletGray className="md:w-8 md:h-8 w-6 h-6" fill="#1B648E" />
+        <WalletGray className="xl:w-8 xl:h-8 w-6 h-6" fill="#1B648E" />
       </div>
 
       {/* MyFatoorah Payment Option */}
       <div 
-        className={`flex items-center p-4 rounded-full border-2 cursor-pointer transition-all flex-1 w-full ${
+        className={`flex items-center p-3 rounded-full border-2 cursor-pointer transition-all flex-1 w-full ${
           selectedPaymentMethod === 'myfatoorah' 
             ? 'border-orangedeep' 
             : 'border-gray-200 bg-white hover:border-gray-300'
@@ -624,9 +716,10 @@ const PaymentMethodSelector = ({ selectedPaymentMethod, onPaymentMethodChange })
           )}
         </div>
         <div className="flex items-center gap-3 flex-1">
-          <span className="text-base font-medium text-gray-800">
+          {/* <span className="text-base font-medium text-gray-800">
             الدفع من خلال ماي فاتورة
-          </span>
+          </span> */}
+          <span className="text-sm font-medium text-gray-800 flex-1">ادفع الآن</span>
         </div>
         <img
           className="w-16"
