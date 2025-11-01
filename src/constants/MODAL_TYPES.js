@@ -28,4 +28,10 @@ export const MODAL_TYPES = {
   EMAIL_REQUIRED: "EMAIL_REQUIRED",
   // Group completion modal
   GROUP_COMPLETION: "GROUP_COMPLETION",
+  // Levels modal
+  LEVELS: "LEVELS",
+  // How it works modal
+  HOW_IT_WORKS: "HOW_IT_WORKS",
+  // Withdraw modal
+  WITHDRAW: "WITHDRAW",
 };

@@ -21,6 +21,9 @@ import {
   CommentsModal,
   PerformanceChartModal,
   GroupCompletionModal,
+  LevelsModal,
+  HowItWorksModal,
+  WithdrawModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -286,6 +289,30 @@ const ModalManager = () => {
       case MODAL_TYPES.GROUP_COMPLETION:
         ModalContent = (
           <GroupCompletionModal
+            {...props}
+            onClose={handleClose}
+          />
+        );
+        break;
+      case MODAL_TYPES.LEVELS:
+        ModalContent = (
+          <LevelsModal
+            {...props}
+            onClose={handleClose}
+          />
+        );
+        break;
+      case MODAL_TYPES.HOW_IT_WORKS:
+        ModalContent = (
+          <HowItWorksModal
+            {...props}
+            onClose={handleClose}
+          />
+        );
+        break;
+      case MODAL_TYPES.WITHDRAW:
+        ModalContent = (
+          <WithdrawModal
             {...props}
             onClose={handleClose}
           />

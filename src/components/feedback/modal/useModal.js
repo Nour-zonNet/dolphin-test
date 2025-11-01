@@ -264,6 +264,33 @@ export const useModal = () => {
     );
   };
 
+  const openLevelsModal = () => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.LEVELS,
+        props: {},
+      })
+    );
+  };
+
+  const openHowItWorksModal = () => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.HOW_IT_WORKS,
+        props: {},
+      })
+    );
+  };
+
+  const openWithdrawModal = () => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.WITHDRAW,
+        props: {},
+      })
+    );
+  };
+
   // Function to execute and remove callback from registry
   const executeCallback = (callbackId, ...args) => {
     const callback = callbackRegistry.get(callbackId);
@@ -295,6 +322,9 @@ export const useModal = () => {
     openSessionRatingModal,
     openEmailRequiredModal,
     openGroupCompletionModal,
+    openLevelsModal,
+    openHowItWorksModal,
+    openWithdrawModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

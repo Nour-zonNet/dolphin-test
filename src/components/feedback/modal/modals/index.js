@@ -14,3 +14,6 @@ export { default as EmailRequiredModal } from './EmailRequiredModal';
 export { default as CommentsModal } from './CommentsModal';
 export { default as PerformanceChartModal } from './PerformanceChartModal';
 export { default as GroupCompletionModal } from './GroupCompletionModal';
+export { default as LevelsModal } from './LevelsModal';
+export { default as HowItWorksModal } from './HowItWorksModal';
+export { default as WithdrawModal } from './WithdrawModal';

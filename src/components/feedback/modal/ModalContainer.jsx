@@ -1,8 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 
 const ModalContainer = ({ children, onClose, labelledBy, describedBy }) => {
-  const contentRef = useRef(null);
-
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -29,7 +27,7 @@ const ModalContainer = ({ children, onClose, labelledBy, describedBy }) => {
       aria-describedby={describedBy}
       onClick={handleBackdropClick}
     >
-      <div ref={contentRef}>{children}</div>
+      {children}
     </div>
   );
 };
