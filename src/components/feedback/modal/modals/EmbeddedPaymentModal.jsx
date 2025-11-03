@@ -263,31 +263,49 @@ const EmbeddedPaymentModal = ({
   };
 
   const handlePaymentCallback = async (response) => {
-    console.log('MyFatoorah payment callback received:', response);
+    console.log('=== STEP 2: MYFATOORAH PAYMENT CALLBACK ===');
+    console.log('Callback response:', response);
+    console.log('SessionId_A (from /initiate):', sessionData?.session_id);
     
-    // According to the flow: callback provides { sessionId: "abc123" }
-    // Extract sessionId from callback response
-    const callbackSessionId = response?.sessionId || response?.session_id || sessionData?.session_id;
+    // STEP 2: MyFatoorah callback provides SessionId_B (different from SessionId_A)
+    // According to flow spec:
+    // - SessionId_A: from /initiate response (used to initialize form)
+    // - SessionId_B: from MyFatoorah callback after user completes form (used for /execute)
+    const callbackSessionId = response?.sessionId || response?.session_id;
     
-    if (!callbackSessionId) {
-      console.error('No sessionId in callback:', response);
+    // Important: Prefer SessionId_B from callback, only fallback to SessionId_A if absolutely necessary
+    const sessionIdB = callbackSessionId || sessionData?.session_id;
+    
+    if (!sessionIdB) {
+      console.error('ERROR: No sessionId in callback response:', response);
       setError('فشل في استلام معرف الجلسة من نظام الدفع');
       setLoading(false);
       return;
     }
     
+    // Log session ID comparison
+    if (callbackSessionId && callbackSessionId !== sessionData?.session_id) {
+      console.log('✓ SessionId_B received (different from SessionId_A):', callbackSessionId);
+    } else if (callbackSessionId === sessionData?.session_id) {
+      console.warn('⚠ SessionId_B matches SessionId_A - this may be unexpected');
+    } else {
+      console.warn('⚠ No SessionId_B in callback, using SessionId_A as fallback');
+    }
+    
     // Check if user cancelled
     if (response && (response.status === 'cancelled' || response.cancelled === true)) {
       console.log('Payment cancelled by user');
-      onClose({ success: false, cancelled: true, sessionId: callbackSessionId });
+      onClose({ success: false, cancelled: true, sessionId: sessionIdB });
       return;
     }
     
-    // Call execute endpoint with SessionId
-    console.log('Calling execute with SessionId:', callbackSessionId);
+    // STEP 3: Call execute endpoint with SessionId_B (or SessionId_A if fallback)
+    console.log('=== STEP 3: EXECUTE PAYMENT ===');
+    console.log('POST /student/embedded-payment/execute');
+    console.log('Body: { SessionId: "' + sessionIdB + '", packages: [' + packageIds.join(', ') + '] }');
     try {
       setLoading(true);
-      const executeResult = await executeEmbeddedPayment(packageIds, callbackSessionId);
+      const executeResult = await executeEmbeddedPayment(packageIds, sessionIdB);
       
       console.log('Execute payment response:', executeResult);
       
@@ -300,10 +318,13 @@ const EmbeddedPaymentModal = ({
                            executeResult?.data?.invoiceStatus ||
                            executeResult?.Data?.InvoiceStatus;
       
-      console.log('Payment execute result:', { paymentUrl, invoiceStatus, fullResult: executeResult });
+      console.log('Execute response:', { paymentUrl, invoiceStatus, fullResult: executeResult });
       
-      // If payment_url is null, check invoice_status to verify payment
-      if (!paymentUrl || paymentUrl === null || paymentUrl === 'null') {
+      // STEP 3: Handle two cases based on MyFatoorah response
+      
+      // CASE A: payment_url = NULL → Payment completed immediately (no 3D Secure)
+      if (!paymentUrl || paymentUrl === null || paymentUrl === 'null' || paymentUrl === '') {
+        console.log('=== CASE A: IMMEDIATE SUCCESS (payment_url = NULL) ===');
         // Check if invoice is actually paid
         const isPaid = invoiceStatus === 'Paid' || 
                       invoiceStatus === 'paid' || 
@@ -312,39 +333,47 @@ const EmbeddedPaymentModal = ({
                       executeResult?.success === true;
         
         if (isPaid) {
-          console.log('Payment completed successfully - invoice is paid (payment_url is null)');
+          console.log('✓ invoice_status = "Paid" → Payment completed immediately');
+          console.log('✓ Backend automatically: Verifies payment, Updates subscription');
+          console.log('✓ Showing success message to user');
           // Add small delay to allow backend to process subscription update
           setTimeout(() => {
             onClose({ 
               success: true, 
               cancelled: false,
-              sessionId: callbackSessionId,
+              sessionId: sessionIdB, // Use SessionId_B
               paymentData: executeResult,
               invoiceStatus: invoiceStatus,
-              verified: true
+              verified: true,
+              paymentType: 'immediate' // No OTP needed
             });
           }, 500);
         } else {
-          console.warn('Payment execute succeeded but invoice status is not paid:', invoiceStatus);
+          console.warn('⚠ Payment execute returned but invoice_status is not Paid:', invoiceStatus);
           // Still show success but log warning - backend should handle verification
           setTimeout(() => {
             onClose({ 
               success: true, 
               cancelled: false,
-              sessionId: callbackSessionId,
+              sessionId: sessionIdB, // Use SessionId_B
               paymentData: executeResult,
               invoiceStatus: invoiceStatus,
-              verified: false
+              verified: false,
+              paymentType: 'immediate'
             });
           }, 1000); // Longer delay to allow backend processing
         }
         return;
       }
       
-      // If payment_url is a URL, show OTP/3DS page in iframe
+      // CASE B: payment_url exists → 3D Secure/OTP required
+      // According to flow: Option 2 - Show in Iframe (instead of redirect)
       if (paymentUrl && paymentUrl.startsWith('http')) {
-        console.log('Payment URL received, showing OTP page:', paymentUrl);
-        mountOtpIframe(paymentUrl);
+        console.log('=== CASE B: 3D SECURE REQUIRED (payment_url exists) ===');
+        console.log('payment_url:', paymentUrl);
+        console.log('Option 2: Show in Iframe (chosen)');
+        // Pass sessionIdB for later use in callback
+        mountOtpIframe(paymentUrl, sessionIdB);
         return;
       }
       
@@ -364,7 +393,11 @@ const EmbeddedPaymentModal = ({
   };
 
 
-  const mountOtpIframe = (paymentUrl) => {
+  const mountOtpIframe = (paymentUrl, sessionIdB) => {
+    console.log('=== MOUNTING OTP/3D SECURE IFRAME ===');
+    console.log('Payment URL:', paymentUrl);
+    console.log('SessionId_B (for reference):', sessionIdB);
+    
     const host = document.getElementById(containerId);
     if (!host) {
       setError('تعذر عرض صفحة الدفع');
@@ -373,6 +406,7 @@ const EmbeddedPaymentModal = ({
     }
     
     // Clear embedded form and show OTP iframe
+    // According to flow: Option 2 - Show in Iframe (instead of redirect)
     host.innerHTML = '';
     
     const iframe = document.createElement('iframe');
@@ -386,6 +420,8 @@ const EmbeddedPaymentModal = ({
     iframe.sandbox = 'allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation';
     host.appendChild(iframe);
     setLoading(false);
+    
+    console.log('✓ OTP iframe mounted - waiting for user to complete 3D Secure...');
 
     // Listen for messages from MyFatoorah iframe
     const onMessage = (event) => {
@@ -394,39 +430,57 @@ const EmbeddedPaymentModal = ({
         const msg = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         // Handle MyFatoorah 3DS redirect message
         if (msg && msg.sender === 'MF-3DSecure' && msg.url) {
+          console.log('MF-3DSecure message received with redirect URL');
           window.removeEventListener('message', onMessage);
           onClose({ 
             success: true, 
             cancelled: false, 
-            sessionId: sessionData?.session_id, 
-            redirectUrl: msg.url 
+            sessionId: sessionIdB, // Use SessionId_B (not SessionId_A!)
+            redirectUrl: msg.url,
+            paymentType: '3ds_secure'
           });
         }
       } catch (_) { /* ignore parsing errors */ }
     };
     
     // Listen for iframe navigation to callback URL
+    // Flow: After user enters OTP and OTP is verified, MyFatoorah redirects to /callback?paymentId=123
     checkUrlIntervalRef.current = setInterval(() => {
       try {
         // Check if iframe navigated to callback URL
         if (iframe.contentWindow?.location?.href?.includes('/callback?paymentId=')) {
+          console.log('=== OTP VERIFIED - CALLBACK DETECTED ===');
+          
           if (checkUrlIntervalRef.current) {
             clearInterval(checkUrlIntervalRef.current);
             checkUrlIntervalRef.current = null;
           }
           window.removeEventListener('message', onMessage);
+          
           try {
             const url = new URL(iframe.contentWindow.location.href);
             const paymentId = url.searchParams.get('paymentId');
-            console.log('Callback URL detected with paymentId:', paymentId);
+            console.log('✓ MyFatoorah redirected to callback URL');
+            console.log('✓ paymentId:', paymentId);
+            console.log('✓ Backend webhook should receive payment confirmation');
+            console.log('✓ Backend should verify and update subscription');
+            
+            // Flow according to spec:
+            // 1. MyFatoorah redirects to /callback?paymentId=123
+            // 2. Backend webhook receives payment confirmation
+            // 3. Backend updates subscription
+            // 4. User sees success page
+            
             // Add delay to allow backend to process the callback and update subscription
             setTimeout(() => {
+              console.log('✓ Showing success message to user');
               onClose({ 
                 success: true, 
                 cancelled: false, 
-                sessionId: sessionData?.session_id,
+                sessionId: sessionIdB, // Use SessionId_B (not SessionId_A!)
                 paymentId: paymentId,
-                verified: true
+                verified: true,
+                paymentType: '3ds_secure'
               });
             }, 1500); // Delay to allow backend to verify and update subscription
           } catch (e) {
@@ -436,8 +490,9 @@ const EmbeddedPaymentModal = ({
               onClose({ 
                 success: true, 
                 cancelled: false, 
-                sessionId: sessionData?.session_id,
-                verified: false
+                sessionId: sessionIdB, // Use SessionId_B
+                verified: false,
+                paymentType: '3ds_secure'
               });
             }, 1500);
           }
