@@ -72,7 +72,7 @@ const ProfilePage = () => {
         <div className="space-y-8 md:space-y-16">
           {/* <WalletBalance /> */}
           <Divider />
-        <InviteStudentSection />
+          <InviteStudentSection />
           <AccountInfo user={user} />
           <Divider />
           <SubscriptionSection />

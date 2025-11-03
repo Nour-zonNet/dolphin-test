@@ -14,6 +14,8 @@ const EmbeddedPaymentModal = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [paymentInitialized, setPaymentInitialized] = useState(false);
+  const [showOtpIframe, setShowOtpIframe] = useState(false); // Track when OTP iframe should be visible
+  const [isProcessingExecute, setIsProcessingExecute] = useState(false); // Prevent duplicate execute calls
   const containerId = "myfatoorah-container"; // Fixed ID for MyFatoorah init
 
   useEffect(() => {
@@ -33,6 +35,8 @@ const EmbeddedPaymentModal = ({
       setPaymentInitialized(false);
       setLoading(false);
       setError(null);
+      setShowOtpIframe(false); // Reset OTP iframe flag
+      setIsProcessingExecute(false); // Reset execute flag
       // Cleanup interval if exists
       if (checkUrlIntervalRef.current) {
         clearInterval(checkUrlIntervalRef.current);
@@ -265,6 +269,12 @@ const EmbeddedPaymentModal = ({
   const handlePaymentCallback = async (response) => {
     console.log('MyFatoorah payment callback received:', response);
     
+    // Prevent duplicate callback handling
+    if (isProcessingExecute) {
+      console.warn('⚠️ Execute already in progress, ignoring duplicate callback');
+      return;
+    }
+    
     // According to the flow: callback provides { sessionId: "abc123" }
     // Extract sessionId from callback response
     const callbackSessionId = response?.sessionId || response?.session_id || sessionData?.session_id;
@@ -283,6 +293,9 @@ const EmbeddedPaymentModal = ({
       return;
     }
     
+    // Set flag to prevent duplicate calls
+    setIsProcessingExecute(true);
+    
     // Call execute endpoint with SessionId
     console.log('Calling execute with SessionId:', callbackSessionId);
     try {
@@ -290,29 +303,146 @@ const EmbeddedPaymentModal = ({
       const executeResult = await executeEmbeddedPayment(packageIds, callbackSessionId);
       
       console.log('Execute payment response:', executeResult);
+      console.log('Execute response structure:', {
+        hasData: !!executeResult?.data,
+        dataKeys: executeResult?.data ? Object.keys(executeResult.data) : [],
+        fullResponse: executeResult
+      });
       
-      // Extract payment_url and invoice_status from response
+      // Log full response for debugging
+      console.log('🔍 Full execute response:', JSON.stringify(executeResult, null, 2));
+      console.log('🔍 Execute result keys:', Object.keys(executeResult || {}));
+      console.log('🔍 Execute result.data keys:', Object.keys(executeResult?.data || {}));
+      
+      // Extract payment_url from various possible locations in response
+      // Try all possible locations (case-sensitive and case-insensitive)
       const paymentUrl = executeResult?.data?.payment_url || 
                          executeResult?.data?.url || 
-                         executeResult?.Data?.PaymentURL;
+                         executeResult?.data?.paymentUrl ||
+                         executeResult?.data?.PaymentURL ||
+                         executeResult?.data?.Payment_Url ||
+                         executeResult?.Data?.PaymentURL ||
+                         executeResult?.Data?.payment_url ||
+                         executeResult?.payment_url ||
+                         executeResult?.PaymentURL ||
+                         executeResult?.url ||
+                         null;
+      
+      console.log('🔍 Raw extraction attempts:', {
+        'data.payment_url': executeResult?.data?.payment_url,
+        'data.url': executeResult?.data?.url,
+        'data.paymentUrl': executeResult?.data?.paymentUrl,
+        'data.PaymentURL': executeResult?.data?.PaymentURL,
+        'Data.PaymentURL': executeResult?.Data?.PaymentURL,
+        'payment_url': executeResult?.payment_url,
+        'finalPaymentUrl': paymentUrl
+      });
       
       const invoiceStatus = executeResult?.data?.invoice_status || 
                            executeResult?.data?.invoiceStatus ||
-                           executeResult?.Data?.InvoiceStatus;
+                           executeResult?.Data?.InvoiceStatus ||
+                           executeResult?.invoice_status ||
+                           null;
       
-      console.log('Payment execute result:', { paymentUrl, invoiceStatus, fullResult: executeResult });
+      console.log('🔍 Payment execute extraction result:', { 
+        paymentUrl, 
+        invoiceStatus, 
+        paymentUrlType: typeof paymentUrl,
+        paymentUrlLength: paymentUrl?.length,
+        paymentUrlStartsWithHttp: paymentUrl?.startsWith?.('http'),
+        paymentUrlStartsWithHttps: paymentUrl?.startsWith?.('https'),
+        paymentUrlFirst50Chars: paymentUrl?.substring?.(0, 50),
+        rawPaymentUrl: executeResult?.data?.payment_url,
+        allDataKeys: Object.keys(executeResult?.data || {})
+      });
       
-      // If payment_url is null, check invoice_status to verify payment
-      if (!paymentUrl || paymentUrl === null || paymentUrl === 'null') {
+      // CRITICAL PRIORITY CHECK: If payment_url exists and is a valid URL, ALWAYS show OTP/3DS page
+      // This MUST be checked FIRST before any invoice_status check
+      // payment_url presence means 3DS/OTP verification is REQUIRED - payment is NOT complete yet
+      
+      // More robust URL validation - check for any valid URL format
+      const isValidUrl = paymentUrl && 
+          typeof paymentUrl === 'string' && 
+          paymentUrl.trim() !== '' && 
+          paymentUrl !== 'null' && 
+          paymentUrl.toLowerCase() !== 'null' &&
+          paymentUrl.toLowerCase() !== 'undefined' &&
+          (paymentUrl.toLowerCase().startsWith('http://') || 
+           paymentUrl.toLowerCase().startsWith('https://'));
+      
+      console.log('🔍 URL validation result:', {
+        hasPaymentUrl: !!paymentUrl,
+        isString: typeof paymentUrl === 'string',
+        notEmpty: paymentUrl?.trim() !== '',
+        notNullString: paymentUrl !== 'null',
+        startsWithHttp: paymentUrl?.toLowerCase().startsWith('http'),
+        isValidUrl: isValidUrl
+      });
+      
+      if (isValidUrl) {
+        console.log('✅✅✅ Payment URL detected - MUST show OTP/3DS verification page:', paymentUrl);
+        console.log('✅ Setting showOtpIframe to true and mounting iframe');
+        console.log('🚫 BLOCKING any success callbacks - OTP iframe will handle completion');
+        
+        // CRITICAL: Set flags to prevent any success modal
+        setShowOtpIframe(true); // Set flag to show OTP iframe
+        setLoading(false); // Stop loading state
+        setError(null); // Clear any errors
+        
+        // CRITICAL: Mount iframe IMMEDIATELY - payment URLs have short-lived tokens
+        // Any delay can cause "Invalid transaction" error
+        // Use requestAnimationFrame for immediate mounting without blocking
+        requestAnimationFrame(() => {
+          console.log('✅ Mounting OTP iframe IMMEDIATELY with URL (token may expire quickly):', paymentUrl.substring(0, 100) + '...');
+          mountOtpIframe(paymentUrl);
+          // Keep isProcessingExecute true until OTP completes (callback URL detected)
+          // This prevents any accidental success modal from showing
+        });
+        
+        // CRITICAL: Return early - DO NOT proceed to success check
+        // This return statement MUST execute to prevent showing success modal
+        console.log('🛑 Returning early - OTP iframe mounted, no success modal should show');
+        return; // CRITICAL: Return early to prevent showing success modal
+      } else {
+        console.error('❌❌❌ Payment URL validation FAILED - URL should have been detected!', {
+          paymentUrl,
+          type: typeof paymentUrl,
+          length: paymentUrl?.length,
+          trimmed: paymentUrl?.trim?.(),
+          firstChars: paymentUrl?.substring?.(0, 100)
+        });
+      }
+      
+      // Only proceed to success check if payment_url is DEFINITELY null/empty
+      // This handles direct payments that don't require 3DS/OTP verification
+      // CRITICAL: If we reach here, it means isValidUrl was FALSE
+      // So paymentUrl either doesn't exist, or exists but is not a valid URL
+      console.log('🔍 Reached null/empty payment_url check - isValidUrl was false');
+      console.log('🔍 paymentUrl value:', paymentUrl);
+      console.log('🔍 paymentUrl type:', typeof paymentUrl);
+      
+      if (!paymentUrl || 
+          paymentUrl === null || 
+          paymentUrl === undefined ||
+          paymentUrl === 'null' || 
+          paymentUrl === 'undefined' ||
+          (typeof paymentUrl === 'string' && paymentUrl.trim() === '')) {
+        
+        console.log('✅ No payment_url found - checking invoice_status for direct payment completion');
+        console.log('🔍 invoice_status:', invoiceStatus);
+        
         // Check if invoice is actually paid
         const isPaid = invoiceStatus === 'Paid' || 
                       invoiceStatus === 'paid' || 
                       invoiceStatus === 'PAID' ||
                       invoiceStatus === 2 || // MyFatoorah paid status code
-                      executeResult?.success === true;
+                      invoiceStatus === 'Completed' ||
+                      invoiceStatus === 'completed';
+        
+        console.log('🔍 isPaid check result:', isPaid);
         
         if (isPaid) {
-          console.log('Payment completed successfully - invoice is paid (payment_url is null)');
+          console.log('✅ Payment completed successfully - invoice is paid (payment_url is null)');
           // Add small delay to allow backend to process subscription update
           setTimeout(() => {
             onClose({ 
@@ -325,33 +455,35 @@ const EmbeddedPaymentModal = ({
             });
           }, 500);
         } else {
-          console.warn('Payment execute succeeded but invoice status is not paid:', invoiceStatus);
-          // Still show success but log warning - backend should handle verification
-          setTimeout(() => {
-            onClose({ 
-              success: true, 
-              cancelled: false,
-              sessionId: callbackSessionId,
-              paymentData: executeResult,
-              invoiceStatus: invoiceStatus,
-              verified: false
-            });
-          }, 1000); // Longer delay to allow backend processing
+          // CRITICAL: If invoice_status is null/not paid AND payment_url is null,
+          // this means payment is NOT complete - don't show success!
+          console.error('❌ Payment NOT complete - showing error:', { 
+            invoiceStatus, 
+            paymentUrl, 
+            executeResultSuccess: executeResult?.success,
+            message: 'Invoice status is not paid and no payment_url provided. Payment is incomplete.' 
+          });
+          
+          setError('لم يتم إتمام عملية الدفع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.');
+          setLoading(false);
+          setIsProcessingExecute(false); // Reset flag
         }
         return;
       }
       
-      // If payment_url is a URL, show OTP/3DS page in iframe
-      if (paymentUrl && paymentUrl.startsWith('http')) {
-        console.log('Payment URL received, showing OTP page:', paymentUrl);
-        mountOtpIframe(paymentUrl);
-        return;
-      }
-      
-      // Unexpected response format
-      console.error('Unexpected execute response format:', executeResult);
-      setError(executeResult?.message || 'رد غير متوقع من خادم الدفع');
+      // If we reach here, paymentUrl exists but is NOT a valid URL
+      // This is an error condition - we have a payment_url but it's not usable
+      console.error('❌❌❌ CRITICAL ERROR: payment_url exists but is not a valid URL!', {
+        paymentUrl,
+        type: typeof paymentUrl,
+        length: paymentUrl?.length,
+        firstChars: paymentUrl?.substring?.(0, 100),
+        executeResult
+      });
+      setError('رابط الدفع غير صالح. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.');
       setLoading(false);
+      setIsProcessingExecute(false); // Reset flag on error
+      return; // Exit early - don't show success
       
     } catch (err) {
       console.error('ExecutePayment error:', err);
@@ -360,32 +492,268 @@ const EmbeddedPaymentModal = ({
                           'فشل في تنفيذ الدفع';
       setError(errorMessage);
       setLoading(false);
+      setIsProcessingExecute(false); // Reset flag on error
     }
   };
 
 
   const mountOtpIframe = (paymentUrl) => {
-    const host = document.getElementById(containerId);
+    console.log('🔄 mountOtpIframe called with paymentUrl:', paymentUrl);
+    
+    // Try to find the container - it should be in the modal content area
+    let host = document.getElementById(containerId);
+    
+    // If container doesn't exist, find the modal content area and create it
     if (!host) {
-      setError('تعذر عرض صفحة الدفع');
+      console.warn('Container not found, attempting to locate or create it');
+      
+      // Find the modal content area (flex-1 relative div)
+      const modalContentArea = document.querySelector('.bg-white.rounded-lg .flex-1.relative') ||
+                               document.querySelector('.bg-white.rounded-lg [class*="flex-1"]') ||
+                               document.querySelector('#myfatoorah-container') ||
+                               document.querySelector('[id*="fatoorah"]');
+      
+      if (modalContentArea) {
+        console.log('Found modal content area, creating container');
+        host = document.createElement('div');
+        host.id = containerId;
+        host.className = 'w-full h-full';
+        host.style.pointerEvents = 'auto';
+        host.style.position = 'relative';
+        host.style.minHeight = '520px';
+        modalContentArea.innerHTML = ''; // Clear any existing content
+        modalContentArea.appendChild(host);
+      } else {
+        // Last resort: try to find any container or create in body (shouldn't happen)
+        console.error('Could not find modal content area');
+        const fallbackContainer = document.querySelector('.bg-white.rounded-lg');
+        if (fallbackContainer) {
+          host = document.createElement('div');
+          host.id = containerId;
+          host.className = 'w-full h-full';
+          host.style.pointerEvents = 'auto';
+          host.style.position = 'relative';
+          host.style.minHeight = '520px';
+          host.style.width = '100%';
+          host.style.height = '100%';
+          
+          // Find or create the flex-1 div inside modal
+          let contentArea = fallbackContainer.querySelector('.flex-1');
+          if (!contentArea) {
+            contentArea = document.createElement('div');
+            contentArea.className = 'flex-1 relative';
+            // Insert before footer if it exists
+            const footer = fallbackContainer.querySelector('.border-t');
+            if (footer) {
+              fallbackContainer.insertBefore(contentArea, footer);
+            } else {
+              fallbackContainer.appendChild(contentArea);
+            }
+          }
+          contentArea.innerHTML = '';
+          contentArea.appendChild(host);
+        }
+      }
+    }
+    
+    if (!host) {
+      console.error('❌ Could not find or create container:', containerId);
+      setError('تعذر عرض صفحة الدفع - لم يتم العثور على العنصر المطلوب');
       setLoading(false);
       return;
     }
     
+    console.log('✅ Container found/created, clearing and preparing for OTP iframe');
+    
+    // CRITICAL: Force container and ALL parents to be visible
+    // Use !important to override React inline styles that might hide it
+    const forceVisibility = (element) => {
+      if (!element) return;
+      element.style.setProperty('display', 'block', 'important');
+      element.style.setProperty('visibility', 'visible', 'important');
+      element.style.setProperty('opacity', '1', 'important');
+      element.style.setProperty('height', 'auto', 'important');
+      element.style.setProperty('min-height', '520px', 'important');
+      element.style.setProperty('width', '100%', 'important');
+      element.style.setProperty('position', 'relative', 'important');
+      element.style.setProperty('z-index', '1', 'important');
+    };
+    
+    // Force visibility on container
+    forceVisibility(host);
+    
+    // Force visibility on parent (flex-1 relative div)
+    if (host.parentElement) {
+      forceVisibility(host.parentElement);
+    }
+    
+    // Force visibility on grandparent (modal content area)
+    if (host.parentElement?.parentElement) {
+      forceVisibility(host.parentElement.parentElement);
+    }
+    
+    console.log('✅ Container and parents forced visible');
+    
     // Clear embedded form and show OTP iframe
+    // Clear any existing MyFatoorah widget content
     host.innerHTML = '';
+    
+    // Also clear any MyFatoorah initialization
+    try {
+      if (window.myfatoorah && typeof window.myfatoorah.destroy === 'function') {
+        window.myfatoorah.destroy();
+      }
+    } catch (e) {
+      console.warn('Could not destroy MyFatoorah widget:', e);
+    }
     
     const iframe = document.createElement('iframe');
     iframe.src = paymentUrl;
     iframe.title = 'MyFatoorah OTP';
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
-    iframe.style.minHeight = '520px';
-    iframe.style.border = '0';
+    
+    // Store iframe reference for monitoring
+    iframeRef.current = iframe;
+    
+    // Ensure iframe is fully visible with !important styles
+    iframe.style.setProperty('width', '100%', 'important');
+    iframe.style.setProperty('height', '100%', 'important');
+    iframe.style.setProperty('min-height', '520px', 'important');
+    iframe.style.setProperty('border', '0', 'important');
+    iframe.style.setProperty('display', 'block', 'important');
+    iframe.style.setProperty('visibility', 'visible', 'important');
+    iframe.style.setProperty('opacity', '1', 'important');
+    iframe.style.setProperty('position', 'relative', 'important');
+    iframe.style.setProperty('z-index', '10', 'important');
     iframe.referrerPolicy = 'no-referrer-when-downgrade';
-    iframe.sandbox = 'allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation';
+
+    // Handle iframe load errors (e.g., invalid transaction)
+    // Note: Errors from MyFatoorah's JavaScript (jQuery, etc.) may appear but are usually non-fatal
+    iframe.onerror = (error) => {
+      console.error('Error loading payment iframe:', error);
+      // Only show error if iframe actually failed to load, not just JS errors inside iframe
+      // MyFatoorah's jQuery errors are expected and usually don't prevent OTP page from working
+      setTimeout(() => {
+        // Check if iframe actually loaded (wait a bit for errors to surface)
+        if (!iframe.contentWindow) {
+          setError('حدث خطأ في تحميل صفحة التحقق. يرجى المحاولة مرة أخرى.');
+          setLoading(false);
+        }
+      }, 3000);
+    };
+    
+
+    iframe.onload = () => {
+      console.log('✅ OTP iframe onload event fired - page is loading');
+      console.log('ℹ️ Note: Any jQuery errors from MyFatoorah site.js are expected and non-fatal');
+      
+      // Check URL immediately for invalid transaction errors
+      setTimeout(() => {
+        try {
+          const iframeHref = iframe.contentWindow?.location?.href || '';
+          console.log('🔍 Checking iframe URL after load:', iframeHref.substring(0, 200));
+          
+          // CRITICAL: Check if URL shows invalid transaction error
+          if (iframeHref.toLowerCase().includes('invalid transaction') || 
+              iframeHref.toLowerCase().includes('invalidtransaction')) {
+            console.error('❌ Invalid transaction detected in iframe URL!');
+            setError('انتهت صلاحية رابط الدفع أو المعاملة غير صالحة. يرجى المحاولة مرة أخرى.');
+            setLoading(false);
+            setIsProcessingExecute(false);
+            return;
+          }
+          
+          // Try to check iframe content (may fail due to cross-origin)
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+          if (iframeDoc) {
+            const bodyText = iframeDoc.body?.innerText?.toLowerCase() || '';
+            const titleText = iframeDoc.title?.toLowerCase() || '';
+            
+            // Check for error messages
+            if (bodyText.includes('invalid transaction') || 
+                bodyText.includes('invalid') || 
+                bodyText.includes('expired') || 
+                bodyText.includes('خطأ') ||
+                titleText.includes('invalid')) {
+              console.error('❌ Error page detected in iframe content:', { bodyText: bodyText.substring(0, 100), titleText });
+              setError('انتهت صلاحية رابط الدفع أو المعاملة غير صالحة. يرجى المحاولة مرة أخرى.');
+              setLoading(false);
+              setIsProcessingExecute(false);
+            } else {
+              // Iframe loaded successfully and shows content
+              console.log('✅ OTP iframe content loaded successfully - no errors detected');
+            }
+          }
+        } catch (e) {
+          // Cross-origin - can't access iframe content, which is expected
+          // This is normal for MyFatoorah's payment pages
+          // The OTP form should still be visible and functional
+          console.log('Cannot access iframe content (cross-origin restriction) - this is expected');
+          console.log('✅ OTP page should be visible in iframe (cross-origin prevents content inspection)');
+          console.log('⚠️ Cannot verify if page shows "Invalid transaction" due to cross-origin - URL monitoring will detect it');
+        }
+      }, 1000); // Reduced from 2000ms to 1000ms for faster error detection
+    };
+    
+    // Monitor for iframe being removed/unloaded (which would cancel requests)
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.removedNodes.forEach((node) => {
+            if (node === iframe || (node.nodeType === 1 && node.querySelector && node.querySelector('iframe') === iframe)) {
+              console.error('⚠️ OTP iframe was removed from DOM! This will cancel ongoing requests.');
+            }
+          });
+        }
+      });
+    });
+    
+    // Start observing the container for iframe removal
+    if (host.parentElement) {
+      observer.observe(host.parentElement, { childList: true, subtree: true });
+    }
+    
+    // Cleanup observer when iframe is done
+    setTimeout(() => {
+      observer.disconnect();
+    }, 60000); // Disconnect after 1 minute
+    
+    console.log('📦 Appending OTP iframe to container');
     host.appendChild(iframe);
-    setLoading(false);
+    setLoading(false); // Hide loading spinner
+    setError(null); // Clear any errors to ensure container is visible
+    
+      // Verify iframe was added and is visible
+    setTimeout(() => {
+      const addedIframe = host.querySelector('iframe');
+      if (addedIframe) {
+        console.log('✅ OTP iframe successfully added to DOM');
+        console.log('Iframe src:', addedIframe.src);
+        console.log('Iframe dimensions:', {
+          width: addedIframe.offsetWidth,
+          height: addedIframe.offsetHeight
+        });
+        console.log('Iframe computed styles:', {
+          display: window.getComputedStyle(addedIframe).display,
+          visibility: window.getComputedStyle(addedIframe).visibility,
+          opacity: window.getComputedStyle(addedIframe).opacity,
+          zIndex: window.getComputedStyle(addedIframe).zIndex
+        });
+        console.log('Container computed styles:', {
+          display: window.getComputedStyle(host).display,
+          visibility: window.getComputedStyle(host).visibility,
+          opacity: window.getComputedStyle(host).opacity
+        });
+        
+        // Force visibility one more time to be sure
+        addedIframe.style.setProperty('display', 'block', 'important');
+        addedIframe.style.setProperty('visibility', 'visible', 'important');
+        host.style.setProperty('display', 'block', 'important');
+        host.style.setProperty('visibility', 'visible', 'important');
+      } else {
+        console.error('❌ OTP iframe was not added to DOM!');
+        setError('فشل في عرض صفحة التحقق. يرجى المحاولة مرة أخرى.');
+      }
+    }, 500);
 
     // Listen for messages from MyFatoorah iframe
     const onMessage = (event) => {
@@ -405,22 +773,85 @@ const EmbeddedPaymentModal = ({
       } catch (_) { /* ignore parsing errors */ }
     };
     
-    // Listen for iframe navigation to callback URL
+    // Listen for iframe navigation to callback URL or error pages
+    // Use the stored iframe reference or find it again
     checkUrlIntervalRef.current = setInterval(() => {
       try {
-        // Check if iframe navigated to callback URL
-        if (iframe.contentWindow?.location?.href?.includes('/callback?paymentId=')) {
+        // Get iframe - use ref first, then try to find it
+        const currentIframe = iframeRef.current || host.querySelector('iframe');
+        if (!currentIframe) {
+          console.warn('⚠️ Iframe not found for URL monitoring');
+          return;
+        }
+        
+        const iframeHref = currentIframe.contentWindow?.location?.href || '';
+        
+        // CRITICAL: Check for "Invalid transaction" error first
+        // This happens when the payment URL token expires (usually within seconds)
+        if (iframeHref.includes('Invalid') || 
+            iframeHref.includes('invalid') || 
+            iframeHref.includes('Invalid transaction') ||
+            iframeHref.toLowerCase().includes('invalid transaction')) {
+          console.error('❌ Invalid transaction detected in iframe URL - token likely expired:', iframeHref.substring(0, 150));
+          if (checkUrlIntervalRef.current) {
+            clearInterval(checkUrlIntervalRef.current);
+            checkUrlIntervalRef.current = null;
+          }
+          window.removeEventListener('message', onMessage);
+          setIsProcessingExecute(false);
+          setError('انتهت صلاحية رابط الدفع. الرجاء المحاولة مرة أخرى - قد يكون رابط الدفع منتهي الصلاحية.');
+          setLoading(false);
+          return;
+        }
+        
+        // Check if iframe navigated to callback URL (success)
+        // ONLY treat as success if URL contains callback AND paymentId (not cancelled)
+        if (iframeHref.includes('/callback') && iframeHref.includes('paymentId=')) {
+          // Double-check it's NOT a cancel callback
+          if (iframeHref.includes('cancel') || iframeHref.includes('cancelled') || iframeHref.includes('canceled')) {
+            console.warn('⚠️ Cancel callback detected - not treating as success');
+            if (checkUrlIntervalRef.current) {
+              clearInterval(checkUrlIntervalRef.current);
+              checkUrlIntervalRef.current = null;
+            }
+            window.removeEventListener('message', onMessage);
+            setIsProcessingExecute(false);
+            onClose({ 
+              success: false, 
+              cancelled: true,
+              sessionId: sessionData?.session_id,
+              error: 'تم إلغاء عملية الدفع'
+            });
+            return;
+          }
+          
           if (checkUrlIntervalRef.current) {
             clearInterval(checkUrlIntervalRef.current);
             checkUrlIntervalRef.current = null;
           }
           window.removeEventListener('message', onMessage);
           try {
-            const url = new URL(iframe.contentWindow.location.href);
+            const url = new URL(iframeHref);
             const paymentId = url.searchParams.get('paymentId');
-            console.log('Callback URL detected with paymentId:', paymentId);
+            const status = url.searchParams.get('status');
+            
+            // Check status parameter if present
+            if (status && (status.toLowerCase() === 'cancel' || status.toLowerCase() === 'cancelled' || status.toLowerCase() === 'failed')) {
+              console.warn('⚠️ Payment status indicates failure/cancel:', status);
+              setIsProcessingExecute(false);
+              onClose({ 
+                success: false, 
+                cancelled: status.toLowerCase().includes('cancel'),
+                sessionId: sessionData?.session_id,
+                error: `حالة الدفع: ${status}`
+              });
+              return;
+            }
+            
+            console.log('✅ Valid callback URL detected with paymentId:', paymentId);
             // Add delay to allow backend to process the callback and update subscription
             setTimeout(() => {
+              setIsProcessingExecute(false); // Reset flag on successful completion
               onClose({ 
                 success: true, 
                 cancelled: false, 
@@ -431,19 +862,57 @@ const EmbeddedPaymentModal = ({
             }, 1500); // Delay to allow backend to verify and update subscription
           } catch (e) {
             console.error('Error parsing callback URL:', e);
-            // Still close with success after delay
-            setTimeout(() => {
+            // If we can't parse the URL, don't assume success
+            console.warn('⚠️ Could not parse callback URL - treating as uncertain');
+            setIsProcessingExecute(false);
               onClose({ 
-                success: true, 
+              success: false, 
                 cancelled: false, 
                 sessionId: sessionData?.session_id,
-                verified: false
-              });
-            }, 1500);
+              verified: false,
+              error: 'تعذر التحقق من حالة الدفع'
+            });
           }
         }
+        // Check for cancel/cancelled pages (user cancelled OTP/3DS)
+        else if (iframeHref.includes('cancel') || 
+                 iframeHref.includes('cancelled') ||
+                 iframeHref.includes('canceled') ||
+                 iframeHref.includes('إلغاء')) {
+          console.warn('⚠️ Payment cancelled by user - cancel page detected:', iframeHref);
+          if (checkUrlIntervalRef.current) {
+            clearInterval(checkUrlIntervalRef.current);
+            checkUrlIntervalRef.current = null;
+          }
+          window.removeEventListener('message', onMessage);
+          setIsProcessingExecute(false); 
+          onClose({ 
+            success: false, 
+            cancelled: true,
+            sessionId: sessionData?.session_id,
+            error: 'تم إلغاء عملية الدفع من قبل المستخدم'
+          });
+          return; // Exit early - don't show error, just close modal
+        }
+        // Check for error pages (invalid transaction, expired, etc.)
+        else if (iframeHref.includes('error') || 
+                 iframeHref.includes('invalid') || 
+                 iframeHref.includes('expired') ||
+                 iframeHref.includes('fail') ||
+                 iframeHref.includes('failed') ||
+                 iframeHref.includes('فشل')) {
+          console.warn('❌ Error page detected in iframe:', iframeHref);
+          if (checkUrlIntervalRef.current) {
+            clearInterval(checkUrlIntervalRef.current);
+            checkUrlIntervalRef.current = null;
+          }
+          window.removeEventListener('message', onMessage);
+          setIsProcessingExecute(false); // Reset execute flag
+          setError('فشلت عملية التحقق من الدفع. قد يكون رابط الدفع منتهي الصلاحية أو المعاملة غير صالحة. يرجى المحاولة مرة أخرى.');
+          setLoading(false);
+        }
       } catch (e) {
-        // Cross-origin check - ignore
+        // Cross-origin check - ignore (expected when iframe is cross-origin)
       }
     }, 500);
     
@@ -451,21 +920,36 @@ const EmbeddedPaymentModal = ({
   };
 
   const handleClose = () => {
+    console.log('⚠️ User manually closed payment modal');
+    
     // Cleanup custom styles
     const existingStyles = document.getElementById('myfatoorah-input-fix');
     if (existingStyles) {
       existingStyles.remove();
     }
     
+    // Stop any URL checking
+    if (checkUrlIntervalRef.current) {
+      clearInterval(checkUrlIntervalRef.current);
+      checkUrlIntervalRef.current = null;
+    }
+    
     // Reset all state
     setPaymentInitialized(false);
     setLoading(false);
     setError(null);
+      setShowOtpIframe(false);
+      setIsProcessingExecute(false);
+      
+      // Clear iframe reference
+      iframeRef.current = null;
     
+      // Close with cancelled = true to prevent success modal
     onClose({ 
       success: false, 
       cancelled: true,
-      sessionId: sessionData?.session_id
+        sessionId: sessionData?.session_id,
+        error: 'تم إغلاق نافذة الدفع من قبل المستخدم'
     });
   };
 
@@ -498,16 +982,16 @@ const EmbeddedPaymentModal = ({
           </button>
         </div>
 
-        {/* Loading State */}
-        {loading && (
+        {/* Loading State - Hide when OTP iframe is showing */}
+        {loading && !showOtpIframe && (
           <div className="flex-1 flex items-center justify-center flex-col gap-4">
             <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
             <p className="text-gray-600">جاري تحضير صفحة الدفع...</p>
           </div>
         )}
 
-        {/* Error State */}
-        {error && (
+        {/* Error State - Hide when OTP iframe is showing */}
+        {error && !showOtpIframe && (
           <div className="flex-1 flex items-center justify-center flex-col gap-4 p-8">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -525,15 +1009,28 @@ const EmbeddedPaymentModal = ({
         )}
 
         {/* MyFatoorah Payment Container */}
-        {!loading && !error && sessionData?.session_id && (
-          <div className="flex-1 relative">
+        {/* Always render container div to ensure it exists in DOM for OTP iframe mounting */}
+        {/* Container will be used when payment form loads OR when OTP iframe needs to mount */}
+        <div className="flex-1 relative" style={{ minHeight: '520px', display: 'flex', flexDirection: 'column' }}>
+          {/* Container div - ALWAYS render in DOM, show/hide based on loading/error/OTP state */}
             <div 
               id={containerId} 
               className="w-full h-full"
-              style={{ pointerEvents: 'auto' }}
+            style={{ 
+              pointerEvents: 'auto', 
+              minHeight: '520px', 
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              flex: '1 1 auto',
+              // Show if: (not loading AND no error AND has session) OR OTP iframe is showing
+              // CRITICAL: When showOtpIframe is true, ALWAYS show (override any other state)
+              visibility: showOtpIframe ? 'visible' : ((!loading && !error && sessionData?.session_id) ? 'visible' : 'hidden'),
+              display: 'block', // Always keep in DOM layout
+              opacity: showOtpIframe ? 1 : ((!loading && !error && sessionData?.session_id) ? 1 : 0)
+            }}
             />
           </div>
-        )}
 
         {/* Footer */}
         <div className="p-4 border-t bg-gray-50 text-center rounded-b-lg">

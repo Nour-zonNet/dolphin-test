@@ -142,15 +142,21 @@ const CommentsModal = ({ onClose, subject }) => {
     };
   }, []);
 
-  // Enable vertical scroll when exceeding 2 rows
-  // Desktop (lg+, 2 columns): > 4 comments
-  // Mobile/Tablet (1 column): > 2 comments
   const maxVisibleWithoutScroll = isLargeScreen ? 4 : 2;
   const needsVerticalScroll = comments.length > maxVisibleWithoutScroll;
 
   return (
     <ModalContainer onClose={onClose}>
-      <div className="bg-white rounded-2xl p-6 w-full min-w-xs md:min-w-xl xl:min-w-2xl md:max-w-xl mx-auto max-h-[80vh] min-h-[60vh] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-2xl p-6 w-[90%] min-w-xs md:min-w-xl xl:min-w-2xl md:max-w-xl mx-auto max-h-[90vh] overflow-y-auto comments-modal-scroll">
+        <style>{`
+          .comments-modal-scroll::-webkit-scrollbar {
+            display: none;
+          }
+          .comments-modal-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
         {/* Header */}
         <div className="flex items-center justify-between mb-4 relative">
           <button
@@ -199,81 +205,78 @@ const CommentsModal = ({ onClose, subject }) => {
         </div>
 
         {/* Comments List */}
-        <div className="flex-1 overflow-hidden">
-          <div className={`h-full ${needsVerticalScroll ? 'overflow-y-auto' : 'overflow-y-hidden'} pr-2 custom-scrollbar`}>
-            {comments.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
-                {comments.map((comment) => (
-                  <div 
-                    key={comment.id} 
-                    className="bg-[#F4F4F4] rounded-bl-[32px] rounded-br-[32px] rounded-tl-[32px] p-6 relative"
-                  >
-
-                    {/* Comment Header */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-navyteal">
-                        <Teacher className="w-4 h-4 md:w-6 md:h-6" />
-                        <span className="text-xs md:text-base font-semibold">{comment.instructor}</span>
-                      </div>
-                      <span className="text-xs md:text-base font-semibold text-[#525D67]">{comment.date}</span>
+        <div>
+          {comments.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+              {comments.map((comment) => (
+                <div 
+                  key={comment.id} 
+                  className="bg-[#F4F4F4] rounded-bl-[32px] rounded-br-[32px] rounded-tl-[32px] p-6 relative"
+                >
+                  {/* Comment Header */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-navyteal">
+                      <Teacher className="w-4 h-4 md:w-6 md:h-6" />
+                      <span className="text-xs md:text-base font-semibold">{comment.instructor}</span>
                     </div>
-                    
-                    {/* Rating Text */}
-                    {comment.rating > 0 && (
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-medium ${
-                          comment.rating >= 4 ? 'text-green-600' : 
-                          comment.rating >= 3 ? 'text-yellow-600' : 'text-red-600'
-                        }`}>
-                          {getRatingText(comment.rating)}
-                        </span>
-                        {/* Rating Badge */}
-                        {comment.rating > 0 && (
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-navyteal text-xs font-bold ${
-                            comment.rating >= 4 ? 'text-green-500' : 
-                            comment.rating >= 3 ? 'text-yellow-500' : 'text-red-500'
-                          }`}>
-                            <div className="flex items-center">
-                              (
-                              <span>⭐</span>
-                              <span>{comment.rating}</span>
-                              )
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    
-                    {/* Comment Text or No Comment Message */}
-                    {comment.hasComment ? (
-                      <p className="text-sm md:text-base text-navyteal leading-relaxed">
-                        {comment.comment}
-                      </p>
-                    ) : (
-                      <div className="py-2">
-                        <p className="text-sm text-gray-500 italic">
-                          لا يوجد تعليق نصي
-                        </p>
-                      </div>
-                    )}
+                    <span className="text-xs md:text-base font-semibold text-[#525D67]">{comment.date}</span>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Teacher className="w-8 h-8 text-gray-400" />
+                  
+                  {/* Rating Text */}
+                  {comment.rating > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm font-medium ${
+                        comment.rating >= 4 ? 'text-green-600' : 
+                        comment.rating >= 3 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {getRatingText(comment.rating)}
+                      </span>
+                      {/* Rating Badge */}
+                      {comment.rating > 0 && (
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-navyteal text-xs font-bold ${
+                          comment.rating >= 4 ? 'text-green-500' : 
+                          comment.rating >= 3 ? 'text-yellow-500' : 'text-red-500'
+                        }`}>
+                          <div className="flex items-center">
+                            (
+                            <span>⭐</span>
+                            <span>{comment.rating}</span>
+                            )
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Comment Text or No Comment Message */}
+                  {comment.hasComment ? (
+                    <p className="text-sm md:text-base text-navyteal leading-relaxed">
+                      {comment.comment}
+                    </p>
+                  ) : (
+                    <div className="py-2">
+                      <p className="text-sm text-gray-500 italic">
+                        لا يوجد تعليق نصي
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <p className="text-lg font-medium mb-2">لا توجد تعليقات متاحة</p>
-                <p className="text-sm">
-                  {selectedPeriod === "شهري" 
-                    ? "لا توجد تعليقات لهذا الشهر" 
-                    : "لا توجد تعليقات لهذا الفصل"
-                  }
-                </p>
+                ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <Teacher className="w-8 h-8 text-gray-400" />
               </div>
-            )}
-          </div>
+              <p className="text-lg font-medium mb-2">لا توجد تعليقات متاحة</p>
+              <p className="text-sm">
+                {selectedPeriod === "شهري" 
+                  ? "لا توجد تعليقات لهذا الشهر" 
+                  : "لا توجد تعليقات لهذا الفصل"
+                }
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </ModalContainer>

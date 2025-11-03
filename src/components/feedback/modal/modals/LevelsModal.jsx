@@ -93,7 +93,7 @@ const LevelsModal = ({ onClose }) => {
             >
               {/* Lock Icon for locked levels */}
               {level.status === "locked" && (
-                <div className="absolute top-4 left-4">
+                <div className="absolute md:top-4 left-4">
                   <img src={lockIcon} alt="lock" className="w-4 md:w-6" />
                 </div>
               )}

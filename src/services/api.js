@@ -68,5 +68,34 @@ export const rechargePackagesFromWallet = async (packageIds) => {
   return response.data;
 };
 
+// Apply coupon API function (for wallet balance)
+export const applyCoupon = async (couponCode) => {
+  try {
+    const response = await api.post('/student/wallet/apply-coupon', {
+      couponCode: couponCode
+    });
+    
+    return response.data;
+  } catch (error) {
+    // Coupon apply error
+    throw new Error(error.response?.data?.message || error.message || 'فشل في تطبيق الكوبون');
+  }
+};
+
+// Apply coupon to subscription API function (for adding days to package)
+export const applyCouponToSubscription = async (subscriptionId, couponCode) => {
+  try {
+    const response = await api.post('/student/subscriptions/apply-coupon', {
+      subscription_id: subscriptionId,
+      couponCode: couponCode
+    });
+    
+    return response.data;
+  } catch (error) {
+    // Subscription coupon apply error
+    throw new Error(error.response?.data?.message || error.message || 'فشل في تطبيق الكوبون على الاشتراك');
+  }
+};
+
 export default api;
   

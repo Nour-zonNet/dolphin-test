@@ -29,7 +29,7 @@ const InviteStudentSection = () => {
         onClick={handleClick}
         className="relative p-4 sm:p-6 border border-[#D9D9D9] rounded-[16px] min-h-[140px] sm:min-h-[170px] cursor-pointer hover:border-orangedeep transition-all duration-300 hover:shadow-md"
       >
-        <div className="flex items-start sm:items-center justify-between gap-4 sm:gap-6">
+        <div className="flex items-start justify-between gap-4 sm:gap-6">
           <div className="flex items-start gap-3 sm:gap-4 flex-1 w-full sm:w-auto">
             <div className="flex flex-col gap-1 sm:gap-2 flex-1">
               <h3 className="font-bold text-black text-base sm:text-lg md:text-xl lg:text-2xl">

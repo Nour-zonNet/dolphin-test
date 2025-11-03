@@ -62,7 +62,7 @@ const MonthlyChallengeCard = () => {
           </div>
         </div>
         <div className="">
-          <img src={challengeImage} alt="challenge" className="w-32 md:w-auto" />
+          <img src={challengeImage} alt="challenge" className="w-24 md:w-32 lg:w-auto" />
         </div>
       </div>
     </div>

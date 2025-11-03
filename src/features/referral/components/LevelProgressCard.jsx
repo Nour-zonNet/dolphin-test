@@ -15,13 +15,13 @@ const LevelProgressCard = () => {
   const progressPercentage = Math.min((currentProgress / targetProgress) * 100, 100);
 
   return (
-    <div className="bg-white border border-[#D9D9D9] rounded-[24px] p-6 md:p-8 space-y-4 w-full h-full flex flex-col">
-      <div className="flex items-start justify-between">
+    <div className="bg-white border border-[#D9D9D9] rounded-[24px] p-4 md:p-8 space-y-4 w-full h-full flex flex-col">
+      <div className="flex items-center md:items-start justify-between">
         <div className="flex items-center gap-4">
           {/* Badge Icon */}
           <img src={medalIcon} alt="medal" className="w-10 md:w-14 lg:w-18" />
           <div>
-            <h3 className="font-semibold text-black text-base md:text-xl lg:text-2xl">
+            <h3 className="font-semibold text-black text-sm md:text-xl lg:text-2xl text-nowrap">
               {/* المستوي {currentLevel} */} المستوى الأول
             </h3>
             <p className="text-sm md:text-base text-orangedeep font-semibold">
@@ -32,18 +32,20 @@ const LevelProgressCard = () => {
         {/* All Levels Button */}
         <p 
           onClick={openLevelsModal}
-          className="text-base md:text-lg lg:text-xl text-[#BA7C28] underline cursor-pointer hover:text-[#9a6a1f] transition-colors"
+          className="text-sm md:text-lg lg:text-xl text-[#BA7C28] underline cursor-pointer hover:text-[#9a6a1f] transition-colors text-nowrap"
         >
           جميع المستويات
         </p>
       </div>
 
       {/* Level Progress Bar */}
-      <div className="flex items-center">
-        <div className="w-full h-4 md:h-6 bg-[#D9D9D9] rounded-full">
-          <div className="h-full bg-orangedeep rounded-full" style={{ width: `${progressPercentage}%` }}></div>
+      <div className="flex items-center relative">
+        <div className="w-[90%] h-4 md:h-6 bg-[#D9D9D9] rounded-full">
+          <div className="h-full bg-orangedeep rounded-full w-full" style={{ width: `${progressPercentage}%` }}></div>
         </div>
-        <img src={tenFlag} alt="ten flag" className="w-14 md:w-16 lg:w-20" />
+        <div className="absolute lg:-top-12 md:-top-10 -top-7 left-6">
+          <img src={tenFlag} alt="ten flag" className="w-10 md:w-14 lg:w-17" />
+        </div>
       </div>
 
       {/* Info Text */}

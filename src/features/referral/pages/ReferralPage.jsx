@@ -54,7 +54,6 @@ const ReferralPage = () => {
             <div className="lg:col-span-1">
               <ActivityLog />
             </div>
-
           </div>
         ) : null}
       </main>

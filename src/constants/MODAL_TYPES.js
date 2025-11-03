@@ -34,4 +34,6 @@ export const MODAL_TYPES = {
   HOW_IT_WORKS: "HOW_IT_WORKS",
   // Withdraw modal
   WITHDRAW: "WITHDRAW",
+  // Share modal
+  SHARE: "SHARE",
 };

@@ -29,20 +29,54 @@ const ReferralCodeCard = () => {
     }
   };
 
-  const handleInviteFriends = () => {
-    // TODO: Implement invite friends functionality (share link, etc.)
-    console.log("Invite friends clicked");
+  const handleInviteFriends = async () => {
+    // Construct the referral link
+    const referralLink = `${window.location.origin}/register?referral=${referralCode}`;
+    const shareMessage = `انضم إلى تعلم مع دولفين باستخدام كود الإحالة الخاص بي: ${referralCode}`;
+
+    // Check if native share is available
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "كود الإحالة",
+          text: shareMessage,
+          url: referralLink,
+        });
+      } catch (error) {
+        // User cancelled or error occurred
+        if (error.name !== "AbortError") {
+          openStatusModal("ERROR", {
+            title: "خطأ",
+            message: "فشل مشاركة كود الإحالة",
+          });
+        }
+      }
+    } else {
+      // Fallback: copy link to clipboard if native share is not available
+      try {
+        await navigator.clipboard.writeText(`${shareMessage}\n${referralLink}`);
+        openStatusModal("SUCCESS", {
+          title: "تم النسخ",
+          message: "تم نسخ رابط الإحالة بنجاح",
+        });
+      } catch (err) {
+        openStatusModal("ERROR", {
+          title: "خطأ",
+          message: "متصفحك لا يدعم المشاركة. يرجى نسخ الرابط يدوياً.",
+        });
+      }
+    }
   };
 
   return (
-    <div className="bg-white border border-[#D9D9D9] rounded-[24px] p-6 md:p-8 space-y-6 w-full h-full flex flex-col">
+    <div className="bg-white border border-[#D9D9D9] rounded-[24px] p-4 md:p-8 space-y-6 w-full h-full flex flex-col">
       {/* Referral Code Section */}
       <div className="space-y-10">
         <p className="text-base md:text-xl lg:text-2xl text-black font-semibold text-center">
           كود الإحالة الخاص بك
         </p>
-        <div className="flex items-center justify-between border border-dashed border-[#99A1A7] rounded-lg px-10 py-3">
-            <span className="font-bold text-base md:text-lg text-[#5C6064]">{referralCode}</span>
+        <div className="flex items-center justify-between border border-dashed border-[#99A1A7] rounded-lg md:px-10 px-5 py-3">
+            <span className="font-bold text-sm md:text-base lg:text-lg text-[#5C6064]">{referralCode}</span>
             <button
               onClick={handleCopy}
               className="flex items-center gap-1 px-4 py-1.5 bg-orangedeep text-navyteal rounded-lg hover:bg-btnClicked transition font-semibold text-sm md:text-base"
@@ -74,8 +108,8 @@ const ReferralCodeCard = () => {
             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
           />
         </svg>
-        <span className="text-navyteal font-semibold text-base md:text-lg">دعوة الأصدقاء</span>
-      </ProfileButtons>
+        <span className="text-navyteal font-semibold text-sm md:text-base lg:text-lg">دعوة الأصدقاء</span>
+        </ProfileButtons>
       </div>
     </div>
   );

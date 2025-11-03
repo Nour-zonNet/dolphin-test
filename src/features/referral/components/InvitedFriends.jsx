@@ -12,7 +12,7 @@ const InvitedFriends = () => {
   ];
 
   const getStatusColor = (status) => {
-    return status === "تم قبولها" ? "text-gray-600" : "text-gray-500";
+    return status === "تم قبولها" ? "text-[#2E7D32]" : "text-orangedeep";
   };
 
   return (
@@ -28,17 +28,17 @@ const InvitedFriends = () => {
           >
             {/* Initial Circle */}
             <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#FAEBD6] text-orangedeep flex items-center justify-center">
-              <span className="text-navyteal font-bold text-base md:text-lg">
+              <span className="text-btnClicked font-bold text-base md:text-lg">
                 {friend.initial}
               </span>
             </div>
 
             {/* Name and Status */}
             <div className="flex-1">
-              <p className="text-sm md:text-base font-medium text-black">
+              <p className="text-sm md:text-base font-semibold text-black">
                 {friend.name}
               </p>
-              <p className={`text-xs md:text-sm ${getStatusColor(friend.status)}`}>
+              <p className={`text-sm md:text-base font-semibold ${getStatusColor(friend.status)}`}>
                 {friend.status}
               </p>
             </div>
