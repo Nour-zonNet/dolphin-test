@@ -99,6 +99,7 @@ const ComplaintsPage = lazy(() => import("@/features/complaints/pages/Complaints
 const BalanceDetails = lazy(() => import("@/features/balance/pages/BalanceDetails"));
 const PaymentStatus = lazy(() => import("@/features/balance/pages/PaymentStatus"));
 const RenewalStatus = lazy(() => import("@/features/subscription/pages/RenewalStatus"));
+const ReferralPage = lazy(() => import("@/features/referral/pages/ReferralPage"));
 
 // Route Configuration
 export const routes = [
@@ -361,6 +362,14 @@ export const routes = [
     navbar: false,
     mobileNav: true,
     homeSupportBtn: true,
+  },
+  {
+    path: "/referral",
+    element: ReferralPage,
+    protected: true,
+    navbar: false,
+    mobileNav: false,
+    layout: false,
   },
   {
     path: "/teacher/:username",

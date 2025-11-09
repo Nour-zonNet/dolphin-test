@@ -26,7 +26,10 @@ export const useSubscriptions = () => {
 
   // Stable action dispatchers
   const dispatchFetch = useCallback(
-    () => dispatch(fetchSubscriptions()),
+    async () => {
+      const result = await dispatch(fetchSubscriptions());
+      return result;
+    },
     [dispatch]
   );
 

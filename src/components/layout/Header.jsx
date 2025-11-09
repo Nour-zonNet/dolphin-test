@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 // import { useTranslation } from "react-i18next";
 import { Balance, RightArrow } from "@/utils/icons";
+import infoIcon from "@/assets/images/info.svg";
 // import FormatWithCurrency from "@/utils/FormatWithCurrency";
 
 export const Header = ({
@@ -11,6 +12,8 @@ export const Header = ({
   supTitle,
   showBalanceSection = true,
   showArrow = true,
+  showInfo = false,
+  onInfoClick,
 }) => {
   // const { t } = useTranslation();
   const navigate = useNavigate();
@@ -55,6 +58,15 @@ export const Header = ({
           </span> */}
             </div>
           )}
+        {showInfo && (
+          <button
+            onClick={onInfoClick}
+            className="cursor-pointer outline-0 border-0 bg-transparent p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Info"
+          >
+            <img src={infoIcon} alt="info" className="w-6 h-6 md:w-8 md:h-8" />
+          </button>
+        )}
         </div>
       </div>
     </div>

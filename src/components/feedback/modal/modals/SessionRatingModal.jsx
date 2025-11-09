@@ -189,7 +189,7 @@ const SessionRatingModal = ({ onClose, onSkip, onSubmit, sessions = [] }) => {
     // const hasAnyRating = Object.values(ratings).some(rating => rating > 0);
 
     return (
-        <div className="relative w-[90%] mx-auto md:w-full xl:min-w-3xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col mx-4">
+        <div className="relative w-[90%] mx-auto max-w-3xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col mx-4">
                 {/* Close Button */}
                 <button
                     onClick={onClose}

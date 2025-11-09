@@ -14,6 +14,7 @@ import ActionButton from "./ActionButton";
 import GroupInfo from "./GroupInfo";
 import { useModal } from "@/components/feedback/modal/useModal";
 import { packageFactoryWithTitle } from "../../packages/factory/packageFactory";
+import { Coupon } from "@/utils/icons";
 import {
   formatPackageStartDate,
   getRemainingDate,
@@ -27,7 +28,7 @@ import EmbeddedPaymentModal from "@/components/feedback/modal/modals/EmbeddedPay
 const Card = React.memo(({ item, isOpen, onToggle }) => {
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
-  const { openConfirmModal, openStatusModal } = useModal();
+  const { openConfirmModal, openStatusModal, openAddCouponModal } = useModal();
   const { cancelSubscription, fetchSubscriptions } = useSubscriptions();
   const { all: allPackages } = usePackages();
   useGroups(item.package_id);
@@ -243,6 +244,22 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
         }
       }
     );
+  };
+
+  const handleCouponClick = () => {
+    openAddCouponModal(async (couponData) => {
+      if (couponData) {
+        // Refresh subscriptions after successful coupon application
+        await fetchSubscriptions();
+        const daysMessage = couponData.daysAdded 
+          ? `تم إضافة ${couponData.daysAdded} ${couponData.daysAdded === 1 ? 'يوم' : 'أيام'} إلى اشتراكك بنجاح.`
+          : "تم إضافة الأيام بنجاح.";
+        openStatusModal("SUCCESS", {
+          title: "تم تطبيق الكوبون بنجاح",
+          message: couponData.message || daysMessage,
+        });
+      }
+    }, item.id, true); // Pass subscriptionId and forSubscription flag
   };
   // (legacy handleReactivateClick removed)
 
@@ -643,16 +660,31 @@ const Card = React.memo(({ item, isOpen, onToggle }) => {
                     switch (action) {
                       case "cancel":
                         return (
-                          <ActionButton
-                            key="cancel"
-                            outline
-                            full
-                            danger
-                            icon={<Cancel />}
-                            onClick={handleCancelClick}
-                          >
-                            إلغاء الاشتراك
-                          </ActionButton>
+                          <div key="cancel-actions" className="flex flex-col sm:flex-row gap-3">
+                            {statusKey === "active" && (
+                              <ActionButton
+                                key="coupon"
+                                outline
+                                primary
+                                onClick={handleCouponClick}
+                                className="flex-1"
+                              >
+                                  <Coupon />
+                                استخدام كوبون لإضافة أيام
+                              </ActionButton>
+                            )}
+                            <ActionButton
+                              key="cancel"
+                              outline
+                              danger
+                              icon={<Cancel />}
+                              onClick={handleCancelClick}
+                              className={statusKey === "active" ? "flex-1" : "w-full"}
+                            >
+                              إلغاء الاشتراك
+                            
+                            </ActionButton>
+                          </div>
                         );
 
                       case "renew":

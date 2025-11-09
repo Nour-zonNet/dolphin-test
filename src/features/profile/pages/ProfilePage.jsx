@@ -5,6 +5,7 @@ import UserProfile from "../components/UserProfile";
 import AddSiblingButton from "../components/AddSiblingButton";
 import AccountInfo from "../components/AccountInfo";
 import SubscriptionSection from "../components/SubscriptionSection";
+import InviteStudentSection from "../components/InviteStudentSection";
 import { ProfileActions } from "../components";
 import { useProfile } from "@/features/profile/hooks/useProfile";
 import FormatWithCurrency from "@/utils/FormatWithCurrency";
@@ -65,9 +66,13 @@ const ProfilePage = () => {
           </Link>
         </div>
 
+        {/* Invite Student Section */}
+
+        {/* Invitation Section */}
         <div className="space-y-8 md:space-y-16">
           {/* <WalletBalance /> */}
           <Divider />
+          <InviteStudentSection />
           <AccountInfo user={user} />
           <Divider />
           <SubscriptionSection />

@@ -1,6 +1,6 @@
 import React from "react";
 
-const ActionButton = ({ children, icon, onClick, primary, outline, full, danger }) => {
+const ActionButton = ({ children, icon, onClick, primary, outline, full, danger, className = "" }) => {
   const base =
     "flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base font-semibold rounded-3xl transition cursor-pointer";
   const styles = [
@@ -13,7 +13,7 @@ const ActionButton = ({ children, icon, onClick, primary, outline, full, danger 
     .join(" ");
 
   return (
-    <button onClick={onClick} className={`${base} ${styles} text-nowrap`}>
+    <button onClick={onClick} className={`${base} ${styles} text-nowrap ${className}`}>
       {icon} {children}
     </button>
   );

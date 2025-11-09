@@ -165,7 +165,7 @@ export const useModal = () => {
     );
   };
 
-  const openAddCouponModal = (onSubmit) => {
+  const openAddCouponModal = (onSubmit, subscriptionId = null, forSubscription = false) => {
     // Store callback in registry with a unique ID
     const callbackId = Date.now().toString();
     if (onSubmit) {
@@ -177,6 +177,8 @@ export const useModal = () => {
         type: MODAL_TYPES.ADD_COUPON,
         props: {
           callbackId: onSubmit ? callbackId : null,
+          subscriptionId,
+          forSubscription,
         },
       })
     );
@@ -264,6 +266,45 @@ export const useModal = () => {
     );
   };
 
+  const openLevelsModal = () => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.LEVELS,
+        props: {},
+      })
+    );
+  };
+
+  const openHowItWorksModal = () => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.HOW_IT_WORKS,
+        props: {},
+      })
+    );
+  };
+
+  const openWithdrawModal = () => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.WITHDRAW,
+        props: {},
+      })
+    );
+  };
+
+  const openShareModal = (shareData = {}) => {
+    dispatch(
+      openModal({
+        type: MODAL_TYPES.SHARE,
+        props: {
+          referralCode: shareData.referralCode || "",
+          shareMessage: shareData.shareMessage || "",
+        },
+      })
+    );
+  };
+
   // Function to execute and remove callback from registry
   const executeCallback = (callbackId, ...args) => {
     const callback = callbackRegistry.get(callbackId);
@@ -295,6 +336,10 @@ export const useModal = () => {
     openSessionRatingModal,
     openEmailRequiredModal,
     openGroupCompletionModal,
+    openLevelsModal,
+    openHowItWorksModal,
+    openWithdrawModal,
+    openShareModal,
     closeCurrentModal,
     executeCallback, // Export this for use in ModalManager
   };

@@ -14,13 +14,17 @@ import {
   WeeklyScheduleModal,
   AvatarModal,
   AddBalanceModal,
-  // AddCouponModal,
+  AddCouponModal,
   SessionRatingModal,
   TransactionDetailsModal,
   EmailRequiredModal,
   CommentsModal,
   PerformanceChartModal,
   GroupCompletionModal,
+  LevelsModal,
+  HowItWorksModal,
+  WithdrawModal,
+  ShareModal,
 } from "./modals";
 
 const ModalManager = () => {
@@ -150,34 +154,6 @@ const ModalManager = () => {
         />
       );
       break;
-    // case MODAL_TYPES.ADD_BALANCE:
-    //   ModalContent = (
-    //     <AddBalanceModal
-    //       {...props}
-    //       onClose={handleClose}
-    //       onSubmit={(data) => {
-    //         if (props.callbackId) {
-    //           executeCallback(props.callbackId, data);
-    //         }
-    //         handleClose();
-    //       }}
-    //     />
-    //   );
-    //   break;
-    // case MODAL_TYPES.ADD_COUPON:
-    //   ModalContent = (
-    //     <AddCouponModal
-    //       {...props}
-    //       onClose={handleClose}
-    //       onSubmit={(data) => {
-    //         if (props.callbackId) {
-    //           executeCallback(props.callbackId, data);
-    //         }
-    //         handleClose();
-    //       }}
-    //     />
-    //   );
-    //   break;
     case MODAL_TYPES.SESSION_RATING:
       ModalContent = (
         <SessionRatingModal
@@ -237,6 +213,20 @@ const ModalManager = () => {
         />
       );
       break;
+    case MODAL_TYPES.ADD_COUPON:
+      ModalContent = (
+        <AddCouponModal
+          {...props}
+          onClose={handleClose}
+          onSubmit={(data) => {
+            if (props.callbackId) {
+              executeCallback(props.callbackId, data);
+            }
+            handleClose();
+          }}
+        />
+      );
+      break;
     case MODAL_TYPES.COMMENTS:
       ModalContent = <CommentsModal {...props} onClose={handleClose} />;
       break;
@@ -264,36 +254,48 @@ const ModalManager = () => {
         />
       );
       break;
-        // ADD THESE NEW CASES:
-      case MODAL_TYPES.COMMENTS:
-        ModalContent = (
-          <CommentsModal
-            {...props}
-            onClose={handleClose}
-          />
-        );
-        break;
-      
-      case MODAL_TYPES.PERFORMANCE_CHART:
-        ModalContent = (
-          <PerformanceChartModal
-            {...props}
-            onClose={handleClose}
-          />
-        );
-        break;
-        
-      case MODAL_TYPES.GROUP_COMPLETION:
-        ModalContent = (
-          <GroupCompletionModal
-            {...props}
-            onClose={handleClose}
-          />
-        );
-        break;
-        
-        default:
-          return null;
+    case MODAL_TYPES.GROUP_COMPLETION:
+      ModalContent = (
+        <GroupCompletionModal
+          {...props}
+          onClose={handleClose}
+        />
+      );
+      break;
+    case MODAL_TYPES.LEVELS:
+      ModalContent = (
+        <LevelsModal
+          {...props}
+          onClose={handleClose}
+        />
+      );
+      break;
+    case MODAL_TYPES.HOW_IT_WORKS:
+      ModalContent = (
+        <HowItWorksModal
+          {...props}
+          onClose={handleClose}
+        />
+      );
+      break;
+    case MODAL_TYPES.WITHDRAW:
+      ModalContent = (
+        <WithdrawModal
+          {...props}
+          onClose={handleClose}
+        />
+      );
+      break;
+    case MODAL_TYPES.SHARE:
+      ModalContent = (
+        <ShareModal
+          {...props}
+          onClose={handleClose}
+        />
+      );
+      break;
+    default:
+      return null;
   }
 
   return (
